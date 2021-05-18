@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ======= #23. tiles 레이아웃 설정하기 ======= -->
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+       
+<tiles-definitions>
+	
+   <!-- ==== 그룹웨어쪽 레이아웃 ==== -->	
+   <!-- ==== tiles 를 사용하는 레이아웃(header,content,footer) 설정 시작 ==== -->
+   <definition name="gwLayout-tiles"  template="/WEB-INF/tiles/gwLayout/gwLayout-tiles.jsp"> 
+      <put-attribute name="header"   value="/WEB-INF/tiles/gw/header.jsp" />
+      <put-attribute name="sideinfo"  value="/WEB-INF/tiles/gw/sideinfo.jsp" />
+      <put-attribute name="content"  value="" />
+      <put-attribute name="footer"   value="/WEB-INF/tiles/gw/footer.jsp" />
+   </definition>
+   
+      <!-- return member.gwTiles 이라고 정의하면 /WEB-INF/views/gwTiles/member.jsp 를 불러오는것이다. -->
+   <definition name="*.gwTiles" extends="gwLayout-tiles">
+      <put-attribute name="content" value="/WEB-INF/views/gwTiles/{1}.jsp"/>
+   </definition>
+   <definition name="*/*.gwTiles" extends="gwLayout-tiles">
+   <!-- return 폴더명/member.gwTiles 이라고 정의하면 /WEB-INF/views/gwTiles/폴더명/member.jsp 를 불러오는것이다. -->
+      <put-attribute name="content" value="/WEB-INF/views/gwTiles/{1}/{2}.jsp"/>
+   </definition>
+   <!-- return 폴더명/폴더명/member.gwTiles 이라고 정의하면 /WEB-INF/views/gwTiles/폴더명/폴더명/member.jsp 를 불러오는것이다. -->
+   <definition name="*/*/*.gwTiles" extends="gwLayout-tiles">
+      <put-attribute name="content" value="/WEB-INF/views/gwTiles/{1}/{2}/{3}.jsp"/>
+   </definition>
+   
+   
+   <!-- ==== 메인홈페이지 레이아웃 ==== -->
+   <!-- ==== tiles 를 사용하는 레이아웃(header,content,sideinfo,footer) 설정 시작 ==== -->
+   <definition name="mainLayout-tiles"  template="/WEB-INF/tiles/mainLayout/mainLayout-tiles.jsp"> 
+      <put-attribute name="header"  value="/WEB-INF/tiles/main/header.jsp" />
+      <put-attribute name="content" value="" />
+      <put-attribute name="sideinfo"  value="/WEB-INF/tiles/main/sideinfo.jsp" />
+      <put-attribute name="footer"  value="/WEB-INF/tiles/main/footer.jsp" />
+   </definition>
+   
+   <definition name="*.mainTiles" extends="mainLayout-tiles">
+      <put-attribute name="content" value="/WEB-INF/views/mainTiles/{1}.jsp"/>
+   </definition>
+   <definition name="*/*.mainTiles" extends="mainLayout-tiles">
+      <put-attribute name="content" value="/WEB-INF/views/mainTiles/{1}/{2}.jsp"/>
+   </definition>
+   <definition name="*/*/*.mainTiles" extends="mainLayout-tiles">
+      <put-attribute name="content" value="/WEB-INF/views/mainTiles/{1}/{2}/{3}.jsp"/>
+   </definition>
+
+</tiles-definitions>        
