@@ -1,1 +1,53 @@
 @charset "UTF-8";
+
+div#container{
+	
+	margin: 0 auto;
+	width: 90%
+	
+}
+
+
+div#mainMenu{
+	margin-bottom: 15px;
+	background-color: orange;
+	height: 50px;
+	
+}
+
+div#sidemenu{
+	
+	float:left;
+	width: 200px;
+}
+
+div#sidemenu div{
+	
+	border: solid 1px black;
+	height: 100px;
+
+}
+
+div#sidemenu div:hover{	
+	cursor: pointer;
+}
+
+div#sebumenu{
+	
+	float: left;
+	width: 250px;
+	
+}
+
+div#sebumenu div{
+	border: solid 1px black;
+	height: 30px;	
+	
+}
+
+div#content{
+	border: solid 1px black;
+	float:left;
+	background-color: yellow;
+	
+}
