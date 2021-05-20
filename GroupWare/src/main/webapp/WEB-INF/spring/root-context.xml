@@ -28,7 +28,7 @@
       <constructor-arg index="0" ref="sqlSessionFactory" />
    </bean>   
    
-    <bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
+   <bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
       <property name="mapperLocations" value="classpath*:com/t1works/groupware/hsy/mapper/*.xml" />
       <property name="dataSource" ref="dataSource"/>
    </bean>
@@ -36,7 +36,49 @@
    <!-- ==== #15. myBatis(JDBC)설정 sqlSessionTemplate 의존 객체 설정 ==== -->
    <bean id="sqlsession2" class="org.mybatis.spring.SqlSessionTemplate"> 
       <constructor-arg index="0" ref="sqlSessionFactory2" />
-   </bean>   
+   </bean>
+   
+   <bean id="sqlSessionFactory3" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="mapperLocations" value="classpath*:com/t1works/groupware/kdn/mapper/*.xml" />
+      <property name="dataSource" ref="dataSource"/>
+   </bean>
+   
+   <!-- ==== #15. myBatis(JDBC)설정 sqlSessionTemplate 의존 객체 설정 ==== -->
+   <bean id="sqlsession3" class="org.mybatis.spring.SqlSessionTemplate"> 
+      <constructor-arg index="0" ref="sqlSessionFactory3" />
+   </bean>
+   
+   <bean id="sqlSessionFactory4" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="mapperLocations" value="classpath*:com/t1works/groupware/sia/mapper/*.xml" />
+      <property name="dataSource" ref="dataSource"/>
+   </bean>
+   
+   <!-- ==== #15. myBatis(JDBC)설정 sqlSessionTemplate 의존 객체 설정 ==== -->
+   <bean id="sqlsession4" class="org.mybatis.spring.SqlSessionTemplate"> 
+      <constructor-arg index="0" ref="sqlSessionFactory4" />
+   </bean>
+   
+   <bean id="sqlSessionFactory5" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="mapperLocations" value="classpath*:com/t1works/groupware/ody/mapper/*.xml" />
+      <property name="dataSource" ref="dataSource"/>
+   </bean>
+   
+   <!-- ==== #15. myBatis(JDBC)설정 sqlSessionTemplate 의존 객체 설정 ==== -->
+   <bean id="sqlsession5" class="org.mybatis.spring.SqlSessionTemplate"> 
+      <constructor-arg index="0" ref="sqlSessionFactory5" />
+   </bean>
+   
+   <bean id="sqlSessionFactory6" class="org.mybatis.spring.SqlSessionFactoryBean">
+      <property name="mapperLocations" value="classpath*:com/t1works/groupware/jsh/mapper/*.xml" />
+      <property name="dataSource" ref="dataSource"/>
+   </bean>
+   
+   <!-- ==== #15. myBatis(JDBC)설정 sqlSessionTemplate 의존 객체 설정 ==== -->
+   <bean id="sqlsession6" class="org.mybatis.spring.SqlSessionTemplate"> 
+      <constructor-arg index="0" ref="sqlSessionFactory6" />
+   </bean>
+   
+      
    
    <!-- ==== #16. 트랜잭션 처리를 위해서 아래와 같이 트랜잭션매니저 객체를 bean 으로 등록해야 한다. ==== -->
    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
