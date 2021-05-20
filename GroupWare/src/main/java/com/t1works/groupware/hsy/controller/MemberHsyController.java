@@ -29,11 +29,12 @@ public class MemberHsyController {
 		// 주소록표기
 		// 1) 모든 부서에 대한 정보 가져오기
 		List<DepartmentHsyVO> departmentList= service.selectAllDepartment();
-		//System.out.println(departmentList.size());
+		mav.addObject("departmentList", departmentList);
+		
 		
 		// 2) 모든 직원 정보 가져오기
 		List<MemberHsyVO> employeeList= service.selectAllMember();
-		//System.out.println(employeeList.size());
+		mav.addObject("employeeList",employeeList);
 		
 		mav.setViewName("hsy/employee/employeeMap.gwTiles");
 		return mav;

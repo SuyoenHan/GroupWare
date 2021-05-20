@@ -58,6 +58,9 @@
 	
 	<div style="border: solid 1px red; float:left;">
 		<div>t1works</div>
+		<c:forEach var="departmentVO" items="${departmentList}">
+			<div>${deartmentVO.dname}</div>
+		</c:forEach>
 		
 	</div>
 	
