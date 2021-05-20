@@ -45,5 +45,10 @@
       <filter-name>encodingFilter</filter-name>
       <url-pattern>*</url-pattern>
    </filter-mapping>
+   
+   <!-- ==== #14. 시작웹페이지 등록하기 ==== -->
+   <welcome-file-list>
+     <welcome-file>t1/home.tw</welcome-file>
+   </welcome-file-list>
 
 </web-app>
