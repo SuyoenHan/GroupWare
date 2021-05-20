@@ -1,9 +1,3 @@
-show user;
--- USER이(가) "FINALUSER1"입니다.
-
-select * from tbl_department;
-select * from tab;
-
 -- ***** 직급테이블 ***** --
 create table tbl_position
 ( pcode   varchar2(3)   not null   -- 직급코드
@@ -16,6 +10,14 @@ create table tbl_position
 );
 -- Table TBL_POSITION이(가) 생성되었습니다.
 
+create sequence seq_tbl_position_pcode
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+-- Sequence SEQ_TBL_POSITION_PCODE이(가) 생성되었습니다.
 
 -- ***** 부서테이블 ***** --
 create table tbl_department
@@ -28,6 +30,16 @@ create table tbl_department
 , constraint FK_tbl_department_managerid foreign key (managerid) references tbl_employee(employeeid)
 );
 -- Table TBL_DEPARTMENT이(가) 생성되었습니다.
+
+create sequence seq_tbl_department_dcode
+start with 1
+increment by 1
+nomaxvalue
+nominvalue
+nocycle
+nocache;
+-- Sequence SEQ_TBL_DEPARTMENT_DCODE이(가) 생성되었습니다.
+
 
 -- ***** 직원테이블 ***** --
 create table tbl_employee
@@ -42,7 +54,7 @@ create table tbl_employee
 , jubun        varchar2(100)   not null   -- 주민번호
 , hiredate     date            default sysdate not null  -- 입사일자
 , status       varchar2(2)     default '0' not null     -- 재직상태 (0:재직중, 1:퇴사)
-, managerid    varchar2(50)                           -- 직속상사사번
+, managerid    varchar2(50)    null   -- 직속상사사번
 , employeeimg  varchar2(100)   default 'noimage.png'  -- 직원이미지
 , constraint  PK_tbl_employee_employeeid primary key(employeeid)
 , constraint  FK_tbl_employee_fk_dcode foreign key(fk_dcode) references tbl_department(dcode) on delete cascade
@@ -54,24 +66,6 @@ create table tbl_employee
 );
 -- Table TBL_EMPLOYEE이(가) 생성되었습니다.
 
-
-create sequence seq_tbl_position_pcode
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
--- Sequence SEQ_TBL_POSITION_PCODE이(가) 생성되었습니다.
-
-create sequence seq_tbl_department_dcode
-start with 1
-increment by 1
-nomaxvalue
-nominvalue
-nocycle
-nocache;
--- Sequence SEQ_TBL_DEPARTMENT_DCODE이(가) 생성되었습니다.
 
 create sequence seq_tbl_employee_employeeid
 start with 1
