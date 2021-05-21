@@ -5,8 +5,11 @@
 
 	$(document).ready(function(){
 		
+		
 		// sidemenu와 content길이 맞추기
 		func_height1();
+		
+		
 		
 	}); // end of $(document).ready(function(){
 
