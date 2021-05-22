@@ -158,8 +158,8 @@
 		// 회사명 클릭이벤트
 		$("div.companyName").click(function(){
 			if($("div.hideDeptInfo").css('display')=='none'){
-				$("div.hideDeptInfo").show();
-				$(this).next().show();
+				$("div.hideDeptInfo").show(500);
+				$(this).next().show(500);
 				$(this).find("span.minus").show();
 				$(this).find("span.plus").hide();
 				
@@ -178,7 +178,7 @@
 		// 각부서명 클릭이벤트
 		$("div.clickMenu").click(function(){
 			if($(this).next().css('display')=='none'){
-				$(this).next().show();
+				$(this).next().show(500);
 				$(this).find("span.minus").show();
 				$(this).find("span.plus").hide();
 			}
@@ -227,7 +227,7 @@
 		$("span.minus").show();
 		$("span.plus").hide();
 		$("ul.hideInfo").show();
-		$("div.hideDeptInfo").show();
+		$("div.hideDeptInfo").show(500);
 		
 	}// end of function showAll(){-----
 		
