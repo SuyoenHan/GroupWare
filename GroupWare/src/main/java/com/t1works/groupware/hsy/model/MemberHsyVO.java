@@ -17,6 +17,13 @@ public class MemberHsyVO {
 	private String employeeimg;    // 직원이미지
 	
 	
+	// select용 변수 생성
+	private String pname;         // 직위명
+	private String dname;         // 부서명
+	private String duty;          // 직무
+	
+	
+	
 	public String getEmployeeid() {
 		return employeeid;
 	}
@@ -108,6 +115,27 @@ public class MemberHsyVO {
 		this.employeeimg = employeeimg;
 	}
 	
-
+	public String getPname() {
+		return pname;
+	}
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
+	
+	public String getDname() {
+		return dname;
+	}
+	public void setDname(String dname) {
+		this.dname = dname;
+	}
+	
+	public String getDuty() {
+		return duty;
+	}
+	public void setDuty(String duty) {
+		this.duty = duty;
+	}
+	
+	
 	
 }
