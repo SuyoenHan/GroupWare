@@ -227,7 +227,7 @@
 		$("span.minus").show();
 		$("span.plus").hide();
 		$("ul.hideInfo").show();
-		$("div.hideDeptInfo").show(500);
+		$("div.hideDeptInfo").show(500); 
 		
 	}// end of function showAll(){-----
 		
