@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     
 <%
    String ctxPath = request.getContextPath();
@@ -27,27 +27,34 @@
 <div id="mainMenu"> 
    <span>${loginuser.name}
       <c:if test="${loginuser.fk_pcode eq 1}">
-         사원
+         사원님
       </c:if>
       <c:if test="${loginuser.fk_pcode eq 2}">
-         대리
+         대리님
       </c:if>
       <c:if test="${loginuser.fk_pcode eq 3}">
-         부장
+         부장님
       </c:if>
       <c:if test="${loginuser.fk_pcode eq 4}">
-         사장
-      </c:if>님 환영합니다.</span>
+         사장님
+      </c:if>환영합니다.</span>
    <span id="menu2">홈</span>
    <span id="menu3">마이페이지</span>
    <span id="menu4">일정관리</span>
    <span id="menu5">예약현황</span>
    <span id="menu6">공지사항</span>
    <span id="menu7">검색</span>
+   <span id="menu7" onclick="location.href='<%= ctxPath%>/t1/logout.tw'">
+   	 <c:if test="${not empty loginuser}">
+           로그아웃
+     </c:if>
+   </span>
+   
 </div>
 
 <script type="text/javascript">
-      
+   
+
    //Function Declaration
    function func_height1(){ // sidemenu와 content길이 맞추기
       
