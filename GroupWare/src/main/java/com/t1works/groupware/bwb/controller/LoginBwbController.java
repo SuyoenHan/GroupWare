@@ -22,7 +22,7 @@ public class LoginBwbController {
    
    // 그룹웨어 홈페이지 들어갔을때의 화면 구현
    @RequestMapping(value="/t1/home.tw")
-   public ModelAndView test_test1(HttpServletRequest request,ModelAndView mav) {
+   public ModelAndView goGroupware(HttpServletRequest request,ModelAndView mav) {
       
       String method = request.getMethod();
       
