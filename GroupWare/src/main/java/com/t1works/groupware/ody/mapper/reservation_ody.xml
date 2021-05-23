@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reservation_ody">
+
+	<select id="getRoomList" resultType="com.t1works.groupware.ody.model.RoomOdyVO">
+		select roomno, roomname,cappeople
+		from tbl_room
+	</select>
+
+	<select id="getReserveRoomList" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO" parameterType="HashMap">
+		select rsroomno,fk_roomno, fk_employeeid, name, rsubject, rdate, rtime, rdepartment
+		from tbl_rsroom
+		where fk_roomno=#{roomno} and rdate = #{rdate}
+	</select>
+	
+	<select id="getGoodsList" resultType="com.t1works.groupware.ody.model.GoodsOdyVO">
+		select gno, goodsname
+		from tbl_goods
+	</select>
+	
+	<select id="getReserveGoodsList" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO" parameterType="HashMap">
+		select rsgno,fk_gno, fk_employeeid, name, rgsubject, rgdate, rgtime, rgdepartment
+		from tbl_rsgoods
+		where fk_gno=#{gno} and rgdate = #{rgdate}
+	</select>
+	
+	<select id="getcarList" resultType="com.t1works.groupware.ody.model.CarOdyVO">
+		select cno, carname,carlicense
+		from tbl_car
+	</select>
+	
+	<select id="getReserveCarList" resultType="com.t1works.groupware.ody.model.RsCarOdyVO" parameterType="HashMap">
+		select rscno, fk_cno, fk_employeeid, name, rdestination, rcpeople, rcsubject, rcdate, rctime
+		from tbl_rscar
+		where fk_cno=#{cno} and rcdate = #{rcdate}
+	</select>
+	
+	
+</mapper>
