@@ -91,8 +91,8 @@
          <tr>
             <th>성명</th>
             <td>
-                <%-- <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.userid}" /> --%>
-                <input type="text" name="name" class="short" readonly />       <%-- value="${sessionScope.loginuser.name}" --%>
+                <input type="hidden" name="fk_userid" value="${sessionScope.loginuser.employeeid}" />
+                <input type="text" name="name" class="short" value="${sessionScope.loginuser.name}" readonly />>
             </td>
          </tr>
          <tr>

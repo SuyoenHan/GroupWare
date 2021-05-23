@@ -17,8 +17,8 @@ import com.t1works.groupware.kdn.service.InterBoardServiceKdn;
 @Controller
 public class BoardControllerKdn {
 	
-	//@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
-	//private InterBoardServiceKdn service;
+	 //@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private InterBoardServiceKdn service;
 
 	
 	// === 글목록 보기 페이지 요청 ===
@@ -47,29 +47,26 @@ public class BoardControllerKdn {
 		return mav;
 	}
 	
-	/*
 	// === 게시판 글쓰기 완료 요청 ===
-	@RequestMapping(value="/addEnd.action", method= {RequestMethod.POST})
+	@RequestMapping(value="/uploadComplete.tw", method= {RequestMethod.POST})
 	public ModelAndView addEnd(ModelAndView mav, BoardVOKdn boardvo) {
 	    // form 태그의 name 명과  BoardVO 의 필드명이 같다라면  request.getParameter("form 태그의 name명"); 을 사용하지 않더라도
 	    //  자동적으로 BoardVO boardvo 에 set 되어진다.
 		
-		int n = service.postupload(boardvo);	// 파일첨부가 없는 글쓰기
+		int n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
 		
 		if(n==1) {	//글쓰기가 성공한 경우
-			
-			mav.setViewName("redirect:/list.action");
-		//   list.action 페이지로 redirect(페이지이동)해라는 말이다.
-			
+			mav.setViewName("redirect:/employeeBoard.tw");
+		//   employeeBoard.tw 페이지로 redirect(페이지이동)해라는 말이다.
 		} else {	//글쓰기가 실패한 경우
-			mav.setViewName("error/add_error.tiles1");
-			// WEB-INF/views/tiles1/board/error/add_error.jsp 파일을 생성한다
+			mav.setViewName("kdn/uploadfail.gwTiles");
+			// WEB-INF/views/gwTiles/kdn/uploadfail.jsp 파일을 생성한다
 		}
 		
 		
 		return mav;
 	} 
-	*/
+	
 	
 	
 	

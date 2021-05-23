@@ -47,3 +47,6 @@
 		</tbody>
 		
 	</table>
+
+	
+	<button type="button" onclick="javascript:location.href='postupload.tw'">글쓰기</button>
