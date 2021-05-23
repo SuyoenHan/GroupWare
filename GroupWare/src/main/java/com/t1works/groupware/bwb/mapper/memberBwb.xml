@@ -9,6 +9,30 @@
       from tbl_employee
       where employeeid = #{employeeid} and passwd = #{passwd}
    </select>
+	
+   <insert id="insertlogin_history">
+	  insert into login_history(loginno,fk_employeeid,loginip)
+	  values(seq_login_history_loginno.nextval,#{employeeid},#{loginip})
+   </insert>
    
+   <insert id="insertIntime" parameterType="HashMap"> 
+	  insert into tbl_inout(gooutdate,fk_employeeid,intime,lateno)
+	  values(to_date(#{gooutdate}),#{fk_employeeid},sysdate,0)			
+   </insert>
+   
+   <select id="selectIntime" resultType="String">
+   	  select to_char(intime,'hh24:mi:ss') from tbl_inout
+   	  where gooutdate=#{gooutdate} and fk_employeeid=#{fk_employeeid}
+   </select>
+   
+   <select id="selectlateno" parameterType="String" resultType="String">
+   	  select sign(to_date(#{intime},'hh24:mi:ss')- to_date('09:30:00','hh24:mi:ss')) as late
+	  from dual
+   </select>
+   
+   <update id="updateLateno" parameterType="HashMap">
+	  update tbl_inout set lateno = '1'
+	  where gooutdate=#{gooutdate} and fk_employeeid=#{fk_employeeid} 
+   </update>
    
 </mapper>

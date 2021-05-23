@@ -17,6 +17,7 @@ public class MemberBwbVO {
    private String employeeimg;    // 직원이미지
    
    
+   
    public String getEmployeeid() {
       return employeeid;
    }
