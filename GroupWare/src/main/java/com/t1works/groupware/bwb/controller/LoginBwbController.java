@@ -58,7 +58,18 @@ public class LoginBwbController {
             
             mav.setViewName("/bwb/homepage.gwTiles");   
             
+            String goBackURL =(String)session.getAttribute("goBackURL");
+            
+            if(goBackURL != null) {
+            	mav.setViewName("redirect:/"+goBackURL);
+            	session.removeAttribute(goBackURL); // 세션에서 반드시 제거해주어야 한다.
+            }
+            else {
+            	mav.setViewName("redirect:/t1/home.tw");
+            }
+            
             return mav;
+            
          }
          else {// 로그인 실패했을 경우
             String message = "아이디와 비밀번호를 다시 확인해주세요";

@@ -27,7 +27,7 @@ public class MemberHsyController {
 	
 	// 주소록(조직도) 매핑 주소
 	@RequestMapping(value="/t1/employeeMap.tw")        // 로그인이 필요한 url
-	public ModelAndView employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+	public ModelAndView requiredLogin_employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		// 주소록표기
 		// 1) 모든 부서에 대한 정보 가져오기

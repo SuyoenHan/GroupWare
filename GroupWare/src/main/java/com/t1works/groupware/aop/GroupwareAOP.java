@@ -1,6 +1,7 @@
 package com.t1works.groupware.aop;
 
 import java.io.IOException;
+import java.util.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -23,7 +24,7 @@ public class GroupwareAOP {
 	
 	
 	// === 주업무 설정 === //
-	@Pointcut("execution(public * com.tlworks..*Controller.requiredLogin_*(..))")
+	@Pointcut("execution(public * com.t1works..*Controller.requiredLogin_*(..))")
     public void requiredLogin(){}
 	
 	// === 보조업무 설정 === //
@@ -35,13 +36,16 @@ public class GroupwareAOP {
 		   HttpServletResponse response = (HttpServletResponse)joinPoint.getArgs()[1]; // 주 업무에 있던 두번째 파라미터를 땡겨오기
 		   
 		   HttpSession session = request.getSession();
-		   
 		   if(session.getAttribute("loginuser")==null) {
 			   String message = "먼저 로그인 하세요";
-			   String loc = request.getContextPath()+"/login.action";
+			   String loc = request.getContextPath()+"/t1/home.tw";
+
+			   Map<String,String> paraMap = new HashMap<>();
+			   paraMap.put("message", message);
+			   paraMap.put("loc", loc);
 			   
-			   request.setAttribute("message", message);
-			   request.setAttribute("loc", loc);
+			   request.setAttribute("paraMap", paraMap);
+			   
 			   
 			   // >>> 로그인 성공 후 로그인 하기전 페이지로 돌아가는 작업 만들기 <<< // 
 			   String url = MyUtil.getCurrentURL(request);
