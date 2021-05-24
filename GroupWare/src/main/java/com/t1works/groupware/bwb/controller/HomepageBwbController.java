@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
-import com.t1works.groupware.bwb.service.InterMemberBwbService;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 
 @Controller
 public class HomepageBwbController {
 	
 	 @Autowired // Type에 따라 알아서 Bean 을 주입해준다.
-	 private InterMemberBwbService service;
+	 private InterHomepageBwbService service;
 	 
 	 
 	 // 출퇴근기록 테이블에 insert 및 select작업(출근시간)
@@ -83,5 +83,60 @@ public class HomepageBwbController {
 
 		 return jsonobj.toString();
 	 }
+	 
+	 
+	// 출퇴근기록 테이블에 insert 및 select작업(출근시간)
+	 @ResponseBody
+	 @RequestMapping(value="/t1/insertSelectOuttime.tw", method= {RequestMethod.POST})
+	 public String requiredLogin_insertSelectOuttime(HttpServletRequest request, HttpServletResponse response) {
+		 
+		 String fk_employeeid = request.getParameter("fk_employeeid");
+		 String gooutdate = request.getParameter("gooutdate"); 
+		 
+		 
+		 Map<String,String> paraMap = new HashMap<>();
+		 paraMap.put("fk_employeeid", fk_employeeid);
+		 paraMap.put("gooutdate", gooutdate);
+		 
+		 // 출퇴근테이블에 insert하기(퇴근시간)
+		 int n = service.updateOuttime(paraMap);
+
+		 // 출퇴근테이블에서 select하기(퇴근시간)
+		 String outtime = service.selectOuttime(paraMap);
+		 
+		 
+		 JSONObject jsonobj = new JSONObject();
+		 jsonobj.put("outtime", outtime);
+		 
+		 
+		 return jsonobj.toString();
+		 
+	 }// end of public String requiredLogin_insertSelectOuttime
+	 
+	// 출퇴근기록 테이블에서 select작업(퇴근시간)
+	 @ResponseBody
+	 @RequestMapping(value="/t1/selectOuttime.tw")
+	 public String requiredLogin_selectOuttime(HttpServletRequest request, HttpServletResponse response) {
+ 
+		 String fk_employeeid = request.getParameter("fk_employeeid");
+		 String gooutdate = request.getParameter("gooutdate"); 
+		 
+		 Map<String,String> paraMap = new HashMap<>();
+		 paraMap.put("fk_employeeid", fk_employeeid);
+		 paraMap.put("gooutdate", gooutdate);
+
+		 String outtime = service.selectOuttime(paraMap);
+		 
+		 if(outtime==null) {
+			 outtime="";
+		 }
+		 
+		 JSONObject jsonobj = new JSONObject();
+		 jsonobj.put("outtime", outtime);
+		 
+		 return jsonobj.toString();
+	 }
+	 
+	 
 }
 
