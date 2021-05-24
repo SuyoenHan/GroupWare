@@ -103,9 +103,6 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 	
-	// sidemenu와 content길이 맞추기
-	func_height1();
-	
 	// sebumenu와 content길이 맞추기
 	func_height2();
 	
@@ -162,7 +159,6 @@ $(document).ready(function(){
         	var cno=$("input#cno").val();
         	var chgdate=$("input#chgdate").val();
         	 if( cno!= "" && chgdate != "" ){
-             	alert("확인용:"+chgdate+"차량번호: "+cno);
              	$.ajax({
              		url:"<%= ctxPath%>/t1/rscar/reserveCar.tw",
              		data:{"cno":cno, "chgdate":chgdate},
@@ -216,7 +212,10 @@ $(document).ready(function(){
              }
              else{
             	 <%-- form으로 값 넘겨주기--%>
-            	 $("#myModal").modal("hide");
+            	 var frm = document.reserveCar;
+            	 frm.method = "POST";
+                 frm.action = "<%= ctxPath%>/t1/addReserveCar.tw";
+                 frm.submit();
              }
     	});
     	
@@ -240,8 +239,9 @@ $(document).ready(function(){
 		var name=Array();
 		var fk_employeeid=Array();
 		var rcsubject=Array();
-		var rcdestination=Array();
+		var rdestination=Array();
 		var rcpeople=Array();
+		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
 		// select 해온 값을 table td 값에 쌓아둔다.
@@ -251,7 +251,7 @@ $(document).ready(function(){
 			name.push(item.name);
 			fk_employeeid.push(item.fk_employeeid);
 			rcsubject.push(item.rcsubject);
-			rcdestination.push(item.rcdestination);
+			rdestination.push(item.rdestination);
 			rcpeople.push(item.rcpeople);
 		});
 		
@@ -308,21 +308,22 @@ $(document).ready(function(){
 
 				html += "<tr><td style='vertical-align: middle;' ><label id='id_time' ><font color='"+fontType+"'>"+timeText(rctime[index])+"</label></span></td>";
 				html += "<td>"+name[index]+"</td>";
+				
 				html += "<td>"+rdestination[index]+"</td>";
 				html += "<td align='left'>"+rcsubject[index]+"</td>";
-				html += "<td align='left'>"+rcpeople[index]+"</td>";
-					html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-				
-				<%--
+				console.log(rcpeople[index]);
+				if(rcpeople[index]==undefined){
+					html +="<td></td>"
+				}
 				else{
-					if(reserveEmp[index] != currEmp) {
+					html += "<td align='left'>"+rcpeople[index]+"</td>";
+				}
+				if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
 					} 
 					else {
-						html += "<td><span id='btn_delete' class='btn1' title='삭제' onclick='deleteReserve("+rscno[index]+")';>삭제</span></td></tr>";
+						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 					}
-				}
-				--%>
 			} 
 			else {
 
@@ -420,7 +421,7 @@ $(document).ready(function(){
 	}
 	
 	
-
+	// 카카오 지도 팝업창 오픈
 	function openMap(){
 		
 		var destination = $("input#destination").val().trim();
@@ -430,13 +431,31 @@ $(document).ready(function(){
 			return;
 		}
 		else{
-		
 			openChild=window.open("<%= ctxPath%>/t1/searchMap.tw?searchPlace="+destination, "openChild", "left=100px, top=100px, width=800px, height=800px");
 	   		openChild.document.getElementById('keyword').value = document.getElementById('destination').value;
-
 	      }
 	
 	}
+	
+	// 차량 삭제하기
+	function deleteReserve(rscno){
+
+		$.ajax({
+			url: "<%= ctxPath%>/t1/rsCar/delReserveCar.tw",
+			type: "post",
+			data: {"rscno":rscno},
+			dataType: "json",
+			success:function(json){
+				alert("예약내역이 삭제되었습니다.");
+     		 	location.href="javascript:history.go(0);"; 
+			}
+			, error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+  	      }
+		});
+	}
+	
+	
 	
 	
 </script>
@@ -448,7 +467,7 @@ $(document).ready(function(){
 </div>
 
 
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
+<div id="content" style="background-color: white;">
 	<h3 style="margin-top: 20px !important;">차량 대여신청</h3>
 	
 	<div>
@@ -561,9 +580,10 @@ $(document).ready(function(){
          		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
          		<div>
 					<input type="hidden" id="cno" value="" name="cno"/>
-					<input type="hidden" id="carname" value="" name="carname"/>
-					<input type="hidden" id="chgdate" value="" name="chgdate"/>
+					<input type="text" id="chgdate" value="" name="rcdate"/>
 					<input type="text" id="rctime" value="" name="rctime"/>
+					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
 				</div>
          	</form>
         </div>
