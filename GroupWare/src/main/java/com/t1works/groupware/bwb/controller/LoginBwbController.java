@@ -44,32 +44,41 @@ public class LoginBwbController {
          
          String employeeid = request.getParameter("employeeid");
          String passwd = request.getParameter("passwd");
+         String loginip = request.getRemoteAddr(); 
          
          Map<String,String> paraMap = new HashMap<>();
          paraMap.put("employeeid", employeeid);
          paraMap.put("passwd", passwd);
+         paraMap.put("loginip",loginip);
          
          // 직원테이블에서 select해오기
          MemberBwbVO mvo = service.selectMember(paraMap);
          
          if(mvo != null) { // 로그인 성공했을경우
-            HttpSession session =  request.getSession();
-            session.setAttribute("loginuser", mvo);
-            
-            mav.setViewName("/bwb/homepage.gwTiles");   
-            
-            String goBackURL =(String)session.getAttribute("goBackURL");
-            
-            if(goBackURL != null) {
-            	mav.setViewName("redirect:/"+goBackURL);
-            	session.removeAttribute(goBackURL); // 세션에서 반드시 제거해주어야 한다.
-            }
-            else {
-            	mav.setViewName("redirect:/t1/home.tw");
-            }
-            
-            return mav;
-            
+        	 
+        	// 로그인 기록테이블에 insert하기 
+        	int n = service.insertlogin_history(paraMap);
+        	 
+        	if(n==1) {
+	            HttpSession session =  request.getSession();
+	            session.setAttribute("loginuser", mvo);
+	            session.setAttribute("loginip", loginip);
+	            
+	            mav.setViewName("/bwb/homepage.gwTiles");   
+	            
+	            String goBackURL =(String)session.getAttribute("goBackURL");
+	            
+	            if(goBackURL != null) {
+	            	mav.setViewName("redirect:/"+goBackURL);
+	            	session.removeAttribute(goBackURL); // 세션에서 반드시 제거해주어야 한다.
+	            }
+	            else {
+	            	mav.setViewName("redirect:/t1/home.tw");
+	            }
+	            	          
+        	}
+        	
+        	return mav;
          }
          else {// 로그인 실패했을 경우
             String message = "아이디와 비밀번호를 다시 확인해주세요";
@@ -88,5 +97,27 @@ public class LoginBwbController {
       
    }
    
+   // 로그아웃 메소드
+   @RequestMapping(value="/t1/logout.tw")
+   public ModelAndView logout(HttpServletRequest request, ModelAndView mav) {
+   
+	   HttpSession session = request.getSession();
+	   session.invalidate(); // 세션값 삭제
+	   
+	   String message = "로그아웃 되었습니다.";
+	   String loc = request.getContextPath()+"/t1/home.tw";
+	   
+	   Map<String,String> paraMap = new HashMap<>();
+       paraMap.put("message", message);
+       paraMap.put("loc", loc);
+	   
+	   mav.addObject("paraMap", paraMap);
 
+	   mav.setViewName("/bwb/msg"); 
+	   
+	   return mav;
+
+   }
+   
+   
 }

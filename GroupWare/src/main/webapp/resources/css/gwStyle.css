@@ -1,53 +1,63 @@
 @charset "UTF-8";
 
-div#container{
-	
+body{
+	margin: 0;
+}
+
+div#gwContent{
 	margin: 0 auto;
-	width: 90%
-	
+	width: 100%;
+	height: 100%;
+	background-color: #ccc;
+	border: solid 1px red;
+	position: relative;
+	top: 70px;
+	left: 80px;
+	z-index: -1;
 }
 
 
+/* 상단 메인메뉴 */
 div#mainMenu{
-	margin-bottom: 15px;
-	background-color: orange;
-	height: 50px;
-	
+	width: 100%;
+	background-color: #0071bd;
+	height: 70px;
+	margin:0;
+	position: fixed;
+	top: 0;
 }
 
-div#sidemenu{
-	
-	float:left;
-	width: 200px;
-}
-
-div#sidemenu div{
-	
-	border: solid 1px black;
-	height: 100px;
-
-}
-
-div#sidemenu div:hover{	
+img#gwLogo{
+	height: 60px;
+	display: inline-block;
 	cursor: pointer;
 }
 
-div#sebumenu{
-	
-	float: left;
-	width: 250px;
-	
+div#left-menu{display: inline-block;}
+div#right-menu {float: right; margin-right: 10px;}
+div#left-menu > span, div#right-menu > span{
+	color: #ffffff;
+	display: inline-block;
+	vertical-align: middle;
+}
+div#right-menu > span{
+	height: 70px;
+	vertical-algin: middle;
+	line-height: 70px;
 }
 
-div#sebumenu div{
-	border: solid 1px black;
-	height: 30px;	
-	
+/* 사이드바 메뉴 */
+
+div#sidemenu{
+	clear: both;
+	position: fixed;
+	top: 70px;
+	left: 0;
+	width: 80px;
+	height: 100%;
+	background-color: #333333;
 }
 
-div#content{
-	border: solid 1px black;
-	float:left;
-	background-color: yellow;
-	
-}
+div#sidemenu > p{ color: #ffffff; }
+div#sidemenu > p:hover{	cursor: pointer; }
+
