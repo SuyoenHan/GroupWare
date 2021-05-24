@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clientHsy">
+
+	<!-- 특정 상품에 예약정보 insert 하기 -->
+	<insert id="insertClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		insert into tbl_client (fk_pNo, clientmobile, clientname, cnumber)
+		values (#{fk_pNo}, #{clientmobile}, #{clientname}, #{cnumber})
+	</insert>
+	
+	<!-- 해당제품에 특정고객의 예약이 존재하는지 확인 -->
+	<select id="isExistClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO" resultType="Integer">
+		select count(*) as cnt from tbl_client
+		where fk_pNo=#{fk_pNo} and clientmobile=#{clientmobile}
+	</select>
+
+
+</mapper>
