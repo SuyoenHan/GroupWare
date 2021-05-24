@@ -31,7 +31,7 @@ public class BoardControllerKdn {
 		//boardList = service.boardListNoSearch();
 		
 		mav.addObject("boardList", boardList);
-		mav.setViewName("kdn/board");
+		mav.setViewName("kdn/board.gwTiles");
 		
 		return mav;
 		
@@ -56,7 +56,7 @@ public class BoardControllerKdn {
 		int n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
 		
 		if(n==1) {	//글쓰기가 성공한 경우
-			mav.setViewName("redirect:/employeeBoard.tw");
+			mav.setViewName("redirect:/employeeBoard.gwTiles");
 		//   employeeBoard.tw 페이지로 redirect(페이지이동)해라는 말이다.
 		} else {	//글쓰기가 실패한 경우
 			mav.setViewName("kdn/uploadfail.gwTiles");

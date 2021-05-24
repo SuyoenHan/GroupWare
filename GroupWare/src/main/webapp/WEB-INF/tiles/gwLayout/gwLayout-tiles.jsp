@@ -1,14 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
-
 <%
    String ctxPath = request.getContextPath();
    //     /groupware
 %> 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,22 +15,16 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/gwStyle.css" />
 </head>
-
 <body>
-	<div id="container"> <%-- (디자인은 gwStyle.css에 있음) --%>
-	    <div id="gwHeader">
-	        <tiles:insertAttribute name="header" />     
-	    </div>
-	    
-	    <div id="gwSideinfo">
-	        <tiles:insertAttribute name="sideinfo" />     
-	    </div>
-	      
-	    <div id="gwContent">
-	        <tiles:insertAttribute name="content" />
-	    </div>
-	      
-    </div>
+    <tiles:insertAttribute name="header" />     
+  
+    <tiles:insertAttribute name="sideinfo" />     
+  
+  	<%-- (디자인은 gwStyle.css에 있음) --%>
+   <div id="gwContent">
+       <tiles:insertAttribute name="content" />
+   </div>
+ 
 </body>
 </html>
   
