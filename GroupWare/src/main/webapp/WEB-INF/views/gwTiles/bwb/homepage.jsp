@@ -52,7 +52,7 @@
     			  		$("span#intime").text(json.intime+'(정상출근)');
     			  	}
 			  	}else{
-			  		$("span#intime").text("미출근 상태");
+			  		$("span#intime").text("(미출근)");
 			  	}
 			},
 			error: function(request, status, error){
@@ -65,9 +65,7 @@
       $("span#intimeButton").click(function(){
     	  
     	  var intime = $("span#intime").text();
-    	  if(intime==""){
-			console.log("${loginuser.employeeid}");
-			console.log(todayDate);
+    	  if(intime=="(미출근)"){
 			
 	    	  // 출퇴근기록 테이블에 insert하기
 	    	  $.ajax({
@@ -97,12 +95,69 @@
     	  }
     	  
       }); // end of $("span#intime").click(function(){
-    	  
-      $("span#outtimeButton").click(function(){	  
       
-    	  var todayDate = func_todayDate();
     	  
     	  
+      // 퇴근을 찍고 나서 다시 로그인을 했을때
+       $.ajax({
+		  url:"<%=ctxPath %>/t1/selectOuttime.tw",
+		  type:"get",
+		  data:{"fk_employeeid":"${loginuser.employeeid}",
+			    "gooutdate":todayDate},
+		  dataType:"json",
+		  success:function(json){
+			  
+			  	if(json.outtime != ""){
+			  		
+    			  	$("span#outtime").text(json.outtime);
+
+			  	}else{
+			  		$("span#outtime").text("(미퇴근)");
+			  	}
+			},
+			error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+		  
+	  });// end of ajax(insert)	  
+    	  
+    	  
+      // 퇴근버튼을 클릭 했을때 	  
+      $("span#outtimeButton").click(function(){	
+    	  
+      
+    	  var intime = $("span#intime").text();
+    	  var outtime = $("span#outtime").text();
+    	  
+    	  if(intime!="(미출근)"){ // 출근시간이 찍혀 있을때
+    		  
+	    	  if(outtime==""){
+	
+		    	  // 출퇴근기록 테이블에 insert하기
+		    	  $.ajax({
+		    		  url:"<%=ctxPath %>/t1/insertSelectOuttime.tw",
+		    		  type:"post",
+		    		  data:{"fk_employeeid":"${loginuser.employeeid}",
+		    			    "gooutdate":todayDate},
+		    		  dataType:"json",
+		    		  success:function(json){
+							
+	    			  		$("span#outtime").text(json.outtime);
+	
+						},
+						error: function(request, status, error){
+				            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				        }
+		    		  
+		    	  });// end of ajax(insert)
+	    	  }
+	    	  else{
+	    		  alert("이미 퇴근버튼을 클릭하셨습니다.");
+	    	  }
+    	  }// end of if(intime!="(미출근)"){
+    	  else{// 출근시간이 안 찍혀 있을때
+    		  alert("출근버튼을  먼저 클릭하세요.");	  
+    	  }
       }); // end of $("span#outtime").click(function(){
       
       
@@ -253,7 +308,7 @@
   	<div id="indolence">
   		<div>출퇴근시간</div>
   		<span id="intimeButton">출근</span> <span id="intime"></span>
-  		<span id="outtimeButton">퇴근</span> <span id="outtime">퇴근시간</span>
+  		<span id="outtimeButton">퇴근</span> <span id="outtime"></span>
   		<div>
   			<span>월별근태현황</span>
   			<c:if test="${loginuser.fk_pcode eq 3}">
