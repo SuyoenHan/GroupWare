@@ -5,12 +5,12 @@
 	String ctxPath = request.getContextPath();
 %>
 
-<style type="text/css">	
-	div.dropdown {
-		margin-left: 30px;
-	}
+<style type="text/css">
 	div.section{
-		margin: 10px 30px;;
+		clear: both;
+	}
+	div.tab_select{
+		clear: both;
 	}
 	a.tab_area{
 		background-color: #ecf2f9;
@@ -66,16 +66,15 @@
 	}
 </style>
 
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	$("div#submenu2").show();
 	
 	var today = new Date();
 	var dd = today.getDate();
@@ -170,89 +169,77 @@ $(document).ready(function(){
 		
 	}
 </script>
-
-<div class="container">                                          
-	<div class="dropdown">
-		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" >내문서함
-		<span class="caret"></span></button>
-		<ul class="dropdown-menu">
-			<li><a href="#">수신함</a></li>
-			<li><a href="#">발신함</a></li>
-			<li><a href="#">임시저장함</a></li>
-		</ul>
+<div class="section">
+<h3>임시저장함</h3>
+	<div class="tab_select">
+		<a href="<%= ctxPath%>/t1/myDocuNorm_temp.tw" class="tab_area">일반 결재 문서</a> 
+		<a href="<%= ctxPath%>/t1/myDocuSpend_temp.tw" class="tab_area selected">지출 결재 문서</a>
+		<a href="<%= ctxPath%>/t1/myDocuVacation_temp.tw" class="tab_area">근태/휴가 결재 문서</a>			
 	</div>
 	
-	<div class="section">
-		<div class="tab_area">
-			<a href="<%= ctxPath%>/t1/myDocuNorm.tw" class="tab_area">일반 결재 문서</a> 
-			<a href="<%= ctxPath%>/t1/myDocuSpend.tw" class="tab_area selected">지출 결재 문서</a>
-			<a href="<%= ctxPath%>/t1/myDocuVacation.tw" class="tab_area">근태/휴가 결재 문서</a>			
-		</div>
-		
-		<table>
-			<tr>
-				<td width="20%" class="th">결재상태</td>
-				<td width="80%">&nbsp;&nbsp;
-					<select name="status" id="status">
-						<option>전체보기</option>
-						<option value="0">제출</option>
-						<option value="1">결재진행중</option>
-						<option value="2">반려</option>
-						<option value="3">승인완료</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td class="th">작성일자</td>
-				<td>&nbsp;&nbsp;
-					<span class="period">
-						<span class="chkbox">
-							<input type="radio" class="dateType" id="dateType1" onclick="setSearchDate('0d')"/>
-							<label for="dateType1">오늘</label>
-						</span>
-						<span class="chkbox">
-							<input type="radio" class="dateType" id="dateType2" onclick="setSearchDate('1w')"/>
-							<label for="dateType2">1주일</label>
-						</span>
-						<span class="chkbox">
-							<input type="radio" class="dateType" id="dateType3" onclick="setSearchDate('1m')"/>
-							<label for="dateType3">1개월</label>
-						</span>
-						<span class="chkbox">
-							<input type="radio" class="dateType" id="dateType4" onclick="setSearchDate('3m')"/>
-							<label for="dateType4">3개월</label>
-						</span>
-						<span class="chkbox">
-							<input type="radio" class="dateType" id="dateType5" onclick="setSearchDate('6m')"/>
-							<label for="dateType5">6개월</label>
-						</span>
+	<table>
+		<tr>
+			<td width="20%" class="th">결재상태</td>
+			<td width="80%">&nbsp;&nbsp;
+				<select name="status" id="status">
+					<option>전체보기</option>
+					<option value="0">제출</option>
+					<option value="1">결재진행중</option>
+					<option value="2">반려</option>
+					<option value="3">승인완료</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="th">작성일자</td>
+			<td>&nbsp;&nbsp;
+				<span class="period">
+					<span class="chkbox">
+						<input type="radio" class="dateType" id="dateType1" onclick="setSearchDate('0d')"/>
+						<label for="dateType1">오늘</label>
 					</span>
-					<input type="hidden" value="${fromDate}" id="hiddendate"/>
-					<input type="hidden" value="${toDate}" id="hiddendate2"/>
-					<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
-				</td>
-			</tr>
-			<tr>
-				<td class="th">일반 결재 문서</td>
-				<td>&nbsp;&nbsp;
-					<label for="chx1"><input type="checkbox" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
-					<label for="chx2"><input type="checkbox" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
-					<label for="chx3"><input type="checkbox" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
-					<label for="chx4"><input type="checkbox" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
-				</td>
-			</tr>			
-			<tr>
-				<td class="th">문서검색</td>
-				<td>&nbsp;&nbsp;
-					<select>
-						<option>전체보기</option>
-						<option value="0">제목</option>
-						<option value="1">문서번호</option>												
-					</select>&nbsp;
-					<input type="text" style="height: 20px;"/> <button type="button">검색</button>
-				</td>
-			</tr>
-		
-		</table>
-	</div>
+					<span class="chkbox">
+						<input type="radio" class="dateType" id="dateType2" onclick="setSearchDate('1w')"/>
+						<label for="dateType2">1주일</label>
+					</span>
+					<span class="chkbox">
+						<input type="radio" class="dateType" id="dateType3" onclick="setSearchDate('1m')"/>
+						<label for="dateType3">1개월</label>
+					</span>
+					<span class="chkbox">
+						<input type="radio" class="dateType" id="dateType4" onclick="setSearchDate('3m')"/>
+						<label for="dateType4">3개월</label>
+					</span>
+					<span class="chkbox">
+						<input type="radio" class="dateType" id="dateType5" onclick="setSearchDate('6m')"/>
+						<label for="dateType5">6개월</label>
+					</span>
+				</span>
+				<input type="hidden" value="${fromDate}" id="hiddendate"/>
+				<input type="hidden" value="${toDate}" id="hiddendate2"/>
+				<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
+			</td>
+		</tr>
+		<tr>
+			<td class="th">일반 결재 문서</td>
+			<td>&nbsp;&nbsp;
+				<label for="chx1"><input type="checkbox" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
+				<label for="chx2"><input type="checkbox" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
+				<label for="chx3"><input type="checkbox" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
+				<label for="chx4"><input type="checkbox" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
+			</td>
+		</tr>			
+		<tr>
+			<td class="th">문서검색</td>
+			<td>&nbsp;&nbsp;
+				<select>
+					<option>전체보기</option>
+					<option value="0">제목</option>
+					<option value="1">문서번호</option>												
+				</select>&nbsp;
+				<input type="text" style="height: 20px;"/> <button type="button">검색</button>
+			</td>
+		</tr>
+	
+	</table>
 </div>

@@ -4,27 +4,6 @@
 	String ctxPath = request.getContextPath();
 %>
 
-<script type="text/javascript">
-
-	$(document).ready(function(){
-		
-		
-		
-	}); // end of $(document).ready(function(){
-
-</script>
-
-<div id="sidemenu">
-	<div id="mail" onclick="location.href='<%= ctxPath%>/t1/mail.tw'">메일함</div>
-	<div id="myDocument" onclick="location.href='<%= ctxPath%>/t1/myDocument.tw'">내문서함</div>
-	<div id="electronPay" onclick="location.href='<%= ctxPath%>/t1/electronPay.tw'">전자결재</div>
-	<div id="employeeMap" onclick="location.href='<%= ctxPath%>/t1/employeeMap.tw'">주소록</div>
-	<div id="employeeBoard" onclick="location.href='<%= ctxPath%>/t1/employeeBoard.tw'">사내게시판</div>
-	<div id="salary" onclick="location.href='<%= ctxPath%>/t1/salary.tw'">월급관리</div>
-	<div id="toDo" onclick="location.href='<%= ctxPath%>/t1/toDo.tw'">업무관리</div>
-</div>
-
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -49,7 +28,6 @@
 
 </script>
 
-
 	<div id="sidemenu">
 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><span>×</span></a><br>
 		<p id="mail" onclick="openNav()">메일함</p>
@@ -70,9 +48,9 @@
 	</div>
 	
 	<div id="submenu2" class="submenu">
-	    <a href="<%=ctxPath%>/t1/mydocu_receive.tw">수신함</a>
-	    <a href="<%=ctxPath%>/t1/mydocu_send.tw">발신함</a>
-	    <a href="<%=ctxPath%>/t1/mydocu_temp.tw">임시저장함</a>
+	    <a href="<%=ctxPath%>/t1/myDocuNorm_rec.tw">수신함</a>
+	    <a href="<%=ctxPath%>/t1/myDocuNorm_send.tw">발신함</a>
+	    <a href="<%=ctxPath%>/t1/myDocuNorm_temp.tw">임시저장함</a>
 	</div>
 	<div id="submenu3" class="submenu">
 	    <a href="<%=ctxPath%>/t1/generalPayment_List.tw">일반결재내역</a>
@@ -121,11 +99,7 @@
 	    <a href="<%=ctxPath%>/t1/rsRoom.tw">회의실대여신청</a>
 	    <a href="<%=ctxPath%>/t1/rsCar.tw">차량대여신청</a>
 	    <a href="<%=ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a>
-	</div>
-		
-		
-		
-		
+	</div>		
 		
 		
 <script type="text/javascript">
@@ -177,7 +151,3 @@ function closeNav() {
 }
 
 </script>
-
-
-
->>>>>>> branch 'main' of https://github.com/bwb930305/GroupWare.git
