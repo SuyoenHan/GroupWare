@@ -51,6 +51,37 @@
    	  where gooutdate=#{gooutdate} and fk_employeeid=#{fk_employeeid}
    </select>
    
+   <!-- 모든 직위가져오기 -->
+   <select id="selectPositionList" resultType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		select pname from tbl_position
+   </select>
+   
+   <!-- 소속에 따른 직무 가져오기 -->
+   <select id="selectDuty" parameterType="String" resultType="String">
+   		select duty from tbl_department
+   		where dname = #{dname}
+   </select>
+   
+   
+    <resultMap type="HashMap" id="PDMap"> 
+		<result property="fk_pcode" column="pcode" javaType="String" /> 
+		<result property="fk_dcode" column="dcode" javaType="String" />
+	</resultMap>
+   
+   <!-- name과 dname을 통해 pcode,dcode 가져오기. -->  
+   <select id="selectPDcode" parameterType="HashMap" resultMap="PDMap">
+	   	select pcode, dcode
+		from tbl_department
+		cross join tbl_position
+		where dname = #{dname} and pname= #{pname}
+   </select>
+   
+   <!-- 회원정보 update하기 -->
+   <update id="updateOneInfo" parameterType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		update tbl_employee set fk_dcode = #{fk_dcode}, fk_pcode = #{fk_pcode}, name=#{name}, email=#{email}, mobile=#{mobile}, cmobile=#{cmobile}
+   		where employeeid = #{employeeid}
+   </update>
+   
    
    
 </mapper>
