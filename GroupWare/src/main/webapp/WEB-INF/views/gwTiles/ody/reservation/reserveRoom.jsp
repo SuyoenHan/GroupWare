@@ -22,7 +22,7 @@ th, td{
 
 /* 달력 css */
 div#calendarWrapper{
-	display: inline-block;
+	float: left;
 }
 
 .fc-scroller {
@@ -55,10 +55,11 @@ a:hover {
 }
 
 div.room{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
 	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-top: 150px;
 }
 
 .roomClick{
@@ -103,9 +104,6 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 
 $(document).ready(function(){
-	
-	// sidemenu와 content길이 맞추기
-	func_height1();
 	
 	// sebumenu와 content길이 맞추기
 	func_height2();
@@ -163,7 +161,6 @@ $(document).ready(function(){
         	var roomno=$("input#roomno").val();
         	var chgdate=$("input#chgdate").val();
         	 if( roomno!= "" && chgdate != "" ){
-             	alert("확인용:"+chgdate+"회의실: "+roomno);
              	$.ajax({
              		url:"<%= ctxPath%>/t1/rsroom/reserveRoom.tw",
              		data:{"roomno":roomno, "chgdate":chgdate},
@@ -196,7 +193,7 @@ $(document).ready(function(){
     		func_reserve();
     	});
     
-        
+        // 모알창에서 예약
     	$("button#realReserve").click(function(event){
     		 event.stopPropagation();
              event.preventDefault();
@@ -208,7 +205,11 @@ $(document).ready(function(){
              }
              else{
             	 <%-- form으로 값 넘겨주기--%>
-            	 $("#myModal").modal("hide");
+            	 var frm = document.reserveRoom;
+            	 frm.method = "POST";
+                 frm.action = "<%= ctxPath%>/t1/addReserveRoom.tw";
+                 frm.submit();  
+        
              }
     	});
     	
@@ -233,6 +234,7 @@ $(document).ready(function(){
 		var fk_employeeid=Array();
 		var rsubject=Array();
 		var rdepartment=Array();
+		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
 		// select 해온 값을 table td 값에 쌓아둔다.
@@ -301,18 +303,14 @@ $(document).ready(function(){
 				html += "<td>"+name[index]+"</td>";
 				html += "<td align='left'>"+rsubject[index]+"</td>";
 				
-					html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsroomno[index]+")';>삭제</button></td></tr>";
-				
-				<%--
-				else{
-					if(reserveEmp[index] != currEmp) {
+					if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
 					} 
 					else {
-						html += "<td><span id='btn_delete' class='btn1' title='삭제' onclick='deleteReserve("+rsroomno[index]+")';>삭제</span></td></tr>";
+						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsroomno[index]+")';>삭제</button></td></tr>";
 					}
-				}
-				--%>
+			
+				
 			} 
 			else {
 
@@ -409,21 +407,29 @@ $(document).ready(function(){
 		$("input#rtime").val(val);
 	}
 	
-	
-
+	// 예약했던 회의실 삭제하기
+	function deleteReserve(rsroomno){
+		
+		$.ajax({
+     		url:"<%= ctxPath%>/t1/rsroom/delReserveRoom.tw",
+     		type:"POST",
+     		data:{"rsroomno":rsroomno},
+     		dataType: "json",
+     		success:function(json){
+     		 	alert("예약내역이 삭제되었습니다.");
+     		 	location.href="javascript:history.go(0);"; 
+     		}
+     		, error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+  	      }
+     	});
+		
+	}
 	
 	
 	
 </script>
 
-<div id="sebumenu">
-	<div style="background-color: #6c757d; color: #fff;"><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsCar.tw">차량 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
-
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
 	<h3 style="margin-top: 20px !important;">회의실 대여신청</h3>
 	
 	<div>
@@ -486,8 +492,6 @@ $(document).ready(function(){
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
-</div>
-
 
 
 <!-- The Modal -->
@@ -515,15 +519,17 @@ $(document).ready(function(){
          			</tr>
          			<tr>
          				<td style="text-align: left;">목적</td>
-         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="subject"/></td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="rsubject"/></td>
          			</tr>
          		</table>
          		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
          		<div>
-					<input type="hidden" id="roomno" value="" name="roomno"/>
-					<input type="hidden" id="roomname" value="" name="roomname"/>
-					<input type="hidden" id="chgdate" value="" name="chgdate"/>
-					<input type="text" id="rtime" value="" name="rtime"/>
+					<input type="hidden" id="roomno" value="" name="fk_roomno"/>
+					<input type="hidden" id="chgdate" value="" name="rdate"/>
+					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
+					<input type="hidden" name="rdepartment" value="${requestScope.dname}"/>
+					<input type="hidden" id="rtime" value="" name="rtime"/>
 				</div>
          	</form>
         </div>

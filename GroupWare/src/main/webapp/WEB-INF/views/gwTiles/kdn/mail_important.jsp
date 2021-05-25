@@ -11,12 +11,9 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
-		
-	}); // end of $(document).ready(function(){
+$(document).ready(function(){
+	$("div#submenu1").show();
+});
 </script>
 
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">

@@ -22,7 +22,7 @@ th, td{
 
 /* 달력 css */
 div#calendarWrapper{
-	display: inline-block;
+	float: left;
 }	
 
 .fc-scroller {
@@ -51,15 +51,17 @@ a:hover {
 
 
 .fc-header-toolbar{
-	height: 30ox;
+	height: 30px;
 }
 
 
 div.room{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
 	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-top: 150px;
+
 }
 
 .goodsClick{
@@ -105,24 +107,24 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 	
-	// sidemenu와 content길이 맞추기
-	func_height1();
-	
 	// sebumenu와 content길이 맞추기
 	func_height2();
 	
-	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
+	// 등록버튼 숨기기
+	$("button#btn_Reserve").hide(); 
 	
+	// 모달창 숨기기
 	$("div#myModal").modal('hide');
+	
 	var gno="";
 	var chgdate="";
 
-	
+	// 사무용품 마우스 오버시
 	$("tr.selectGoods").hover(function(){
 		$(this).css("cursor", "pointer");
 	});
 	
-
+	// 사무용품 클릭 했을 때
 	$("tr.selectGoods").click(function(){
 		$("tr.selectGoods").removeClass("goodsClick");
 		var gno = $(this).find("td#findno").html();
@@ -133,6 +135,7 @@ $(document).ready(function(){
 		$(this).addClass("goodsClick");
 	});
 	
+	// full calendar
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: 'dayGridMonth',
@@ -142,11 +145,10 @@ $(document).ready(function(){
 	      headerToolbar: {
 	    	    left: 'prev',
 	    	    center: 'title',
-	    	    right: 'next' // today 추가?
+	    	    right: 'next' 
 	    	  },
 	    	  
           dateClick: function(info) {
-        	//  alert('Date: ' + info.dateStr);
         	    $(".fc-day").css('background','none'); // 현재 날짜 배경색 없애기
         	    info.dayEl.style.backgroundColor = '#b1b8cd';
         	    chgdate=info.dateStr;
@@ -158,7 +160,7 @@ $(document).ready(function(){
         calendar.render();
         calendar.setOption('height', 510);
         
-		
+		// 예약현황보기 클릭
         $("button#btn_show").click(function(){
         	
         	var gno=$("input#gno").val();
@@ -190,7 +192,7 @@ $(document).ready(function(){
     		func_reserve();
     	});
     
-        
+        // 모달창에서 예약 버튼 클릭
     	$("button#realReserve").click(function(event){
     		 event.stopPropagation();
              event.preventDefault();
@@ -202,7 +204,10 @@ $(document).ready(function(){
              }
              else{
             	 <%-- form으로 값 넘겨주기--%>
-            	 $("#myModal").modal("hide");
+            	 var frm = document.reserveGoods;
+            	 frm.method = "POST";
+                 frm.action = "<%= ctxPath%>/t1/addReserveGoods.tw";
+                 frm.submit();
              }
     	});
     	
@@ -227,6 +232,7 @@ $(document).ready(function(){
 		var fk_employeeid=Array();
 		var rgsubject=Array();
 		var rgdepartment=Array();
+		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
 		// select 해온 값을 table td 값에 쌓아둔다.
@@ -294,18 +300,14 @@ $(document).ready(function(){
 				html += "<td>"+name[index]+"</td>";
 				html += "<td align='left'>"+rgsubject[index]+"</td>";
 				
-					html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+			
 				
-				<%--
-				else{
-					if(reserveEmp[index] != currEmp) {
+				if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
 					} 
 					else {
-						html += "<td><span id='btn_delete' class='btn1' title='삭제' onclick='deleteReserve("+rsgno[index]+")';>삭제</span></td></tr>";
+						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
 					}
-				}
-				--%>
 			} 
 			else {
 
@@ -346,7 +348,7 @@ $(document).ready(function(){
 		return timeText;
 	}
 	
-	// 예약 등록버튼을 눌렀을 때 발생하는 함수
+	// 예약 등록 버튼을 눌렀을 때 발생하는 함수
 	function func_reserve(){
 		var checkCnt= $("input:checkbox[name=rsCheck]:checked").length;
 		
@@ -402,21 +404,28 @@ $(document).ready(function(){
 		$("input#rgtime").val(val);
 	}
 	
-	
+	// 삭제하기 버튼 글릭
+	function deleteReserve(rsgno){
 
+		$.ajax({
+			url: "<%= ctxPath%>/t1/rsGoods/delReserveGoods.tw",
+			type: "post",
+			data: {"rsgno":rsgno},
+			dataType: "json",
+			success:function(json){
+				alert("예약내역이 삭제되었습니다.");
+     		 	location.href="javascript:history.go(0);"; 
+			}
+			, error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+  	      }
+		});
+	}
 	
 	
 	
 </script>
 
-<div id="sebumenu">
-	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsCar.tw">차량 대여신청</a></div>
-	<div  style="background-color: #6c757d; color: #fff;"><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
-
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
 	<h3 style="margin-top: 20px !important;">사무용품 대여신청</h3>
 	
 	<div id="calendarWrapper">
@@ -477,7 +486,7 @@ $(document).ready(function(){
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
-</div>
+
 
 
 
@@ -494,8 +503,8 @@ $(document).ready(function(){
         
         <!-- Modal body -->
         <div class="modal-body">
-         	<form name="reserveRoom">
-         		<table style="width: 100%;">
+         	<form name="reserveGoods">
+         	<table style="width: 100%;">
          			<tr>
          				<td style="text-align: left; ">신청 사무용품</td>
          				<td id="goodsname" style="text-align: left; padding-left: 5px;"></td>
@@ -506,15 +515,18 @@ $(document).ready(function(){
          			</tr>
          			<tr>
          				<td style="text-align: left;">목적</td>
-         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="subject"/></td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="rgsubject"/></td>
          			</tr>
          		</table>
          		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
          		<div>
 					<input type="hidden" id="gno" value="" name="gno"/>
 					<input type="hidden" id="goodsname" value="" name="goodsname"/>
-					<input type="hidden" id="chgdate" value="" name="chgdate"/>
-					<input type="text" id="rgtime" value="" name="rgtime"/>
+					<input type="hidden" id="chgdate" value="" name="rgdate"/>
+					<input type="hidden" id="rgtime" value="" name="rgtime"/>
+					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
+					<input type="hidden" name="rgdepartment" value="${requestScope.dname}"/>
 				</div>
          	</form>
         </div>

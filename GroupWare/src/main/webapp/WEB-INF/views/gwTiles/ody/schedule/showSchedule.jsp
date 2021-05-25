@@ -15,6 +15,36 @@
 
 <style type="text/css">
 
+div#firstWrap{
+	margin-top: 20px;
+	float: right;
+}
+
+a{
+    color: #000;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+}
+.fc-daygrid{
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+
+.fc-header-toolbar{
+	height: 30px;
+}
+
 </style>
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
@@ -23,10 +53,7 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-	
-	// sidemenu와 content길이 맞추기
-	func_height1();
-	
+
 	// sebumenu와 content길이 맞추기
 	func_height2();
 	
@@ -37,17 +64,22 @@ $(document).ready(function(){
         selectable: true,
 	      editable: false,
 	      headerToolbar: {
-	    	    left: 'prev',
-	    	    center: 'title',
-	    	    right: 'next' // today 추가?
+	    	  left: 'prev,next today',
+	          center: 'title',
+	          right: 'dayGridMonth,timeGridWeek,timeGridDay'
 	    	  },
 	    	  
         dateClick: function(info) {
       	//  alert('Date: ' + info.dateStr);
       	    $(".fc-day").css('background','none'); // 현재 날짜 배경색 없애기
       	    info.dayEl.style.backgroundColor = '#b1b8cd';
-      	    chgdate=info.dateStr;
-      	    $("input#chgdate").val(chgdate);
+      	    date=info.dateStr;
+      	    $("input[name=chooseDate]").val(date);
+      	    
+      	    var frm = document.dateFrm;
+      	    frm.action="<%= ctxPath%>/t1/insertSchedule.tw";
+      	    frm.submit();
+      	    
       	  }
       });
       
@@ -60,26 +92,30 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-<div id="sebumenu">
-	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div style="background-color: #6c757d;"><a href="<%= ctxPath%>/t1/rsCar.tw" style="color: #fff;">차량 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
 
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
 
 	<div id="firstWrap">
-	
+		<select id="searchType">
+			<option value="">선택하세요</option>
+			<option value="name">이름</option>
+			<option value="subject">제목</option>
+			<option value="content">내용</option>
+		</select>	
+		<input type="text" id="searchWord" value=""/>
+		<button type="button">검색</button>
 	
 	</div>
 
 	<div id="calendarWrapper">
-			<div id="calendar" style="margin-top: 50px;" ></div>
+			<div id="calendar" style="margin-top: 100px;" ></div>
+	</div>
+	
+	<div>
+		<form name="dateFrm">
+			<input type="text" name="chooseDate" value=""/>	
+		</form>
 	</div>
 
 
-
-</div>
 </body>
 </html>

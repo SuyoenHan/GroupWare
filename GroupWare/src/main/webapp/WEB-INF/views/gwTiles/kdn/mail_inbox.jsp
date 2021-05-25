@@ -10,15 +10,10 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
-		
-	}); // end of $(document).ready(function(){
+		$("div#submenu1").show();
+	});
 </script>
-
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">
 	 <h4 style="margin-bottom: 20px; font-weight: bold;">받은메일함</h4>
 	 <div id="left-header">
@@ -60,7 +55,7 @@
  			</tr>
  		</thead>
  		<tbody>
- 		<!-- 메일목록은 c:forEach문 사용할 것 -->
+ 		<%-- 메일목록은 c:forEach문 사용할 것--%>
  			<tr>
  				<th><input type="checkbox" name="selectThis" style="margin-left: 10px;"/></th>
  				<td>&star;</td>
