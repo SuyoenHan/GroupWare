@@ -1,38 +1,43 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-	String ctxPath = request.getContextPath();
+   String ctxPath = request.getContextPath();
 %>
 
 <div id="mainMenu"> 
-	<span id="menu1" onclick="location.href='<%= ctxPath%>/t1/home.tw'">T1Works</span>
-	<label for="userid">아이디</label>  <input id="userid" type="text">
-	<label for="password">비밀번호</label> <input id="password" type="password">
-	<button type="button">로그인</button>
-	<span>홈</span>
-	<span>마이페이지</span>
-	<span>일정관리</span>
-	<span>예약현황</span>
-	<span>공지사항</span>
-	<span>검색</span>
-</div>
-
-<script type="text/javascript">
+	<div id="left-menu">
 		
-	//Function Declaration
-	function func_height1(){ // sidemenu와 content길이 맞추기
-		
-    	var content_height= $("div#content").height();
-        $("div#sidemenu").height(content_height);
-
-    }
+		<span id="menu1" onclick="location.href='<%= ctxPath%>/t1/home.tw'"><img id="gwLogo" src="<%=ctxPath%>/resources/images/login/t1works_logo.jpg" /></span>
+	   <span>${loginuser.name}
+	      <c:if test="${loginuser.fk_pcode eq 1}">
+	         사원님
+	      </c:if>
+	      <c:if test="${loginuser.fk_pcode eq 2}">
+	         대리님
+	      </c:if>
+	      <c:if test="${loginuser.fk_pcode eq 3}">
+	         부장님
+	      </c:if>
+	      <c:if test="${loginuser.fk_pcode eq 4}">
+	         사장님
+	      </c:if>환영합니다.</span>
 	
-	function func_height2(){ // sebumenu와 content길이 맞추기
-		
-    	var content_height= $("div#content").height();
-        $("div#sebumenu").height(content_height);
-
-    }
-
-</script>
+	</div>
+	<div id="right-menu">
+   <span id="menu2">홈</span>
+   <span id="menu3">마이페이지</span>
+   <span id="menu4">일정관리</span>
+   <span id="menu5">예약현황</span>
+   <span id="menu6">공지사항</span>
+   <form name="searchFrm" style="display:inline-block;">
+   	<input type="text"/>
+   	<button type="submit">검색</button>
+   </form>
+   <span id="menu7" onclick="location.href='<%= ctxPath%>/t1/logout.tw'">
+   	 <c:if test="${not empty loginuser}">
+           로그아웃
+     </c:if>
+   </span>
+   </div>
+</div>

@@ -1,53 +1,116 @@
 @charset "UTF-8";
 
-div#container{
-	
-	margin: 0 auto;
-	width: 90%
-	
+body{
+	height: 100%;
 }
 
+div#gwContent{
+	margin: 0 auto;
+	height: 100%;
+	border: solid 1px red;
+	position: relative;
+	top: 70px;
+	left: 280px;
+}
+
+
+/* 상단 메인메뉴 */
 
 div#mainMenu{
-	margin-bottom: 15px;
-	background-color: orange;
-	height: 50px;
-	
+	width: 100%;
+	background-color: #0071bd;
+	height: 70px;
+	margin:0;
+	position: fixed;
+	top: 0;
+	z-index: 100;
 }
 
-div#sidemenu{
-	
-	float:left;
-	width: 200px;
-}
-
-div#sidemenu div{
-	
-	border: solid 1px black;
-	height: 100px;
-
-}
-
-div#sidemenu div:hover{	
+img#gwLogo{
+	height: 60px;
+	display: inline-block;
 	cursor: pointer;
 }
 
-div#sebumenu{
-	
-	float: left;
-	width: 250px;
-	
+div#left-menu{display: inline-block;}
+div#right-menu {float: right; margin-right: 10px;}
+div#left-menu > span, div#right-menu > span{
+	color: #ffffff;
+	display: inline-block;
+	vertical-align: middle;
+}
+div#right-menu > span{
+	height: 70px;
+	vertical-algin: middle;
+	line-height: 70px;
 }
 
-div#sebumenu div{
-	border: solid 1px black;
-	height: 30px;	
-	
+/* 사이드바 메인 메뉴 */
+
+div#sidemenu{
+	clear: both;
+	position: fixed;
+	top: 70px;
+	left: 0;
+	width: 80px;
+	height: 100%;
+	background-color: #333333;
 }
 
-div#content{
-	border: solid 1px black;
-	float:left;
-	background-color: yellow;
-	
+div#sidemenu > p{ color: #ffffff; font-size: 15px;}
+div#sidemenu > p:hover{	cursor: pointer; }
+
+
+/* 사이드바 세부 메뉴 */
+
+
+div.submenu  {
+  float: left;
+  height: 100%;
+  width: 200px;
+  position: relative;
+  z-index: 1;
+  top: 70px;
+  left: 80px;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 10px;
+ 
 }
+
+
+div.submenu a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 15px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+  
+}
+
+.submenu a:hover {
+  color: #f1f1f1;
+}
+
+.submenu .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+}
+
+.openbtn {
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+}
+
+.openbtn:hover {
+  background-color:#444;
+}
+

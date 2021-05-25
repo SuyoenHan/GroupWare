@@ -1,1 +1,11 @@
 @charset "UTF-8";
+
+div#container{
+	margin: 0 auto;
+	width: 90%
+}
+
+div#content{
+	clear: both;
+	border: solid 0px red;
+}
