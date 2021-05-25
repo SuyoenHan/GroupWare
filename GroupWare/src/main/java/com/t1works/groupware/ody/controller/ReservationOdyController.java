@@ -35,7 +35,7 @@ public class ReservationOdyController {
 	@RequestMapping(value="/t1/rsRoom.tw")
 	public String requiredLogin_room(HttpServletRequest request, HttpServletResponse response) {
 		
-		
+		System.out.println("안녕하세요");
 		HttpSession session = request.getSession();
 		
 		MemberBwbVO loginuser =(MemberBwbVO) session.getAttribute("loginuser");
