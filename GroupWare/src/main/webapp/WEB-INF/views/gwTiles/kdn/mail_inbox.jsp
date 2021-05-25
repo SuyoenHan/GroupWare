@@ -10,24 +10,25 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
-		
-	}); // end of $(document).ready(function(){
+		$("div#submenu1").show();
+	});
 </script>
-
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">
-	 <h4 style="margin-bottom: 20px; font-weight: bold;">휴지통</h4>
+	 <h4 style="margin-bottom: 20px; font-weight: bold;">받은메일함</h4>
 	 <div id="left-header">
+		 <button type="button">삭제</button>
 		 <button type="button">완전삭제</button>
+		 <select name="readMark">
+		 	<option value="">읽음표시</option>
+		 	<option value="read">읽음</option>
+		 	<option value="unread">읽지않음</option>
+		 </select>
 	 <div id="right-header" style="float: right;">
 		 <select name="mailSearch">
 		 	<option value="">선택</option>
 		 	<option value="subject">제목</option>
-		 	<option value="sender">받는사람</option>
+		 	<option value="sender">보낸사람</option>
 		 	<option value="content">내용</option>
 		 </select>
 		<input type="text" />
@@ -46,6 +47,7 @@
  		<thead>
  			<tr>
  				<th width=3%><input type="checkbox" name="selectAll" style="margin-left: 10px;"/></th>
+ 				<th width=3%>중요</th>
  				<th width=3%>첨부<br>파일</th>
  				<th width=13%>보낸사람+이메일주소</th>
  				<th width=70%>제목</th>
@@ -53,9 +55,10 @@
  			</tr>
  		</thead>
  		<tbody>
- 		<!-- 메일목록은 c:forEach문 사용할 것 -->
+ 		<%-- 메일목록은 c:forEach문 사용할 것--%>
  			<tr>
  				<th><input type="checkbox" name="selectThis" style="margin-left: 10px;"/></th>
+ 				<td>&star;</td>
  				<td></td>
  				<td>이순신(leess@t1works.com)</td>
  				<td>테스트 메일입니다.</td>
@@ -63,6 +66,7 @@
  			</tr>
  			<tr>
  				<th><input type="checkbox" name="selectThis" style="margin-left: 10px;"/></th>
+ 				<td>&star;</td>
  				<td><i class="fas fa-paperclip"></i></td>
  				<td>박보영(parkby@t1works.com)</td>
  				<td>입사를 축하합니다.</td>

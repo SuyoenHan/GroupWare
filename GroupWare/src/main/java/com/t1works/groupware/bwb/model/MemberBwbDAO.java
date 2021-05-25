@@ -33,7 +33,7 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 	  return n;
    }
 
-
+   // 출퇴근기록 테이블에 insert하기(출근시간)
    @Override
    public int insertIntime(Map<String, String> paraMap) {
 	   
@@ -41,7 +41,7 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 	   return n;
    }
 
-
+   // 출퇴근기록 테이블에 select하기(출근시간)
    @Override
    public String selectIntime(Map<String, String> paraMap) {
 	   
@@ -63,6 +63,23 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		
 		String latenoTime = sqlsession.selectOne("memberBwb.selectlateno", intime);
 		return latenoTime;
+	}
+
+	// 출퇴근기록 테이블에 update하기(퇴근시간)
+	@Override
+	public int updateOuttime(Map<String, String> paraMap) {
+		
+		int n = sqlsession.update("memberBwb.updateOuttime", paraMap);
+	    return n;
+	}
+
+	// 출퇴근테이블에서 select하기(퇴근시간)
+	@Override
+	public String selectOuttime(Map<String, String> paraMap) {
+		
+		String outtime = sqlsession.selectOne("memberBwb.selectOuttime", paraMap);
+		
+	    return outtime;
 	}
 	
     

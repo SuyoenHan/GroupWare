@@ -36,6 +36,16 @@ public class ReservationOdyService implements InterReservationOdyService {
 		return reserveRoomList;
 	}
 
+	// 회의실 예약하기
+	@Override
+	public int insert_rsRoom(Map<String, String> paraMap) {
+		int n = rdao.insert_rsRoom(paraMap);
+		return n;
+	}
+
+
+
+	
 	// 사무용품 목록 리스트
 	@Override
 	public List<GoodsOdyVO> getGoodsList() {
@@ -63,6 +73,49 @@ public class ReservationOdyService implements InterReservationOdyService {
 		List<RsCarOdyVO> reserveCarList = rdao.getReserveCarList(paraMap);
 		return reserveCarList;
 	}
+
+	// 신청 부서 알아오기
+	@Override
+	public String selectDepartment(String dcode) {
+		String dname= rdao.selectDepartment(dcode);
+		return dname;
+	}
+
+	// 사무용품 신청하기
+	@Override
+	public int insert_rsGoods(Map<String, String> paraMap) {
+		int n = rdao.insert_rsGoods(paraMap);
+		return n;
+	}
+
+	// 회의실 예약 삭제하기
+	@Override
+	public int delReserveRoom(String rsroomno) {
+		int n =rdao.delReserveRoom(rsroomno);
+		return n;
+	}
+
+	// 차량 예약하기
+	@Override
+	public int insert_rsCar(Map<String, String> paraMap) {
+		int n =rdao.insert_rsCar(paraMap);
+		return n;
+	}
+
+	// 사무용품 예약 삭제하기
+	@Override
+	public int delReserveGoods(String rsgno) {
+		int n =rdao.delReserveGoods(rsgno);
+		return n;
+	}
+
+	// 차량 예약 삭제하기
+	@Override
+	public int delReserveCar(String rscno) {
+		int n =rdao.delReserveCar(rscno);
+		return n;
+	}
+
 
 	
 
