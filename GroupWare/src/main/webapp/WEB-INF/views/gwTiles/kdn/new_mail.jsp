@@ -27,9 +27,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
+		$("div#submenu1").show();
 		
 		<%-- === #167. 스마트 에디터 구현 시작 === --%>
 	       
@@ -107,7 +105,7 @@
          <tr>
             <th>보내는사람</th>
             <td>
-                <span>leess@t1works.com</span><input type="hidden" name="fk_userid" value="<%-- ${sessionScope.loginuser.userid} --%>" />
+                <span>${loginuser.email}</span><input type="hidden" name="fk_userid" value="${loginuser.employeeid}" />
                 <%-- <input type="text" name="name" value="${sessionScope.loginuser.name}" class="short" readonly /> --%>       
             </td>
          </tr>

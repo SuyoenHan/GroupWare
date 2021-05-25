@@ -11,7 +11,7 @@
 	});
 </script>
 
-	<h3>사내게시판 페이지 입니다.</h3>
+	<h3>자유게시판</h3>
 	<table class="table" style="width: 65%;">
 		<thead>
 			<tr class="thead">

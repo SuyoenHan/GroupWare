@@ -11,13 +11,13 @@
 		$("div.submenu").hide();
 		
 		
-		var sidemenuHeight=$("div#sidemenu").height();
+		/* var sidemenuHeight=$("div#sidemenu").height();
 		console.log(sidemenuHeight);
 		
 		$("p").click(function(){
 			$(this).height(sidemenuHeight);
 		});
-		
+		 */
 		
 		
 	});
@@ -28,7 +28,7 @@
 
 	<div id="sidemenu">
 		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><span>×</span></a><br>
-		<p id="mail" onclick="openNav(this)">메일함</p>
+		<p id="mail" onclick="openNav()">메일함</p>
 		<p id="myDocument" onclick="location.href='<%= ctxPath%>/t1/myDocument.tw'">내문서함</p>
 		<p id="electronPay" onclick="location.href='<%= ctxPath%>/t1/electronPay.tw'">전자결재</p>
 		<p id="employeeMap" onclick="location.href='<%= ctxPath%>/t1/employeeMap.tw'">주소록</p>
@@ -38,60 +38,65 @@
 		<p id="reservation" onclick="location.href='<%= ctxPath%>/t1/rsRoom.tw'">예약관리</p>
 	</div>
 	<div id="submenu1" class="submenu">
-	    <a href="#">메일쓰기</a>
+	    <a href="<%=ctxPath%>/t1/new_mail.tw">메일쓰기</a>
 	    <a href="<%=ctxPath%>/t1/mail.tw">받은메일함</a>
 	    <a href="<%=ctxPath%>/t1/mail_sent.tw">보낸메일함</a>
+	    <a href="<%=ctxPath%>/t1/mail_important.tw">중요메일함</a>
 	    <a href="<%=ctxPath%>/t1/mail_trash.tw">휴지통</a>
 	</div>
 	
 	<div id="submenu2" class="submenu">
-	    <a href="#">수신함</a>
-	    <a href="#">발신함</a>
-	    <a href="#">임시저장함</a>
+	    <a href="<%=ctxPath%>/t1/mydocu_receive.tw">수신함</a>
+	    <a href="<%=ctxPath%>/t1/mydocu_send.tw">발신함</a>
+	    <a href="<%=ctxPath%>/t1/mydocu_temp.tw">임시저장함</a>
 	</div>
 	<div id="submenu3" class="submenu">
-	    <a href="#">세부메뉴1</a>
-	    <a href="#">세부메뉴2</a>
-	    <a href="#">세부메뉴3</a>
+	    <a href="<%=ctxPath%>/t1/generalPayment_List.tw">일반결재내역</a>
+	    <a href="<%=ctxPath%>/t1/generalPayment_Write.tw">일반결재문서작성</a>
+	    <a href="#">지출결재내역</a>
+	    <a href="#">지출결재문서작성</a>
+	    <a href="#">지출결재내역</a>
+	    <a href="#">근태/휴가결재내역</a>
+	    <a href="#">근태/휴가결재문서작성</a>
 	</div>
 	<div id="submenu4" class="submenu">
-	    <a href="#">직원목록</a>
-	    <a href="#">조직도</a>
+	    <a href="<%=ctxPath%>/t1/employeeMap.tw">직원목록</a>
+	    <a href="<%=ctxPath%>/t1/employeeChart.tw">조직도</a>
 	</div>
 	<div id="submenu5" class="submenu">
-	    <a href="#">공지사항</a>
-	    <a href="#">건의사항</a>
-	    <a href="#">자유게시판</a>
+	    <a href="<%=ctxPath%>/t1/employeeBoard.tw">공지사항</a>
+	    <a href="<%=ctxPath%>/t1/suggestionBoard.tw">건의사항</a>
+	    <a href="<%=ctxPath%>/t1/generalBoard.tw">자유게시판</a>
 	</div>
 	<div id="submenu6" class="submenu">
-	    <a href="#">수당월별내역</a>
-	    <a href="#">성과금/야근수당내역</a>
+	    <a href="<%=ctxPath%>/t1/salary.tw ">수당월별내역</a>
+	    <a href="<%=ctxPath%>/t1/salaryDetail.tw">성과금/야근수당내역</a>
 	</div>
 	<div id="submenu7" class="submenu">
-	    <c:choose>
-	    	<c:when  test="${session.loginuser.pcode eq '1'}">
-			    <a href="#">나의업무현황</a>
-			    <a href="#">나의실적현황</a>
-		    </c:when>
-		    <c:when  test="${session.loginuser.dcode eq '4' && session.loginuser.pcode eq '3'}">
-			    <a href="#">인사관리</a>
-			    <a href="#">신입사원등록</a>
-		    </c:when>
-		    <c:when  test="${session.loginuser.pcode eq '3' && (session.loginuser.dcode eq '1' || session.loginuser.dcode eq '2' || session.loginuser.dcode eq '3')}">
-			    <a href="#">나의업무현황</a>
-			    <a href="#">부서업무현황</a>
-			    <a href="#">부서실적현황</a>
-		    </c:when>
-		    <c:when test="${session.loginuser.pcode eq'4'}">
-			    <a href="#">회사실적현황</a>
-			    <a href="#">부서별 실적현황</a>
-		    </c:when>
-	    </c:choose>
+	    <%-- <c:choose>
+	    	<c:when  test="${loginuser.pcode eq '1'}"> --%>
+			    <a href="<%=ctxPath%>/t1/employeeTodo.tw   ">나의업무현황</a>
+			    <a href="<%=ctxPath%>/t1/employeePerformance.tw">나의실적현황</a>
+		    <%-- </c:when>
+		    <c:when  test="${loginuser.dcode eq '4' && loginuser.pcode eq '3'}"> --%>
+			    <a href="<%=ctxPath%>/t1/personnelManage.tw">인사관리</a>
+			    <a href="<%=ctxPath%>/t1/registerNewEmployee.tw">신입사원등록</a>
+		    <%-- </c:when>
+		    <c:when  test="${loginuser.pcode eq '3' && (loginuser.dcode eq '1' || loginuser.dcode eq '2' || loginuser.dcode eq '3')}"> --%>
+			    <a href="<%=ctxPath%>/t1/leaderTodo.tw ">나의업무현황</a>
+			    <a href="<%=ctxPath%>/t1/departmentTodo.tw ">부서업무현황</a>
+			    <a href="<%=ctxPath%>/t1/departmentPerformance.tw">부서실적현황</a>
+		    <%-- </c:when>
+		    <c:when test="${loginuser.pcode eq'4'}"> --%>
+			    <a href="<%=ctxPath%>/t1/companyPerformance.tw">회사실적현황</a>
+			    <a href="<%=ctxPath%>/t1/companyPerformance/departmentPerformance.tw">부서별 실적현황</a>
+		    <%-- </c:when>
+	    </c:choose> --%>
 	</div>
 	<div id="submenu8" class="submenu">
-	    <a href="#">회의실대여신청</a>
-	    <a href="#">차량대여신청</a>
-	    <a href="#">사무용품 대여신청</a>
+	    <a href="<%=ctxPath%>/t1/rsRoom.tw">회의실대여신청</a>
+	    <a href="<%=ctxPath%>/t1/rsCar.tw">차량대여신청</a>
+	    <a href="<%=ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a>
 	</div>
 		
 		

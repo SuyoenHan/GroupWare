@@ -21,9 +21,9 @@ public class BoardControllerKdn {
 	private InterBoardServiceKdn service;
 
 	
-	// === 글목록 보기 페이지 요청 ===
+	// === 공지사항게시판 글목록 보기 페이지 요청 ===
 	@RequestMapping(value="/t1/employeeBoard.tw")
-	public ModelAndView list(ModelAndView mav) {
+	public ModelAndView view_noticeBoard(ModelAndView mav) {
 		
 		List<BoardVOKdn> boardList = null;
 		
@@ -31,7 +31,7 @@ public class BoardControllerKdn {
 		//boardList = service.boardListNoSearch();
 		
 		mav.addObject("boardList", boardList);
-		mav.setViewName("kdn/board.gwTiles");
+		mav.setViewName("kdn/noticeboard.gwTiles");
 		
 		return mav;
 		
@@ -66,6 +66,41 @@ public class BoardControllerKdn {
 		
 		return mav;
 	} 
+	
+	
+	// === 건의사항게시판 글목록 보기 페이지 요청 ===
+	@RequestMapping(value="/t1/suggestionBoard.tw")
+	public ModelAndView view_suggestionBoard(ModelAndView mav) {
+		
+		List<BoardVOKdn> boardList = null;
+		
+		// == 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기 == //
+		//boardList = service.boardListNoSearch();
+		
+		mav.addObject("boardList", boardList);
+		mav.setViewName("kdn/suggestionboard.gwTiles");
+		
+		return mav;
+		
+	}
+
+	
+	// === 자유게시판 글목록 보기 페이지 요청 ===
+	@RequestMapping(value="/t1/generalBoard.tw")
+	public ModelAndView view_generalBoard(ModelAndView mav) {
+		
+		List<BoardVOKdn> boardList = null;
+		
+		// == 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기 == //
+		//boardList = service.boardListNoSearch();
+		
+		mav.addObject("boardList", boardList);
+		mav.setViewName("kdn/generalboard.gwTiles");
+		
+		return mav;
+		
+	}
+	
 	
 	
 	
