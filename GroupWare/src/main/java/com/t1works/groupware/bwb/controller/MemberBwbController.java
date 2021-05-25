@@ -33,7 +33,7 @@ public class MemberBwbController {
 	
 	
 	// 주소록(조직도) 매핑 주소
-	@RequestMapping(value="/t1/toDo.tw")        // 로그인이 필요한 url
+	@RequestMapping(value="/t1/personnelManage.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		// 주소록표기
@@ -112,8 +112,8 @@ public class MemberBwbController {
 		if(searchWord == null) searchWord="";
 		
 		if(pageNo != 1) {
-			pageBar += "&nbsp;<a href='toDo.tw?currentShowPageNo=1&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[맨처음]</a>&nbsp;"; 
-			pageBar += "&nbsp;<a href='toDo.tw?currentShowPageNo="+(pageNo-1)+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[이전]</a>&nbsp;";
+			pageBar += "&nbsp;<a href='personnelManage.tw?currentShowPageNo=1&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[맨처음]</a>&nbsp;"; 
+			pageBar += "&nbsp;<a href='personnelManage.tw?currentShowPageNo="+(pageNo-1)+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[이전]</a>&nbsp;";
 		}
 		
 		while(!(loop>blockSize || pageNo > totalPage) ) {
@@ -121,15 +121,15 @@ public class MemberBwbController {
 				pageBar += "&nbsp;<span style='color:#fff; background-color: #5e5e5e; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
 			}
 			else {
-				pageBar += "&nbsp;<a href='toDo.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>"+pageNo+"</a>&nbsp;";
+				pageBar += "&nbsp;<a href='personnelManage.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>"+pageNo+"</a>&nbsp;";
 			}
 			loop++;
 			pageNo++;
 		}// end of while-----------------------------
 		
 		if(pageNo <= totalPage) {
-			pageBar += "&nbsp;<a href='toDo.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[다음]</a>&nbsp";
-			pageBar += "&nbsp;<a href='toDo.tw?currentShowPageNo="+totalPage+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[마지막]</a>&nbsp";
+			pageBar += "&nbsp;<a href='personnelManage.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[다음]</a>&nbsp";
+			pageBar += "&nbsp;<a href='personnelManage.tw?currentShowPageNo="+totalPage+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[마지막]</a>&nbsp";
 		}
 		
 		mav.addObject("pageBar", pageBar);

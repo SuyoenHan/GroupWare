@@ -25,7 +25,7 @@
 	
 	</div>
 	<div id="right-menu">
-   <span id="menu2">홈</span>
+   <span id="menu2" onclick="location.href='<%= ctxPath%>/t1/travelAgency.tw'">홈</span>
    <span id="menu3">마이페이지</span>
    <span id="menu4">일정관리</span>
    <span id="menu5">예약현황</span>

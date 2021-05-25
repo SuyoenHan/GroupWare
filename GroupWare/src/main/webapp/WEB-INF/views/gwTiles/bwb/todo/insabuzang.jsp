@@ -6,7 +6,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <style type="text/css">
-
+	
+	
 	div#employeeMap {
       background-color: #0071bd;
       color: #fff;
@@ -70,10 +71,6 @@
       list-style-type: none;
    }
    
-   div.modalLocation{
-      margin-top:100px;
-      margin-left:150px;
-   }
    
    table#employeeListTable tr.employeeListTr{
       cursor:pointer;
@@ -122,15 +119,7 @@
    table#oneEmployeeTable th {text-align: center;}
    table#oneEmployeeTable td {padding-left: 30px;}
       
-   button.sendMail{
-      background-color: #0071bd;
-      color: #fff;
-      cursor:pointer;
-      margin-left: 40px;
-      border: none;
-      width: 120px;
-      height: 30px;
-   }
+
    
    div#gwContent {overflow: hidden;}
    
@@ -174,22 +163,7 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		
-		// 신입사원등록 내용 감추기
-		$("div#sebuInfo2").hide();
-		
-		// 신입사원등록 클릭 시
-		$("div#sebumenu2").click(function(){
-			$("div#sebuInfo2").show();
-			$("div#sebuInfo1").hide();
-		})
-		
-		// 인사관리 클릭 시
-		$("div#sebumenu1").click(function(){
-			$("div#sebuInfo1").show();
-			$("div#sebuInfo2").hide();
-			$("div#oneInfoUpdate").hide();
-		})
+		$("div#submenu7").show();
 		
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();
@@ -417,13 +391,6 @@
 		
 </script>
 
-
-<div id="sebumenu">
-	<div id="sebumenu1">인사관리</div>
-	<div id="sebumenu2">신입사원등록</div>
-</div>
-
-
 <div id="content">
 	<div id="sebuInfo1">
 		
@@ -594,10 +561,4 @@
     	 </form>    
       </div>
   	  
-	</div>
-	
-	
-	
-	<div id="sebuInfo2">
-		
 	</div>
