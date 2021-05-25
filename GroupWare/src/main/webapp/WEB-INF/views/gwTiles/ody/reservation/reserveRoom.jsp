@@ -5,7 +5,7 @@
  	String ctxPath = request.getContextPath();
 	//     /groupware
 %>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style type="text/css">
 
@@ -58,8 +58,8 @@ div.room{
 	float: left;
 /* 	display: inline-block; */
 	width:500px;
-	margin-left: 500px;
-	margin-top: 150px;
+	margin-left: 300px;
+	margin-bottom: 140px;
 }
 
 .roomClick{
@@ -70,6 +70,7 @@ button#btn_show{
 	float: right;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	margin-right: 50px;
 }
 
 
@@ -104,9 +105,8 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 
 $(document).ready(function(){
-	
-	// sebumenu와 content길이 맞추기
-	func_height2();
+
+	$("div#submenu8").show();
 	
 	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
 	
@@ -432,14 +432,14 @@ $(document).ready(function(){
 
 	<h3 style="margin-top: 20px !important;">회의실 대여신청</h3>
 	
-	<div>
+	<div style="margin-bottom: " >
 		<div id="calendarWrapper">
-			<div id="calendar" style="width: 450px; margin-top: 50px;" ></div>
+			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px;" ></div>
 		</div>
 		
 	  
 		<div class="room" >
-			<table style="width: 100%; margin-bottom: 80px;">
+			<table style="width: 90%; margin-top: 200px;">
 		            <tr><td colspan="2">회의실 목록</td></tr>
 		            <c:if test="${empty requestScope.roomList}">
 	            		<tr><td colspan="2">회의실이 존재하지 않습니다.</td></tr>
@@ -458,8 +458,8 @@ $(document).ready(function(){
 		</div>
 	</div>
 	
-	<div class="middle" style="margin-top: 100px;">
-		<table  style="width: 90%;">
+	<div class="middle" style="width: 80%;" >
+		<table  style="width: 92%; " >
 			<colgroup>
 				<col width="20%">
 				<col width="20%">
