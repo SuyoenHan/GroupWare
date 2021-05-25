@@ -13,7 +13,7 @@ div#gwContent{
 	position: relative;
 	top: 70px;
 	left: 80px;
-	z-index: -1;
+	
 }
 
 
@@ -25,6 +25,7 @@ div#mainMenu{
 	margin:0;
 	position: fixed;
 	top: 0;
+	z-index: 100;
 }
 
 img#gwLogo{
