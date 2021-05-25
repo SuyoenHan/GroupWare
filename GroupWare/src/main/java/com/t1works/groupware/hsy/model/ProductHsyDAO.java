@@ -76,6 +76,28 @@ public class ProductHsyDAO implements InterProductHsyDAO {
 	public int getAvailableCount(String fk_pNo) {
 		int count= sqlsession2.selectOne("productHsy.getAvailableCount", fk_pNo);
 		return count;
-	}
+		
+	} // end of public int getAvailableCount(String fk_pNo) {-----
+
+	
+	// 여행확정 상품인지 확인하기
+	@Override
+	public Map<String, String> checkProductStatus(String pNo) {
+		
+		Map<String,String> paraMap=sqlsession2.selectOne("productHsy.checkProductStatus",pNo);
+		return paraMap;
+	
+	}// end of public Map<String, String> checkProductStatus(String pNo) {----
+
+
+	// 예약취소가 된 상품의 현재예약인원 update
+	@Override
+	public int updateMinusNowNo(ClientHsyVO cvo) {
+		
+		int n= sqlsession2.update("productHsy.updateMinusNowNo",cvo);
+		return n;
+		// n==1  업데이트성공 
+		
+	} // end of public int updateMinusNowNo(ClientHsyVO cvo) {
 	
 }
