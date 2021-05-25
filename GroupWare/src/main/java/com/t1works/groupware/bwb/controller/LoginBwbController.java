@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
-import com.t1works.groupware.bwb.service.InterMemberBwbService;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 
 @Controller
 public class LoginBwbController {
    
    @Autowired // Type에 따라 알아서 Bean 을 주입해준다.
-   private InterMemberBwbService service;
+   private InterHomepageBwbService service;
    
    
    // 그룹웨어 홈페이지 들어갔을때의 화면 구현

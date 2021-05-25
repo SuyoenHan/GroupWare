@@ -5,38 +5,90 @@
 
 <mapper namespace="reservation_ody">
 
+	<!-- 회의실 목록 리스트 -->
 	<select id="getRoomList" resultType="com.t1works.groupware.ody.model.RoomOdyVO">
 		select roomno, roomname,cappeople
 		from tbl_room
 	</select>
 
+	<!-- 회의실 예약 리스트 -->
 	<select id="getReserveRoomList" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO" parameterType="HashMap">
 		select rsroomno,fk_roomno, fk_employeeid, name, rsubject, rdate, rtime, rdepartment
 		from tbl_rsroom
 		where fk_roomno=#{roomno} and rdate = #{rdate}
 	</select>
 	
+	<!-- 회의실 예약하기 -->
+	<insert id="insert_rsRoom" parameterType="HashMap">
+		insert into tbl_rsroom(rsroomno,fk_roomno,fk_employeeid,name,rsubject,rdate,rtime ,rstatus, rdepartment)
+		values(rsroomnoSeq.nextval, #{fk_roomno},#{fk_employeeid},#{name},#{rsubject},#{rdate},#{rtime},1,#{rdepartment})
+	</insert>
+
+
+	
+	<!-- 사무용품 목록 리스트 -->	
 	<select id="getGoodsList" resultType="com.t1works.groupware.ody.model.GoodsOdyVO">
 		select gno, goodsname
 		from tbl_goods
 	</select>
 	
+	<!-- 사무용품 예약 리스트 -->	
 	<select id="getReserveGoodsList" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO" parameterType="HashMap">
 		select rsgno,fk_gno, fk_employeeid, name, rgsubject, rgdate, rgtime, rgdepartment
 		from tbl_rsgoods
 		where fk_gno=#{gno} and rgdate = #{rgdate}
 	</select>
-	
+
+	<!-- 차량 예약 리스트 -->	
 	<select id="getcarList" resultType="com.t1works.groupware.ody.model.CarOdyVO">
 		select cno, carname,carlicense
 		from tbl_car
 	</select>
-	
+
+	<!-- 차량 예약 리스트 -->	
 	<select id="getReserveCarList" resultType="com.t1works.groupware.ody.model.RsCarOdyVO" parameterType="HashMap">
-		select rscno, fk_cno, fk_employeeid, name, rdestination, rcpeople, rcsubject, rcdate, rctime
+		select rscno, fk_cno, fk_employeeid, name, rdestination, nvl(rcpeople,' '), rcsubject, rcdate, rctime
 		from tbl_rscar
 		where fk_cno=#{cno} and rcdate = #{rcdate}
 	</select>
+
+	<!-- 신청부서 목록 -->	
+	<select id="selectDepartment" resultType="String" parameterType="String">
+		select dname
+		from tbl_department
+		where dcode=#{decode}
+	</select>
+	
+	<!-- 사무용품 신청하기 -->
+	<insert id="insert_rsGoods" parameterType="HashMap">
+		insert into tbl_rsgoods(rsgno,fk_gno,fk_employeeid,name,rgsubject,rgdate,rgtime ,gstatus, rgdepartment)
+		values(rsgnoSeq.nextval, #{gno},#{fk_employeeid},#{name},#{rgsubject},#{rgdate},#{rgtime},1,#{rgdepartment})
+	</insert>
+	
+	<!-- 회의실 예약 삭제하기 -->
+	<delete id="delReserveRoom" parameterType="String">
+		delete from tbl_rsroom
+		where rsroomno = #{rsroomno}
+	</delete>
+	
+	<!-- 차량 예약하기 -->
+	<insert id="insert_rsCar">
+		insert into tbl_rscar(rscno,fk_cno,fk_employeeid,name,rcsubject,rcdate,rctime ,cstatus, rdestination, rcpeople)
+		values(rscnoSeq.nextval, #{cno},#{fk_employeeid},#{name},#{rcsubject},#{rcdate},#{rctime},1,#{rdestination}, #{rcpeople})
+	</insert>
+	
+	<!-- 사무용품 예약 삭제하기 -->
+	<delete id="delReserveGoods" parameterType="String">
+		delete from tbl_rsgoods
+		where rsgno = #{rsgno}
+	</delete>
+	
+	<!-- 차량 예약 삭제하기 -->
+	<delete id="delReserveCar" parameterType="String">
+		delete from tbl_rscar
+		where rscno = #{rscno}
+	</delete>
+	
 	
 	
 </mapper>
