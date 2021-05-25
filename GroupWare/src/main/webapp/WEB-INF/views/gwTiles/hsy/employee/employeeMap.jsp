@@ -49,7 +49,7 @@
 	}
 	
 	div#allBt button{
-		width: 175px;
+		width: 150px;
 		height: 30px;
 		margin-left: 20px;
 		background-color: #5e5e5e;
@@ -134,6 +134,9 @@
 	}
 	
 	div#gwContent {overflow: hidden;}
+	
+	div#gwContent{left: 80px;}
+	
 	
 </style>
 
@@ -315,7 +318,7 @@
 			<button type="button" onclick='javascript:hideAll();'>⊖&nbsp;&nbsp;전체폴더닫기</button>
 		</div>
 		
-		<div style="float:right; margin-right: 180px;">
+		<div style="float:right; margin-right: 150px;">
 			<select id="searchType" style="height: 30px; width: 120px; cursor:pointer;">
 				<option value="">&nbsp;&nbsp;선택하세요</option>
 				<option value="name">&nbsp;&nbsp;직원명</option>
@@ -364,7 +367,7 @@
 			
 		</div>
 		
-		<div style="border: solid 0px red; float:right; width: 700px; margin-right:180px;">
+		<div style="border: solid 0px red; float:right; width: 700px; margin-right:150px;">
 			<div style="margin-bottom:20px;"><h4>직원목록</h4></div>
 			<table id="employeeListTable">
 				<tr style="height:50px; background-color: #e9e9ed; font-weight: bold; ">
