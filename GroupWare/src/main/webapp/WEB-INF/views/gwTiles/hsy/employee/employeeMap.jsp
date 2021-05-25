@@ -139,7 +139,7 @@
 
 	$(document).ready(function(){
 		
-		func_height1(); // sidemenu와 content길이 맞추는 메소드
+		/* func_height1(); // sidemenu와 content길이 맞추는 메소드 */
 		
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();

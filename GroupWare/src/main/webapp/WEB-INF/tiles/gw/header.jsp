@@ -7,6 +7,7 @@
 
 <div id="mainMenu"> 
 	<div id="left-menu">
+		
 		<span id="menu1" onclick="location.href='<%= ctxPath%>/t1/home.tw'"><img id="gwLogo" src="<%=ctxPath%>/resources/images/login/t1works_logo.jpg" /></span>
 	   <span>${loginuser.name}
 	      <c:if test="${loginuser.fk_pcode eq 1}">
@@ -40,20 +41,3 @@
    </span>
    </div>
 </div>
-
-<script type="text/javascript">
-   
-
-   //Function Declaration
-   function func_height1(){ // sidemenu와 content길이 맞추기
-      
-       var content_height= $("div#content").height();
-        $("div#sidemenu").height(content_height);
-    }
-   
-   function func_height2(){ // sebumenu와 content길이 맞추기
-      
-       var content_height= $("div#content").height();
-        $("div#sebumenu").height(content_height);
-    }
-</script>

@@ -11,12 +11,6 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
-		
-	}); // end of $(document).ready(function(){
 </script>
 
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">
@@ -47,7 +41,7 @@
 	 </div>
 </div>
 
- <div id="mail-list">
+ <div id="mail-list" style="height: 100%;">
  	<table class="table" >
  		<thead>
  			<tr>

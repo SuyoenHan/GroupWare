@@ -6,13 +6,9 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
-
 	$(document).ready(function(){
-		
-		// sidemenu와 content길이 맞추기
-		func_height1();
-		
-	}); // end of $(document).ready(function(){
+		$("div#submenu5").show();
+	});
 </script>
 
 	<h3>사내게시판 페이지 입니다.</h3>

@@ -17,9 +17,8 @@
 </head>
 <body>
     <tiles:insertAttribute name="header" />     
-  
-    <tiles:insertAttribute name="sideinfo" />     
-  
+   	<tiles:insertAttribute name="sideinfo" />     
+ 
   	<%-- (디자인은 gwStyle.css에 있음) --%>
    <div id="gwContent">
        <tiles:insertAttribute name="content" />

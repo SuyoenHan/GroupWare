@@ -6,12 +6,12 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		
+
 		// sidemenu와 content길이 맞추기
-		func_height1();
+		/* func_height1(); */
 		
 		// sebumenu와 content길이 맞추기
-		func_height2();
+		/* func_height2(); */
 		
 		// div#sebuInfo2 감추기
 		$("div#sebuInfo2").hide();
