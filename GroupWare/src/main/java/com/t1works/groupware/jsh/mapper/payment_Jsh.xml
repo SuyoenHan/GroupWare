@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="payment_Jsh">
+
+	<select id="generalPayment_List"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select  row_number() over(order by a.ano desc ) as RNO,
+			       		 a.ano ,ncatname, atitle, name ,dname,asdate    
+			from tbl_approval a left join tbl_norapproval n
+			on a.ano = n.fk_ano
+			left join 
+			(select employeeid ,name , fk_dcode
+			 from tbl_employee 
+			)e
+			on a.fk_employeeid = e.employeeid
+			left join 
+			(select dcode, dname
+			from tbl_department
+			)d
+			on e.fk_dcode = d.dcode
+			where anocode= 1
+	</select>
+
+
+
+</mapper>
