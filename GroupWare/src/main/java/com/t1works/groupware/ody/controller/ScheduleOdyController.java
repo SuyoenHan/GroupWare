@@ -26,6 +26,8 @@ public class ScheduleOdyController {
 	@RequestMapping(value="/t1/insertSchedule.tw")
 	public String requiredLogin_insertSchedule(HttpServletRequest request, HttpServletResponse response) {
 		
+		String chooseDate = request.getParameter("chooseDate");
+		request.setAttribute("chooseDate", chooseDate);
 		return "ody/schedule/insertSchedule.gwTiles";
 	}
 	

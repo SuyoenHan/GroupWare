@@ -92,14 +92,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-<div id="sebumenu">
-	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div style="background-color: #6c757d;"><a href="<%= ctxPath%>/t1/rsCar.tw" style="color: #fff;">차량 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
 
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
 
 	<div id="firstWrap">
 		<select id="searchType">
@@ -123,6 +116,6 @@ $(document).ready(function(){
 		</form>
 	</div>
 
-</div>
+
 </body>
 </html>

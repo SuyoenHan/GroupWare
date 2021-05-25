@@ -22,7 +22,7 @@ th, td{
 
 /* 달력 css */
 div#calendarWrapper{
-	display: inline-block;
+	float: left;
 }	
 
 .fc-scroller {
@@ -56,10 +56,12 @@ a:hover {
 
 
 div.room{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
 	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-top: 150px;
+
 }
 
 .goodsClick{
@@ -424,14 +426,6 @@ $(document).ready(function(){
 	
 </script>
 
-<div id="sebumenu">
-	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsCar.tw">차량 대여신청</a></div>
-	<div  style="background-color: #6c757d; color: #fff;"><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
-
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
 	<h3 style="margin-top: 20px !important;">사무용품 대여신청</h3>
 	
 	<div id="calendarWrapper">
@@ -492,7 +486,7 @@ $(document).ready(function(){
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
-</div>
+
 
 
 

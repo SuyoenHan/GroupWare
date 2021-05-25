@@ -21,8 +21,8 @@ th, td{
 }
 
 /* 달력 css */
-div#calendarWrapper{
-	display: inline-block;
+div#calendarWrapper {
+	float: left;
 }
 
 .fc-scroller {
@@ -55,10 +55,11 @@ a:hover {
 }
 
 div.car{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
 	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-top: 150px;
 }
 
 .carClick{
@@ -459,19 +460,17 @@ $(document).ready(function(){
 	
 	
 </script>
-
+<!-- 
 <div id="sebumenu">
 	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
 	<div style="background-color: #6c757d;"><a href="<%= ctxPath%>/t1/rsCar.tw" style="color: #fff;">차량 대여신청</a></div>
 	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
 </div>
-
-
-<div id="content" style="background-color: white;">
+ -->
 	<h3 style="margin-top: 20px !important;">차량 대여신청</h3>
 	
 	<div>
-		<div id="calendarWrapper">
+		<div id="calendarWrapper" >
 			<div id="calendar" style="width: 450px; margin-top: 50px;" ></div>
 		</div>
 		
@@ -532,7 +531,7 @@ $(document).ready(function(){
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
-</div>
+
 
 
 
