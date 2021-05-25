@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mydocument_sia">
+
+	<select id="getnorm_reclist" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select rownum, atitle, ano, astatus, asdate, ncat, ncatname
+		from tbl_approval A join tbl_norapproval B
+		on A.ano = B.fk_ano
+		where apaper = '1'
+		order by asdate desc
+	</select>
+</mapper>

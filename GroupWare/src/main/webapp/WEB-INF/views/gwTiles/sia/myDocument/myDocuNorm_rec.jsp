@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <% 
 	String ctxPath = request.getContextPath();
@@ -8,6 +10,8 @@
 <style type="text/css">
 	div.section{
 		clear: both;
+		padding-left: 15px;
+		width: 85%;
 	}
 	div.tab_select{
 		clear: both;
@@ -76,6 +80,9 @@ $(document).ready(function(){
 	
 	$("div#submenu2").show();
 	
+	goSearch();
+	
+	
 	var today = new Date();
 	var dd = today.getDate();
 	var mm = today.getMonth()+1; //January is 0!
@@ -134,8 +141,6 @@ $(document).ready(function(){
 		
 	});
 	
-
-	
 });
 	
 	//Function Declaration
@@ -164,10 +169,48 @@ $(document).ready(function(){
 		$("#toDate").datepicker( "option", "minDate", startDate );
 		
 		// 시작일은 종료일 이후 날짜 선택하지 못하도록 비활성화
-		$("#fromDate").datepicker( "option", "maxDate", endDate );	
+		$("#fromDate").datepicker( "option", "maxDate", endDate );		
+	}
 	
+	
+	function goSearch(){
+		
+		$.ajax({
+			url:"<%= ctxPath%>/t1/norm_reclist.tw",
+			data:{"anocode":"${requestScope.approvalvo.anocode}"},
+			dataType:"json",
+			success:function(json){
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						html += "<tr>";
+						html += "<td>"+ (index+1) +"</td>";
+						html += "<td>"+ item.atitle +"</td>";
+						html += "<td>"+  +"</td>";
+						html += "<td>"+ item.ano +"</td>";
+						html += "<td>"+ item.astatus +"</td>";
+						html += "<td>"+ item.asdate +"</td>";
+						html += "</tr>";
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='6'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#commentDisplay").html(html);
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+		
 		
 	}
+	
 </script>
 <div class="section">
 <h3>수신함</h3>
@@ -237,9 +280,22 @@ $(document).ready(function(){
 					<option value="0">제목</option>
 					<option value="1">문서번호</option>												
 				</select>&nbsp;
-				<input type="text" style="height: 20px;"/> <button type="button">검색</button>
+				<input type="text" style="height: 20px;"/> <button type="button" onclick="goSearch()">검색</button>
 			</td>
-		</tr>
+		</tr>	
+	</table>
 	
+	<table id="table">
+		<thead>
+		<tr>
+			<th style="width: 70px;  text-align: center;">번호</th>
+			<th style="width: 300px; text-align: center;">제목</th>
+			<th style="width: 100px; text-align: center;">문서분류</th>
+			<th style="width: 100px; text-align: center;">문서번호</th>
+			<th style="width: 100px; text-align: center;">결재상태</th>
+			<th style="width: 120px; text-align: center;">기안일</th>
+		</tr>
+		</thead>		
+		<tbody id="commentDisplay"></tbody>		
 	</table>
 </div>

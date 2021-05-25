@@ -1,10 +1,19 @@
 package com.t1works.groupware.sia.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.t1works.groupware.sia.model.ApprovalSiaVO;
 import com.t1works.groupware.sia.service.InterMyDocumentSiaService;
 
 @Component
@@ -17,9 +26,8 @@ public class MyDocumentSiaController {
 	// 내문서함 클릭 시 수신함 일반결재문서로 이동!
 	@RequestMapping(value="/t1/myDocument.tw")
 	public String myDocument() {
-		return "sia/myDocument/myDocuNorm_rec.gwTiles";		
+		return "sia/myDocument/myDocuNorm_rec.gwTiles";
 	}
-	
 	
 	// 내문서함 - 수신함 - 일반결재문서 (기본으로 일반결재문서가 보여짐!)
 	@RequestMapping(value="/t1/myDocuNorm_rec.tw")
@@ -76,6 +84,36 @@ public class MyDocumentSiaController {
 	public String myDocuVacation_temp() {
 		return "sia/myDocument/myDocuVacation_temp.gwTiles";		
 	}
+	
+	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기
+	@ResponseBody
+	@RequestMapping(value="/t1/norm_reclist.tw", produces="text/plain;charset=UTF-8")
+	public String norm_reclist(HttpServletRequest request) {
+		
+		String anocode = request.getParameter("anocode");
+		
+		List<ApprovalSiaVO> approvalvo = service.getnorm_reclist(anocode);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();			
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("astatus", appvo.getAstatus());
+				jsonObj.put("asdate", appvo.getAsdate());
+				
+				jsonArr.put(jsonObj);
+			}			
+		}		
+		return jsonArr.toString();
+	}
+	
+	
+	
 	
 	
 }
