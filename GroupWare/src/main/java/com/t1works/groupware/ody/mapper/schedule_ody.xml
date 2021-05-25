@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="schedule_ody">
+
+	<select id="getSmallCategory" resultType="com.t1works.groupware.ody.model.ScalCategoryOdyVO" parameterType="HashMap">
+		select 	scno, fk_bcno, scname
+		from tbl_scal_category
+		where fk_bcno = #{fk_bcno} and fk_employeeid= #{fk_employeeid}
+	</select>
+
+
+	<insert id="registerSchedule" parameterType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		insert into tbl_schedule(sdno, startdate,enddate,subject,color,place,joinEmp,content,fk_scno,fk_bcno,fk_employeeid)
+		values(sdnoSeq.nextval, to_date(#{startdate},'yyyyMMddhh24miss'), to_date(#{enddate}, 'yyyyMMddhh24miss'), #{subject}, #{color}, #{place}, #{joinEmp}, #{content}, #{fk_scno},#{fk_bcno}, #{fk_employeeid})
+	</insert>
+
+	<select id="getScheduleList" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO" parameterType="HashMap">
+		select sdno, startdate,enddate,subject,color,place,joinEmp,content,fk_scno,fk_employeeid
+		from tbl_schedule
+        where fk_employeeid=#{fk_employeeid} or fk_bcno=#{fk_bcno}		
+		order by sdno desc
+	</select>
+
+</mapper>
