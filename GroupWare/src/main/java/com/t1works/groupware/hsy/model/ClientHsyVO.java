@@ -7,6 +7,15 @@ public class ClientHsyVO {
 	private String clientname;    // 고객명
 	private String cnumber;       // 예약인원수
 	
+	// select용 
+	private String pNo;        // 상품번호
+	private String pName;      // 상품명
+	private String startDate;  // 여행시작일
+	private String endDate;    // 여행종료일
+	private String price;      // 인당 가격
+	private String period;     // 여행기간 => 0박 0일
+	
+	
 	public String getFk_pNo() {
 		return fk_pNo;
 	}
@@ -35,7 +44,46 @@ public class ClientHsyVO {
 		this.cnumber = cnumber;
 	}
 	
+	public String getpNo() {
+		return pNo;
+	}
+	public void setpNo(String pNo) {
+		this.pNo = pNo;
+	}
 	
+	public String getpName() {
+		return pName;
+	}
+	public void setpName(String pName) {
+		this.pName = pName;
+	}
 	
+	public String getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	
+	public String getPrice() {
+		return price;
+	}
+	public void setPrice(String price) {
+		this.price = price;
+	}
+	
+	public String getPeriod() {
+		return period;
+	}
+	public void setPeriod(String period) {
+		this.period = period;
+	}
 	
 }

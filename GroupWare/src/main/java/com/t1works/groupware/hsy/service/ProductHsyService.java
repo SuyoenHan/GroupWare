@@ -1,6 +1,7 @@
 package com.t1works.groupware.hsy.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.t1works.groupware.hsy.model.*;
+import com.t1works.groupware.hsy.model.ClientHsyVO;
+import com.t1works.groupware.hsy.model.InterClientHsyDAO;
+import com.t1works.groupware.hsy.model.InterProductHsyDAO;
+import com.t1works.groupware.hsy.model.InterTwLocationHsyDAO;
+import com.t1works.groupware.hsy.model.ProductHsyVO;
+import com.t1works.groupware.hsy.model.TwLocationHsyVO;
 
 @Component
 @Service
@@ -20,6 +26,9 @@ public class ProductHsyService implements InterProductHsyService {
 
 	@Autowired 
 	private InterClientHsyDAO cdao;
+
+	@Autowired 
+	private InterTwLocationHsyDAO tldao;
 
 	
 	// 여행사 홈페이지에서 보여줄 상품정보 가져오기
@@ -193,4 +202,150 @@ public class ProductHsyService implements InterProductHsyService {
 		return n;
 	} // end of public int isExistClientAjax(ClientHsyVO cvo) {-----
 
+
+	// 회사위치테이블에 있는 정보 가져오기  
+	@Override
+	public List<TwLocationHsyVO> twLocationAjax() {
+
+		List<TwLocationHsyVO> twLocationList= tldao.twLocationAjax();
+		return twLocationList;
+	} // end of public List<TwLocationHsyVO> twLocationAjax() {-------
+
+	
+	// 해당 고객명, 연락처에 일치하는 고객예약항목이 있는지 검사
+	@Override
+	public int checkClientMobile(Map<String,String> paraMap) {
+
+		int n=cdao.checkClientMobile(paraMap);
+		return n;
+		
+	} // end of public int checkClientMobile(String clientmobile) {
+
+
+	// 특정고객의 예약정보를 가져오기
+	@Override
+	public List<ClientHsyVO> moreReserveListAjax(Map<String, String> paraMap) {
+		
+		List<ClientHsyVO> cvoList= cdao.moreReserveListAjax(paraMap);
+		
+		// 여행시작일과 여행 종료일 데이터 형태 바꿔주기
+		for(ClientHsyVO cvo: cvoList) {
+			
+			// 1) 여행시작일 데이터 형태 바꿔주기
+			String[] startDateArr= cvo.getStartDate().split("-");
+			
+			String year= startDateArr[0];
+			String month= startDateArr[1];
+			
+			if(month.length()==1) { // 월이 한자리인 경우 앞에 "0" 붙여주기
+				month="0"+month;
+			}
+			
+			String day= startDateArr[2];
+			if(day.length()==1) { // 일이 한자리인 경우 앞에 "0" 붙여주기
+				day="0"+day;
+			}
+			
+			cvo.setStartDate(year+"년 "+month+"월 "+day+"일");
+			
+			// 2) 여행종료일 데이터 형태 바꿔주기
+			String[] endDateArr= cvo.getEndDate().split("-");
+			
+			year= endDateArr[0];
+			month= endDateArr[1];
+			
+			if(month.length()==1) { // 월이 한자리인 경우 앞에 "0" 붙여주기
+				month="0"+month;
+			}
+			
+			day= endDateArr[2];
+			if(day.length()==1) { // 일이 한자리인 경우 앞에 "0" 붙여주기
+				day="0"+day;
+			}
+			
+			cvo.setEndDate(year+"년 "+month+"월 "+day+"일");
+			
+			// 3) 전화번호 형태 바꿔주기
+			String clientmobile=cvo.getClientmobile();
+			clientmobile= clientmobile.substring(0, 3)+"-"+clientmobile.substring(3, 7)+"-"+clientmobile.substring(7);
+			
+			cvo.setClientmobile(clientmobile);
+			
+		} // end of for(ClientHsyVO cvo: cvoList) {------------
+		
+		return cvoList;
+		
+	} // end of public List<ClientHsyVO> moreReserveListAjax(Map<String, String> paraMap)-----
+
+
+	// 해당 연락처의 예약정보 총 개수 구하기
+	@Override
+	public int getTotalReserveCount(String clientmobile) {
+
+		int totalCount= cdao.getTotalReserveCount(clientmobile);
+		return totalCount;
+		
+	}// end of public int getTotalCount(String clientmobile) {-----
+
+	
+	// 여행확정 상품인지 확인하기
+	@Override
+	public Map<String, String> checkProductStatus(String pNo) {
+		
+		Map<String,String> paraMap= pdao.checkProductStatus(pNo);
+		return paraMap;
+		
+	} // end of public Map<String, String> checkProductStatus(String pNo)----
+
+	
+	// 고객테이블에 delete하고 제품테이블에 update (transaction처리)
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int deleteUpdateClientAjax(ClientHsyVO cvo) throws Throwable {
+		
+		int result= 0;
+		
+		// 1) 고객테이블에 해당예약건 delete
+		int m= cdao.deleteClientAjax(cvo);
+		//m==1 예약취소 성공
+	
+		if(m==1) { // 2) 예약취소가 제대로 된 경우 update
+ 			result= pdao.updateMinusNowNo(cvo);
+		}
+		
+		return result;
+		
+		/*
+	 		result==1 트랜잭션 처리 성공
+	 		result==0 트랜잭션 처리 실패 
+		*/
+	
+	} // end of public int deleteUpdateClientAjax(ClientHsyVO cvo) throws Throwable {----
+
+	
+	// 고객테이블에 update하고 제품테이블에 update (transaction처리)
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int changeCountAjax(ClientHsyVO cvo) throws Throwable {
+	
+		int result= 0;
+		
+		// 1) 고객테이블에 해당예약건 update
+		int m= cdao.updateClientAjax(cvo);
+		//m==1 예약취소 성공
+	
+		if(m==1) { // 2) 고객테이블의 update가 제대로 된 경우 update
+ 			result= pdao.updateNowNo(cvo);
+		}
+		
+		return result;
+		
+		/*
+	 		result==1 트랜잭션 처리 성공
+	 		result==0 트랜잭션 처리 실패 
+		*/
+	
+	} // end of public int changeCountAjax(ClientHsyVO cvo) throws Throwable {----
+
+	
 }
