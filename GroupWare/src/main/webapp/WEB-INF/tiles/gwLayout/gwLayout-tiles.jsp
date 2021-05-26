@@ -26,16 +26,9 @@
 <script src="<%=ctxPath%>/resources/js/kdn/header_sideinfo.js"></script>
 </head>
 <body>
-<<<<<<< HEAD
-    <tiles:insertAttribute name="header" /> 
-   	<tiles:insertAttribute name="sideinfo" />    
- 
-  	<%-- (디자인은 gwStyle.css에 있음) --%>
-=======
     <tiles:insertAttribute name="header" />     
    	<tiles:insertAttribute name="sideinfo" />     
  	<%-- (디자인은 gwStyle.css에 있음) --%>
->>>>>>> refs/heads/valentinakim
    <div id="gwContent">
        <tiles:insertAttribute name="content" />
   </div>

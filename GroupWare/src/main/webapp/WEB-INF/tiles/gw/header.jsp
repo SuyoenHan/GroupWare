@@ -18,22 +18,6 @@
 		</div>
 	</div>
 	<div id="right-menu">
-<<<<<<< HEAD
-   <span id="menu2" onclick="location.href='<%= ctxPath%>/t1/travelAgency.tw'">홈</span>
-   <span id="menu3">마이페이지</span>
-   <span id="menu4">일정관리</span>
-   <span id="menu5">예약현황</span>
-   <span id="menu6">공지사항</span>
-   <form name="searchFrm" style="display:inline-block;">
-   	<input type="text"/>
-   	<button type="submit">검색</button>
-   </form>
-   <span id="menu7" onclick="location.href='<%= ctxPath%>/t1/logout.tw'">
-   	 <c:if test="${not empty loginuser}">
-           로그아웃
-     </c:if>
-   </span>
-=======
 		<table>
 		   	<tbody>
 		   		<tr style="height: 30px;">
@@ -58,7 +42,6 @@
 		   		</tr>
 		    </tbody>
 	    </table>
->>>>>>> refs/heads/valentinakim
    </div>
    
 </div>
