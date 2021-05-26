@@ -118,6 +118,25 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		
 		return n;
 	}
+
+	
+	// pcode에 따른 연차수 가져오기
+	@Override
+	public String selectOffCnt(String pcode) {
+		
+		String offcnt = sqlsession.selectOne("memberBwb.selectOffCnt", pcode);
+		
+		return offcnt;
+	}
+	
+	
+	// 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
+	@Override
+	public int registerOne(MemberBwbVO mvo) {
+		
+		int n = sqlsession.insert("memberBwb.registerOne", mvo);
+		return n;
+	}
 	
     
    

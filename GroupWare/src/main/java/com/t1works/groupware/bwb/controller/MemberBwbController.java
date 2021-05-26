@@ -32,7 +32,7 @@ public class MemberBwbController {
 	private InterMemberBwbService service2;
 	
 	
-	// 주소록(조직도) 매핑 주소
+	// 인사부장- 업무관리(인사관리) 매핑 주소
 	@RequestMapping(value="/t1/personnelManage.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
@@ -134,7 +134,7 @@ public class MemberBwbController {
 		
 		mav.addObject("pageBar", pageBar);
 		
-		mav.setViewName("bwb/todo/insabuzang.gwTiles");
+		mav.setViewName("bwb/todo/personnelManage.gwTiles");
 		return mav;
 		
 	} // end of public ModelAndView employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {--------------------------------------------
@@ -202,6 +202,65 @@ public class MemberBwbController {
 		
 		return jsonObj.toString();
 	}
+	
+	
+	// 인사부장- 업무관리(신입사원 등록) 매핑 주소
+	@RequestMapping(value="/t1/registerNewEmployee.tw")
+	public ModelAndView requiredLogin_registerNewEmployee(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) { // 로그인이 필요한 url AOP사용
+		
+		// 1) 모든 부서명 가저오기
+		List<DepartmentHsyVO> departmentList= service.selectAllDepartment();
+		mav.addObject("departmentList", departmentList);
+		
+		// 2) 모든 직위 가져오기
+		List<MemberBwbVO> positionList = service2.selectPositionList();
+		mav.addObject("positionList", positionList);
+		
+		
+		mav.setViewName("bwb/todo/registerNewEmployee.gwTiles");
+		
+		return mav;
+
+	}
+	
+	// pcode에 따른 연차수 가져오기
+	@ResponseBody
+	@RequestMapping(value="/t1/selectOffCnt.tw")
+	public String requiredLogin_selectOffCnt(HttpServletRequest request,HttpServletResponse response) {
+		
+		String pcode = request.getParameter("fk_pcode");
+		
+		String offcnt = service2.selectOffCnt(pcode);
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("offcnt", offcnt);
+			
+		return jsonObj.toString();
+		
+	}// end of public String requiredLogin_selectDuty(HttpServletRequest request,HttpServletResponse response) {
+	
+	// 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
+	@ResponseBody
+	@RequestMapping(value="/t1/registerOne.tw")
+	public String registerOne(HttpServletRequest request, MemberBwbVO mvo) {
+		
+		int n = service2.registerOne(mvo);
+		
+		String jubun1 = request.getParameter("jubun1");
+		String jubun2 = request.getParameter("jubun2");
+		
+		String jubun = jubun1+jubun2;
+		
+		
+		
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+			
+		return jsonObj.toString();
+	}
+	
 	
 	
 }

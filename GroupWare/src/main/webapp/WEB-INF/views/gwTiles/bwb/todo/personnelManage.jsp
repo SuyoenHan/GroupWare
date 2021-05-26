@@ -6,7 +6,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <style type="text/css">
-	
+
+	div#gwContent{left: 80px;}
 	
 	div#employeeMap {
       background-color: #0071bd;
@@ -534,17 +535,17 @@
 	      			<tr> 
 	      				<td class="oneInfoMenu">소속</td>
 	      				<td style="padding-left:15px;">
-	      					<select id="dname" name="dname" class="updateInfo">
+	      					<select id="fk_dcode" name="fk_dcode" class="updateInfo">
 	      						<c:forEach var="Department" items="${departmentList}">
-	      							<option value="${Department.dname}">${Department.dname}</option>
+	      							<option value="${Department.dcode}">${Department.dname}</option>
 	      						</c:forEach>
 	      					</select>
 	      				</td>
 	      				<td class="oneInfoMenu">직위</td>
 	      				<td style="padding-left:15px;">
-	      					<select id="pname" name="pname" class="updateInfo">
+	      					<select id="fk_pcode" name="fk_pcode" class="updateInfo">
 	      						<c:forEach var="position" items="${positionList}">
-	      							<option value="${position.pname}">${position.pname}</option>
+	      							<option value="${position.fk_pcode}">${position.pname}</option>
 	      						</c:forEach>
 	      					</select>
 	      				</td>
@@ -561,4 +562,4 @@
     	 </form>    
       </div>
   	  
-	</div>
+</div>

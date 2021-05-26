@@ -6,6 +6,10 @@
 <%
    String ctxPath = request.getContextPath();
 %>
+<style>
+ div#gwContent{left: 80px;}
+</style>
+
 <script type="text/javascript">
    $(document).ready(function(){
       

@@ -41,6 +41,12 @@ public interface InterMemberBwbDAO {
    
    // 회원정보 업데이트하기 
    int updateOneInfo(MemberBwbVO mvo);
+   
+   // pcode에 따른 연차수 가져오기
+   String selectOffCnt(String pcode);
+   
+   // 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
+   int registerOne(MemberBwbVO mvo);
 
 
 }
