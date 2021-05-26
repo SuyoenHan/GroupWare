@@ -1,6 +1,6 @@
 package com.t1works.groupware.hsy.model;
 
-import java.util.List;
+import java.util.*;
 
 public interface InterProductHsyDAO {
 
@@ -21,5 +21,11 @@ public interface InterProductHsyDAO {
 
 	// 특정제품에 현재 예약가능한 인원수 알아오기
 	int getAvailableCount(String fk_pNo);
+
+	// 여행확정 상품인지 확인하기
+	Map<String, String> checkProductStatus(String pNo);
+
+	// 예약취소가 된 상품의 현재예약인원 update
+	int updateMinusNowNo(ClientHsyVO cvo);
 
 }

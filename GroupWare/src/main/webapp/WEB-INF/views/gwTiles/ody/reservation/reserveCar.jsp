@@ -5,7 +5,7 @@
  	String ctxPath = request.getContextPath();
 	//     /groupware
 %>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style type="text/css">
 
@@ -21,8 +21,8 @@ th, td{
 }
 
 /* 달력 css */
-div#calendarWrapper{
-	display: inline-block;
+div#calendarWrapper {
+	float: left;
 }
 
 .fc-scroller {
@@ -55,10 +55,11 @@ a:hover {
 }
 
 div.car{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
-	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-left: 300px;
+	margin-bottom: 140px;
 }
 
 .carClick{
@@ -69,6 +70,7 @@ button#btn_show{
 	float: right;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	margin-right: 50px;
 }
 
 </style>
@@ -102,9 +104,8 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 
 $(document).ready(function(){
-	
-	// sebumenu와 content길이 맞추기
-	func_height2();
+
+	$("div#submenu8").show();
 	
 	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
 	
@@ -459,25 +460,23 @@ $(document).ready(function(){
 	
 	
 </script>
-
+<!-- 
 <div id="sebumenu">
 	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
 	<div style="background-color: #6c757d;"><a href="<%= ctxPath%>/t1/rsCar.tw" style="color: #fff;">차량 대여신청</a></div>
 	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
 </div>
-
-
-<div id="content" style="background-color: white;">
+ -->
 	<h3 style="margin-top: 20px !important;">차량 대여신청</h3>
 	
 	<div>
-		<div id="calendarWrapper">
-			<div id="calendar" style="width: 450px; margin-top: 50px;" ></div>
+		<div id="calendarWrapper" >
+			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px;" ></div>
 		</div>
 		
 	  
 		<div class="car" >
-			<table style="width: 520px; margin-bottom: 110px;">
+			<table style="width: 90%; margin-top: 200px;">
 	            <tr><td colspan="2">차량 목록</td></tr>
 	            	<c:if test="${empty requestScope.carList}">
 	            		<tr><td colspan="2">차량이 존재하지 않습니다.</td></tr>
@@ -496,8 +495,8 @@ $(document).ready(function(){
 		</div>
 </div>
 	
-	<div class="middle" style="margin-top: 100px;">
-		<table  style="width: 90%;">
+	<div class="middle"  style="width: 80%;">
+		<table  style="width: 92%;">
 			<colgroup>
 				<col width="15%">
 				<col width="15%">
@@ -532,7 +531,7 @@ $(document).ready(function(){
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
-</div>
+
 
 
 

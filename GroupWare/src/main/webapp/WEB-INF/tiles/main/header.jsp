@@ -64,7 +64,7 @@
 </div>
 
 <div id="mainHomebt">
-	<span>나의 예약현황</span>
+	<span onclick="location.href='<%=ctxPath%>/t1/myreserve.tw'">나의 예약현황</span>
 	&nbsp;&nbsp;|&nbsp;&nbsp;
-	<span>회사 위치</span>
+	<span onclick="location.href='<%=ctxPath%>/t1/travel/twLocation.tw'">회사 위치</span>
 </div>

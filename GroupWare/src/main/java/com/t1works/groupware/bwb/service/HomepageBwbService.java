@@ -89,9 +89,6 @@ public class HomepageBwbService implements InterHomepageBwbService {
 	    return outtime;
 	}
 	
-	
-   
-   
-   
+
    
 }

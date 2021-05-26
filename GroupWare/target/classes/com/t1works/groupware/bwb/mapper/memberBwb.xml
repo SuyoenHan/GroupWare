@@ -51,6 +51,49 @@
    	  where gooutdate=#{gooutdate} and fk_employeeid=#{fk_employeeid}
    </select>
    
+   <!-- 모든 직위가져오기 -->
+   <select id="selectPositionList" resultType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		select pname, pcode as fk_pcode from tbl_position
+   		order by pcode asc
+   </select>
+   
+   <!-- 소속에 따른 직무 가져오기 -->
+   <select id="selectDuty" parameterType="String" resultType="String">
+   		select duty from tbl_department
+   		where dname = #{dname}
+   </select>
+   
+   
+    <resultMap type="HashMap" id="PDMap"> 
+		<result property="fk_pcode" column="pcode" javaType="String" /> 
+		<result property="fk_dcode" column="dcode" javaType="String" />
+	</resultMap>
+   
+   <!-- name과 dname을 통해 pcode 가져오기. -->  
+   <select id="selectPDcode" parameterType="HashMap" resultMap="PDMap">
+	   	select pcode, dcode, offcnt
+		from tbl_department
+		cross join tbl_position
+		where dname = #{dname} and pname= #{pname}
+   </select>
+   
+   <!-- 회원정보 update하기 -->
+   <update id="updateOneInfo" parameterType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		update tbl_employee set fk_dcode = #{fk_dcode}, fk_pcode = #{fk_pcode}, name=#{name}, email=#{email}, mobile=#{mobile}, cmobile=#{cmobile}
+   		where employeeid = #{employeeid}
+   </update>
+   
+   <!-- 직위에 따른 휴가값 가져오기 -->
+   <select id="selectOffCnt" resultType="String">
+   		select offcnt from tbl_position
+   		where pcode = #{pcode}
+   </select>
+   
+   <!-- 직원정보 등록하기 ==> 추후 코드 변경 예정 -->
+   <insert id="registerOne" parameterType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		insert into tbl_employee(employeeid,fk_dcode,fk_pcode,name,passwd,email,mobile,cmobile,jubun)
+   		values(#{employeeid},#{fk_dcode},#{fk_pcode},#{name},#{passwd},#{email},#{mobile},#{cmobile},#{jubun})
+   </insert>
    
    
 </mapper>
