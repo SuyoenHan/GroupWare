@@ -18,7 +18,7 @@
 		</div>
 	</div>
 	<div id="right-menu">
-		<table>
+		<table id="right-menu-style">
 		   	<tbody>
 		   		<tr style="height: 30px;">
 		   			<td class="home"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/home.png"></td>

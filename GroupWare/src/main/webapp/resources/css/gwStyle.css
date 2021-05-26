@@ -61,7 +61,7 @@ span.navbar-btn{
 
 div#right-menu {float: right; margin-right: 10px;}
 
-table{ margin-top:10px; }
+table#right-menu-style{ margin-top:10px; }
 
 div#right-menu > table tr td{
 	color: #ffffff;
