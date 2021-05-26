@@ -7,7 +7,7 @@ public class ScheduleOdyVO {
 	private String subject; // 제목
 	private String color; // 색상
 	private String place; // 장소
-	private String joinEmp; // 공유자
+	private String joinemployee; // 공유자
 	private String content; // 내용
 	private int fk_scno; // 캘린더 소분류 번호
 	private int fk_bcno;// 캘린더 대분류 번호
@@ -44,11 +44,11 @@ public class ScheduleOdyVO {
 	public void setPlace(String place) {
 		this.place = place;
 	}
-	public String getJoinEmp() {
-		return joinEmp;
+	public String getjoinemployee() {
+		return joinemployee;
 	}
-	public void setJoinEmp(String joinEmp) {
-		this.joinEmp = joinEmp;
+	public void setJoinEmp(String joinemployee) {
+		this.joinemployee = joinemployee;
 	}
 	public String getContent() {
 		return content;

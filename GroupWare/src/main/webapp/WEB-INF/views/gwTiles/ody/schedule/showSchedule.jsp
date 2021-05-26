@@ -60,7 +60,7 @@ a:hover {
 $(document).ready(function(){
 
 	
-	
+	  // 풀캘린더와 관련된 소스코드
 	  var calendarEl = document.getElementById('calendar');
       var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -72,7 +72,7 @@ $(document).ready(function(){
 	          center: 'title',
 	          right: 'dayGridMonth,timeGridWeek,timeGridDay'
 	    },
-
+		// db와 연동하는 법
 	    events:function(info, successCallback, failureCallback){
 	    	 $.ajax({
                  url: '<%= ctxPath%>/t1/selectSchedule.tw',
@@ -85,9 +85,11 @@ $(document).ready(function(){
                              $.each(json, function(index, item) {
             
                                     var startdate=moment(item.startdate).format('YYYY-MM-DD');
-                                    var enddate=moment(enddate).format('YYYY-MM-DD');
+                                    var enddate=moment(item.enddate).format('YYYY-MM-DD');
+                                    var penddate=moment(item.enddate).add(1, 'days').format('YYYY-MM-DD');
                                     var subject = item.subject;
-                                    
+                                   
+                                    if(startdate==enddate){
                                    events.push({
                                                title: item.subject,
                                                start: startdate,
@@ -95,6 +97,16 @@ $(document).ready(function(){
                                          <%--  url: <%= ctxPath%>/detailSchedule.tw?seq="+item.sdno,--%>
                                                color: item.color                                                   
                                   }); // events.push
+                                    }
+                                    else{
+                                    	events.push({
+                                            title: item.subject,
+                                            start: startdate,
+                                            end: penddate,
+                                      <%--  url: <%= ctxPath%>/detailSchedule.tw?seq="+item.sdno,--%>
+                                            color: item.color     
+                                    	 });
+                                    	}
                              });  //.each()
                                                                   
                            
@@ -105,7 +117,7 @@ $(document).ready(function(){
                   }//success: function end                          
           }); //ajax end
         }, //events:function end
-
+		// 날짜 클릭할 때 발생하는 이벤트(일정 등록창으로 넘어간다)
         dateClick: function(info) {
       	//  alert('Date: ' + info.dateStr);
       	    $(".fc-day").css('background','none'); // 현재 날짜 배경색 없애기
@@ -120,8 +132,6 @@ $(document).ready(function(){
       	    
       	  }
       });
-      
-      
       calendar.render();
       
 }); // end of $(document).ready(function()

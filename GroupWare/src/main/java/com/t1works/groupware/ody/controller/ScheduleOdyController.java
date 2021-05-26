@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.ody.model.MemberOdyVO;
 import com.t1works.groupware.ody.model.ScalCategoryOdyVO;
 import com.t1works.groupware.ody.model.ScheduleOdyVO;
 import com.t1works.groupware.ody.service.InterScheduleOdyService;
@@ -67,6 +68,7 @@ public class ScheduleOdyController {
 				return jsArr.toString();
 	}
 	
+	// 일정관리 등록 페이지로 이동
 	@RequestMapping(value="/t1/insertSchedule.tw", method = {RequestMethod.POST})
 	public String requiredLogin_insertSchedule(HttpServletRequest request, HttpServletResponse response) {
 		
@@ -76,6 +78,7 @@ public class ScheduleOdyController {
 		return "ody/schedule/insertSchedule.gwTiles";
 	}
 	
+	// 일정등록시 카테고리 정보 보여주기
 	@ResponseBody
 	@RequestMapping(value="/t1/selectCategory.tw", produces="text/plain;charset=UTF-8")
 	public String getSmallCategory(HttpServletRequest request) {
@@ -107,10 +110,63 @@ public class ScheduleOdyController {
 		return jsArr.toString();
 	}
 	
+	
+	// 사원 명단 불러오기
+	@ResponseBody
+	@RequestMapping(value="/t1/insertSchedule/searchJoinEmpList.tw", produces="text/plain;charset=UTF-8")
+	public String searchJoinEmpList(HttpServletRequest request) {
+		
+		String joinEmp = request.getParameter("joinEmp");
+		
+		// 사원 명단 불러오기
+		List<MemberOdyVO> joinEmpList = service.searchJoinEmpList(joinEmp);
+
+		JSONArray jsArr = new JSONArray();
+		if(joinEmpList!=null) {
+			for(MemberOdyVO mvo : joinEmpList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("name", mvo.getName());
+				jsObj.put("employeeid", mvo.getEmployeeid());
+				
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+		
+	}
+
+	// 일정 등록하기
 	@RequestMapping(value="/t1/schedule/registerSchedule.tw", method = {RequestMethod.POST})
 	public ModelAndView registerSchedule(ModelAndView mav, HttpServletRequest request, ScheduleOdyVO svo) {
-
-		int n = service.registerSchedule(svo);
+		
+		
+		String startdate= request.getParameter("startdate");
+		String enddate = request.getParameter("enddate");
+		String subject = request.getParameter("subject");
+		String color = request.getParameter("color");
+		String place = request.getParameter("place");
+		String joinemployee = request.getParameter("joinemployee");
+		String content = request.getParameter("content");
+		String fk_scno = request.getParameter("fk_scno");
+		String fk_bcno= request.getParameter("fk_bcno");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		System.out.println(joinemployee);
+		
+		
+		Map<String,String> paraMap = new HashMap<String, String>();
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("subject", subject);
+		paraMap.put("color", color);
+		paraMap.put("joinemployee", joinemployee);
+		paraMap.put("place", place);
+		paraMap.put("content", content);
+		paraMap.put("fk_scno", fk_scno);
+		paraMap.put("fk_bcno",fk_bcno);
+		paraMap.put("fk_employeeid", fk_employeeid);
+		
+		int n = service.registerSchedule(paraMap);
 		
 		if(n == 0) {
 			mav.addObject("message", "일정 등록에 실패하였습니다.");

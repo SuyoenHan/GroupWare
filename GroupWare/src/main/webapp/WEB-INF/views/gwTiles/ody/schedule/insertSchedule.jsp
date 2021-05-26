@@ -14,11 +14,26 @@ th, td{
  	padding: 10px 5px;
 }
 
-
+#joinEmp:focus{
+	outline: none;
+	}
+	.calssArea{
+		float:left;
+		border: 2px solid rgb(20,20,50); 
+		background: rgba(20,20,50, 0.7); 
+		color:white;
+		border-radius: 1rem;
+		padding: 8px;
+		padding-top:2px;
+		padding-bottom: 2px;
+		margin: 5px;
+		transition: .8s;
+	}
 
 </style>
 
-
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script type="text/javascript">
 
 	$(document).ready(function(){
@@ -108,17 +123,67 @@ th, td{
 		
 		
 		
+		$("input#joinEmp").bind("keyup",function(){
+				var joinEmp = $(this).val();
+				console.log(joinEmp);
+				$.ajax({
+					url:"<%= ctxPath%>/t1/insertSchedule/searchJoinEmpList.tw",
+					data:{"joinEmp":joinEmp},
+					dataType:"json",
+					success : function(json){
+						var list = [];
+						console.log("수:"+json.length);
+						if(json.length > 0){
+								$.each(json,function(index,item){
+									var inputEmp = item.name;
+									if(!joinEmp.includes(inputEmp)){
+										list.push(inputEmp);
+									}
+								});
+							$("input#joinEmp").autocomplete({
+								source:list,
+								select: function(event, ui) {
+									addFun(ui.item.value);
+									return false;
+						        },
+						        focus: function(event, ui) {
+						            return false;
+						        }
+							});
+						}
+					}
+				});
+		});
 		
+	
+
+		$(document).on('click','.calssArea',function(){
+				var text = $(this).text();
+				if(confirm(text +" 사원을 정말로 삭제하시겠습니까?")){
+					$(this).fadeOut(400);
+					$(this).empty();
+					var joinEmp = "";
+					var array = joinEmp.split(",");
+					for ( var i in array ) {
+						if(array[i]==text){
+							array[i]="";
+						}else{
+							array[i]+=",";
+						}
+						joinEmp+=array[i];
+				      }
+					joinEmp=joinEmp.substr(0,joinEmp.length-1);
+					console.log(joinEmp);
+				}
+			});
+
+		
+		// 등록 버튼 클릭
 		$("button#register").click(function(){
 			
 		//	alert($("input#color").val());
 			var subject = $("input#subject").val().trim();
 			var calType = $("select.calType").val().trim();
-			
-		
-			
-			console.log("sdate"+sdate);
-			console.log("edate"+edate);
 			console.log($("select[name=scno]").val());
 			// 달력 유효성 검사
 			var startDate = $("input#startDate").val();	
@@ -134,7 +199,7 @@ th, td{
 	     		endDate+=eArr[i];
 	     	}
 			
-	     	alert(startDate);
+	   
 	     	var startHour= $("select#startHour").val();
 	     	var endHour = $("select#endHour").val();
 	     	var startMin= $("select#startMin").val();
@@ -171,15 +236,17 @@ th, td{
 				var sdate = startDate+$("select#startHour").val()+$("select#startMin").val()+"00";
 				var edate = endDate+$("select#endHour").val()+$("select#endMin").val()+"00";
 				
-				alert("시작일:"+sdate);
-				alert("종료일:"+edate);
-		
-				
 				$("input[name=startdate]").val(sdate);
 				$("input[name=enddate]").val(edate);
 				
+				var join = $("span.calssArea").text();
 				
-		
+				var jcomma=join.replace(/ /g,",");
+				alert(jcomma);
+				
+				jcomma=jcomma.substring(0,jcomma.length-1);
+				$("input[name=joinemployee]").val(jcomma);
+			
 				var frm = document.scheduleFrm;
 				frm.action="<%= ctxPath%>/t1/schedule/registerSchedule.tw";
 				frm.method="post";
@@ -189,6 +256,22 @@ th, td{
 		});
 		
 	}); // end of $(document).ready(function(){}----------------
+
+
+	function addFun(value){
+		var joinEmp = $("span.calssArea").text();
+		var $div = $("div.extraArea");
+		var $span = $("<span class='calssArea'>").text(value+" ");
+		if(joinEmp.includes(value)){
+			alert("이미 추가한 사원입니다.");
+		}
+		else{
+			joinEmp += value+",";
+			$div.append($span);
+		}
+		$("#joinEmp").val("");
+	}			
+
 </script>
 
 <h3>일정 등록</h3>
@@ -205,8 +288,8 @@ th, td{
 					<select id="endHour"></select> 시
 					<select id="endMin"></select> 분
 					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/><span>종일</span></label>
-					<input type="text" name="startdate"/>
-					<input type="text" name="enddate"/>
+					<input type="hidden" name="startdate"/>
+					<input type="hidden" name="enddate"/>
 				</td>
 			</tr>
 			<tr>
@@ -249,7 +332,9 @@ th, td{
 			
 			<tr>
 				<th>공유</th>
-				<td><input type="text" name="joinEmp"/></td>
+				<td>
+				<div class="extraArea"></div>
+				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/></td>
 			</tr>
 			<tr>
 				<th>내용</th>
