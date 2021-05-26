@@ -98,6 +98,17 @@ public class BoardControllerKdn {
 		mav.setViewName("kdn/generalboard.gwTiles");
 		
 		return mav;
+	}
+
+	@RequestMapping(value="/t1/mydocu_receive.tw")
+	public ModelAndView view_mydocureceive(ModelAndView mav) {
+		
+		// == 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기 == //
+		//boardList = service.boardListNoSearch();
+		
+		mav.setViewName("kdn/mydocu_receive.gwTiles");
+		
+		return mav;
 		
 	}
 	

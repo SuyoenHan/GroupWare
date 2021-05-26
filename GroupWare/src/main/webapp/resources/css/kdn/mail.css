@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-/* board.jsp 공지사항 게시판 목록 css */
+/* mail_inbox.jsp 받은메일함 페이지 css */
 
 @font-face {
     font-family: 'NEXON Lv2 Gothic';
@@ -26,5 +26,13 @@ body > table > thead > tr > th{
 	color: white;
 }
 
-/* mail_inbox.jsp 받은메일함 페이지 css */
+/* new_mail.jsp 메일쓰기 페이지 css */
 
+input, textarea {border: solid #ccc 1px;}
+
+#table {border-collapse: collapse;
+        width: 1024px;
+       }
+#table th, #table td{padding: 5px;}
+#table th{width: 120px;}
+#table td{width: 90%;}
