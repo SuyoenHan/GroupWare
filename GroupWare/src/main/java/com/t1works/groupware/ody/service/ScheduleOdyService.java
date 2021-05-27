@@ -61,6 +61,13 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 		int n=sdao.delSchedule(sdno);
 		return n;
 	}
+
+	// 일정 수정 완료
+	@Override
+	public int editEndSchedule(Map<String,String> paraMap) {
+		int n= sdao.editEndSchedule(paraMap);
+		return n;
+	}
 	
 	
 }

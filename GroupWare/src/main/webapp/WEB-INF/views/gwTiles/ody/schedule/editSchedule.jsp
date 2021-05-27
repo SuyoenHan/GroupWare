@@ -1,20 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<% String ctxPath = request.getContextPath(); %>    
+<% String ctxPath = request.getContextPath(); %>   
+
 <style type="text/css">
-
-table#schedule{
-	border: solid 1px #CCD1D1;
-	border-collapse: collapse;
-}
-
-th, td{
- 	border: solid 1px #CCD1D1;
- 	padding: 10px 5px;
- 	vertical-align: middle;
-}
-
 #joinEmp:focus{
 	outline: none;
 	}
@@ -40,10 +29,47 @@ overflow-y: auto;
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script type="text/javascript">
 
-	$(document).ready(function(){
+$(document).ready(function(){
+	
+	// 캘린더 소분류 카테고리 숨기기
+	$("select.scategory").hide();
+		// 시작시간
+		var str_s = $("span#startdate").text();
+		console.log(str_s);
+		var target = str_s.indexOf(":");
+		var smin= str_s.substring(target+1);
+		console.log(smin);
+		var shour = str_s.substring(target-2,target);
+		console.log(typeof(shour));
+		$("select#startHour").text(shour);
+		$("select#startMin").val(smin);
 		
-		$("select.scategory").hide();
-		// === *** 달력 관련 *** === //
+		// 종료시간
+		var str_e = $("span#enddate").text();
+		target = str_e.indexOf(":");
+		var emin= str_e.substring(target+1);
+		console.log(emin);
+		var ehour = str_e.substring(target-2,target);
+		console.log(ehour);
+		$("select#endHour").text(ehour);
+		$("select#endMin").val(emin);
+		
+		
+		if(shour=='00' && smin=='00' && ehour=='23' && emin=='55' ){
+			$("input#allday").prop("checked",true);
+		}
+		else{
+			$("input#allday").prop("checked",false);
+		}
+	
+		//시작 일시
+		target = str_s.indexOf(" ");
+		var start = str_s.substring(0,target);
+		$("input#startDate").val(start);
+		// 종료 일시
+		target = str_e.indexOf(" ");
+		var end = str_e.substring(0,target);
+		$("input#endDate").val(end);
 		
 		
 		// 시작시간, 종료시간		
@@ -94,7 +120,6 @@ overflow-y: auto;
 			}
 		});
 		
-		//
 		
 		// 캘린더 종류 선택
 		$("select.calType").change(function(){
@@ -121,11 +146,19 @@ overflow-y: auto;
 					}
 					
 				});
-			
-			
 		});
 		
-		
+		// 이미 저장되어있는 공유자
+		var sjoin = $("span#storedEmp").text();
+		if(sjoin!="공유자가 없습니다."){
+		var sjoinArr =sjoin.split(",");
+		var sjoinemp="";
+		for(var i=0;i<sjoinArr.length;i++){
+			sjoinemp=sjoinArr[i];
+			console.log(sjoinemp);
+			addJoinEmp(sjoinemp);
+		}
+		}
 		// 공유자 추가하기
 		$("input#joinEmp").bind("keyup",function(){
 				var joinEmp = $(this).val();
@@ -160,7 +193,7 @@ overflow-y: auto;
 		});
 		
 	
-
+		// 공유자 삭제하기
 		$(document).on('click','.plusEmp',function(){
 				var text = $(this).text();
 				if(confirm(text +"사원을 삭제하시겠습니까?")){
@@ -180,12 +213,14 @@ overflow-y: auto;
 					console.log(joinEmp);
 				}
 			});
-
 		
-		// 등록 버튼 클릭
-		$("button#register").click(function(){
+		// 
+		$("select[name=calType]").val(${svo.fk_bcno});
+		
+		
+		// 수정 버튼 클릭
+		$("button#edit").click(function(){
 			
-		//	alert($("input#color").val());
 			var subject = $("input#subject").val().trim();
 			var calType = $("select.calType").val().trim();
 			console.log($("select[name=scno]").val());
@@ -246,78 +281,84 @@ overflow-y: auto;
 				var join = $("span.plusEmp").text();
 				
 				var jcomma=join.replace(/ /g,",");
-		//		alert(jcomma);
+			//	alert(jcomma);
 				
 				jcomma=jcomma.substring(0,jcomma.length-1);
 				$("input[name=joinemployee]").val(jcomma);
 			
 				var frm = document.scheduleFrm;
-				frm.action="<%= ctxPath%>/t1/schedule/registerSchedule.tw";
+				frm.action="<%= ctxPath%>/t1/schedule/editEndSchedule.tw";
 				frm.method="post";
 				frm.submit();
 				
 			}
 		});
 		
-	}); // end of $(document).ready(function(){}----------------
+		
+		
+		
+		
+		
+		
+		
+}); // end of $(document).ready(function(){})----------
 
 
-	function addJoinEmp(value){
-		var joinEmp = $("span.plusEmp").text();
-		var $div = $("div.extraArea");
-		var $span = $("<span class='plusEmp'>").text(value+" ");
-		if(joinEmp.includes(value)){
-			alert("이미 추가한 사원입니다.");
-		}
-		else{
-			joinEmp += value+",";
-			$div.append($span);
-		}
-		$("#joinEmp").val("");
-	}			
+function addJoinEmp(value){
+	var joinEmp = $("span.plusEmp").text();
+	var $div = $("div.extraArea");
+	var $span = $("<span class='plusEmp'>").text(value+" ");
+	if(joinEmp.includes(value)){
+		alert("이미 추가한 사원입니다.");
+	}
+	else{
+		joinEmp += value+",";
+		$div.append($span);
+	}
+	$("#joinEmp").val("");
+}			
+
+
 
 </script>
 
-<h3>일정 등록</h3>
+<h3>일정 수정하기</h3>
 <div>
 	<form name="scheduleFrm">
-		<table id="schedule">
+		<table id="schedule" class="table  table-bordered">
 			<tr>
 				<th>일자</th>
 				<td>
-					<input type="date" id="startDate" value="${requestScope.chooseDate}"/>&nbsp; 
+					<input type="date" id="startDate" value=""/>&nbsp; 
 					<select id="startHour"></select> 시
 					<select id="startMin"></select> 분
-					- <input type="date" id="endDate" value="${requestScope.chooseDate}"/>&nbsp;
+					- <input type="date" id="endDate" value=""/>&nbsp;
 					<select id="endHour"></select> 시
 					<select id="endMin"></select> 분&nbsp;
 					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/>&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
+					<span id="startdate">${svo.startdate}</span>&nbsp;~&nbsp;<span id="enddate">${svo.enddate}</span>
 				</td>
 			</tr>
 			<tr>
 				<th>제목</th>
-				<td><input type="text" id="subject" name="subject"/></td>
+				<td><input type="text" id="subject" name="subject" value="${svo.subject}"/></td>
 			</tr>
 			
 			<tr>
 				<th>캘린더선택</th>
 				<td>
-				
-				
 					<select class="calType" name="fk_bcno">
-					<c:choose>
-						<c:when test="${loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
+						<c:if test="${sessionScope.loginuser.employeeid eq 'tw005' }">
 							<option value="">선택하세요</option>
 							<option value="1">내 캘린더</option>
 							<option value="2">전체 캘린더</option>
-						</c:when>
-						<c:otherwise>
+						</c:if>
+						<c:if test="${sessionScope.loginuser.employeeid ne 'tw005' }">
 							<option value="">선택하세요</option>
 							<option value="1">내 캘린더</option>
-						</c:otherwise >
-						</c:choose>
+						</c:if>
 					</select>
 			
 				
@@ -328,26 +369,28 @@ overflow-y: auto;
 			</tr>
 			<tr>
 				<th>색상</th>
-				<td><input type="color" id="color" name="color" value="#0071bd"/></td>
+				<td><input type="color" id="color" name="color" value="${svo.color}"/></td>
 			</tr>
 			<tr>
 				<th>장소</th>
-				<td><input type="text" name="place"/></td>
+				<td><input type="text" name="place" value="${svo.place}"/></td>
 			</tr>
 			
 			<tr>
 				<th>공유</th>
 				<td>
+				<span id="storedEmp" style="display: none;">${svo.joinemployee}</span>
 				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/>
 				<div class="extraArea"></div>
 				</td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><textarea rows="10" cols="100" style="width: 95%; height: 200px;" name="content" id="content"></textarea></td>
+				<td><textarea rows="10" cols="100" style="width: 95%; height: 200px;" name="content" id="content">${svo.content}</textarea></td>
 			</tr>
 		</table>
 		<input type="hidden" value="${sessionScope.loginuser.employeeid}" name="fk_employeeid"/>
+		<input type="text" value="${svo.sdno}" name="sdno"/>
 	</form>
-	<button type="button" id="register" class="btn">저장</button>
+	<button type="button" id="edit">수정</button>
 </div>

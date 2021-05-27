@@ -26,10 +26,38 @@ th {
 
 <script type="text/javascript">
 
+$(document).ready(function(){
+	
+	// 시작시간
+	var str_s = $("span#startdate").text();
+//	console.log(str_s);
+	var target = str_s.indexOf(":");
+	var smin= str_s.substring(target+1);
+//	console.log(smin);
+	var shour = str_s.substring(target-2,target);
+//	console.log(shour);
+	
+	// 종료시간
+	var str_e = $("span#enddate").text();
+	target = str_e.indexOf(":");
+	var emin= str_e.substring(target+1);
+	console.log(emin);
+	var ehour = str_e.substring(target-2,target);
+	console.log(ehour);
+	
+	if(shour=='00' && smin=='00' && ehour=='23' && emin=='55' ){
+		$("input#allday").prop("checked",true);
+	}
+	else{
+		$("input#allday").prop("checked",false);
+	}
+});
+
+
 
 // 일정 삭제하기
 function delSchedule(sdno){
-	
+
 	if(confirm("일정을 삭제하시겠습니까?")){
 		$.ajax({
 			url: "<%= ctxPath%>/t1/schedule/deleteSchedule.tw",
@@ -54,15 +82,15 @@ function delSchedule(sdno){
 
 </script>
 
-
-
+<div style="margin-left: 500px;">
 <h3 style="display: inline-block;">일정 상세보기</h3>&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
-<div>
+
 		<table id="schedule" class="table table-bordered">
 			<tr>
 				<th style="width: 160px; vertical-align: middle;" >일자</th>
 				<td>
-					<span>${svo.startdate}</span>&nbsp;~&nbsp;<span>${svo.enddate}</span>
+					<span id="startdate">${svo.startdate}</span>&nbsp;~&nbsp;<span id="enddate">${svo.enddate}</span>&nbsp;&nbsp;
+					<input type="checkbox" id="allday" disabled/>&nbsp;종일
 				</td>
 			</tr>
 			<tr>
@@ -73,10 +101,10 @@ function delSchedule(sdno){
 			<tr>
 				<th style="vertical-align: middle;">캘린더선택</th>
 				<td>
-				<c:if test="${svo.fk_bcno eq 2}">
+				<c:if test="${svo.fk_bcno eq '2'}">
 					전체 캘린더
 				</c:if>
-				<c:if test="${svo.fk_bcno eq 1}">
+				<c:if test="${svo.fk_bcno eq '1'}">
 					<!-- join한 값 가져와야함 -->
 					${svo.scvo.scname}
 				</c:if></td>
@@ -95,18 +123,20 @@ function delSchedule(sdno){
 				<td><textarea id="content" rows="10" cols="100" style="width: 95%; height: 200px;" readonly>${svo.content}</textarea></td>
 			</tr>
 		</table>
-
+	<input type="hidden" value="${sessionScope.loginuser.employeeid}" />
+	<input type="hidden" value="${svo.fk_bcno}" />
+	<c:set var="fk_employeeid" value="${requestScope.svo.fk_employeeid}" />
 	<c:set var="bcno" value="${svo.fk_bcno}"/>
 	<c:set var="employeeid" value="${sessionScope.loginuser.employeeid}"/>
-	<c:choose>
-		<c:when test="${bcno ==2 && employeeid=='tw005'}">
-			<button type="button" id="edit" class="btn" onclick="editSchedule('${svo.sdno}')">수정</button>
+
+		<c:if test="${bcno eq'2' && loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
+			<button type="button" id="edit" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule/editSchedule.tw?sdno=${svo.sdno}'">수정</button>
 			<button type="button" class="btn" onclick="delSchedule('${svo.sdno}')">삭제</button>
-		</c:when>
-		<c:when test="${bcno ==1}">
-			<button type="button" id="edit" class="btn" onclick="editSchedule('${svo.sdno}')">수정</button>
+		</c:if>
+		<c:if test="${bcno eq '1' && fk_employeeid eq employeeid}">
+			<button type="button" id="edit" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule/editSchedule.tw?sdno=${svo.sdno}'">수정</button>
 			<button type="button" class="btn" onclick="delSchedule('${svo.sdno}')">삭제</button>
-		</c:when>
-	</c:choose>
-	<button type="button" id="cancle" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule.tw'">취소</button>
+		</c:if>
+			<button type="button" id="cancel" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule.tw'">취소</button>
+		
 </div>
