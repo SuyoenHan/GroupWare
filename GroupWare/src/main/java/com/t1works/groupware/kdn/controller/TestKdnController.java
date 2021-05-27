@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class TestControllerKdn {
+public class TestKdnController {
 
 	@RequestMapping(value="/t1/sidenavbar_iframe.tw")
 	public ModelAndView show_sideNavBar(ModelAndView mav) {

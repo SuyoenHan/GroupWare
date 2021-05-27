@@ -21,11 +21,11 @@
 		<table id="right-menu-style">
 		   	<tbody>
 		   		<tr style="height: 30px;">
-		   			<td class="home"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/home.png"></td>
-		   			<td class="mypage"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/mypage.png"></td>
-		   			<td class="schedule"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/calendar.png"></td>
-		   			<td class="rsv"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/rsv.png"></td>
-		   			<td class="notice"><img class="top-menu-icon" src="<%=ctxPath%>/resources/images/topnavbar/notice.png"></td>
+		   			<td class="home"><i class="fas fa-home fa-2x"></i></td>
+		   			<td class="mypage"><i class="far fa-user-circle fa-2x"></i></td>
+		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
+		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
+		   			<td class="notice"><i class="fas fa-bullhorn fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
 				   	<input type="text"/>
