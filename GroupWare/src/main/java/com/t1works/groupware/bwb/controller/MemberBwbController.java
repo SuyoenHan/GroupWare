@@ -245,21 +245,48 @@ public class MemberBwbController {
 	@RequestMapping(value="/t1/registerOne.tw")
 	public String registerOne(HttpServletRequest request, MemberBwbVO mvo) {
 		
-		int n = service2.registerOne(mvo);
 		
 		String jubun1 = request.getParameter("jubun1");
 		String jubun2 = request.getParameter("jubun2");
 		
 		String jubun = jubun1+jubun2;
+		System.out.println(jubun);
 		
+		mvo.setJubun(jubun);
+		mvo.setPasswd(jubun1);
 		
+		String mobile1 = request.getParameter("mobile1");
+		String mobile2 = request.getParameter("mobile2");
+		String mobile3 = request.getParameter("mobile3");
+		
+		String mobile = mobile1+mobile2+mobile3;
+		mvo.setMobile(mobile);
+		System.out.println(mobile);
+		String cmobile1 = request.getParameter("cmobile1");
+		String cmobile2 = request.getParameter("cmobile2");
+		String cmobile3 = request.getParameter("cmobile3");
+		
+		String cmobile = cmobile1+cmobile2+cmobile3;
+		mvo.setCmobile(cmobile);
+		System.out.println(cmobile);
+		String dcode = request.getParameter("fk_dcode");
+		// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+		String managerid = service2.selectMangerid(dcode);
+		mvo.setManagerid(managerid);
+		System.out.println(managerid);
+
+		
+		int n = service2.registerOne(mvo);
+		System.out.println(n);
 		
 		JSONObject jsonObj = new JSONObject();
 		
 		jsonObj.put("n", n);
 			
 		return jsonObj.toString();
+		
 	}
+	
 	
 	
 	
