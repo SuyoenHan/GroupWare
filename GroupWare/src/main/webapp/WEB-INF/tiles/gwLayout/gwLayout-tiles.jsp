@@ -26,12 +26,16 @@
 <script src="<%=ctxPath%>/resources/js/kdn/header_sideinfo.js"></script>
 </head>
 <body>
-    <tiles:insertAttribute name="header" />     
-   	<tiles:insertAttribute name="sideinfo" />     
- 	<%-- (디자인은 gwStyle.css에 있음) --%>
-   <div id="gwContent">
-       <tiles:insertAttribute name="content" />
+<div id="body-container">
+   	<tiles:insertAttribute name="header" />
+	<div id="sideinfo-content-container">
+	   <tiles:insertAttribute name="content" />
+	   <div id="sideinfo">
+   		<tiles:insertAttribute name="sideinfo" />     
+	  </div>
+    </div>     
   </div>
+ 	<%-- (디자인은 gwStyle.css에 있음) --%>
 </body>
 </html>
   
