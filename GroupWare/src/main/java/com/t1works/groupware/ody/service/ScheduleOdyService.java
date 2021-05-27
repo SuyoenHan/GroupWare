@@ -47,6 +47,20 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 		List<MemberOdyVO> joinEmpList = sdao.searchJoinEmpList(joinEmp);
 		return joinEmpList;
 	}
+
+	// 일정 상세 보기
+	@Override
+	public ScheduleOdyVO getDetailSchedule(String sdno) {
+		ScheduleOdyVO svo = sdao.getDetailSchedule(sdno);
+		return svo;
+	}
+
+	// 일정 상세보기에서 삭제 클릭
+	@Override
+	public int delSchedule(String sdno) {
+		int n=sdao.delSchedule(sdno);
+		return n;
+	}
 	
 	
 }

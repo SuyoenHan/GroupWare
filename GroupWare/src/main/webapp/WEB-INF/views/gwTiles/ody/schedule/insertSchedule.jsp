@@ -12,23 +12,23 @@ table#schedule{
 th, td{
  	border: solid 1px #CCD1D1;
  	padding: 10px 5px;
+ 	vertical-align: middle;
 }
 
 #joinEmp:focus{
 	outline: none;
 	}
-	.calssArea{
-		float:left;
-		border: 2px solid rgb(20,20,50); 
-		background: rgba(20,20,50, 0.7); 
+.plusEmp{
+		float:left; 
+		background-color:#333333; 
 		color:white;
-		border-radius: 1rem;
+		border-radius: 10%;
 		padding: 8px;
-		padding-top:2px;
-		padding-bottom: 2px;
-		margin: 5px;
+		margin: 3px;
 		transition: .8s;
-	}
+		cursor: pointer;
+		margin-top: 6px;
+}
 
 </style>
 
@@ -157,20 +157,20 @@ th, td{
 		
 	
 
-		$(document).on('click','.calssArea',function(){
+		$(document).on('click','.plusEmp',function(){
 				var text = $(this).text();
-				if(confirm(text +" 사원을 정말로 삭제하시겠습니까?")){
-					$(this).fadeOut(400);
+				if(confirm(text +"사원을 삭제하시겠습니까?")){
+					$(this).fadeOut(200);
 					$(this).empty();
 					var joinEmp = "";
-					var array = joinEmp.split(",");
-					for ( var i in array ) {
-						if(array[i]==text){
-							array[i]="";
+					var jArr = joinEmp.split(",");
+					for ( var i;i<jArr.length;i++) {
+						if(jArr[i]==text){
+							jArr[i]="";
 						}else{
-							array[i]+=",";
+							jArr[i]+=",";
 						}
-						joinEmp+=array[i];
+						joinEmp+=jArr[i];
 				      }
 					joinEmp=joinEmp.substr(0,joinEmp.length-1);
 					console.log(joinEmp);
@@ -239,10 +239,10 @@ th, td{
 				$("input[name=startdate]").val(sdate);
 				$("input[name=enddate]").val(edate);
 				
-				var join = $("span.calssArea").text();
+				var join = $("span.plusEmp").text();
 				
 				var jcomma=join.replace(/ /g,",");
-				alert(jcomma);
+		//		alert(jcomma);
 				
 				jcomma=jcomma.substring(0,jcomma.length-1);
 				$("input[name=joinemployee]").val(jcomma);
@@ -259,9 +259,9 @@ th, td{
 
 
 	function addFun(value){
-		var joinEmp = $("span.calssArea").text();
+		var joinEmp = $("span.plusEmp").text();
 		var $div = $("div.extraArea");
-		var $span = $("<span class='calssArea'>").text(value+" ");
+		var $span = $("<span class='plusEmp'>").text(value+" ");
 		if(joinEmp.includes(value)){
 			alert("이미 추가한 사원입니다.");
 		}
@@ -286,8 +286,8 @@ th, td{
 					<select id="startMin"></select> 분
 					- <input type="date" id="endDate" value="${requestScope.chooseDate}"/>&nbsp;
 					<select id="endHour"></select> 시
-					<select id="endMin"></select> 분
-					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/><span>종일</span></label>
+					<select id="endMin"></select> 분&nbsp;
+					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/>&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
 				</td>
@@ -317,7 +317,6 @@ th, td{
 				
 				&nbsp;
 				<select class="scategory" name="fk_scno">
-				
 				</select>
 				</td>
 			</tr>
@@ -333,8 +332,9 @@ th, td{
 			<tr>
 				<th>공유</th>
 				<td>
+				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/>
 				<div class="extraArea"></div>
-				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/></td>
+				</td>
 			</tr>
 			<tr>
 				<th>내용</th>
