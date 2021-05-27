@@ -120,14 +120,6 @@ div#sidemenu > p:hover{
 
 /* 사이드바 세부 메뉴 */
 
-.submenu-hidden{
-	width: 0;
-}
-
-.submenu-show{
-	width: 200px;
-}
-
 span#closebtn-style{
 	display: block;
 	margin-right: 10px;

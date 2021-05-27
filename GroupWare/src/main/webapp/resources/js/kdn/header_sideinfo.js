@@ -20,8 +20,6 @@ $(document).ready(function(){
 	$("div#contentLeft").hide();	
 	
 	// 세부메뉴 보이기
-	var menuClicked = false;	
-	var contentWidth = $("div#gwContent").css('width');
 	$("p.menu-btn").click(function(){
 		$(this).css("border-left","solid 3px #0071bd");
 		$("p.menu-btn").not($(this)).css("border-left","solid 3px #333333");
@@ -39,6 +37,8 @@ $(document).ready(function(){
 	});
 	
 });
+
+// Function Declaration
 
 function showSubmenu(thismenu){
 	var submenuIndex = $("div#contentLeft").children().eq(thismenu).index();
