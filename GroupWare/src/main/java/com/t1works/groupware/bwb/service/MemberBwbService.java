@@ -1,23 +1,28 @@
 package com.t1works.groupware.bwb.service;
 
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.t1works.groupware.bwb.model.InterMemberBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.common.AES256;
 
 @Component
 @Service
 public class MemberBwbService implements InterMemberBwbService {
 	
-	@Resource
+   @Autowired
    private InterMemberBwbDAO dao;
 	
+   @Autowired
+   private AES256 aes;
+   
 	// 모든 직위가져오기
 	@Override
 	public List<MemberBwbVO> selectPositionList() {
@@ -67,8 +72,24 @@ public class MemberBwbService implements InterMemberBwbService {
 	@Override
 	public int registerOne(MemberBwbVO mvo) {
 		
+		// 주민번호 암호화 하기
+		try {
+			String jubun = aes.encrypt(mvo.getJubun());
+			mvo.setJubun(jubun);
+		} catch (UnsupportedEncodingException | GeneralSecurityException e) {
+			e.printStackTrace();
+		}
+
 		int n = dao.registerOne(mvo);
 		return n;
+	}
+	
+	// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+	@Override
+	public String selectMangerid(String dcode) {
+		
+		String managerid = dao.selectMangerid(dcode);
+		return managerid;
 	}
 	
 	

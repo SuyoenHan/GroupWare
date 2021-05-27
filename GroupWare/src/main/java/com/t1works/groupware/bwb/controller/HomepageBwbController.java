@@ -99,7 +99,7 @@ public class HomepageBwbController {
 		 paraMap.put("gooutdate", gooutdate);
 		 
 		 // 출퇴근테이블에 insert하기(퇴근시간)
-		 int n = service.updateOuttime(paraMap);
+		 service.updateOuttime(paraMap);
 
 		 // 출퇴근테이블에서 select하기(퇴근시간)
 		 String outtime = service.selectOuttime(paraMap);

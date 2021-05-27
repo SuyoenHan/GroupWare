@@ -138,6 +138,15 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		return n;
 	}
 	
+	
+	// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+	@Override
+	public String selectMangerid(String dcode) {
+		
+		String managerid = sqlsession.selectOne("memberBwb.selectMangerid", dcode);
+		return managerid;
+	}
+	
     
    
    
