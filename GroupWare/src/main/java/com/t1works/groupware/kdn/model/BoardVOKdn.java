@@ -3,7 +3,7 @@ package com.t1works.groupware.kdn.model;
 public class BoardVOKdn {
 
 	private String seq;          // 글번호 
-	   private String fk_userid;    // 사용자ID
+	   private String fk_employeeid;    // 사용자ID
 	   private String name;         // 글쓴이 
 	   private String subject;      // 글제목
 	   private String content;      // 글내용 
@@ -12,13 +12,16 @@ public class BoardVOKdn {
 	   private String regDate;      // 글쓴시간
 	   private String status;       // 글삭제여부   1:사용가능한 글,  0:삭제된글 
 	   
+	   
+	   private String fk_categnum;		// 카테고리번호 
+	   
 	   public BoardVOKdn() {}
 	   
-	   public BoardVOKdn(String seq, String fk_userid, String name, String subject, String content, String pw, String readCount,
-			String regDate, String status) {
+	   public BoardVOKdn(String seq, String fk_employeeid, String name, String subject, String content, String pw, String readCount,
+			String regDate, String status, String fk_categnum) {
 		super();
 		this.seq = seq;
-		this.fk_userid = fk_userid;
+		this.fk_employeeid = fk_employeeid;
 		this.name = name;
 		this.subject = subject;
 		this.content = content;
@@ -26,6 +29,7 @@ public class BoardVOKdn {
 		this.readCount = readCount;
 		this.regDate = regDate;
 		this.status = status;
+		this.fk_categnum = fk_categnum;
 	}
 
 	public String getSeq() {
@@ -36,12 +40,12 @@ public class BoardVOKdn {
 		this.seq = seq;
 	}
 
-	public String getFk_userid() {
-		return fk_userid;
+	public String getFk_employeeid() {
+		return fk_employeeid;
 	}
 
-	public void setFk_userid(String fk_userid) {
-		this.fk_userid = fk_userid;
+	public void setFk_employeeid(String fk_employeeid) {
+		this.fk_employeeid = fk_employeeid;
 	}
 
 	public String getName() {
@@ -99,5 +103,14 @@ public class BoardVOKdn {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getFk_categnum() {
+		return fk_categnum;
+	}
+
+	public void setFk_categnum(String fk_categnum) {
+		this.fk_categnum = fk_categnum;
+	}
+
 	
 }
