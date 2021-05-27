@@ -107,7 +107,6 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 
-	 $("div#submenu8").show();
 	
 	// 등록버튼 숨기기
 	$("button#btn_Reserve").hide(); 

@@ -222,6 +222,7 @@ public class ReservationOdyController {
 				jsonObj.put("rctime", rscvo.getRctime());
 				jsonObj.put("rdestination", rscvo.getRdestination());
 				jsonObj.put("rcpeople", rscvo.getRcpeople());
+				jsonObj.put("rcstatus", rscvo.getCstatus());
 				
 				jsonArr.put(jsonObj); // [{"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}] 
 			} // end of for-------------------

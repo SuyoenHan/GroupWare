@@ -59,5 +59,12 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 		return n;
 	}
 
+	// 일정 수정 완료
+	@Override
+	public int editEndSchedule(Map<String,String> paraMap) {
+		int n = sqlsession5.update("schedule_ody.editEndSchedule",paraMap);
+		return n;
+	}
+
 	
 }

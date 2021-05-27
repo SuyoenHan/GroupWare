@@ -27,4 +27,7 @@ public interface InterScheduleOdyService {
 	// 일정 상세보기에서 삭제 클릭
 	int delSchedule(String sdno);
 
+	// 일정 수정 완료
+	int editEndSchedule(Map<String,String> paraMap);
+
 }

@@ -105,7 +105,7 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 
-	$("div#submenu8").show();
+	
 	
 	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
 	
@@ -242,6 +242,7 @@ $(document).ready(function(){
 		var rcsubject=Array();
 		var rdestination=Array();
 		var rcpeople=Array();
+		var rcstatus=Array();
 		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
@@ -254,6 +255,7 @@ $(document).ready(function(){
 			rcsubject.push(item.rcsubject);
 			rdestination.push(item.rdestination);
 			rcpeople.push(item.rcpeople);
+			rcstatus.push(item.rcstatus);
 		});
 		
 	
@@ -323,7 +325,12 @@ $(document).ready(function(){
 						html += "<td></td></tr>";
 					} 
 					else {
-						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						if(rcstatus[index]==1){
+							html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}
+						else{
+							html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}					
 					}
 			} 
 			else {
