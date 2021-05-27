@@ -10,6 +10,12 @@
       where employeeid = #{employeeid} and passwd = #{passwd}
    </select>
 	
+   <select id="selectJubun" parameterType="String" resultType="String">
+   		select jubun
+   		from tbl_employee
+        where employeeid = #{employeeid}
+   </select>
+	
    <insert id="insertlogin_history">
 	  insert into login_history(loginno,fk_employeeid,loginip)
 	  values(seq_login_history_loginno.nextval,#{employeeid},#{loginip})
@@ -100,6 +106,24 @@
    		select managerid from tbl_department
    		where dcode = #{dcode}
    </select>
+   
+   <!-- 부서명가져오기 -->
+   <select id="selectdname" parameterType="String" resultType="String">
+   		select dname from tbl_department
+   		where dcode = #{dcode}
+   </select>
+   
+   <!-- 직위명 가져오기 -->
+   <select id="selectpname" parameterType="String" resultType="String">
+   		select pname from tbl_position
+   		where pcode = #{pcode}
+   </select>
+   
+   <!-- 비밀번호 변경하기 -->
+   <update id="updatePasswd" parameterType="HashMap">
+   		update tbl_employee set passwd = #{passwd}
+   		where employeeid = #{employeeid}
+   </update>
    
    
 </mapper>
