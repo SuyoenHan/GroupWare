@@ -77,6 +77,14 @@ public class TodoHsyDAO implements InterTodoHsyDAO {
 	} // end of public int goWorkDone(String fk_pNo) {----
 
 	
+	// 기간별로 완료한 업무 총건수 나눠서 표시
+	@Override
+	public Map<String, String> selectCntTodoByPeriod(String employeeid) {
+		Map<String,String> donePeriodMap=sqlsession2.selectOne("todoHsy.selectCntTodoByPeriod",employeeid);
+		return donePeriodMap;
+	} // end of public Map<String, String> selectCntTodoByPeriod(String employeeid) {-----
+
+	
 	
 
 	

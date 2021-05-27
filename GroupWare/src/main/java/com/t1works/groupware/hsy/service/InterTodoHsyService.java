@@ -22,7 +22,10 @@ public interface InterTodoHsyService {
 	// 진행중인 업무 상태변경(진행중 또는 보류)에 따라 update하기
 	int updateIngDetail(TodoHsyVO tvo);
 
-	// 진행중 업무에서 진행완료 업무로 업데이트하는 ajax 매핑 url
+	// 진행중 업무에서 진행완료 업무로 업데이트
 	int goWorkDone(String fk_pNo);
+
+	// 기간별로 완료한 업무 총건수 나눠서 표시
+	Map<String, String> selectCntTodoByPeriod(String employeeid);
 
 }
