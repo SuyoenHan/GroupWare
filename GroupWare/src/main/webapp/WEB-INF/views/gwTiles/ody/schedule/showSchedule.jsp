@@ -72,6 +72,8 @@ $(document).ready(function(){
 	          center: 'title',
 	          right: 'dayGridMonth,timeGridWeek,timeGridDay'
 	    },
+	    eventLimit:3,
+	    eventLimitText: "Something",
 		// db와 연동하는 법
 	    events:function(info, successCallback, failureCallback){
 	    	 $.ajax({
@@ -83,7 +85,7 @@ $(document).ready(function(){
                      if(json!=null){
                          
                              $.each(json, function(index, item) {
-            
+            						
                                     var startdate=moment(item.startdate).format('YYYY-MM-DD');
                                     var enddate=moment(item.enddate).format('YYYY-MM-DD');
                                     var penddate=moment(item.enddate).add(1, 'days').format('YYYY-MM-DD');
@@ -94,7 +96,7 @@ $(document).ready(function(){
                                                title: item.subject,
                                                start: startdate,
                                                end: enddate,
-                                         <%--  url: <%= ctxPath%>/detailSchedule.tw?seq="+item.sdno,--%>
+                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
                                                color: item.color                                                   
                                   }); // events.push
                                     }
@@ -103,7 +105,7 @@ $(document).ready(function(){
                                             title: item.subject,
                                             start: startdate,
                                             end: penddate,
-                                      <%--  url: <%= ctxPath%>/detailSchedule.tw?seq="+item.sdno,--%>
+                                     		url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
                                             color: item.color     
                                     	 });
                                     	}

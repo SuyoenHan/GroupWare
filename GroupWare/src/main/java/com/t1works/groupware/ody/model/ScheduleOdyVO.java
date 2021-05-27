@@ -13,7 +13,9 @@ public class ScheduleOdyVO {
 	private int fk_bcno;// 캘린더 대분류 번호
 	private String fk_employeeid; // 사번
 	
-	
+	private ScalCategoryOdyVO scvo;
+	private BcalCategoryVO bcvo;
+
 	public String getStartdate() {
 		return startdate;
 	}
@@ -79,5 +81,17 @@ public class ScheduleOdyVO {
 	}
 	public void setFk_bcno(int fk_bcno) {
 		this.fk_bcno = fk_bcno;
+	}
+	public ScalCategoryOdyVO getScvo() {
+		return scvo;
+	}
+	public void setScvo(ScalCategoryOdyVO scvo) {
+		this.scvo = scvo;
+	}
+	public BcalCategoryVO getBcvo() {
+		return bcvo;
+	}
+	public void setBcvo(BcalCategoryVO bcvo) {
+		this.bcvo = bcvo;
 	}
 }

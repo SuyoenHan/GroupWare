@@ -151,7 +151,7 @@ public class ScheduleOdyController {
 		String fk_scno = request.getParameter("fk_scno");
 		String fk_bcno= request.getParameter("fk_bcno");
 		String fk_employeeid= request.getParameter("fk_employeeid");
-		System.out.println(joinemployee);
+	//	System.out.println(joinemployee);
 		
 		
 		Map<String,String> paraMap = new HashMap<String, String>();
@@ -170,14 +170,52 @@ public class ScheduleOdyController {
 		
 		if(n == 0) {
 			mav.addObject("message", "일정 등록에 실패하였습니다.");
+			mav.addObject("loc", request.getContextPath()+"/t1/schedule.tw");
 		}
 		else {
 			mav.addObject("message", "일정 등록에 성공하였습니다.");
+			mav.addObject("loc", request.getContextPath()+"/t1/schedule.tw");
 		}
 		
-		mav.addObject("loc", request.getContextPath()+"/t1/schedule.tw");
-		mav.setViewName("ody/schedule/showSchedule.gwTiles");
+		
+		mav.setViewName("msg");
 		
 		return mav;
 	}
+	
+	// 일정상세보기
+	@RequestMapping(value="/t1/detailSchedule.tw")
+	public String getDetailSchedule(HttpServletRequest request) {
+		
+		String sdno = request.getParameter("sdno");
+		request.setAttribute("sdno", sdno);
+		
+		ScheduleOdyVO svo = service.getDetailSchedule(sdno);
+		
+		request.setAttribute("svo", svo);
+		
+		return "ody/schedule/detailSchedule.gwTiles";
+	}
+	
+	// 일정 상세보기에서 삭제 클릭
+	@ResponseBody
+	@RequestMapping(value="/t1/schedule/deleteSchedule.tw",method = {RequestMethod.POST})
+	public String delSchedule(HttpServletRequest request) {
+		
+		String sdno = request.getParameter("sdno");
+		
+		int n = 0;
+		
+		try {
+		 n = service.delSchedule(sdno);
+		}catch (Throwable e) {	
+		}
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n); // 정상이라면 {"n":1"} 오류가 발생하면 {"n":0}
+		return jsonObj.toString();
+	}
+	
+
+	
 }

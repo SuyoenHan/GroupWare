@@ -17,7 +17,7 @@
 	</insert>
 
 	<select id="getScheduleList" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO" parameterType="HashMap">
-		select sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_employeeid
+		select sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_employeeid,fk_bcno
 		from tbl_schedule
         where fk_employeeid=#{fk_employeeid} or fk_bcno=#{fk_bcno}		
 		order by sdno desc
@@ -28,4 +28,20 @@
 		from tbl_employee
 		where name like '%'||#{joinEmp}||'%'
 	</select>
+	
+	<select id="getDetailSchedule" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select sdno, to_char(startdate,'yyyy-mm-dd') as startdate,to_char(enddate,'yyyy-mm-dd') as enddate, subject, color
+		      , nvl(place,'-') as place, nvl(joinemployee,'공유자가 없습니다.') as joinemployee, nvl(content,'') as content, S.fk_scno
+              , S.fk_employeeid,S.fk_bcno, E.name,G.scname
+		from tbl_schedule S join tbl_employee E
+		on S.fk_employeeid = E.employeeid
+		join tbl_scal_category G
+		on S.fk_scno = G.scno
+		where sdno = #{sdno}
+	</select>
+	
+	<delete id="delSchedule" parameterType="String">
+		delete from tbl_schedule
+		where sdno=#{sdno}
+	</delete>
 </mapper>

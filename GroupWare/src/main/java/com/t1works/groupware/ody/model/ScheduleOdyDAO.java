@@ -45,5 +45,19 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 		return joinEmpList;
 	}
 
+	// 일정 상세 보기
+	@Override
+	public ScheduleOdyVO getDetailSchedule(String sdno) {
+		ScheduleOdyVO svo = sqlsession5.selectOne("schedule_ody.getDetailSchedule",sdno);
+		return svo;
+	}
+
+	// 일정 상세보기에서 삭제 클릭
+	@Override
+	public int delSchedule(String sdno) {
+		int n = sqlsession5.delete("schedule_ody.delSchedule",sdno);
+		return n;
+	}
+
 	
 }

@@ -21,4 +21,10 @@ public interface InterScheduleOdyService {
 	// 사원 명단 불러오기
 	List<MemberOdyVO> searchJoinEmpList(String joinEmp);
 
+	// 일정 상세 보기
+	ScheduleOdyVO getDetailSchedule(String sdno);
+
+	// 일정 상세보기에서 삭제 클릭
+	int delSchedule(String sdno);
+
 }
