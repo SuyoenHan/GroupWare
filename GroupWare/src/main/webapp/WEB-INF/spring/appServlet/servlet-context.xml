@@ -134,8 +134,14 @@
     
    <aop:config proxy-target-class="true">
      <aop:pointcut id="controllerOperation" expression="execution(public * com.spring..*Controller.*(..))" />
-    </aop:config>
+   </aop:config>
    
+   	<!-- === #44. 양방향 암호화 알고리즘인 AES256 를 사용하여 복호화 하기 위한 클래스(파라미터가 있는 생성자) 의존객체 bean 생성하기 === --> 
+    <beans:bean id="aes" class="com.t1works.groupware.common.AES256">
+       <beans:constructor-arg>
+          <beans:value>abcd0070#cclass$</beans:value> <!-- abcd0070#cclass$ 은 각자 com.t1works.groupware.common.SecretMyKey 에 사용되던 암호화/복호화 키 이다. -->   
+       </beans:constructor-arg>
+    </beans:bean>
    
    
 </beans:beans>

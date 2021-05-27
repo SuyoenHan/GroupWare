@@ -164,7 +164,6 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		$("div#submenu7").show();
 		
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();

@@ -25,6 +25,9 @@ public interface InterMemberBwbService {
 	// 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
 	int registerOne(MemberBwbVO mvo);
 	
+	// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+	String selectMangerid(String dcode);
+	
 	
 
 }
