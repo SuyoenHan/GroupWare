@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	// 상단메뉴
+	// == 상단메뉴 ==
 	$("td.home").click(function(){
 		location.href="home.tw";
 	});
@@ -16,9 +16,10 @@ $(document).ready(function(){
 		location.href="travelschedule.tw";
 	});
 	
-	// 사이드바 
+	// == 사이드바 == 
 	$("div#contentLeft").hide();	
 	
+	// 세부메뉴 보이기
 	var menuClicked = false;	
 	var contentWidth = $("div#gwContent").css('width');
 	$("p.menu-btn").click(function(){
@@ -26,14 +27,9 @@ $(document).ready(function(){
 		$("p.menu-btn").not($(this)).css("border-left","solid 3px #333333");
 		showSubmenu($(this).index());
 		$("div#sideinfo-content-container").addClass('content-open-style');
-		
-		/*
-		contentWidth = $("div#sideinfo-content-container").css('width', '118.5em');
-		contentMarginLeft = $("div#sideinfo-content-container").css('margin-left', '265px');
-		$("div#sideinfo-content-container").css('width',contentWidth);
-		$("div#sideinfo-content-container").css('margin-left',contentMarginLeft); */
 	});
 	
+	// 세부메뉴 닫기
 	$("i.closebtn").click(function(){
 		$("p.menu-btn").css("border-left","solid 3px #333333");
 		$("div#contentLeft").animate({
@@ -41,10 +37,6 @@ $(document).ready(function(){
 	    }, 100, "linear");
 		$("div#sideinfo-content-container").removeClass('content-open-style');
 	});
-	
-	// content
-	if(menuClicked){
-	}	
 	
 });
 
@@ -56,7 +48,4 @@ function showSubmenu(thismenu){
 	$("div#contentLeft").children().hide();
 	$("div#contentLeft").children().eq(submenuIndex).show();
 }
-
-// content
-
 
