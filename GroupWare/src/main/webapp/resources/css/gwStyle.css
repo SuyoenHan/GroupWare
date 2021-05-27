@@ -1,17 +1,20 @@
 @charset "UTF-8";
 
-body{ height: 100%; }
-
-div#gwContent{
-	margin: 0 auto;
+div#sideinfo-content-container{
 	height: 100%;
-	width: 100%;
-	border: solid 1px red;
+	width: 132.5em;
+	/* border: solid 1px red; */
 	position: relative;
 	top: 70px;
-	left: 65px;
+	margin-left: 65px;
+	transition: 0.1s;
 }
 
+.content-open-style{
+	width: 118.5em!important;
+	margin-left: 265px!important;
+	transition: 0.1s;
+}
 
 /* 상단 메인메뉴 */
 
