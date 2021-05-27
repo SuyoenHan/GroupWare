@@ -165,13 +165,22 @@ $(document).ready(function(){
 	
 	function goSearch(){
 		// 페이지 로딩 시 해당하는 내역 전체 보여주기		
+		var checkArr = new Array();	
+		$("input[name=ncat]:checked").each(function(index,item){			
+			var ncat = $(item).val();
+			checkArr.push(ncat);			
+		});
+		// console.log(checkArr);
 		
-		$.ajax({
+		var checkArres = checkArr.join();
+		
+		$.ajax({			
 			url:"<%= ctxPath%>/t1/norm_reclist.tw",
 			data:{"anocode":"${requestScope.approvalvo.anocode}"
 				, "astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
+				, "ncat": checkArres
 				, "sort":$("select#sort").val()
 				, "searchWord":$("input#searchWord").val()},
 			dataType:"json",

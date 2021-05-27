@@ -97,6 +97,7 @@ public class MyDocumentSiaController {
 		String astatus = request.getParameter("astatus");
 		String fromDate = request.getParameter("fromDate");
 		String toDate = request.getParameter("toDate");
+		String ncat = request.getParameter("ncat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		
@@ -115,15 +116,36 @@ public class MyDocumentSiaController {
 		
 		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
 			searchWord = "";
-		}		
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}				
+			}			
+		}
+		
 				
 		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("anocode", anocode);
+		paraMap.put("anocode", anocode);  
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
 		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
 		
 		List<ApprovalSiaVO> approvalvo = service.getnorm_reclist(paraMap);
 		

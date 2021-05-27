@@ -18,6 +18,9 @@
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
 		</if>
+		<if test='a != ""'>
+			and ncat in(${a})
+		</if>
 		order by asdate desc
 	</select>
 </mapper>
