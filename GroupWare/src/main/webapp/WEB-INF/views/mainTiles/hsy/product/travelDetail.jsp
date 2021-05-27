@@ -297,6 +297,7 @@
 		var clientname= $("input[name=clientname]").val().trim();
 		var cnumber= $("input[name=cnumber]").val().trim();
 		var pName= '${pvo.pName}';
+		var $frm= document.reserveInfo
 		
 		$.ajax({
 			url:"<%=ctxPath%>/t1/insertUpdateClientAjax.tw",
@@ -308,7 +309,8 @@
 				
 					alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
 					      "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
-					location.href="<%=request.getContextPath()%>/t1/myreserve.tw";	
+					$frm.submit();
+					
 				}
 				else{ // 트랜잭션처리 실패한 경우
 					alert("시스템 오류로 예약에 실패했습니다. 관리자에게 문의바랍니다.");
@@ -363,7 +365,7 @@
 	</div>
 	
 	<div id="reserveInfo">
-		<form name="reserveInfo">
+		<form name="reserveInfo" method="post" action="<%=request.getContextPath()%>/t1/myreserve.tw">
 			<ul>
 				<li>
 					<label>예약상품명</label>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="todoHsy">
+	
+	<!-- 특정유저의 특정업무상태에 해당하는 총 페이지 수 알아오기 -->
+	<select id="selectTotalPage" parameterType="HashMap" resultType="Integer">
+		select ceil(count(*)/#{sizePerPage}) as cnt 
+		from tbl_todo where fk_employeeid=#{employeeid} 
+		<if test='requiredState=="0"'>
+		and startDate is null  <!-- 신규등록업무  -->
+		</if>
+		<if test='requiredState=="1"'>
+			and startDate is not null and endDate is null <!-- 진행중업무  -->
+		</if>
+		<if test='requiredState=="2"'>
+			and startDate is not null and endDate is not null <!-- 진행완료업무  -->
+		</if>
+	</select>
+	
+	<!-- 업무관리페이지에서 보여줄 정보 (페이징처리)  -->
+	<select id="employeeTodoList" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.TodoHsyVO">
+		
+		select rno, fk_pNo, pName, name, assignDate, startDate, dueDate, endDate, hurryno, nowNo, maxNo, miniNo, ingDetail  
+		from
+		(
+			select row_number() over(order by hurryno desc, dueDate) as rno, fk_pNo, pName, name, to_char(assignDate,'yyyy-mm-dd') as assignDate, 
+			       to_char(T.startDate,'yyyy-mm-dd') as startDate, to_char(dueDate,'yyyy-mm-dd') as dueDate, to_char(T.endDate,'yyyy-mm-dd') as endDate,
+			       hurryno, nowNo, maxNo, miniNo, ingDetail
+			from tbl_todo T
+			join tbl_product on fk_pno=pno
+			join tbl_employee on fk_managerid=employeeid
+			where fk_employeeid=#{employeeid} 
+			<if test='requiredState=="0"'>
+				and T.startDate is null <!-- 신규등록업무  -->
+			</if>
+			<if test='requiredState=="1"'>
+				and T.startDate is not null and T.endDate is null <!-- 진행중업무  -->
+			</if>
+			<if test='requiredState=="2"'>
+				and T.startDate is not null and T.endDate is not null <!-- 진행완료업무  -->
+			</if>
+		) V
+		where rno between #{start} and #{end}
+		order by rno
+	</select>
+
+	<!-- 신규등록업무, 진행중업무, 진행완료업무 총 건수 가져오기 resultType 정의  -->
+	<resultMap type="HashMap" id="cntMap">
+		<result property="newTodoCnt" column="newTodoCnt" javaType="String"/>
+		<result property="ingTodoCnt" column="ingTodoCnt" javaType="String"/>
+		<result property="doneTodoCnt" column="doneTodoCnt" javaType="String"/>
+	</resultMap>
+
+	<!-- 신규등록업무, 진행중업무, 진행완료업무 총 건수 가져오기  -->
+	<select id="selectCntTodoByrequiredState" parameterType="String" resultMap="cntMap">
+		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid} and startDate is null) as newTodoCnt,
+			   (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid} and startDate is not null and endDate is null) as ingTodoCnt,
+			   (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid} and startDate is not null and endDate is not null) as doneTodoCnt
+		from dual
+	</select>
+	
+	<!-- 신규등록업무에서 진행중업무로 업데이트 -->
+	<update id="goWorkStart" parameterType="String">
+		update tbl_todo set startDate=sysdate, ingDetail='0'
+		where fk_pNo= #{fk_pNo}
+	</update>
+	
+	<!-- 지연상태인 모든 업무들 지연일자 update 해주기 -->
+	<update id="updateDelayDay">
+		update tbl_todo set ingDetail= to_date(to_char(sysdate,'yyyy/mm/dd'),'yyyy/mm/dd')-to_date(to_char(duedate,'yyyy/mm/dd'),'yyyy/mm/dd')
+		where fk_pno in ( select fk_pNo
+						  from tbl_todo
+						  where to_date(to_char(sysdate,'yyyy/mm/dd'),'yyyy/mm/dd')-to_date(to_char(duedate,'yyyy/mm/dd'),'yyyy/mm/dd') > 0 )
+	</update>
+	
+	<!-- 진행중인 업무 상태변경(진행중 또는 보류)에 따라 update하기 -->
+	<update id="updateIngDetail" parameterType="com.t1works.groupware.hsy.model.TodoHsyVO">
+		update tbl_todo set ingDetail=#{ingDetail}
+		where fk_pNo=#{fk_pNo}
+	</update>
+	
+	<!-- 신규등록업무에서 진행중업무로 업데이트 -->
+	<update id="goWorkDone" parameterType="String">
+		update tbl_todo set endDate=sysdate, ingDetail=null
+		where fk_pNo= #{fk_pNo}
+	</update>
+	
+</mapper>
