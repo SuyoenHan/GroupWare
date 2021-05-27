@@ -9,17 +9,14 @@
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style type="text/css">
 
-table{
-	border-collapse: collapse;
-}
-
-th, td{
-	border: solid 1px #CCD1D1;
+table#rsgoods th, td{
 	text-align: center;
-	height: 40px;
 	vertical-align: middle;
 }
 
+div#rsGoodsContainer{
+	margin-left: 80px;
+}
 /* 달력 css */
 div#calendarWrapper{
 	float: left;
@@ -80,9 +77,7 @@ button#btn_show{
 
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 var curDate = new Date();
@@ -106,13 +101,9 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 
 $(document).ready(function(){
-
 	
 	// 등록버튼 숨기기
 	$("button#btn_Reserve").hide(); 
-	
-	// 모달창 숨기기
-	$("div#myModal").modal('hide');
 	
 	var gno="";
 	var chgdate="";
@@ -192,8 +183,8 @@ $(document).ready(function(){
     
         // 모달창에서 예약 버튼 클릭
     	$("button#realReserve").click(function(event){
-    		 event.stopPropagation();
-             event.preventDefault();
+    	//	 event.stopPropagation();
+        //   event.preventDefault();
              
              var purpose = $("input#purpose").val().trim();
              
@@ -230,6 +221,7 @@ $(document).ready(function(){
 		var fk_employeeid=Array();
 		var rgsubject=Array();
 		var rgdepartment=Array();
+		var gstatus=Array();
 		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
@@ -241,6 +233,7 @@ $(document).ready(function(){
 			fk_employeeid.push(item.fk_employeeid);
 			rgsubject.push(item.rgsubject);
 			rgdepartment.push(item.rgdepartment);
+			gstatus.push(item.gstatus);
 		});
 		
 		for(var i=0;i<24;i++){ // 시간 정보 입력
@@ -293,25 +286,44 @@ $(document).ready(function(){
 
 			if( index > -1){
 
-				html += "<tr><td><label id='id_time' class="+clickEvent+" ><font color='"+fontType+"'>"+timeText(rgtime[index])+"</label></span></td>";
-				html += "<td>"+rgdepartment[index]+"</td>";
-				html += "<td>"+name[index]+"</td>";
-				html += "<td align='left'>"+rgsubject[index]+"</td>";
+				html += "<tr><td style='vertical-align: middle;'><label id='id_time' class="+clickEvent+" ><font color='"+fontType+"'>"+timeText(rgtime[index])+"</label></span></td>";
+				html += "<td style='vertical-align: middle;'>"+rgdepartment[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+name[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+rgsubject[index]+"</td>";
 				
 			
 				
 				if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
-					} 
-					else {
-						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+				} 
+				else {
+					   if(parseInt(curTime)>parseInt(chgdate)){
+							if(gstatus[index]=='1'){
+								html += "<td><button id='btn_return' class='btn' onclick='returnGoods("+rsgno[index]+")';>반납</button></td></tr>";
+							}
+							else{
+								html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+							}
+						}
+						else if(parseInt(curTime)==parseInt(chgdate)){
+							if(gstatus[index]=='1' && i<=curHour){
+								html += "<td><button id='btn_return' class='btn'  onclick='returnGoods("+rsgno[index]+")';>반납</button></td></tr>";
+							}
+							else{
+								html += "<td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+							}	
+						}
+						else{
+							html += "<td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+						}
+						
 					}
-			} 
-			else {
-
-				html += "<tr><td>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
-				html += "<td></td><td></td><td></td><td></td><tr>";
-			}
+				} 
+				else {
+	
+					html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
+					html += "<td></td><td></td><td></td><td></td><tr>";
+				}
 
 			$("tbody#rstimeList").append(html);
 		}// end of for----
@@ -334,7 +346,6 @@ $(document).ready(function(){
 		}
 		
 		ntime= parseInt(val)+1;
-		console.log((typeof(ntime)));
 		sntime= ntime.toString();
 		
 		if(ntime<10){
@@ -420,22 +431,37 @@ $(document).ready(function(){
 		});
 	}
 	
-	
+	function returnGoods(rsgno){
+		$.ajax({
+			url: "<%= ctxPath%>/t1/rsGoods/returnReserveGoods.tw",
+			type: "post",
+			data: {"rsgno":rsgno},
+			dataType: "json",
+			success:function(json){
+				alert("물품을 반납하였습니다.");
+     		 	location.href="javascript:history.go(0);"; 
+			}
+			, error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+  	      }
+		});
+	 }
 	
 </script>
 
+<div class="rsGoodsContainer" style="margin-left: 80px;"> 
 	<h3 style="margin-top: 20px !important;">사무용품 대여신청</h3>
 	
 	<div id="calendarWrapper">
-		<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px;" ></div>
+		<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px; margin-left: 200px;" ></div>
 	</div>
 	
   
 	<div class="room" >
-		<table style="width: 90%; margin-top: 200px;">
+		<table style="width: 90%; margin-top: 200px;" class="table table-bordered">
             <tr><td colspan="2">사무용품 목록</td></tr>
             	<c:if test="${empty requestScope.goodsList}">
-	            		<tr><td colspan="2">회의실이 존재하지 않습니다.</td></tr>
+	            		<tr><td colspan="2">사무용품이 존재하지 않습니다.</td></tr>
 	            </c:if>
 	            <c:if test="${not empty requestScope.goodsList}">
 		        	<c:forEach var="goodsvo" items="${requestScope.goodsList}">
@@ -450,8 +476,8 @@ $(document).ready(function(){
 	</div>
 
 	
-	<div class="middle" style="width: 80%;">
-		<table  style="width: 92%; ">
+	<div class="middle">
+		<table  style="width: 92%; " id="rsgoods" class="table table-bordered" >
 			<colgroup>
 				<col width="20%">
 				<col width="20%">
@@ -485,24 +511,20 @@ $(document).ready(function(){
 		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
 	</div>
 
+</div>
 
 
-
-<!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+ <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-      
-        <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">신청등록</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">신청등록</h4>
         </div>
-        
-        <!-- Modal body -->
         <div class="modal-body">
          	<form name="reserveGoods">
-         	<table style="width: 100%;">
+         	<table style="width: 100%;" class="table table-bordered">
          			<tr>
          				<td style="text-align: left; ">신청 사무용품</td>
          				<td id="goodsname" style="text-align: left; padding-left: 5px;"></td>
@@ -532,7 +554,7 @@ $(document).ready(function(){
         <!-- Modal footer -->
         <div class="modal-footer">
         	<button type="button" id="realReserve" class="btn btn-secondary" data-dismiss="modal">예약</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
         </div>
         
       </div>

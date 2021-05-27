@@ -321,9 +321,9 @@ function addJoinEmp(value){
 
 
 </script>
-
+<div style="margin-left: 80px;">
 <h3>일정 수정하기</h3>
-<div>
+
 	<form name="scheduleFrm">
 		<table id="schedule" class="table  table-bordered">
 			<tr>
@@ -338,7 +338,7 @@ function addJoinEmp(value){
 					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/>&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
-					<span id="startdate">${svo.startdate}</span>&nbsp;~&nbsp;<span id="enddate">${svo.enddate}</span>
+					<div style="display: none;"><span id="startdate">${svo.startdate}</span><span id="enddate">${svo.enddate}</span></div>
 				</td>
 			</tr>
 			<tr>
@@ -390,7 +390,7 @@ function addJoinEmp(value){
 			</tr>
 		</table>
 		<input type="hidden" value="${sessionScope.loginuser.employeeid}" name="fk_employeeid"/>
-		<input type="text" value="${svo.sdno}" name="sdno"/>
+		<input type="hidden" value="${svo.sdno}" name="sdno"/>
 	</form>
-	<button type="button" id="edit">수정</button>
+	<button type="button" class="btn" id="edit">수정</button>
 </div>

@@ -108,6 +108,20 @@ public class ReservationOdyDAO implements InterReservationOdyDAO {
 		return n;
 	}
 
+	// 사무용품 반납하기
+	@Override
+	public int returnReserveGoods(String rsgno) {
+		int n = sqlsession5.update("reservation_ody.returnReserveGoods",rsgno);
+		return n;
+	}
+
+	// 차량 반납하기
+	@Override
+	public int returnReserveCar(String rscno) {
+		int n = sqlsession5.update("reservation_ody.returnReserveCar",rscno);
+		return n;
+	}
+
 
 	
 }
