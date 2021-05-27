@@ -484,7 +484,7 @@
       </div>
   	  </div>
   	  
-  	  <div id="oneInfo" style="clear:both; margin-bottom:50px;">
+  	  <div id="oneInfo" style="clear:both; margin-bottom:100px;">
       		<table id="oneInfo">
       			<tbody>
 	      			<tr> 
@@ -514,7 +514,7 @@
       		</table>
       </div>
       	<form name="goUpdate">
-      	<div id="oneInfoUpdate" style="margin-bottom:100px;">		
+      	<div id="oneInfoUpdate" style="margin-bottom:150px;">		
       		<table id="oneInfoUpdate" style="margin-top:50px;">
       			<tbody>
 	      			<tr> 

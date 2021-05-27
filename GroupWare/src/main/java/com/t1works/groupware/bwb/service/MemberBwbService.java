@@ -13,6 +13,7 @@ import com.t1works.groupware.bwb.model.InterMemberBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.common.AES256;
 
+
 @Component
 @Service
 public class MemberBwbService implements InterMemberBwbService {
@@ -91,7 +92,32 @@ public class MemberBwbService implements InterMemberBwbService {
 		String managerid = dao.selectMangerid(dcode);
 		return managerid;
 	}
-	
-	
+
+	// 부서명 가져오기
+	@Override
+	public String selectdname(String dcode) {
+		
+		String dname = dao.selectdname(dcode);
+		return dname;
+	}
+
+	// 직위 가져오기
+	@Override
+	public String selectpname(String pcode) {
+		
+		String pname = dao.selectpname(pcode);
+		return pname;
+	}
+
+
+	// 비밀번호 변경하기
+	@Override
+	public int updatePasswd(Map<String, String> paraMap) {
+        
+		int n = dao.updatePasswd(paraMap);
+		
+		return n;
+	}
+		
 
 }

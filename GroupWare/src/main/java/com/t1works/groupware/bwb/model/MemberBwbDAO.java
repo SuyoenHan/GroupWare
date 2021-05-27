@@ -146,6 +146,40 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		String managerid = sqlsession.selectOne("memberBwb.selectMangerid", dcode);
 		return managerid;
 	}
+
+	// 부서명가져오기
+	@Override
+	public String selectdname(String dcode) {
+		
+		String dname = sqlsession.selectOne("memberBwb.selectdname", dcode);
+		return dname;
+		
+	}
+
+	// 직위가져오기
+	@Override
+	public String selectpname(String pcode) {
+		
+		String pname = sqlsession.selectOne("memberBwb.selectpname", pcode);
+		return pname;
+	}
+
+	
+	// 비밀번호 변경하기
+	@Override
+	public int updatePasswd(Map<String, String> paraMap) {
+		
+		int n = sqlsession.update("memberBwb.updatePasswd", paraMap);
+		return n;
+	}
+
+	// employeeid를 가지고 주민번호 가져오기
+	@Override
+	public String selectJubun(String string) {
+		
+		String jubun = sqlsession.selectOne("memberBwb.selectJubun", string);
+		return jubun;
+	}
 	
     
    
