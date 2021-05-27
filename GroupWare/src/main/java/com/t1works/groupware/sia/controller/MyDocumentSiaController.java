@@ -1,6 +1,8 @@
 package com.t1works.groupware.sia.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
@@ -93,8 +94,38 @@ public class MyDocumentSiaController {
 	public String norm_reclist(HttpServletRequest request) {
 		
 		String anocode = request.getParameter("anocode");
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
 		
-		List<ApprovalSiaVO> approvalvo = service.getnorm_reclist(anocode);
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}		
+		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}		
+				
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("anocode", anocode);
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		
+		List<ApprovalSiaVO> approvalvo = service.getnorm_reclist(paraMap);
 		
 		JSONArray jsonArr = new JSONArray();
 		
@@ -103,8 +134,9 @@ public class MyDocumentSiaController {
 				JSONObject jsonObj = new JSONObject();			
 				jsonObj.put("atitle", appvo.getAtitle());
 				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("ncatname", appvo.getNcatname());
 				jsonObj.put("astatus", appvo.getAstatus());
-				jsonObj.put("asdate", appvo.getAsdate());
+				jsonObj.put("asdate", appvo.getAsdate());				
 				
 				jsonArr.put(jsonObj);
 			}			

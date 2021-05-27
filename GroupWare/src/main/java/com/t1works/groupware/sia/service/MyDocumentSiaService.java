@@ -1,6 +1,7 @@
 package com.t1works.groupware.sia.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,8 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	
 	// 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기
 	@Override
-	public List<ApprovalSiaVO> getnorm_reclist(String anocode) {
-		List<ApprovalSiaVO> norm_reclist = dao.getnorm_reclist(anocode);
+	public List<ApprovalSiaVO> getnorm_reclist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> norm_reclist = dao.getnorm_reclist(paraMap);
 		return norm_reclist;
 	}
 

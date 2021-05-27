@@ -13,7 +13,9 @@ public class ApprovalSiaVO {
 	private String afile;			// 첨부파일
 	private String apaper;			// 문서상태 (0:수신, 1:발신, 2:임시보관)
 	
-	private NorapprovalSiaVO norapp;	
+	private String ncat;		// 일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
+	private int fk_ano;			// 문서번호
+	private String ncatname;	// 일반결재카테고리명 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
 	
 
 	public int getAno() {
@@ -94,14 +96,30 @@ public class ApprovalSiaVO {
 	
 	public void setApaper(String apaper) {
 		this.apaper = apaper;
-	}	
-
-	public NorapprovalSiaVO getNorapp() {
-		return norapp;
 	}
 
-	public void setNorapp(NorapprovalSiaVO norapp) {
-		this.norapp = norapp;
+	public String getNcat() {
+		return ncat;
+	}
+
+	public void setNcat(String ncat) {
+		this.ncat = ncat;
+	}
+
+	public int getFk_ano() {
+		return fk_ano;
+	}
+
+	public void setFk_ano(int fk_ano) {
+		this.fk_ano = fk_ano;
+	}
+
+	public String getNcatname() {
+		return ncatname;
+	}
+
+	public void setNcatname(String ncatname) {
+		this.ncatname = ncatname;
 	}
 
 }

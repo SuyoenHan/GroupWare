@@ -1,6 +1,7 @@
 package com.t1works.groupware.sia.model;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -17,8 +18,8 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 	
 	// 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기
 	@Override
-	public List<ApprovalSiaVO> getnorm_reclist(String anocode) {
-		List<ApprovalSiaVO> reclist = sqlsession4.selectList("mydocument_sia.getnorm_reclist", anocode);
+	public List<ApprovalSiaVO> getnorm_reclist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> reclist = sqlsession4.selectList("mydocument_sia.getnorm_reclist", paraMap);
 		return reclist;
 	}
 
