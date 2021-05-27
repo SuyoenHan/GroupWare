@@ -16,13 +16,10 @@ a:hover {
     text-decoration: none;
 	font-weight: bold;
 }
-th {
+table#schedule th {
 	vertical-align: middle;
 }
 </style>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 
@@ -82,7 +79,7 @@ function delSchedule(sdno){
 
 </script>
 
-<div style="margin-left: 500px;">
+<div style="margin-left: 80px;">
 <h3 style="display: inline-block;">일정 상세보기</h3>&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
 
 		<table id="schedule" class="table table-bordered">

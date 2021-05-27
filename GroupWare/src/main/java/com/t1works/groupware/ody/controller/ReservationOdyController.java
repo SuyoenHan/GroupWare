@@ -173,7 +173,7 @@ public class ReservationOdyController {
 				jsonObj.put("rgdate", rsgvo.getRgdate());
 				jsonObj.put("rgtime", rsgvo.getRgtime());
 				jsonObj.put("rgdepartment", rsgvo.getRgdepartment());
-				
+				jsonObj.put("gstatus", rsgvo.getGstatus());
 				
 				jsonArr.put(jsonObj); // [{"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}] 
 			} // end of for-------------------
@@ -222,7 +222,7 @@ public class ReservationOdyController {
 				jsonObj.put("rctime", rscvo.getRctime());
 				jsonObj.put("rdestination", rscvo.getRdestination());
 				jsonObj.put("rcpeople", rscvo.getRcpeople());
-				jsonObj.put("rcstatus", rscvo.getCstatus());
+				jsonObj.put("cstatus", rscvo.getCstatus());
 				
 				jsonArr.put(jsonObj); // [{"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}] 
 			} // end of for-------------------
@@ -356,5 +356,31 @@ public class ReservationOdyController {
 		return jsonObj.toString();
 	}
 		
+	// 사무용품 반납하기
+	@ResponseBody
+	@RequestMapping(value="/t1/rsGoods/returnReserveGoods.tw",method= {RequestMethod.POST})
+	public String returnReserveGoods(HttpServletRequest request) {
+		String rsgno = request.getParameter("rsgno");
+		
+		int n =service.returnReserveGoods(rsgno);
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		return jsonObj.toString();
+	}
+	
+	// 차량 반납하기
+	@ResponseBody
+	@RequestMapping(value="/t1/rsCar/returnReserveCar.tw",method= {RequestMethod.POST})
+	public String returnReserveCar(HttpServletRequest request) {
+		String rscno = request.getParameter("rscno");
+		
+		int n =service.returnReserveCar(rscno);
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		return jsonObj.toString();
+	}
+	
+	
+	
 	
 }
