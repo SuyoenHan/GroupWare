@@ -3,6 +3,7 @@
 div#sideinfo-content-container{
 	height: 100%;
 	width: 132.5em;
+	padding: 10px;
 	/* border: solid 1px red; */
 	position: relative;
 	top: 70px;
