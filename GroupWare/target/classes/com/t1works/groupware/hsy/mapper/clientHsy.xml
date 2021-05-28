@@ -15,5 +15,47 @@
 		where fk_pNo=#{fk_pNo} and clientmobile=#{clientmobile}
 	</select>
 
-
+	<!-- 해당 연락처에 일치하는 고객예약항목이 있는지 검사 -->
+	<select id="checkClientMobile" parameterType="HashMap" resultType="Integer">
+		select count(*) from tbl_client 
+		where clientmobile= #{clientmobile} and clientname=#{clientname}
+	</select>
+	
+	<!-- 특정고객의 예약정보를 가져오기 (더보기 방식) -->
+	<select id="moreReserveListAjax" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		select pNo, pName, startDate, endDate, period, price, clientname, clientmobile, cnumber
+		from
+		(
+			select rownum as rno,  pNo, pName, startDate, endDate, period, price, clientname, clientmobile, cnumber
+			from 
+				(
+					select pNo, pName, to_char(startDate,'yyyy-mm-dd') as startDate, to_char(endDate,'yyyy-mm-dd') as endDate,
+     			    to_char(endDate-startdate) ||'박 '|| to_char(endDate-startdate+1) ||'일' as period, price, clientname, clientmobile, cnumber
+					from tbl_product join tbl_client on pNo=fk_pNo
+					where clientmobile=#{clientmobile}
+					order by startDate desc
+				) V1
+		) V2
+		where rno between #{start} and #{end}
+	</select>
+	
+	<!-- 해당 연락처의 예약정보 총 개수 구하기 -->
+	<select id="getTotalReserveCount" parameterType="String" resultType="Integer">
+		select count(*) as count from tbl_client
+		where clientmobile=#{clientmobile}
+	</select>
+	
+	 
+	<!-- 고객테이블에 해당예약건 delete -->
+	<delete id="deleteClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		delete from tbl_client
+		where fk_pNo=#{fk_pNo} and clientmobile=#{clientmobile}
+	</delete>
+	
+	<!-- 고객테이블에 해당예약건 update -->
+	<delete id="updateClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		update tbl_client set cnumber= to_number(cnumber)+to_number(#{cnumber})
+		where fk_pNo=#{fk_pNo} and clientmobile=#{clientmobile}
+	</delete>
+	
 </mapper>

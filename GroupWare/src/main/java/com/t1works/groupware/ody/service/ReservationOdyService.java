@@ -116,6 +116,20 @@ public class ReservationOdyService implements InterReservationOdyService {
 		return n;
 	}
 
+	// 사무용품 반납하기
+	@Override
+	public int returnReserveGoods(String rsgno) {
+		int n =rdao.returnReserveGoods(rsgno);
+		return n;
+	}
+
+	// 차량 반납하기
+	@Override
+	public int returnReserveCar(String rscno) {
+		int n =rdao.returnReserveCar(rscno);
+		return n;
+	}
+
 
 	
 

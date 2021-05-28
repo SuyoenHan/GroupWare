@@ -1,4 +1,4 @@
-package com.t1works.groupware.controller.jsh;
+package com.t1works.groupware.jsh.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

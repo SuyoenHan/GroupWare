@@ -33,7 +33,6 @@ public class LoginBwbController {
          
          if(loginuser!=null) {
             mav.setViewName("/bwb/homepage.gwTiles");
-            
          }
          else {
             mav.setViewName("/bwb/login/login");

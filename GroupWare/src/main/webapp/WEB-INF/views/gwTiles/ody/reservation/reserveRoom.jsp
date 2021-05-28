@@ -5,24 +5,17 @@
  	String ctxPath = request.getContextPath();
 	//     /groupware
 %>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style type="text/css">
 
-table{
-	border-collapse: collapse;
-}
-
-th, td{
-	border: solid 1px #CCD1D1;
+table#rsroom th, td{
 	text-align: center;
-	height: 40px;
 	vertical-align: middle;
 }
-
 /* 달력 css */
 div#calendarWrapper{
-	display: inline-block;
+	float: left;
 }
 
 .fc-scroller {
@@ -55,10 +48,11 @@ a:hover {
 }
 
 div.room{
-	display: inline-block;
+	float: left;
+/* 	display: inline-block; */
 	width:500px;
-	margin-left: 500px;
- 	margin-top: -1000px;
+	margin-left: 300px;
+	margin-bottom: 140px;
 }
 
 .roomClick{
@@ -69,6 +63,7 @@ button#btn_show{
 	float: right;
 	margin-top: 20px;
 	margin-bottom: 20px;
+	margin-right: 50px;
 }
 
 
@@ -77,9 +72,7 @@ button#btn_show{
 
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 var curDate = new Date();
@@ -104,12 +97,8 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 	
-	// sebumenu와 content길이 맞추기
-	func_height2();
-	
 	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
 	
-	$("div#myModal").modal('hide');
 	var roomno="";
 	var chgdate="";
 
@@ -194,9 +183,6 @@ $(document).ready(function(){
     
         // 모알창에서 예약
     	$("button#realReserve").click(function(event){
-    		 event.stopPropagation();
-             event.preventDefault();
-             
              var purpose = $("input#purpose").val().trim();
              
              if(purpose == ""){
@@ -298,9 +284,9 @@ $(document).ready(function(){
 			if( index > -1){
 
 				html += "<tr><td style='vertical-align: middle;' ><label id='id_time' ><font color='"+fontType+"'>"+timeText(rtime[index])+"</label></span></td>";
-				html += "<td>"+rdepartment[index]+"</td>";
-				html += "<td>"+name[index]+"</td>";
-				html += "<td align='left'>"+rsubject[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+rdepartment[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+name[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+rsubject[index]+"</td>";
 				
 					if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
@@ -429,24 +415,17 @@ $(document).ready(function(){
 	
 </script>
 
-<div id="sebumenu">
-	<div style="background-color: #6c757d; color: #fff;"><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsCar.tw">차량 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
-
-
-<div id="content" style="background-color: white; width: 1180px; padding-left: 50px; ">
+<div class="rsRoomContainer" style="margin-left: 80px;"> 
 	<h3 style="margin-top: 20px !important;">회의실 대여신청</h3>
 	
-	<div>
+
 		<div id="calendarWrapper">
-			<div id="calendar" style="width: 450px; margin-top: 50px;" ></div>
+			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px; margin-left: 200px;" ></div>
 		</div>
 		
 	  
 		<div class="room" >
-			<table style="width: 100%; margin-bottom: 80px;">
+			<table style="width: 90%; margin-top: 200px;" class="table table-bordered">
 		            <tr><td colspan="2">회의실 목록</td></tr>
 		            <c:if test="${empty requestScope.roomList}">
 	            		<tr><td colspan="2">회의실이 존재하지 않습니다.</td></tr>
@@ -463,10 +442,10 @@ $(document).ready(function(){
 	         </table>
 	         <button id="btn_show" class="btn btn-secondary">예약현황보기</button>
 		</div>
-	</div>
+
 	
-	<div class="middle" style="margin-top: 100px;">
-		<table  style="width: 90%;">
+	<div class="middle">
+		<table  style="width: 92%; " class="table table-bordered" id="rsroom">
 			<colgroup>
 				<col width="20%">
 				<col width="20%">
@@ -501,23 +480,17 @@ $(document).ready(function(){
 	</div>
 </div>
 
-
-
 <!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-      
-        <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">신청등록</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">신청등록</h4>
         </div>
-        
-        <!-- Modal body -->
         <div class="modal-body">
          	<form name="reserveRoom">
-         		<table style="width: 100%;">
+         		<table style="width: 100%;" class="table table-bordered">
          			<tr>
          				<td style="text-align: left; ">신청회의실</td>
          				<td id="roomname" style="text-align: left; padding-left: 5px;"></td>

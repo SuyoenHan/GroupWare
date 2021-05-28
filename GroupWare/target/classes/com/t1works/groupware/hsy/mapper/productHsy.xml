@@ -36,7 +36,7 @@
 		where pNo= #{fk_pNo}
 	</select>
 	
-	<!-- 특정상품의 현재예약인원 수 udpate하기 -->
+	<!-- 특정상품의 현재예약인원 수 udpate하기 (plus) -->
 	<update id="updateNowNo" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO" >
 		update tbl_product set nowNo= to_number(nowNo)+to_number(#{cnumber})
 		where pNo= #{fk_pNo}
@@ -48,4 +48,23 @@
 		from tbl_product
 		where pNo=#{fk_pNo}
 	</select>
+	
+	<!-- 여행확정 상품인지 확인하기 -->
+	<resultMap type="HashMap" id="paraMap">
+		<result property="n" column="n" javaType="String"/>
+		<result property="pName" column="pName" javaType="String"/>
+	</resultMap>
+		
+	<select id="checkProductStatus" parameterType="String" resultMap="paraMap">
+		select case when to_number(miniNo)>to_number(nowNo) then '1' else '0' end as n, pName
+		from tbl_product
+		where pNo= #{pNo}
+	</select>
+
+	<!-- 예약취소가 된 상품의 현재예약인원 update (minus) -->
+	<update id="updateMinusNowNo" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO" >
+		update tbl_product set nowNo= to_number(nowNo)-to_number(#{cnumber})
+		where pNo= #{fk_pNo}
+	</update>
+	
 </mapper>
