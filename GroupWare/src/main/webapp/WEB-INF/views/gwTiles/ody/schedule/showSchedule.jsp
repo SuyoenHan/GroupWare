@@ -51,7 +51,6 @@ a:hover {
 </style>
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <!-- db에 저장된 스케쥴 값 가져오는 script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
@@ -157,7 +156,7 @@ $(document).ready(function(){
 	
 	</div>
 
-	<div id="calendarWrapper">
+	<div id="calendarWrapper" style="margin-left: 80px;">
 			<div id="calendar" style="margin-top: 100px;" ></div>
 	</div>
 	

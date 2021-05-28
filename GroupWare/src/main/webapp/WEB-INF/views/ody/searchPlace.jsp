@@ -324,7 +324,7 @@ function removeAllChildNods(el) {
 
 
 </script>
-<input type="text" id="placeName" name="placeName" value="">
+<input type="hidden" id="placeName" name="placeName" value="">
 <div id="result"></div>
 
 </body>
