@@ -105,7 +105,7 @@ public class MemberHsyController {
 		
 		while(!(loop>blockSize || pageNo > totalPage) ) {
 			if(pageNo == Integer.parseInt(currentShowPageNo)) {
-				pageBar += "&nbsp;<span style='color:#fff; background-color: #5e5e5e; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
+				pageBar += "&nbsp;<span style='color:#fff; background-color: #003d66; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
 			}
 			else {
 				pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+pageNo+"&searchType="+searchType+"&searchWord="+searchWord+"'>"+pageNo+"</a>&nbsp;";

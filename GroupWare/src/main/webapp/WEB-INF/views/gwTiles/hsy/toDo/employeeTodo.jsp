@@ -6,36 +6,42 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <style type="text/css">
-
-	div#gwContent{left: 80px;}
+	
+	div#employeeTodoBox{
+		border: solid 0px red;
+		width:75%;
+		margin:0 auto;
+		position: relative;
+		left: -200px;
+		padding-bottom: 100px;
+	}
 	
 	div#tabMenu span{
-		background-color: #0071bd;
 		display: inline-block;
 		width:150px;
-		height: 40px;
-		color:#fff;
+		height: 50px;
 		font-weight: bold;
-		padding-top:13px;
+		padding-top:17px;
 		cursor: pointer;
-		margin-left:10px;
 		text-align: center;
+		margin-left:-5px;
+		border: solid 2px #cecece;
+		border-bottom: 0px;
 	}
 	
 	div#tabMenu span:hover{
-		box-shadow: 2px 2px 2px #333;
+		color:#005c99;
+		font-weight: bold;
 	}
 	
 	div#toDoBox{
 		margin:0 auto;
 		padding-left:12px;
 		padding-right:12px;
-		margin-top: 10px;
-		margin-left: 10px;
-		background-color:#f2f2f2;
-		width:85%;
+		width:75%;
 		clear:both;
 		border: solid 2px #cecece;
+		margin: 5px 0px 30px 60px;
 	}
 	
 	div.eachtoDoList{
@@ -114,7 +120,7 @@
 	}
 	
 	table.infoTable, table.infoTable th, table.infoTable td{
-		border: solid 2px #666666;
+		border: solid 2px #bdc2bd;
 		border-collapse: collapse;
 		text-align: center;
 		vertical-align: middle;
@@ -126,8 +132,9 @@
 	}
 	
 	table.infoTable th{
-		background-color: #e6e6e6;
+		background-color: #003d66;
 		padding: 10px 0px;
+		color: #fff;
 	}
 	
 	table.infoTable td{
@@ -166,40 +173,74 @@
 
 	$(document).ready(function(){
 	   
-		$("div#submenu7").show();
 		$("div#periodOption").hide();
 		
 		// 선택된 업무유형에 따라 버튼색깔 다르게 표시하기=> "0":신규등록업무, "1":진행중업무, "2":진행완료업무
 		if("${requiredState}"=="0"){
-			$("span#newTodo").css("background-color","#003d66");
+			$("span#newTodo").css("background-color","#0071bd");
+			$("span#newTodo").css("color","#fff");
 		}
 		else if("${requiredState}"=="1"){
-			$("span#ingTodo").css("background-color","#003d66");
+			$("span#ingTodo").css("background-color","#0071bd");
+			$("span#ingTodo").css("color","#fff");
 			// 진행중업무의 경우 메뉴 1개가 더 추가되므로 너비 조절해주기
-			$("div#toDoBox").css("width","95%");
-			$("div#pageBar").css("width","92%");
+			$("div#toDoBox").css("width","85%");
+			$("div#pageBar").css("width","88%");
 		}
 		else{
-			$("span#doneTodo").css("background-color","#003d66");
+			$("span#doneTodo").css("background-color","#0071bd");
+			$("span#doneTodo").css("color","#fff");
 			// 진행완료 업무인 경우 프로젝트명의 margin이 달리지므로 이에따라 다른 margin도 조절
 			$("span#pname").css("margin-left","30px");
-			$("div#toDoBox").css("width","83%");
-			$("div#pageBar").css("width","80%");
+			$("div#toDoBox").css("width","73%");
+			$("div#pageBar").css("width","76%");
 			
 			// 진행완료업무가 선택된 경우 기가옵션 보여주기, 선택된 기간옵션 색깔 유지시켜주기
 			$("div#periodOption").show();
 			var periodOption= "${periodOption}";
 			if(periodOption == "week"){
-				$("label#week").css("color","#323234");
+				$("label#week").css("color","#005c99");
 			}
 			else if(periodOption == "month"){
-				$("label#month").css("color","#323234");
+				$("label#month").css("color","#005c99");
 			}
 			else{
-				$("label#3months").css("color","#323234");
+				$("label#3months").css("color","#005c99");
 			}
 		}
 
+		// 세부메뉴 열기 클릭시 너비 조절해주기
+		$("p.menu-btn").click(function(){
+			if("${requiredState}"=="0"){
+				$("div#toDoBox").css("width","85%");
+				$("div#pageBar").css("width","88%");
+			}
+			if("${requiredState}"=="1"){
+				$("div#toDoBox").css("width","95%");
+				$("div#pageBar").css("width","98%");
+			}
+			if("${requiredState}"=="2"){
+				$("div#toDoBox").css("width","83%");
+				$("div#pageBar").css("width","86%");
+			}
+		}); // end of $("p.menu-btn").click(function(){-------
+		
+		// 세부메뉴 닫기 클릭시 너비 조절해주기
+		$("i.closebtn").click(function(){
+			if("${requiredState}"=="0"){
+				$("div#toDoBox").css("width","75%");
+				$("div#pageBar").css("width","78%");
+			}
+			if("${requiredState}"=="1"){
+				$("div#toDoBox").css("width","85%");
+				$("div#pageBar").css("width","88%");
+			}
+			if("${requiredState}"=="2"){
+				$("div#toDoBox").css("width","73%");
+				$("div#pageBar").css("width","76%");
+			}
+		}); // end of $("i.closebtn").click(function(){-----------------
+		
 		// 페이지가 로드될때 진행중업무 상태에 맞는 상태값 유지시켜주기
 		$("select.postpone").each(function(index,item){
 			var state= $(this).prop("name");
@@ -456,11 +497,11 @@
 		
 </script>
 
-
-<div style="border: solid 1px green; width:90%; margin:0 auto; padding-left: 140px;">
-	<div id="tabMenu" style="padding-top:30px; float:left;">
-		<span id="newTodo" onclick="getEmployeeTodo('0')">신규등록업무&nbsp;(${newTodoCnt}건)</span>
-		<span id="ingTodo" onclick="getEmployeeTodo('1')">진행중업무&nbsp;(${ingTodoCnt}건)</span>
+<div id="employeeTodoBox">
+	<div style="margin: 70px 0px 0px 65px; font-size: 22pt; font-weight: bold;" >나의&nbsp;업무현황</div>
+	<div id="tabMenu" style="margin: 30px 0px 0px 50px; float:left;">
+		<span id="newTodo" onclick="getEmployeeTodo('0')" style="margin-left:10px;">신규등록업무&nbsp;(${newTodoCnt}건)</span>
+		<span id="ingTodo" onclick="getEmployeeTodo('1')" style="border-left:0px; border-right:0px;">진행중업무&nbsp;(${ingTodoCnt}건)</span>
 		<span id="doneTodo" onclick="getEmployeeTodo('2')">진행완료업무&nbsp;(${doneTodoCnt}건)</span>
 		
 		<%-- 진행완료업무 클릭시에만 보여지는 날짜선택 옵션 --%>
@@ -475,7 +516,7 @@
 	<div id="toDoBox">
 		<div id="toDoTitle" class="eachtoDoList">
 			<span style="margin-left:20px; width:50px;">순번</span>
-			<span style="margin-left:58px; width:250px;" id="pname">프로젝트명</span>
+			<span style="margin-left:58px; width:250px; text-align:left; padding-left:60px;" id="pname">프로젝트명</span>
 			<span style="width:70px;">배정자</span>
 			<span style="width:110px;">배정일</span>
 			<span style="width:110px;">시작일</span>
@@ -507,13 +548,13 @@
 								
 								<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
 									<span class="hurry">&nbsp;긴급&nbsp;</span>
-									<span style="width:250px; margin-left:2px; color:red;" class="productName">${tvo.pName}</span>
+									<span style="width:250px; color:red; text-align:left; margin-left:5px;" class="productName">${tvo.pName}</span>
 								</c:if>
 								<c:if test="${tvo.hurryno eq '0' and requiredState ne '2'}">
-									<span style="width:250px; margin-left:58px;" class="productName">${tvo.pName}</span>
+									<span style="width:250px; margin-left:58px; text-align:left;" class="productName">${tvo.pName}</span>
 								</c:if>
 								<c:if test="${requiredState eq '2'}">
-									<span style="width:250px; margin-left:30px;" class="productName">${tvo.pName}</span>
+									<span style="width:250px; margin-left:30px; text-align:left;" class="productName">${tvo.pName}</span>
 								</c:if>
 								
 								<span style="width:70px;">${tvo.name}</span>
@@ -571,8 +612,9 @@
 				<div class="eachtoDoList ajaxEachList" align="center" style="font-weight: bold;">업무내역이 없습니다.</div>
 			</c:if>
 		</div>
-	</div>
-	<div align="right" style="margin: 30px 0px; width:82%; font-size:14pt; clear:both;" id="pageBar">${pageBar}</div>
+	</div>	
+	
+	<div align="right" style="margin: 30px 0px; width:78%; font-size:14pt; clear:both;" id="pageBar">${pageBar}</div>
 	
 	
 	<!-- 각 업무상세정보 modal로 보여주기 -->
@@ -595,4 +637,3 @@
 	    	</div>
   		</div>
 	</div>
-</div>

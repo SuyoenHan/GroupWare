@@ -121,7 +121,7 @@ public class TodoHsyController {
 		
 		while(!(loop>blockSize || pageNo > totalPage) ) { // totalPage가 0인경우 페이지바는 생성되지 않는다
 			if(pageNo == Integer.parseInt(currentShowPageNo)) {
-				pageBar += "&nbsp;<span style='color:#fff; background-color: #5e5e5e; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
+				pageBar += "&nbsp;<span style='color:#fff; background-color: #003d66; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
 			}
 			else {
 				pageBar += "&nbsp;<a href='employeeTodo.tw?currentShowPageNo="+pageNo+"&requiredState="+requiredState+"&periodOption="+periodOption+"'>"+pageNo+"</a>&nbsp;";
