@@ -17,6 +17,8 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 	@Autowired
 	private InterBoardDAOKdn dao;
 	
+	// === 공지사항 === 
+	
 	// 공지사항 글쓰기
 	@Override
 	public int noticePostUpload(BoardVOKdn boardvo) {
@@ -37,15 +39,27 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 		List<BoardVOKdn> boardList = dao.noticeBoardListSearchWithPaging(paraMap);
 		return boardList;
 	}
-	
-	/*
-	// 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기
+
+	// 공지사항 글조회수 증가와 함께 글1개를 조회를 해주는 것
 	@Override
-	public List<BoardVOKdn> boardListNoSearch() {
-		List<BoardVOKdn> boardList = dao.boardListNoSearch();
+	public BoardVOKdn getView(String seq, String login_userid) {
+		BoardVOKdn boardvo = dao.getView(seq);	// 공지사항 글1개 조회하기
 		
-		return boardList;
+		if(login_userid != null && boardvo != null && !login_userid.equals(boardvo.getFk_employeeid())) {
+			// 로그인이 되어있어야하고 boardvo 데이터가 있어야하고 게시글 작성자 아이디가 게시글 조회하는 유저 아이디와 다를때 
+			dao.setAddReadCount(seq); // 글 조회수 1 증가하기
+			boardvo = dao.getView(seq);
+		}
+		
+		return boardvo;
 	}
-	*/
+
+	// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것
+	@Override
+	public BoardVOKdn getViewWithNoAddCount(String seq) {
+		BoardVOKdn boardvo = dao.getView(seq);	//글1개 조회하기
+		return boardvo;
+	}
+	
 
 }

@@ -8,6 +8,8 @@
 	border: none;
 	font-size: 13px;
 	border-radius: 2px;
+	margin: 0 5px;
+	display: block;
 }
 
 /* board.jsp 공지사항 게시판 목록 css */
@@ -16,7 +18,7 @@
 	padding: 20px;
 }
 
-div#searchform{
+div#search-viewOption{
 	float: right;
 	margin-top:40px;
 	margin-right: 10px;
@@ -30,25 +32,28 @@ div#board-table-div {
 	display: block;
 	margin: 40px auto 15px auto;
 	width: 99%;
-	border: solid 1px red;
+	/* border: solid 1px red; */
 }
 
 table#board-table{
 	font-size: 10pt;
+	border-bottom: solid 1px #ccc;
 }
 
 tr.tbody{
 	border-top: none;
 }
 
-tr.thead > th{
+tr.thead > th, select#category  {
 	background-color: #395673;
 	color: #ffffff;
+	border:none;
 }
 
 
+div p:not(.disabled)
 /* postupload.jsp 게시판 글쓰기 css */
-table, th, td, input, textarea {border: solid #ccc 1px;}
+table#board-table > th, table#board-table > td, input, textarea, select {border: solid #ccc 1px;}
    
 #table { border-collapse: collapse; width: 99%; }
 #table th, #table td{padding: 5px;}

@@ -36,6 +36,20 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 		return boardList;
 	}
 	
+	// 공지사항 글 조회수 1 증가하기
+	@Override
+	public void setAddReadCount(String seq) {
+		sqlsession3.update("board.setAddReadCount", seq);
+	}
+
+	// 공지사항 글1개 조회하기
+	@Override
+	public BoardVOKdn getView(String seq) {
+		BoardVOKdn boardvo = sqlsession3.selectOne("board.getView", seq);
+		return boardvo;
+	}
+
+	
 	/*
 	// 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기
 	@Override

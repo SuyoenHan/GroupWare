@@ -11,6 +11,10 @@ public class BoardVOKdn {
 	   private String readCount;    // 글조회수
 	   private String regDate;      // 글쓴시간
 	   private String status;       // 글삭제여부   1:사용가능한 글,  0:삭제된글 
+	   private String previousseq;      // 이전글번호
+	   private String previoussubject;  // 이전글제목
+	   private String nextseq;          // 다음글번호
+	   private String nextsubject;      // 다음글제목
 	   
 	   
 	   private String fk_categnum;		// 카테고리번호 
@@ -112,5 +116,38 @@ public class BoardVOKdn {
 		this.fk_categnum = fk_categnum;
 	}
 
+	public String getPreviousseq() {
+		return previousseq;
+	}
+
+	public void setPreviousseq(String previousseq) {
+		this.previousseq = previousseq;
+	}
+
+	public String getPrevioussubject() {
+		return previoussubject;
+	}
+
+	public void setPrevioussubject(String previoussubject) {
+		this.previoussubject = previoussubject;
+	}
+
+	public String getNextseq() {
+		return nextseq;
+	}
+
+	public void setNextseq(String nextseq) {
+		this.nextseq = nextseq;
+	}
+
+	public String getNextsubject() {
+		return nextsubject;
+	}
+
+	public void setNextsubject(String nextsubject) {
+		this.nextsubject = nextsubject;
+	}
+
+	
 	
 }
