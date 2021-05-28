@@ -57,6 +57,6 @@
 			</tbody>
 		</table>
 
-		<button type="button" class="btn-style float-right" onclick="javascript:location.href='postupload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
+		<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
 	</div>
 </div>
