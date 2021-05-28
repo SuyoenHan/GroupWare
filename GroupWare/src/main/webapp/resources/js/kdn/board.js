@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	// postupload.jsp 게시판 글쓰기
+	// === postupload.jsp 게시판 글쓰기 ===
       
       // === #167. 스마트 에디터 구현 시작 ===
        
@@ -58,5 +58,8 @@ $(document).ready(function(){
          frm.action = "uploadComplete.tw";
          frm.submit();   
       });
-           
-   });// end of $(document).ready(function(){})----------------
+      
+      
+
+ });// end of $(document).ready(function(){})----------------
+   

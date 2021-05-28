@@ -10,6 +10,12 @@ div#sideinfo-content-container{
 	transition: 0.1s;
 }
 
+@media (max-width: 1520px){
+	div#sideinfo-content-container{
+		width: 103.9em;
+	} 
+}
+
 .content-open-style{
 	width: 118.5em!important;
 	margin-left: 265px!important;
