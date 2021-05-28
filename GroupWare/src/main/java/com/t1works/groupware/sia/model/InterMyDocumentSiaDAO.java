@@ -8,4 +8,7 @@ public interface InterMyDocumentSiaDAO {
 	// 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기
 	List<ApprovalSiaVO> getnorm_reclist(Map<String, String> paraMap);
 
+	// 검색에 해당하는 글의 총 페이지수를 알아오기
+	int getTotalPage(Map<String, String> paraMap);
+
 }

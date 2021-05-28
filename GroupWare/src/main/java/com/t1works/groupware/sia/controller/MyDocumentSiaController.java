@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
@@ -100,7 +101,8 @@ public class MyDocumentSiaController {
 		String ncat = request.getParameter("ncat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
-		
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+				
 		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
 			astatus = "";
 		}		
@@ -137,6 +139,15 @@ public class MyDocumentSiaController {
 			}			
 		}
 		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
 				
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("anocode", anocode);  
@@ -146,6 +157,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
 		
 		List<ApprovalSiaVO> approvalvo = service.getnorm_reclist(paraMap);
 		
@@ -167,7 +180,74 @@ public class MyDocumentSiaController {
 	}
 	
 	
-	
+	// totalPage 알아오기 (Ajax 로 처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/getTotalPage.tw", method= {RequestMethod.GET})
+	public String getTotalPage(HttpServletRequest request) {
+		
+		String anocode = request.getParameter("anocode");
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String ncat = request.getParameter("ncat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}		
+		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}				
+			}			
+		}		
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("anocode", anocode);  
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);		
+		
+		// 검색에 해당하는 글의 총 페이지수를 알아오기
+		int totalPage = service.getTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); 
+		
+		return jsonObj.toString();		
+	}	
 	
 	
 }

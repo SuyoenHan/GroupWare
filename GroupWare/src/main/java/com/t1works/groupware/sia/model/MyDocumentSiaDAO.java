@@ -23,4 +23,12 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return reclist;
 	}
 
+	
+	// 검색에 해당하는 글의 총 페이지수를 알아오기
+	@Override
+	public int getTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getTotalPage", paraMap);
+		return totalPage;
+	}
+
 }

@@ -12,6 +12,9 @@
 		margin: 30px 0px 30px 50px;
 		width: 85%;
 	}
+	div.tab_select{
+		margin-top: 10px;
+	}
 	a.tab_area{
 		background-color: #ecf2f9;
 		font-size: 12pt;
@@ -70,6 +73,10 @@
 		color: #ffffff;
 		padding: 5px;
 		border: solid 1px #ccc;}
+	tr.tr_hover:hover{
+		cursor: pointer;
+		background-color: #eef2f7;
+	}
 </style>
 
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
@@ -79,12 +86,12 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
-	goSearch();
+	goSearch(1);
 	
 	$("input#searchWord").bind("keydown", function(event){
 		if(event.keyCode == 13){
 			// 엔터를 했을 경우
-			goSearch();
+			goSearch(1);
 		}
 	});
 	
@@ -136,7 +143,7 @@ $(document).ready(function(){
 });
 	
 	
-	//Function Declaration
+	// Function Declaration
 	function setSearchDate(start){
 		var num = start.substring(0,1);
 		var str = start.substring(1,2);
@@ -166,8 +173,8 @@ $(document).ready(function(){
 	}
 	
 	
-	function goSearch(){
-		// 페이지 로딩 시 해당하는 내역 전체 보여주기		
+	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
+	function goSearch(currentShowPageNo){			
 		var checkArr = new Array();	
 		$("input[name=ncat]:checked").each(function(index,item){			
 			var ncat = $(item).val();
@@ -185,7 +192,8 @@ $(document).ready(function(){
 				, "toDate":$("input#toDate").val()
 				, "ncat": checkArres
 				, "sort":$("select#sort").val()
-				, "searchWord":$("input#searchWord").val()},
+				, "searchWord":$("input#searchWord").val()
+				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
 			success:function(json){
 				
@@ -209,7 +217,7 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
-						html += "<tr>";
+						html += "<tr class='tr_hover'>";
 						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
 						html += "<td align='center'>"+ item.ncatname +"</td>";
@@ -221,21 +229,108 @@ $(document).ready(function(){
 				}
 				else{
 					html += "<tr>";
-					html += "<td colspan='6' align='center'>해당하는 글이 없습니다</td>";
+					html += "<td colspan='6' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
 					html += "</tr>";
 				}
 				
 				$("tbody#commentDisplay").html(html);
+				
+				// 페이지바 함수 호출
+				makeCommentPageBar(currentShowPageNo);
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		});		
+	}// end of function goSearch(){}--------------------
+	
+	
+	// 페이지바 Ajax로 만들기
+	function makeCommentPageBar(currentShowPageNo){
+		
+		var checkArr = new Array();	
+		$("input[name=ncat]:checked").each(function(index,item){			
+			var ncat = $(item).val();
+			checkArr.push(ncat);			
+		});
+		// console.log(checkArr);
+		
+		var checkArres = checkArr.join();		
+		
+		// totalPage 수 알아오기
+		$.ajax({
+			url:"<%= ctxPath%>/t1/getTotalPage.tw",
+			data:{"anocode":"${requestScope.approvalvo.anocode}"
+				, "astatus":$("select#astatus").val()
+				, "fromDate":$("input#fromDate").val()
+				, "toDate":$("input#toDate").val()
+				, "ncat": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()
+				, "sizePerPage":"10"},
+			type:"get",
+			dataType:"json",
+			success:function(json){
+				
+				if(json.totalPage > 0){
+					// 글이 있는 경우
+					
+					var totalPage = json.totalPage;
+					
+					var pageBarHTML = "<ul class='pagination' style='list-style: none;'>";
+					
+					var blockSize = 5;
+					
+					var loop = 1;
+					
+					if(typeof currentShowPageNo == "string"){
+						currentShowPageNo = Number(currentShowPageNo);
+					}
+					
+					var pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+					
+					// === [맨처음][이전] 만들기 ===
+					if(pageNo != 1) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\"1\")'>First</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+(pageNo-1)+"\")'>Prev</a></li>";
+					}
+					
+					while(!(loop > blockSize || pageNo > totalPage)) {
+						
+						if(pageNo == currentShowPageNo) {
+							pageBarHTML += "<li class='active'><a>"+pageNo+"</a></li>";
+						}
+						else {
+							pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>"+pageNo+"</a></li>";
+						}
+
+						loop++;
+						pageNo++;
+					}// end of while--------------------
+					
+					// === [다음][마지막] 만들기 ===
+					if(pageNo <= totalPage) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>Next</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+totalPage+"\")'>Last</a></li>";
+					}
+					
+					pageBarHTML += "</ul>";
+					
+					$("div#pageBar").html(pageBarHTML);					
+				}				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
 	}
+	
+	
 	
 </script>
 <div class="section">
-<h3 style="font-size: 20pt; margin-bottom: 10px;">수신함</h3>
+<img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
+<span style="font-size: 14pt; font-weight: bold;">수신함</span>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area selected">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
@@ -303,7 +398,7 @@ $(document).ready(function(){
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;
-					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch()">검색</button>
+					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch(1)">검색</button>
 				</td>
 			</tr>	
 		</table>
@@ -313,7 +408,7 @@ $(document).ready(function(){
 		<table id="table">
 			<thead>
 			<tr>
-				<th style="width: 70px;  text-align: center;">번호</th>
+				<th style="width: 70px; text-align: center;">번호</th>
 				<th style="width: 300px; text-align: center;">제목</th>
 				<th style="width: 100px; text-align: center;">문서분류</th>
 				<th style="width: 100px; text-align: center;">문서번호</th>
@@ -323,5 +418,7 @@ $(document).ready(function(){
 			</thead>		
 			<tbody id="commentDisplay"></tbody>		
 		</table>
-	</form>	
+		
+		<div id="pageBar" style="border:solid 0px gray; width: 90%; margin-left: 42%;"></div>
+	</form>
 </div>
