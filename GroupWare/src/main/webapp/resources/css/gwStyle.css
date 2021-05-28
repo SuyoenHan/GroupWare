@@ -1,18 +1,20 @@
 @charset "UTF-8";
 
-body{
+div#sideinfo-content-container{
 	height: 100%;
-}
-
-div#gwContent{
-	margin: 0 auto;
-	height: 100%;
-	border: solid 1px red;
+	width: 132.5em;
+	/* border: solid 1px red; */
 	position: relative;
 	top: 70px;
-	left: 280px;
+	margin-left: 65px;
+	transition: 0.1s;
 }
 
+.content-open-style{
+	width: 118.5em!important;
+	margin-left: 265px!important;
+	transition: 0.1s;
+}
 
 /* 상단 메인메뉴 */
 
@@ -33,17 +35,55 @@ img#gwLogo{
 }
 
 div#left-menu{display: inline-block;}
-div#right-menu {float: right; margin-right: 10px;}
-div#left-menu > span, div#right-menu > span{
+
+div#left-menu span {
 	color: #ffffff;
 	display: inline-block;
+}
+
+.navbar-btn{
+	font-size: 11px;
+	padding: 3px 5px;
+	width: 64px;
+	height: 20px;
+	background-color: #395673;
+	border: solid 1px #395673;
+	text-align:center;
+	border-radius: 3px;
+}
+
+span.navbar-btn{
+	margin-top: 3px;
+}
+
+.navbar-btn:hover{
+	cursor: pointer;
+	background-color: #427c97;
+	border: solid 1px #395673;
+}
+
+div#right-menu {float: right; margin-right: 10px;}
+
+table#right-menu-style{ margin-top:10px; }
+
+div#right-menu > table tr td{
+	color: #ffffff;
 	vertical-align: middle;
+	text-align: center;
+	padding: 0 10px;
+	font-size: 11px;
 }
-div#right-menu > span{
-	height: 70px;
-	vertical-algin: middle;
-	line-height: 70px;
+div#right-menu > table tr td:hover{
+	cursor: pointer;
 }
+
+img.top-menu-icon{
+	display: block;
+	width:25px;
+	height:25px;
+	margin: 0 auto;
+}
+
 
 /* 사이드바 메인 메뉴 */
 
@@ -52,17 +92,35 @@ div#sidemenu{
 	position: fixed;
 	top: 70px;
 	left: 0;
-	width: 80px;
+	width: 65px;
 	height: 100%;
 	background-color: #333333;
+	padding-top: 20px 3px;
 }
 
-div#sidemenu > p{ color: #ffffff; font-size: 15px;}
-div#sidemenu > p:hover{	cursor: pointer; }
+div#sidemenu p{
+	color: #ffffff;
+	opacity: 0.7;
+	text-align: center;
+	margin-top: 20px;
+	border-left: solid 3px #333333;
+}
 
+div#sidemenu span { 
+	color: #ffffff;
+	font-size: 11px;
+	opacity: 0.7;
+	text-align: center;
+}
+	
+div#sidemenu > p:hover{
+	cursor: pointer;
+	opacity: 1; 
+}
 
 /* 사이드바 세부 메뉴 */
 
+<<<<<<< HEAD
 
 div.submenu  {
   float: left;
@@ -76,40 +134,13 @@ div.submenu  {
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 10px;
+=======
+span#closebtn-style{
+	display: block;
+	margin-right: 10px;
+	margin-top: 10px;
+	float: right;
+	color: #a3a5a6;
+>>>>>>> branch 'main' of https://github.com/bwb930305/GroupWare.git
 }
-
-
-div.submenu a {
-  padding: 8px 8px 8px 32px;
-  text-decoration: none;
-  font-size: 15px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-  
-}
-
-.submenu a:hover {
-  color: #f1f1f1;
-}
-
-.submenu .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-}
-
-.openbtn {
-  font-size: 12px;
-  cursor: pointer;
-  background-color: #111;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-}
-
-.openbtn:hover {
-  background-color:#444;
-}
-
+span#closebtn-style:hover {color: white;}

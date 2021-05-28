@@ -34,7 +34,7 @@
 	
 	<!-- 사무용품 예약 리스트 -->	
 	<select id="getReserveGoodsList" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO" parameterType="HashMap">
-		select rsgno,fk_gno, fk_employeeid, name, rgsubject, rgdate, rgtime, rgdepartment
+		select rsgno,fk_gno, fk_employeeid, name, rgsubject, rgdate, rgtime, rgdepartment, gstatus
 		from tbl_rsgoods
 		where fk_gno=#{gno} and rgdate = #{rgdate}
 	</select>
@@ -47,7 +47,7 @@
 
 	<!-- 차량 예약 리스트 -->	
 	<select id="getReserveCarList" resultType="com.t1works.groupware.ody.model.RsCarOdyVO" parameterType="HashMap">
-		select rscno, fk_cno, fk_employeeid, name, rdestination, nvl(rcpeople,' '), rcsubject, rcdate, rctime
+		select rscno, fk_cno, fk_employeeid, name, rdestination, nvl(rcpeople,' ') as rcpeople, rcsubject, rcdate, rctime, cstatus
 		from tbl_rscar
 		where fk_cno=#{cno} and rcdate = #{rcdate}
 	</select>
@@ -89,6 +89,15 @@
 		where rscno = #{rscno}
 	</delete>
 	
+	<!-- 사무용품 반납하기 -->
+	<update id="returnReserveGoods" parameterType="String">
+		update tbl_rsgoods set gstatus = 0
+		where rsgno = #{rsgno}
+	</update>
 	
-	
+	<!-- 차량 반납하기 -->
+	<update id="returnReserveCar" parameterType="String">
+		update tbl_rscar set cstatus = 0
+		where rscno = #{rscno}
+	</update>
 </mapper>

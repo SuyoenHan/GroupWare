@@ -99,7 +99,7 @@
 	}
 </style>
 
-<script>
+<script type="text/javascript">
 	$(document).ready(function(){
 		
 		// 예약창 숨기기
@@ -108,6 +108,7 @@
 		// 예약하기 버튼 클릭시 예약정보 입력창 보이기
 		$("span#reserveBt").click(function(){
 			$("div#reserveInfo").slideDown(1000);
+			$("input[name=clientname]").focus();
 			
 			// 결제가격에 기본으로 넣어주는 1명 가격
 			$("span#totalPrice").text(pricePerOne.toLocaleString('en')+"원");
@@ -232,7 +233,7 @@
 	   	
    		if(!bool){ // 연락처에 숫자 이외의 문자가 포함된 경우
 	   		alert("연락처를 제대로 입력해주세요 (숫자만 입력)");
-	   	    $("input[name=clientmobile]").val("")
+	   	    $("input[name=clientmobile]").val("");
 	        $("input[name=clientmobile]").focus();
 	        return; 
    		}
@@ -265,6 +266,9 @@
 							else{ // 이미 예약현황이 존재하는 경우
 								alert("해당 예약자명으로 예약된 상품입니다. \n"
 									 +"확인 및 변경은 나의 예약현황을 이용해주시기 바랍니다.");
+								$("input[name=clientname]").val("");
+								$("input[name=clientmobile]").val("");
+								$("input[name=cnumber]").val("1");
 							}
 						},
 						error: function(request, status, error){
@@ -275,6 +279,7 @@
 				else{ // 예약불가능한 인원수인 경우
 					alert("해당 상품의 현재 예약가능한 인원은 "+json.count+"명 입니다.\n"
 						 +"인원수를 변경해주세요.");
+					$("input[name=cnumber]").val("1");
 				}
 			},
 			error: function(request, status, error){
@@ -307,6 +312,9 @@
 				}
 				else{ // 트랜잭션처리 실패한 경우
 					alert("시스템 오류로 예약에 실패했습니다. 관리자에게 문의바랍니다.");
+					$("input[name=clientname]").val("");
+					$("input[name=clientmobile]").val("");
+					$("input[name=cnumber]").val("1");
 				}
 			},
 			error: function(request, status, error){
@@ -324,6 +332,13 @@
 		goBackURL= goBackURL.replace(/ /gi, "&"); // 모든 공백을 &로 바꾸기 
 		
 		location.href= "<%=ctxPath%>/"+goBackURL;
+	}
+	
+	// 취소버튼 클릭한 경우 작동하는 함수
+	function cancelReserveTravel(){
+		$("input[name=clientname]").val("");
+		$("input[name=clientmobile]").val("");
+		$("input[name=cnumber]").val("1");
 	}
 	
 </script>
@@ -375,11 +390,11 @@
 					<label>최종결제금액</label>
 					<span id="totalPrice" style="color:red; display:inline-block; width: 200px;"></span>
 					<span class="hideBt" style="margin-left: 100px; width: 170px;" onclick="javascript:goPayTravel();">결제하기</span>
-					<span class="hideBt" style="margin-left: 10px;">취소</span>
+					<span class="hideBt" style="margin-left: 10px;" onclick="javascript:cancelReserveTravel();">취소</span>
 				</li>
 			</ul>
 		</form>
 	</div>
 	
-	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span  onclick="javascript:goProductList();">목록으로</span></div>
+	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span onclick="javascript:goProductList();">목록으로</span></div>
 </div>

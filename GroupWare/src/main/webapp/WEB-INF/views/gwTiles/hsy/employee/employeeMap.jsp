@@ -13,22 +13,20 @@
 		color: #fff;
 		font-weight: bold;
 	}
-
-	div#content{
-		width: 85%;
-		padding: 30px;
-	}
 	
 	div#employeeMapTitle{
-		margin-bottom:30px;
+		border: solid 0px red;
+		margin: 30px 0px 30px 50px;
 		font-size: 22pt;
 		font-weight: bold;
 	}
 	
 	div#employeeBox{
+		border: solid 0px red;
 		background-color: #e9e9ed;
+		margin: 0px 0px 30px 50px;
 		float: left;
-		width: 30%;
+		width: 25%;
 		padding: 0px 20px;
 	}
 	
@@ -46,6 +44,8 @@
 	div#allBt {
 		float: left;
 		margin-bottom: 20px;
+		border: solid 0px red;
+		margin: 20px 0px 20px 50px;
 	}
 	
 	div#allBt button{
@@ -98,7 +98,8 @@
 	}
 	
 	div#employeeMapA{
-		margin-top:20px; 
+		margin-top:20px;
+		margin-bottom: 50px; 
 		font-size:13pt;
 	}
 	
@@ -132,6 +133,11 @@
 		height: 30px;
 	}
 	
+	div#gwContent {overflow: hidden;}
+	
+	div#gwContent{left: 80px;}
+	
+	
 </style>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -139,8 +145,7 @@
 
 	$(document).ready(function(){
 		
-		/* func_height1(); // sidemenu와 content길이 맞추는 메소드 */
-		
+		$("div#submenu4").show();
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();
 		$("span.minus").hide();
@@ -305,8 +310,6 @@
 		
 </script>
 
-<div id="content" style="background-color: #fff;">
-	
 	<div id="employeeMapContainer">
 		<div id="employeeMapTitle">T1Works 주소록</div>
 		
@@ -315,7 +318,7 @@
 			<button type="button" onclick='javascript:hideAll();'>⊖&nbsp;&nbsp;전체폴더닫기</button>
 		</div>
 		
-		<div style="float:right;">
+		<div style="float:right; margin-right: 150px;">
 			<select id="searchType" style="height: 30px; width: 120px; cursor:pointer;">
 				<option value="">&nbsp;&nbsp;선택하세요</option>
 				<option value="name">&nbsp;&nbsp;직원명</option>
@@ -364,7 +367,7 @@
 			
 		</div>
 		
-		<div style="border: solid 0px red; float:right; width: 700px;">
+		<div style="border: solid 0px red; float:right; width: 700px; margin-right:150px;">
 			<div style="margin-bottom:20px;"><h4>직원목록</h4></div>
 			<table id="employeeListTable">
 				<tr style="height:50px; background-color: #e9e9ed; font-weight: bold; ">
@@ -416,6 +419,4 @@
 		    	</div>
 	  		</div>
 		</div>
-		
 	</div>
-</div>
