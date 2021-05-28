@@ -9,7 +9,7 @@
 
 <style type="text/css">
 	div.section{
-		padding-left: 15px;
+		margin: 30px 0px 30px 50px;
 		width: 85%;
 	}
 	a.tab_area{
@@ -60,21 +60,24 @@
 	tr, td{
 		border: solid 1px gray;
 	}
-	td.th{
-		background-color: #e6e6e6;
+	td.th{		
+		background-color: #ccd9e6;
 		padding: 5px;
-	}
+		font-weight: bold;
+	}	
+	#table th{
+		background-color: #395673; 
+		color: #ffffff;
+		padding: 5px;
+		border: solid 1px #ccc;}
 </style>
 
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-	
-	$("div#submenu2").show();
 	
 	goSearch();
 	
@@ -207,7 +210,7 @@ $(document).ready(function(){
 						}
 						
 						html += "<tr>";
-						html += "<td align='center'>"+ (index+1) +"</td>";
+						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
 						html += "<td align='center'>"+ item.ncatname +"</td>";
 						html += "<td align='center'>"+ item.ano +"</td>";						
@@ -232,7 +235,7 @@ $(document).ready(function(){
 	
 </script>
 <div class="section">
-<h3>수신함</h3>
+<h3 style="font-size: 20pt; margin-bottom: 10px;">수신함</h3>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area selected">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
@@ -304,6 +307,8 @@ $(document).ready(function(){
 				</td>
 			</tr>	
 		</table>
+		
+		<br>
 		
 		<table id="table">
 			<thead>

@@ -7,10 +7,8 @@
 
 <style type="text/css">
 	div.section{
-		clear: both;
-	}
-	div.tab_select{
-		clear: both;
+		margin: 30px 0px 30px 50px;
+		width: 85%;
 	}
 	a.tab_area{
 		background-color: #ecf2f9;
@@ -67,14 +65,11 @@
 </style>
 
 <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-	
-	$("div#submenu2").show();
 	
 	var today = new Date();
 	var dd = today.getDate();
@@ -170,7 +165,7 @@ $(document).ready(function(){
 	}
 </script>
 <div class="section">
-<h3>임시저장함</h3>
+<h3 style="font-size: 22pt; font-weight: bold;">임시저장함</h3>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_temp.tw" class="tab_area">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_temp.tw" class="tab_area selected">지출 결재 문서</a>
