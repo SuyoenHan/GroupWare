@@ -89,7 +89,15 @@ public class ClientHsyDAO implements InterClientHsyDAO {
 		int m= sqlsession2.delete("clientHsy.updateClientAjax", cvo);
 		return m;	
 		// m==1 인원수 변경 성공
-	}
+	}// end of public int updateClientAjax(ClientHsyVO cvo) {--------
+
+	
+	// pNo를 이용하여 필요한 고객정보 가져오기
+	@Override
+	public List<ClientHsyVO> selectClientInfoByPno(String pNo) {
+		List<ClientHsyVO> cvoList=sqlsession2.selectList("clientHsy.selectClientInfoByPno",pNo);
+		return cvoList;
+	} // end of public List<ClientHsyVO> selectClientInfoByPno(String pNo) {-----
 	
 	
 	
