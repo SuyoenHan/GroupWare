@@ -27,15 +27,15 @@
 	}
 	
 	div#toDoBox{
-		border: solid 1px blue;
 		margin:0 auto;
-		padding-left:10px;
-		padding-right:10px;
+		padding-left:12px;
+		padding-right:12px;
 		margin-top: 10px;
 		margin-left: 10px;
 		background-color:#f2f2f2;
 		width:85%;
 		clear:both;
+		border: solid 2px #cecece;
 	}
 	
 	div.eachtoDoList{
@@ -50,7 +50,7 @@
 	}
 	
 	div#toDoBox span{
-		border: solid 1px red;
+		border: solid 0px red;
 		margin-left: 15px;
 		display: inline-block;
 		text-align: center;
@@ -111,6 +111,52 @@
 	div.forModal{
 		border: solid 0px red;
 		height:30px;
+	}
+	
+	table.infoTable, table.infoTable th, table.infoTable td{
+		border: solid 2px #666666;
+		border-collapse: collapse;
+		text-align: center;
+		vertical-align: middle;
+	} 
+	
+	table.infoTable {
+		width: 95%;
+		margin: 0 auto;
+	}
+	
+	table.infoTable th{
+		background-color: #e6e6e6;
+		padding: 10px 0px;
+	}
+	
+	table.infoTable td{
+		padding: 10px 0px;
+	}
+	
+	span.sendMail{
+		display: inline-block;
+		background-color: #0071bd;
+		cursor: pointer;
+		color:#fff;
+		font-weight: bolder;
+		width: 100px;
+		padding: 5px 0px;
+		text-align: center;
+		margin-left: 50px;
+	}
+	
+	span.sendMail:hover{box-shadow: 3px 3px 3px #ccc;}
+	
+	div.topTag{
+		background-color: #666666;
+		color:#fff;
+		font-weight: bolder;
+		padding: 5px 0px;
+		width: 100px;
+		text-align: center;
+		margin-bottom: 20px;
+		margin-left: 20px;
 	}
 	
 </style>
@@ -309,7 +355,7 @@
 	
 		
 	// 특정업무 상세 정보 조회		
-	function getOneProductInfo(fk_pno){
+	function getOneProductInfo(fk_pNo){
 		
 		// 1) 상품정보 알아오기
 		$.ajax({      
@@ -318,15 +364,94 @@
 			data:{"fk_pNo":fk_pNo},
 			dataType: "JSON",
 			success: function(json){
-			
-				var html="";
+
+				var topTag="";
+				if("${requiredState}"=="1"){
+				 	topTag="<div class='topTag' style='background-color:#ff4d4d;'>진행중</div>"
+				}
+				else if("${requiredState}"=="2"){
+				 	topTag="<div class='topTag'>진행완료</div>"
+				}
 				
-				$("div.modal-body").html(html);
+				var html=topTag+ 
+						 "<table class='productDetailInfoTable infoTable'>"+
+			      			"<tr>"+
+			      				"<th style='width:35%;'>프로젝트명</th>"+
+			      				"<th style='width:21%;'>여행기간</th>"+
+			      				"<th style='width:12%;'>예약인원수</th>"+
+			      				"<th style='width:16%;'>최소예약인원수</th>"+
+			      				"<th>최대예약인원수</th>"+
+			      			"</tr>"+
+			      			"<tr>"+
+			      				"<td>"+json.pName+"</td>"+
+			      				"<td>"+
+			      					json.startDate+"<br/>-&nbsp;"+json.endDate+"<br/>"+
+			      					"["+json.period+"]"+
+			      				"</td>"+
+			      				"<td>"+json.nowNo+"명</td>"+
+			      				"<td>"+json.miniNo+"명</td>"+
+			      				"<td>"+json.maxNo+"명</td>"+
+			      			"</tr>"+
+			      		 "</table>";
+			      		 
+			     $("div.modal-body").html(html); 		 
+				
+			  // 2) 고객정보 알아오기
+				$.ajax({      
+					url:"<%=ctxPath%>/t1/selectClientInfoForModal.tw",  
+					type:"post",
+					data:{"fk_pNo":fk_pNo},
+					dataType: "JSON",
+					success: function(json){
+						
+						var html="";
+						if(json.length>0){
+							html= "<div style='margin:30px 0px 15px 0px; padding-left:35px; font-weight: bold;'>▶&nbsp;예약자 명단&nbsp;◀</div>"+
+							      	  "<table class='clientDetailInfoTable infoTable'>"+
+							      	  	  "<tr>"+
+							      		     "<th style='width:30%;'>예약자명</th>"+
+							      			 "<th style='width:20%;'>인원수</th>"+
+							      			 "<th style='text-align:left; padding-left:105px;'>연락처</th>"+
+							      		  "</tr>";
+				      		
+							$.each(json,function(index,item){
+								
+								// 고객 연락처 데이터 가공해서 보여주기
+								var clientmobile= item.clientmobile;
+								clientmobile= clientmobile.substr(0,3)+"-"+clientmobile.substr(3,4)+"-"+clientmobile.substr(7,4);
+								
+								html+= "<tr>"+
+									   		"<td>"+item.clientname+"</td>"+
+									   		"<td>"+item.cnumber+"명</td>"+
+									   		"<td style='text-align:left; padding-left:80px;'>"+
+								   				clientmobile+
+								   				"<input type='hidden' class='clientmobile' value='"+item.clientmobile+"' />"+
+								   				"<input type='hidden' class='fk_pNo' value='"+item.fk_pNo+"' />"+
+								   				"<span class='sendMail'>문자 보내기</span>"
+								   			"</td>"+
+									   "</tr>";
+							}); // end of $.each(json,funtion(index,item){-------
+							
+							html+="</table>";
+						} // end of if-------------
+						else{
+							html= "<div style='margin:30px 0px 15px 0px; text-align:center; font-weight: bold;'>예약고객이 존재하지 않습니다.</div>";
+						}
+						
+						$("div.modal-body").append(html);	 
+					
+					},
+					error: function(request, status, error){
+			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			        }
+				}); // end of $.ajax({---------
+			     
 			},
 			error: function(request, status, error){
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 	        }
 		}); // end of $.ajax({---------
+			
 	} // end of function getOneProductInfo(fk_pno){-------
 		
 </script>
@@ -368,70 +493,77 @@
 
 		<div id="toDoList">
 			<c:if test="${not empty tvoList}">
-				<c:forEach var="tvo" items="${tvoList}">
-					<div class="eachtoDoList ajaxEachList">
-						<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
-							<span style="margin-left:20px; width:50px;">${tvo.rno}</span>
+				<c:forEach var="tvo" items="${tvoList}" varStatus="status">
+					<c:choose>
+						<c:when test="${status.last}">
+							<div class="eachtoDoList ajaxEachList" style="border:none;">
+						</c:when>
+						<c:otherwise>
+							<div class="eachtoDoList ajaxEachList">
+						</c:otherwise>
+					</c:choose>
+								<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
+								<span style="margin-left:20px; width:50px;">${tvo.rno}</span>
+								
+								<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
+									<span class="hurry">&nbsp;긴급&nbsp;</span>
+									<span style="width:250px; margin-left:2px; color:red;" class="productName">${tvo.pName}</span>
+								</c:if>
+								<c:if test="${tvo.hurryno eq '0' and requiredState ne '2'}">
+									<span style="width:250px; margin-left:58px;" class="productName">${tvo.pName}</span>
+								</c:if>
+								<c:if test="${requiredState eq '2'}">
+									<span style="width:250px; margin-left:30px;" class="productName">${tvo.pName}</span>
+								</c:if>
+								
+								<span style="width:70px;">${tvo.name}</span>
+								<span style="width:110px;">${tvo.assignDate}</span>
+								<span style="width:110px;">${tvo.startDate}</span>
+								
+								<c:if test="${requiredState ne '2'}">
+									<span style="width:110px;">${tvo.dueDate}</span>  <%-- 신규등록업무와 진행중 업무에만 존재 --%>
+								</c:if>
+								
+								<c:if test="${requiredState eq '1'}">  <%-- 진행중 업무에만 존재 --%>
+									<c:if test="${tvo.fullState eq'0'}"> <%-- 예약인원 미충족 --%>
+										<span style="width:110px;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
+									</c:if>
+									<c:if test="${tvo.fullState eq'1'}"> <%-- 최소예약인원 충족 --%>
+										<span style="width:110px; color:blue;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
+									</c:if>
+									<c:if test="${tvo.fullState eq'2'}"> <%-- 최대예약인원 충족 --%>
+										<span style="width:110px; color:red;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
+									</c:if>
+								</c:if>
+								
+								<c:if test="${requiredState eq '2'}">  <%-- 진행완료 업무에만 존재 --%>
+									<span style="width:110px;">${tvo.endDate}</span> 
+								</c:if>
+							</div>
 							
-							<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
-								<span class="hurry">&nbsp;긴급&nbsp;</span>
-								<span style="width:250px; margin-left:2px; color:red;" class="productName">${tvo.pName}</span>
+							<c:if test="${requiredState eq '0'}">
+								<button type="button" class="state goWork" onclick="goWorkStart('${tvo.fk_pNo}','${tvo.pName}')">진행시작하기</button> <%-- 신규등록 업무에만 존재 --%>
 							</c:if>
-							<c:if test="${tvo.hurryno eq '0' and requiredState ne '2'}">
-								<span style="width:250px; margin-left:58px;" class="productName">${tvo.pName}</span>
+							<c:if test="${requiredState eq '1'}"> <%-- 진행중 업무에만 존재 --%>
+							  	<c:if test="${tvo.ingDetail eq '0' or tvo.ingDetail eq '-1' }"> <%-- 지연된 업무가 아닌 경우 --%>
+									<select class="ingDetail postpone" id="${tvo.fk_pNo}" name="${tvo.ingDetail}">
+										<option value="0">&nbsp;진행중</option> 
+										<option value="-1">&nbsp;보류</option>
+										<option value="2">&nbsp;진행완료</option>
+									</select>
+								</c:if>
+								<c:if test="${tvo.ingDetail ne '0' and tvo.ingDetail ne '-1' }"> <%-- 지연된 업무인 경우 --%>
+									<select class="ingDetail delay" id="${tvo.fk_pNo}">
+										<option value="1" style="background-color: #730099; color: #fff; font-weight: bold;">&nbsp;지연 &nbsp;(&nbsp;+${tvo.ingDetail}일&nbsp;)</option> 
+										<option value="2" style="background-color: #fff; color: black; font-weight: normal;">&nbsp;진행완료</option>
+									</select>
+								</c:if>
 							</c:if>
+							
 							<c:if test="${requiredState eq '2'}">
-								<span style="width:250px; margin-left:30px;" class="productName">${tvo.pName}</span>
-							</c:if>
-							
-							<span style="width:70px;">${tvo.name}</span>
-							<span style="width:110px;">${tvo.assignDate}</span>
-							<span style="width:110px;">${tvo.startDate}</span>
-							
-							<c:if test="${requiredState ne '2'}">
-								<span style="width:110px;">${tvo.dueDate}</span>  <%-- 신규등록업무와 진행중 업무에만 존재 --%>
-							</c:if>
-							
-							<c:if test="${requiredState eq '1'}">  <%-- 진행중 업무에만 존재 --%>
-								<c:if test="${tvo.fullState eq'0'}"> <%-- 예약인원 미충족 --%>
-									<span style="width:110px;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-								</c:if>
-								<c:if test="${tvo.fullState eq'1'}"> <%-- 최소예약인원 충족 --%>
-									<span style="width:110px; color:blue;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-								</c:if>
-								<c:if test="${tvo.fullState eq'2'}"> <%-- 최대예약인원 충족 --%>
-									<span style="width:110px; color:red;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-								</c:if>
-							</c:if>
-							
-							<c:if test="${requiredState eq '2'}">  <%-- 진행완료 업무에만 존재 --%>
-								<span style="width:110px;">${tvo.endDate}</span> 
+								<button type="button" class="state" style="cursor:context-menu;">진행완료</button> <%-- 진행완료 업무에만 존재 --%>
 							</c:if>
 						</div>
-						
-						<c:if test="${requiredState eq '0'}">
-							<button type="button" class="state goWork" onclick="goWorkStart('${tvo.fk_pNo}','${tvo.pName}')">진행시작하기</button> <%-- 신규등록 업무에만 존재 --%>
-						</c:if>
-						<c:if test="${requiredState eq '1'}"> <%-- 진행중 업무에만 존재 --%>
-						  	<c:if test="${tvo.ingDetail eq '0' or tvo.ingDetail eq '-1' }"> <%-- 지연된 업무가 아닌 경우 --%>
-								<select class="ingDetail postpone" id="${tvo.fk_pNo}" name="${tvo.ingDetail}">
-									<option value="0">&nbsp;진행중</option> 
-									<option value="-1">&nbsp;보류</option>
-									<option value="2">&nbsp;진행완료</option>
-								</select>
-							</c:if>
-							<c:if test="${tvo.ingDetail ne '0' and tvo.ingDetail ne '-1' }"> <%-- 지연된 업무인 경우 --%>
-								<select class="ingDetail delay" id="${tvo.fk_pNo}">
-									<option value="1" style="background-color: #730099; color: #fff; font-weight: bold;">&nbsp;지연 &nbsp;(&nbsp;+${tvo.ingDetail}일&nbsp;)</option> 
-									<option value="2" style="background-color: #fff; color: black; font-weight: normal;">&nbsp;진행완료</option>
-								</select>
-							</c:if>
-						</c:if>
-						
-						<c:if test="${requiredState eq '2'}">
-							<button type="button" class="state" style="cursor:context-menu;">진행완료</button> <%-- 진행완료 업무에만 존재 --%>
-						</c:if>
-					</div>
 				</c:forEach>
 			</c:if>
 			
@@ -452,7 +584,7 @@
 		        	<!-- 닫기(x) 버튼 -->
 		        	<button type="button" class="close" data-dismiss="modal">×</button>
 		        	<!-- header title -->
-		        	<h4 class="modal-title">직원 세부정보</h4>
+		        	<h4 class="modal-title">업무 세부정보</h4>
 		      	</div>
 		      	<!-- body (ajax로 값이 들어온다) -->
 		      	<div class="modal-body"></div>

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.ProductHsyVO;
 import com.t1works.groupware.hsy.model.TodoHsyVO;
 import com.t1works.groupware.hsy.service.InterProductHsyService;
@@ -223,7 +225,6 @@ public class TodoHsyController {
 		ProductHsyVO pvo= service2.selectOneProductInfo(pNo);
 		
 		JSONObject jsonObj= new JSONObject();
-		
 		jsonObj.put("pName", pvo.getpName());
 		jsonObj.put("miniNo", pvo.getMiniNo());
 		jsonObj.put("maxNo", pvo.getMaxNo());
@@ -235,4 +236,39 @@ public class TodoHsyController {
 		return jsonObj.toString();
 		
 	} // end of public String selectProductInfoForModal(HttpServletRequest request)---
+	
+	
+	// 특정업무 상세 정보 조회2 (고객에 대한 정보)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectClientInfoForModal.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
+	public String selectClientInfoForModal(HttpServletRequest request) {
+
+		// 1) 여행상품 상세번호 알아오기
+		String pNo= request.getParameter("fk_pNo");
+				
+		// pNo 존재하는지 확인하기 (url 장난 방지) => 숫자형태가 아닌 문자입력 또는 존재하지 않는 pNo 입력한 경우
+		int n= service2.isExistPno(pNo);
+		if(n==0) { // url 장난친 경우 제일 첫번째 상품을 보여준다
+			pNo="1"; 
+		}
+		
+		// 2) pNo를 이용하여 필요한 고객정보 가져오기
+		List<ClientHsyVO> cvoList= service.selectClientInfoByPno(pNo);
+		
+		JSONArray jsonArr= new JSONArray();
+		for(ClientHsyVO cvo: cvoList) {
+			
+			JSONObject jsonObj= new JSONObject();
+			jsonObj.put("clientname",cvo.getClientname());
+			jsonObj.put("clientmobile",cvo.getClientmobile());
+			jsonObj.put("cnumber",cvo.getCnumber());
+			jsonObj.put("fk_pNo",cvo.getFk_pNo());
+			
+			jsonArr.put(jsonObj);
+		}// end of for--------------------
+		
+		return jsonArr.toString();
+		
+	} // end of public String selectProductInfoForModal(HttpServletRequest request) {-----
+	
 }

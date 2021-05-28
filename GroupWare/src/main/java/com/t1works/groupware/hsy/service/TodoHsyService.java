@@ -10,8 +10,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.t1works.groupware.hsy.model.ClientHsyVO;
+import com.t1works.groupware.hsy.model.InterClientHsyDAO;
 import com.t1works.groupware.hsy.model.InterTodoHsyDAO;
-import com.t1works.groupware.hsy.model.MemberHsyVO;
 import com.t1works.groupware.hsy.model.TodoHsyVO;
 
 @Component
@@ -20,6 +21,9 @@ public class TodoHsyService implements InterTodoHsyService {
 
 	@Autowired 
 	private InterTodoHsyDAO tdao;
+	
+	@Autowired 
+	private InterClientHsyDAO cdao;
 	
 	// 특정유저의 특정업무상태에 해당하는 총 페이지 수 알아오기
 	@Override
@@ -117,6 +121,14 @@ public class TodoHsyService implements InterTodoHsyService {
 		Map<String,String> donePeriodMap= tdao.selectCntTodoByPeriod(employeeid);
 		return donePeriodMap;
 	} // end of public Map<String, String> selectCntTodoByPeriod(String employeeid) {---
+
+
+	 // pNo를 이용하여 필요한 고객정보 가져오기
+	@Override
+	public List<ClientHsyVO> selectClientInfoByPno(String pNo) {
+		List<ClientHsyVO> cvoList=cdao.selectClientInfoByPno(pNo);
+		return cvoList;
+	} // end of public List<ClientHsyVO> selectClientInfoByPno(String pNo) {------
  
 
 

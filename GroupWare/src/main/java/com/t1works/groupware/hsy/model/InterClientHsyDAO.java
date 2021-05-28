@@ -25,4 +25,7 @@ public interface InterClientHsyDAO {
 	// 고객테이블에 해당예약건 update
 	int updateClientAjax(ClientHsyVO cvo);
 
+	// pNo를 이용하여 필요한 고객정보 가져오기
+	List<ClientHsyVO> selectClientInfoByPno(String pNo);
+
 }

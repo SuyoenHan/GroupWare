@@ -3,6 +3,7 @@ package com.t1works.groupware.hsy.service;
 import java.util.List;
 import java.util.Map;
 
+import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.TodoHsyVO;
 
 public interface InterTodoHsyService {
@@ -27,5 +28,8 @@ public interface InterTodoHsyService {
 
 	// 기간별로 완료한 업무 총건수 나눠서 표시
 	Map<String, String> selectCntTodoByPeriod(String employeeid);
+	
+	// pNo를 이용하여 필요한 고객정보 가져오기
+	List<ClientHsyVO> selectClientInfoByPno(String pNo);
 
 }

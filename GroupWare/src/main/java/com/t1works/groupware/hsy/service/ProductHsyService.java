@@ -140,6 +140,10 @@ public class ProductHsyService implements InterProductHsyService {
 			pvo.setMaxNo("0"+pvo.getMaxNo());
 		}
 		
+		if(pvo.getMiniNo().length()==1) {
+			pvo.setMiniNo("0"+pvo.getMiniNo());
+		}
+		
 		return pvo;
 		
 	}// end of public ProductHsyVO selectOneProductInfo(String pNo) {-----
