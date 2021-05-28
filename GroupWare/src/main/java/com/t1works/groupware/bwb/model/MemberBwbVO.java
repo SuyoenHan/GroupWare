@@ -18,7 +18,7 @@ public class MemberBwbVO {
    
    private String pname;           // 직위명
    private String dname;		   // 소속명
-   
+   private String offcnt;		   // 총연차수
    
 
 
@@ -138,6 +138,14 @@ public class MemberBwbVO {
 	
    public void setDname(String dname) {
 		this.dname = dname;
+   }
+
+   public String getOffcnt() {
+		return offcnt;
+   }
+	
+   public void setOffcnt(String offcnt) {
+		this.offcnt = offcnt;
    }
    
    

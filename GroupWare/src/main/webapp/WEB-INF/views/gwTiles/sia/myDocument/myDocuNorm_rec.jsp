@@ -1,16 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <% 
 	String ctxPath = request.getContextPath();
 %>
 
-<style type="text/css">	
-	div.dropdown {
-		margin-left: 30px;
-	}
+<style type="text/css">
 	div.section{
-		margin: 10px 30px;;
+		margin: 30px 0px 30px 50px;
+		width: 85%;
 	}
 	a.tab_area{
 		background-color: #ecf2f9;
@@ -60,22 +60,33 @@
 	tr, td{
 		border: solid 1px gray;
 	}
-	td.th{
-		background-color: #e6e6e6;
+	td.th{		
+		background-color: #ccd9e6;
 		padding: 5px;
-	}
+		font-weight: bold;
+	}	
+	#table th{
+		background-color: #395673; 
+		color: #ffffff;
+		padding: 5px;
+		border: solid 1px #ccc;}
 </style>
 
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
 
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	goSearch();
+	
+	$("input#searchWord").bind("keydown", function(event){
+		if(event.keyCode == 13){
+			// 엔터를 했을 경우
+			goSearch();
+		}
+	});
 	
 	var today = new Date();
 	var dd = today.getDate();
@@ -118,26 +129,12 @@ $(document).ready(function(){
 
 		// input을 datepicker로 선언
 		$("input#fromDate").datepicker();                    
-		$("input#toDate").datepicker();		
-		
-		if($('input#hiddendate').val() == today || $('input#hiddendate').val() == ""){
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', '-3M'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', 'today'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)		
-			}
-		else{
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', $('input#hiddendate').val()); 
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', $('input#hiddendate2').val()); 
-		}
-		
+		$("input#toDate").datepicker();
 	});
 	
-
 	
 });
+	
 	
 	//Function Declaration
 	function setSearchDate(start){
@@ -165,35 +162,92 @@ $(document).ready(function(){
 		$("#toDate").datepicker( "option", "minDate", startDate );
 		
 		// 시작일은 종료일 이후 날짜 선택하지 못하도록 비활성화
-		$("#fromDate").datepicker( "option", "maxDate", endDate );	
-	
-		
+		$("#fromDate").datepicker( "option", "maxDate", endDate );		
 	}
-</script>
-
-<div class="container">                                          
-	<div class="dropdown">
-		<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" >내문서함
-		<span class="caret"></span></button>
-		<ul class="dropdown-menu">
-			<li><a href="#">수신함</a></li>
-			<li><a href="#">발신함</a></li>
-			<li><a href="#">임시저장함</a></li>
-		</ul>
-	</div>
 	
-	<div class="section">
-		<div class="tab_area">
-			<a href="<%= ctxPath%>/t1/myDocuNorm.tw" class="tab_area">일반 결재 문서</a> 
-			<a href="<%= ctxPath%>/t1/myDocuSpend.tw" class="tab_area selected">지출 결재 문서</a>
-			<a href="<%= ctxPath%>/t1/myDocuVacation.tw" class="tab_area">근태/휴가 결재 문서</a>			
-		</div>
+	
+	function goSearch(){
+		// 페이지 로딩 시 해당하는 내역 전체 보여주기		
+		var checkArr = new Array();	
+		$("input[name=ncat]:checked").each(function(index,item){			
+			var ncat = $(item).val();
+			checkArr.push(ncat);			
+		});
+		// console.log(checkArr);
 		
+		var checkArres = checkArr.join();
+		
+		$.ajax({			
+			url:"<%= ctxPath%>/t1/norm_reclist.tw",
+			data:{"anocode":"${requestScope.approvalvo.anocode}"
+				, "astatus":$("select#astatus").val()
+				, "fromDate":$("input#fromDate").val()
+				, "toDate":$("input#toDate").val()
+				, "ncat": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()},
+			dataType:"json",
+			success:function(json){
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						var status = "";
+						
+						if(item.astatus == 0){
+							status = "제출";
+						}
+						else if(item.astatus == 1){
+							status = "결재진행중";
+						}
+						else if(item.astatus == 2){
+							status = "반려";
+						}
+						else if(item.astatus == 3){
+							status = "승인완료";
+						}
+						
+						html += "<tr>";
+						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td align='center'>"+ item.ncatname +"</td>";
+						html += "<td align='center'>"+ item.ano +"</td>";						
+						html += "<td align='center'>"+ status +"</td>";
+						html += "<td align='center'>"+ item.asdate +"</td>";
+						html += "</tr>";
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='6' align='center'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#commentDisplay").html(html);
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}
+	
+</script>
+<div class="section">
+<h3 style="font-size: 20pt; margin-bottom: 10px;">수신함</h3>
+	<div class="tab_select">
+		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area selected">일반 결재 문서</a> 
+		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
+		<a href="<%= ctxPath%>/t1/myDocuVacation_rec.tw" class="tab_area">근태/휴가 결재 문서</a>			
+	</div>
+
+	<form name="searchFrm">	
 		<table>
 			<tr>
 				<td width="20%" class="th">결재상태</td>
 				<td width="80%">&nbsp;&nbsp;
-					<select name="status" id="status">
+					<select name="astatus" id="astatus">
 						<option>전체보기</option>
 						<option value="0">제출</option>
 						<option value="1">결재진행중</option>
@@ -232,27 +286,42 @@ $(document).ready(function(){
 					<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
 				</td>
 			</tr>
-			<tr>
+			<tr>			
 				<td class="th">일반 결재 문서</td>
 				<td>&nbsp;&nbsp;
-					<label for="chx1"><input type="checkbox" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
-					<label for="chx2"><input type="checkbox" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
-					<label for="chx3"><input type="checkbox" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
-					<label for="chx4"><input type="checkbox" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
+					<label for="chx1"><input type="checkbox" name="ncat" id="chx1" value="1"> 회의록</label>&nbsp;&nbsp;
+					<label for="chx2"><input type="checkbox" name="ncat" id="chx2" value="2"> 위임장</label>&nbsp;&nbsp;
+					<label for="chx3"><input type="checkbox" name="ncat" id="chx3" value="3"> 외부공문</label>&nbsp;&nbsp;
+					<label for="chx4"><input type="checkbox" name="ncat" id="chx4" value="4"> 협조공문</label>&nbsp;&nbsp;
 				</td>
 			</tr>			
 			<tr>
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
-					<select>
+					<select name="sort" id="sort">
 						<option>전체보기</option>
-						<option value="0">제목</option>
-						<option value="1">문서번호</option>												
+						<option value="atitle">제목</option>
+						<option value="ano">문서번호</option>												
 					</select>&nbsp;
-					<input type="text" style="height: 20px;"/> <button type="button">검색</button>
+					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch()">검색</button>
 				</td>
-			</tr>
-		
+			</tr>	
 		</table>
-	</div>
+		
+		<br>
+		
+		<table id="table">
+			<thead>
+			<tr>
+				<th style="width: 70px;  text-align: center;">번호</th>
+				<th style="width: 300px; text-align: center;">제목</th>
+				<th style="width: 100px; text-align: center;">문서분류</th>
+				<th style="width: 100px; text-align: center;">문서번호</th>
+				<th style="width: 100px; text-align: center;">결재상태</th>
+				<th style="width: 120px; text-align: center;">기안일</th>
+			</tr>
+			</thead>		
+			<tbody id="commentDisplay"></tbody>		
+		</table>
+	</form>	
 </div>

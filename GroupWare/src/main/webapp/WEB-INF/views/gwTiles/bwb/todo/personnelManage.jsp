@@ -6,7 +6,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <style type="text/css">
-	
+
+	div#gwContent{left: 80px;}
 	
 	div#employeeMap {
       background-color: #0071bd;
@@ -163,7 +164,6 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		$("div#submenu7").show();
 		
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();
@@ -484,7 +484,7 @@
       </div>
   	  </div>
   	  
-  	  <div id="oneInfo" style="clear:both; margin-bottom:50px;">
+  	  <div id="oneInfo" style="clear:both; margin-bottom:100px;">
       		<table id="oneInfo">
       			<tbody>
 	      			<tr> 
@@ -514,7 +514,7 @@
       		</table>
       </div>
       	<form name="goUpdate">
-      	<div id="oneInfoUpdate" style="margin-bottom:100px;">		
+      	<div id="oneInfoUpdate" style="margin-bottom:150px;">		
       		<table id="oneInfoUpdate" style="margin-top:50px;">
       			<tbody>
 	      			<tr> 
@@ -534,17 +534,17 @@
 	      			<tr> 
 	      				<td class="oneInfoMenu">소속</td>
 	      				<td style="padding-left:15px;">
-	      					<select id="dname" name="dname" class="updateInfo">
+	      					<select id="fk_dcode" name="fk_dcode" class="updateInfo">
 	      						<c:forEach var="Department" items="${departmentList}">
-	      							<option value="${Department.dname}">${Department.dname}</option>
+	      							<option value="${Department.dcode}">${Department.dname}</option>
 	      						</c:forEach>
 	      					</select>
 	      				</td>
 	      				<td class="oneInfoMenu">직위</td>
 	      				<td style="padding-left:15px;">
-	      					<select id="pname" name="pname" class="updateInfo">
+	      					<select id="fk_pcode" name="fk_pcode" class="updateInfo">
 	      						<c:forEach var="position" items="${positionList}">
-	      							<option value="${position.pname}">${position.pname}</option>
+	      							<option value="${position.fk_pcode}">${position.pname}</option>
 	      						</c:forEach>
 	      					</select>
 	      				</td>
@@ -561,4 +561,4 @@
     	 </form>    
       </div>
   	  
-	</div>
+</div>

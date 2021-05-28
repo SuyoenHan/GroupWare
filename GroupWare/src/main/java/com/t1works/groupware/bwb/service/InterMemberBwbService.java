@@ -19,6 +19,24 @@ public interface InterMemberBwbService {
 	// 회원정보 업데이트하기
 	int updateOneInfo(MemberBwbVO mvo);
 	
+	// pcode에 따른 연차수 가져오기
+	String selectOffCnt(String pcode);
+	
+	// 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
+	int registerOne(MemberBwbVO mvo);
+	
+	// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+	String selectMangerid(String dcode);
+	
+	// 부서명 가져오기
+	String selectdname(String dcode);
+	
+	// 직위 가져오기
+	String selectpname(String pcode);
+	
+	// 비밀번호 변경하기
+	int updatePasswd(Map<String, String> paraMap);
+	
 	
 
 }

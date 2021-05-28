@@ -9,17 +9,10 @@
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style type="text/css">
 
-table{
-	border-collapse: collapse;
-}
-
-th, td{
-	border: solid 1px #CCD1D1;
+table#rscar th, td{
 	text-align: center;
-	height: 40px;
 	vertical-align: middle;
 }
-
 /* 달력 css */
 div#calendarWrapper {
 	float: left;
@@ -78,9 +71,7 @@ button#btn_show{
 
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 var curDate = new Date();
@@ -105,7 +96,7 @@ var curTime = curYear + "" + curMonth + "" + curDay;
 
 $(document).ready(function(){
 
-	$("div#submenu8").show();
+	
 	
 	$("button#btn_Reserve").hide(); // 등록버튼 숨기기
 	
@@ -242,6 +233,7 @@ $(document).ready(function(){
 		var rcsubject=Array();
 		var rdestination=Array();
 		var rcpeople=Array();
+		var cstatus=Array();
 		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
@@ -254,6 +246,7 @@ $(document).ready(function(){
 			rcsubject.push(item.rcsubject);
 			rdestination.push(item.rdestination);
 			rcpeople.push(item.rcpeople);
+			cstatus.push(item.cstatus);
 		});
 		
 	
@@ -265,7 +258,7 @@ $(document).ready(function(){
 			var clickEvent="";
 			var chkBox="";
 			var index=jQuery.inArray(i,rctime); // 시간배열에 i가 존재하는지 index값을 설정  i에 맞는 시간대가 있다면 index의 값은 무조건 0이상이된다. 
-			console.log(i+"인덱스값: "+index);
+		//	console.log(i+"인덱스값: "+index);
 			
 			// 선택한 날짜와 오늘날짜가 같을 때
 			if(parseInt(curTime)==parseInt(chgdate)){ 
@@ -308,30 +301,47 @@ $(document).ready(function(){
 			if( index > -1){
 
 				html += "<tr><td style='vertical-align: middle;' ><label id='id_time' ><font color='"+fontType+"'>"+timeText(rctime[index])+"</label></span></td>";
-				html += "<td>"+name[index]+"</td>";
+				html += "<td style='vertical-align: middle;' >"+name[index]+"</td>";
 				
-				html += "<td>"+rdestination[index]+"</td>";
-				html += "<td align='left'>"+rcsubject[index]+"</td>";
+				html += "<td style='vertical-align: middle;' >"+rdestination[index]+"</td>";
+				html += "<td style='vertical-align: middle; ' >"+rcsubject[index]+"</td>";
 				console.log(rcpeople[index]);
 				if(rcpeople[index]==undefined){
 					html +="<td></td>"
 				}
 				else{
-					html += "<td align='left'>"+rcpeople[index]+"</td>";
+					html += "<td style='vertical-align: middle;'>"+rcpeople[index]+"</td>";
 				}
+				
 				if(fk_employeeid[index] != employeeid) {
 						html += "<td></td></tr>";
-					} 
-					else {
-						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+				} 
+				else {
+					if(parseInt(curTime)>parseInt(chgdate)){
+						if(cstatus[index]=='1'){
+							html += "<td><button id='btn_return' class='btn' onclick='returnCar("+rscno[index]+")';>반납</button></td></tr>";
+						}
+						else{
+							html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}
 					}
+					else if(parseInt(curTime)==parseInt(chgdate)){
+						if(cstatus[index]=='1' && i<=curHour){
+							html += "<td><button id='btn_return' class='btn' onclick='returnCar("+rscno[index]+")';>반납</button></td></tr>";
+						}
+						else{
+							html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}	
+					}
+					else{
+						html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+					}
+				}
 			} 
 			else {
-
 				html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
 				html += "<td></td><td></td><td></td><td></td><td></td><tr>";
 			}
-
 			$("tbody#rstimeList").append(html);
 		}// end of for----
 		
@@ -456,27 +466,36 @@ $(document).ready(function(){
 		});
 	}
 	
-	
+	function returnCar(rscno){
+		$.ajax({
+			url: "<%= ctxPath%>/t1/rsCar/returnReserveCar.tw",
+			type: "post",
+			data: {"rscno":rscno},
+			dataType: "json",
+			success:function(json){
+				alert("차량을 반납하였습니다.");
+     		 	location.href="javascript:history.go(0);"; 
+			}
+			, error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+  	      }
+		});
+	 }
 	
 	
 </script>
-<!-- 
-<div id="sebumenu">
-	<div><a href="<%= ctxPath%>/t1/rsRoom.tw">회의실 대여신청</a></div>
-	<div style="background-color: #6c757d;"><a href="<%= ctxPath%>/t1/rsCar.tw" style="color: #fff;">차량 대여신청</a></div>
-	<div><a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a></div>
-</div>
- -->
+
+<div class="rsCarContainer" style="margin-left: 80px;"> 
 	<h3 style="margin-top: 20px !important;">차량 대여신청</h3>
 	
 	<div>
 		<div id="calendarWrapper" >
-			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px;" ></div>
+			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px; margin-left: 200px;" ></div>
 		</div>
 		
 	  
 		<div class="car" >
-			<table style="width: 90%; margin-top: 200px;">
+			<table style="width: 90%; margin-top: 200px;" class="table table-bordered" >
 	            <tr><td colspan="2">차량 목록</td></tr>
 	            	<c:if test="${empty requestScope.carList}">
 	            		<tr><td colspan="2">차량이 존재하지 않습니다.</td></tr>
@@ -495,8 +514,8 @@ $(document).ready(function(){
 		</div>
 </div>
 	
-	<div class="middle"  style="width: 80%;">
-		<table  style="width: 92%;">
+	<div class="middle">
+		<table  style="width: 92%;" class="table table-bordered" id="rscar">
 			<colgroup>
 				<col width="15%">
 				<col width="15%">
@@ -516,7 +535,7 @@ $(document).ready(function(){
 				   <th>도착지</th>
 				   <th>목적</th>
 				   <th>탑승자</th>
-				   <th>삭제</th>
+				   <th>반납 / 삭제</th>
 				</tr>
 			</thead>
 			<tbody id="rstimeList">
@@ -529,27 +548,23 @@ $(document).ready(function(){
 	
 	
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
-		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
+		<button id="btn_Reserve" class="btn"  data-toggle="modal" data-target="" >등록</button>
 	</div>
 
 
-
+</div>
 
 <!-- The Modal -->
-  <div class="modal fade" id="myModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+ <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-      
-        <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">신청등록</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">신청등록</h4>
         </div>
-        
-        <!-- Modal body -->
         <div class="modal-body">
          	<form name="reserveCar">
-         		<table style="width: 100%;">
+         		<table style="width: 100%;" class="table table-bordered">
          			<tr>
          				<td style="text-align: left; ">신청차량</td>
          				<td id="carname" style="text-align: left; padding-left: 5px;"></td>
@@ -579,8 +594,8 @@ $(document).ready(function(){
          		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
          		<div>
 					<input type="hidden" id="cno" value="" name="cno"/>
-					<input type="text" id="chgdate" value="" name="rcdate"/>
-					<input type="text" id="rctime" value="" name="rctime"/>
+					<input type="hidden" id="chgdate" value="" name="rcdate"/>
+					<input type="hidden" id="rctime" value="" name="rctime"/>
 					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
 					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
 				</div>
@@ -588,9 +603,9 @@ $(document).ready(function(){
         </div>
         
         <!-- Modal footer -->
-        <div class="modal-footer">
-        	<button type="button" id="realReserve" class="btn btn-secondary" data-dismiss="modal">예약</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        <div class="modal-footer" align="center">
+        	<button type="button" id="realReserve" class="btn" data-dismiss="modal">예약</button>
+          <button type="button" class="btn" data-dismiss="modal">취소</button>
         </div>
         
       </div>
