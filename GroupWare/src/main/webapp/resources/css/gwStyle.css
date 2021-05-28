@@ -126,8 +126,6 @@ div#sidemenu > p:hover{
 
 /* 사이드바 세부 메뉴 */
 
-<<<<<<< HEAD
-
 div.submenu  {
   float: left;
   height: 100%;
@@ -140,13 +138,13 @@ div.submenu  {
   overflow-x: hidden;
   transition: 0.5s;
   padding-top: 10px;
-=======
+}
+
 span#closebtn-style{
 	display: block;
 	margin-right: 10px;
 	margin-top: 10px;
 	float: right;
 	color: #a3a5a6;
->>>>>>> branch 'main' of https://github.com/bwb930305/GroupWare.git
 }
 span#closebtn-style:hover {color: white;}
