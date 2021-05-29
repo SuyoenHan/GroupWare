@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	// == 상단메뉴 ==
 	$("td.home").click(function(){
-		location.href="home.tw";
+		location.href="travelAgency.tw";
 	});
 	$("td.mypage").click(function(){
 		location.href="mypage.tw";
