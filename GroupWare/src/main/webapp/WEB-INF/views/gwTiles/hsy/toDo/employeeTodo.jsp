@@ -498,7 +498,7 @@
 </script>
 
 <div id="employeeTodoBox">
-	<div style="margin: 70px 0px 0px 65px; font-size: 22pt; font-weight: bold;" >나의&nbsp;업무현황</div>
+	<div style="margin: 70px 0px 0px 65px; font-size: 22pt; font-weight: bold;" >${sessionScope.loginuser.name}님의&nbsp;업무현황</div>
 	<div id="tabMenu" style="margin: 30px 0px 0px 50px; float:left;">
 		<span id="newTodo" onclick="getEmployeeTodo('0')" style="margin-left:10px;">신규등록업무&nbsp;(${newTodoCnt}건)</span>
 		<span id="ingTodo" onclick="getEmployeeTodo('1')" style="border-left:0px; border-right:0px;">진행중업무&nbsp;(${ingTodoCnt}건)</span>
