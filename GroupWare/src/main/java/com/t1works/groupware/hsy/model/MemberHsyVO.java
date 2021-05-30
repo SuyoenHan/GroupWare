@@ -21,8 +21,7 @@ public class MemberHsyVO {
 	private String pname;         // 직위명
 	private String dname;         // 부서명
 	private String duty;          // 직무
-	
-	
+
 	
 	public String getEmployeeid() {
 		return employeeid;

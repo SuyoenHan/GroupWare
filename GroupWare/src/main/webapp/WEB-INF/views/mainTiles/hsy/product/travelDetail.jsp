@@ -7,7 +7,7 @@
 	
 	div#productDetailOuterBox{
 		border: solid 0px red;
-		width: 80%;
+		width: 90%;
 		margin: 0 auto;
 		overflow: hidden;
 		padding: 50px 0px 30px 0px;
@@ -297,6 +297,8 @@
 		var clientname= $("input[name=clientname]").val().trim();
 		var cnumber= $("input[name=cnumber]").val().trim();
 		var pName= '${pvo.pName}';
+		var clientmobile= $("input[name=clientmobile]").val().trim();
+		
 		var $frm= document.reserveInfo
 		
 		$.ajax({
@@ -307,10 +309,25 @@
 			success:function(json){
 				if(json.result==1){ // 트랜잭션처리 성공한 경우		
 				
-					alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
-					      "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
-					$frm.submit();
-					
+					// 예약고객에게 문자보내기
+					$.ajax({
+						url:"<%=ctxPath%>/t1/sendSms.tw",
+						type:"POST",   // 받는사람의 번호와 문자 내용물
+						data:{"mobile":clientmobile,"smsContent":"[연습용] 고객님의 여행 예약이 완료되었습니다 - T1Works"},
+						dataType:"json",
+						success:function(json){
+							
+							if(json.success_count==1){
+								alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
+								      "예약내역이 문자로 전송되었습니다. 또한 "+
+									  "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
+								$frm.submit();
+							}
+						},
+						error: function(request, status, error){
+				               alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				        }
+					}); // end of $.ajax({-----------------------
 				}
 				else{ // 트랜잭션처리 실패한 경우
 					alert("시스템 오류로 예약에 실패했습니다. 관리자에게 문의바랍니다.");

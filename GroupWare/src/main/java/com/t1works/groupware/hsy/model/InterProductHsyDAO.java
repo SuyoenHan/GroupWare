@@ -5,7 +5,7 @@ import java.util.*;
 public interface InterProductHsyDAO {
 
 	// 여행사 홈페이지에서 보여줄 상품정보 가져오기
-	List<ProductHsyVO> selectProductInfoForHome();
+	List<ProductHsyVO> selectProductInfoForHome(Map<String,String> paraMap);
 
 	// pNo 존재하는지 확인하기
 	int isExistPno(String pNo);
@@ -27,5 +27,8 @@ public interface InterProductHsyDAO {
 
 	// 예약취소가 된 상품의 현재예약인원 update
 	int updateMinusNowNo(ClientHsyVO cvo);
+
+	// 상품목록 총 페이지 수
+	int selectProductTotalPage(Map<String, String> paraMap);
 
 }

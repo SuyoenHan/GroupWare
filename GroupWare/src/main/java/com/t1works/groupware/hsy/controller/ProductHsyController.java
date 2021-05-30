@@ -29,11 +29,67 @@ public class ProductHsyController {
 	@RequestMapping(value="/t1/travelAgency.tw") 
 	public ModelAndView travelAgency(ModelAndView mav, HttpServletRequest request) {
 		
-		// 1) 여행사 홈페이지에서 보여줄 상품정보 가져오기
-		List<ProductHsyVO> pvoList= service.selectProductInfoForHome();
+		// 1) 여행사 홈페이지에서 보여줄 상품정보 가져오기 => 페이징바 처리
+		
+		String currentShowPageNo= request.getParameter("currentShowPageNo");
+		if(currentShowPageNo == null) currentShowPageNo = "1";
+		
+		try {
+			Integer.parseInt(currentShowPageNo);
+		} catch(NumberFormatException e) {
+			currentShowPageNo = "1"; 
+		}
+		
+		String sizePerPage= "6"; // 6개씩 고정
+		if(!"6".equals(sizePerPage)) sizePerPage = "6";
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("currentShowPageNo", currentShowPageNo);
+		paraMap.put("sizePerPage", sizePerPage);
+		
+		// 상품목록 총 페이지 수
+		int productTotalPage = service.selectProductTotalPage(paraMap);
+		
+		if( Integer.parseInt(currentShowPageNo) > productTotalPage || Integer.parseInt(currentShowPageNo) < 1) {
+			currentShowPageNo = "1";
+			paraMap.put("currentShowPageNo", currentShowPageNo);
+		}
+		
+		List<ProductHsyVO> pvoList= service.selectProductInfoForHome(paraMap);
 		mav.addObject("pvoList", pvoList);
 		
-		// 2) 상품상세페이지에서 사용할 gobackURL 작업
+		// 2) 페이징바 생성
+		String pageBar= "";
+		int blockSize= 3;
+		int loop=1;
+		int pageNo=0;
+		
+		pageNo= ((Integer.parseInt(currentShowPageNo)-1)/blockSize) * blockSize + 1 ;
+		
+		if(pageNo != 1) {
+			pageBar += "&nbsp;<a href='travelAgency.tw?currentShowPageNo=1'>◀◀</a>&nbsp;"; 
+			pageBar += "&nbsp;<a href='travelAgency.tw?currentShowPageNo="+(pageNo-1)+"'>◀</a>&nbsp;";
+		}
+		
+		while(!(loop>blockSize || pageNo > productTotalPage) ) {
+			if(pageNo == Integer.parseInt(currentShowPageNo)) {
+				pageBar += "&nbsp;<span style='color:#fff; background-color: #003d66; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
+			}
+			else {
+				pageBar += "&nbsp;<a href='travelAgency.tw?currentShowPageNo="+pageNo+"'>"+pageNo+"</a>&nbsp;";
+			}
+			loop++;
+			pageNo++;
+		}// end of while-----------------------------
+		
+		if(pageNo <= productTotalPage) {
+			pageBar += "&nbsp;<a href='travelAgency.tw?currentShowPageNo="+pageNo+"'>▶</a>&nbsp;";
+			pageBar += "&nbsp;<a href='travelAgency.tw?currentShowPageNo="+productTotalPage+"'>▶▶</a>&nbsp;";
+		}
+		
+		mav.addObject("pageBar", pageBar);
+		
+		// 3) 상품상세페이지에서 사용할 gobackURL 작업
 		String currentURL= MyUtil.getCurrentURL(request);
 		currentURL= currentURL.replaceAll("&", " ");
 		mav.addObject("goBackURL", currentURL);
@@ -388,6 +444,5 @@ public class ProductHsyController {
 		return jsonObj.toString();
 	}// end of public String changeCountAjax(ClientHsyVO cvo) {-----------
 		
-	
 	
 }

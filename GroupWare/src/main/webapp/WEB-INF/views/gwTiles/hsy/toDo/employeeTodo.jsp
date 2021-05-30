@@ -135,6 +135,7 @@
 		background-color: #003d66;
 		padding: 10px 0px;
 		color: #fff;
+		border-top: solid 2px #003d66;
 	}
 	
 	table.infoTable td{
@@ -150,7 +151,8 @@
 		width: 100px;
 		padding: 5px 0px;
 		text-align: center;
-		margin-left: 50px;
+		position: relative;
+		left: 50px;
 	}
 	
 	span.sendMail:hover{box-shadow: 3px 3px 3px #ccc;}
@@ -165,6 +167,7 @@
 		margin-bottom: 20px;
 		margin-left: 20px;
 	}
+	
 	
 </style>
 
@@ -247,7 +250,7 @@
 			$(this).val(state);
 		}); // end of $("select.postpone").each(function(index,item){
 		
-	
+
 		// 지연상태인 경우 select태그 배경색 변경하기  => 페이지가 로드될때 적용
 		$("select.delay").each(function(index,item){
 			if($(item).val()=="1"){
@@ -417,11 +420,11 @@
 				var html=topTag+ 
 						 "<table class='productDetailInfoTable infoTable'>"+
 			      			"<tr>"+
-			      				"<th style='width:35%;'>프로젝트명</th>"+
+			      				"<th style='width:35%; border-left: solid 2px #003d66;'>프로젝트명</th>"+
 			      				"<th style='width:21%;'>여행기간</th>"+
 			      				"<th style='width:12%;'>예약인원수</th>"+
 			      				"<th style='width:16%;'>최소예약인원수</th>"+
-			      				"<th>최대예약인원수</th>"+
+			      				"<th style='border-right: solid 2px #003d66;''>최대예약인원수</th>"+
 			      			"</tr>"+
 			      			"<tr>"+
 			      				"<td>"+json.pName+"</td>"+
@@ -437,55 +440,7 @@
 			      		 
 			     $("div.modal-body").html(html); 		 
 				
-			  // 2) 고객정보 알아오기
-				$.ajax({      
-					url:"<%=ctxPath%>/t1/selectClientInfoForModal.tw",  
-					type:"post",
-					data:{"fk_pNo":fk_pNo},
-					dataType: "JSON",
-					success: function(json){
-						
-						var html="";
-						if(json.length>0){
-							html= "<div style='margin:30px 0px 15px 0px; padding-left:35px; font-weight: bold;'>▶&nbsp;예약자 명단&nbsp;◀</div>"+
-							      	  "<table class='clientDetailInfoTable infoTable'>"+
-							      	  	  "<tr>"+
-							      		     "<th style='width:30%;'>예약자명</th>"+
-							      			 "<th style='width:20%;'>인원수</th>"+
-							      			 "<th style='text-align:left; padding-left:105px;'>연락처</th>"+
-							      		  "</tr>";
-				      		
-							$.each(json,function(index,item){
-								
-								// 고객 연락처 데이터 가공해서 보여주기
-								var clientmobile= item.clientmobile;
-								clientmobile= clientmobile.substr(0,3)+"-"+clientmobile.substr(3,4)+"-"+clientmobile.substr(7,4);
-								
-								html+= "<tr>"+
-									   		"<td>"+item.clientname+"</td>"+
-									   		"<td>"+item.cnumber+"명</td>"+
-									   		"<td style='text-align:left; padding-left:80px;'>"+
-								   				clientmobile+
-								   				"<input type='hidden' class='clientmobile' value='"+item.clientmobile+"' />"+
-								   				"<input type='hidden' class='fk_pNo' value='"+item.fk_pNo+"' />"+
-								   				"<span class='sendMail'>문자 보내기</span>"
-								   			"</td>"+
-									   "</tr>";
-							}); // end of $.each(json,funtion(index,item){-------
-							
-							html+="</table>";
-						} // end of if-------------
-						else{
-							html= "<div style='margin:30px 0px 15px 0px; text-align:center; font-weight: bold;'>예약고객이 존재하지 않습니다.</div>";
-						}
-						
-						$("div.modal-body").append(html);	 
-					
-					},
-					error: function(request, status, error){
-			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			        }
-				}); // end of $.ajax({---------
+			     selectClientInfoForModal(fk_pNo,1); // 페이징 처리한 특정 업무의 고객정보 가져오는 함수 호출
 			     
 			},
 			error: function(request, status, error){
@@ -494,6 +449,124 @@
 		}); // end of $.ajax({---------
 			
 	} // end of function getOneProductInfo(fk_pno){-------
+		
+	
+	// 특정 업무의 고객정보 알아오기 (페이징바 처리된 정보)
+	function selectClientInfoForModal(fk_pNo,currentShowPageNo){
+		$.ajax({      
+			url:"<%=ctxPath%>/t1/selectClientInfoForModal.tw",  
+			type:"post",
+			data:{"fk_pNo":fk_pNo,"currentShowPageNo":currentShowPageNo},
+			dataType: "JSON",
+			success: function(json){
+				var html="";
+				if(json.length>0){
+					html= "<div style='margin:30px 0px 15px 0px; padding-left:35px; font-weight: bold;'>▶&nbsp;예약자 명단&nbsp;◀</div>"+
+				      	  "<table class='clientDetailInfoTable infoTable'>"+
+				      	  	  "<tr>"+
+				      		     "<th style='width:25%; border-left: solid 2px #003d66;'>예약자명</th>"+
+				      			 "<th style='width:20%;'>인원수</th>"+
+				      			 "<th style='text-align:left; padding-left:105px; width: 40%; border-right: solid 2px #003d66;'>연락처</th>"+
+				      		  "</tr>";
+		      		
+					$.each(json,function(index,item){
+						
+						// 고객 연락처 데이터 가공해서 보여주기
+						var clientmobile= item.clientmobile;
+						clientmobile= clientmobile.substr(0,3)+"-"+clientmobile.substr(3,4)+"-"+clientmobile.substr(7,4);
+						
+						html+= "<tr>"+
+							   		"<td>"+item.clientname+"</td>"+
+							   		"<td>"+item.cnumber+"명</td>"+
+							   		"<td style='text-align:left; padding-left:80px;'>"+
+						   				clientmobile+
+						   				"<input type='hidden' class='clientmobile' value='"+item.clientmobile+"' />"+
+						   				"<input type='hidden' class='fk_pNo' value='"+item.fk_pNo+"' />"+
+						   				"<span class='sendMail'>문자 보내기</span>"
+						   			"</td>"+
+							   "</tr>";
+					}); // end of $.each(json,funtion(index,item){-------
+					
+					html+="</table>";
+				} // end of if-------------
+				else{
+					html= "<div style='margin:30px 0px 15px 0px; text-align:center; font-weight: bold;'>예약고객이 존재하지 않습니다.</div>";
+				}
+				
+				$("div.modal-body2").html(html);	 
+				clientLisPageBar(fk_pNo,currentShowPageNo); // 페이지바 함수 호출
+				
+			},
+			error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+		}); // end of $.ajax({---------	
+	} // end of function selectClientInfoForModal(){-------	
+		
+		
+		
+	// 고객 예약정보 페이징바 생성 함수
+	function clientLisPageBar(fk_pNo,currentShowPageNo){
+		
+		// 1) 특정업무에 관한 고객의 totalPage 수 알아오기
+		$.ajax({      
+			url:"<%=ctxPath%>/t1/getclientLisTotalPage.tw",  
+			type:"GET",
+			data:{"fk_pNo":fk_pNo,"sizePerPage":"3"},
+			dataType: "JSON",
+			success: function(json){
+				if(json.totalPage>0){ // 예약고객이 존재하는 경우 => 페이징바 생성 
+					
+					// 2) 페이징바 생성을 위한 사전작업
+					var totalPage = json.totalPage;
+					var pageBar= ""
+					var blockSize = 3;
+		            var loop=1;
+		            
+		            if(typeof currentShowPageNo == "string"){ // currentShowPageNo 숫자처리
+		            	currentShowPageNo= Number(currentShowPageNo)	   
+		            }
+		            
+		            var pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1; 
+		            
+		         	// 2) 페이징바 생성
+		            if(pageNo!=1) {
+		            	pageBar+="&nbsp;<a href='javascript:selectClientInfoForModal("+fk_pNo+",\"1\")'>[맨처음]</a>&nbsp;";
+		            	pageBar+="&nbsp;<a href='javascript:selectClientInfoForModal("+fk_pNo+",\""+(pageNo-1)+"\")'>[이전]</a>&nbsp;";
+		    		}
+		    		
+                    while( !(loop > blockSize || pageNo > totalPage) ) {
+   					
+						if(pageNo == currentShowPageNo) {
+							pageBar += "&nbsp;<span style='color:#fff; background-color: #003d66; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
+						}
+						else {
+							pageBar += "&nbsp;<a href='javascript:selectClientInfoForModal("+fk_pNo+",\""+pageNo+"\")'>"+pageNo+"</a>&nbsp;";
+						}
+						
+						loop++;
+						pageNo++;
+					}// end of while------------------------
+		    		
+					if(pageNo <= totalPage) {
+						pageBar += "&nbsp;<a href='javascript:selectClientInfoForModal("+fk_pNo+",\""+pageNo+"\")'>[다음]</a>&nbsp;";
+						pageBar += "&nbsp;<a href='javascript:selectClientInfoForModal("+fk_pNo+",\""+totalPage+"\")'>[마지막]</a>&nbsp;";
+					}
+		            
+				} // end of if(json.totalPage>0){------------------------
+					
+				pageBar += "</ul>";
+				$("div.modal-pageBar").html(pageBar);
+					
+			},
+			error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }
+		}); // end of $.ajax({---------
+		
+	}// end of function pageBarClientList(currentShowPageNo){------
+		
+		
 		
 </script>
 
@@ -543,7 +616,7 @@
 							<div class="eachtoDoList ajaxEachList">
 						</c:otherwise>
 					</c:choose>
-								<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
+							<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
 								<span style="margin-left:20px; width:50px;">${tvo.rno}</span>
 								
 								<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
@@ -628,8 +701,15 @@
 		        	<!-- header title -->
 		        	<h4 class="modal-title">업무 세부정보</h4>
 		      	</div>
-		      	<!-- body (ajax로 값이 들어온다) -->
-		      	<div class="modal-body"></div>
+		      	<!-- body -->
+		      	<div>
+			      	<!-- body의 특정업무 상세정보 (ajax로 값이 들어온다) -->
+			      	<div class="modal-body"></div>
+			      	<!-- body의 특정업무 고객예약 상세정보 (ajax로 값이 들어온다) -->
+			      	<div class="modal-body2"></div>
+			      	<!-- body의 페이지바 (ajax로 값이 들어온다) -->
+			      	<div class="modal-pageBar" align="center" style="font-size:12pt; margin: 20px 0px;"></div>
+		      	</div>
 		      	<!-- Footer -->
 		      	<div class="modal-footer">
 		        	<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
