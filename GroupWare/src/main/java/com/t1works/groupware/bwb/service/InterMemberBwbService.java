@@ -37,6 +37,5 @@ public interface InterMemberBwbService {
 	// 비밀번호 변경하기
 	int updatePasswd(Map<String, String> paraMap);
 	
-	
 
 }

@@ -1,5 +1,6 @@
 package com.t1works.groupware.bwb.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
@@ -29,6 +30,8 @@ public interface InterHomepageBwbService {
    
    // 출퇴근테이블에서 select하기(퇴근시간)
    String selectOuttime(Map<String, String> paraMap);
+   
+
 
 
 
