@@ -9,7 +9,12 @@
 	font-size: 13px;
 	border-radius: 2px;
 	margin: 0 5px;
-	display: block;
+	display: inlnie-block;
+}
+
+.anchor-style{
+	text-decoration: none;
+	color: black;
 }
 
 /* board.jsp 공지사항 게시판 목록 css */
@@ -35,7 +40,7 @@ div#board-table-div {
 	/* border: solid 1px red; */
 }
 
-table#board-table{
+table#board-table, #post-table{
 	font-size: 10pt;
 	border-bottom: solid 1px #ccc;
 }
@@ -44,14 +49,14 @@ tr.tbody{
 	border-top: none;
 }
 
-tr.thead > th, select#category  {
+
+tr.thead > th, select#category{
 	background-color: #395673;
 	color: #ffffff;
 	border:none;
 }
 
 
-div p:not(.disabled)
 /* postupload.jsp 게시판 글쓰기 css */
 table#board-table > th, table#board-table > td, input, textarea, select {border: solid #ccc 1px;}
    
@@ -63,3 +68,12 @@ table#board-table > th, table#board-table > td, input, textarea, select {border:
 .short {width: 120px;}
 
 #btn-container{margin-top: 20px; margin-right: 20px;}
+
+/* viewPost.jsp, viewSuggPost.jsp, viewGenPost.jsp 게시글 1개 조회 */
+
+
+table#post-table > tbody > tr > th {
+	width: 20em;
+}
+
+
