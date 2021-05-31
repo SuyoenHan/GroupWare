@@ -4,18 +4,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%	String ctxPath = request.getContextPath(); %>
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
 <style type="text/css">
-	table, th, td, input, textarea {border: solid gray 1px;}
-	
-	#table, #table2 {border-collapse: collapse;
-	 		         width: 1024px;
-	 		        }
-	#table th, #table td{padding: 5px;}
-	#table th{width: 120px; background-color: #DDDDDD;}
-	#table td{width: 880px;}
-	.long {width: 470px;}
-	.short {width: 120px;}
 	
 	.move {cursor: pointer;}
 	.moveColor {color: #660029; font-weight: bold;}
@@ -278,25 +269,38 @@ function makeCommentPageBar(currentShowPageNo){
 		
 </script>
 
-<div style="padding-left: 10%;">
-	<h1>글내용보기</h1>
-
+<div id="board-container">
+	<a href="javascript:location.href='employeeBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 40px;">공지사항</span></a>
 	<c:if test="${not empty requestScope.boardvo}">
-		<table id="table">
-			<tr>
-				<th>글번호</th>
+		<table id="post-table" class="table">
+			<tr class="thead">
+				<th style="width: 20em;">글번호</th>
 				<td>${requestScope.boardvo.seq}</td>
 			</tr>
-			<tr>
+			<tr class="thead">
+				<th>구분</th>
+				<c:choose>
+					<c:when test="${requestScope.boardvo.fk_categnum eq '1'}">
+						<td>전체공지</td>
+					</c:when>
+					<c:when test="${requestScope.boardvo.fk_categnum eq '1'}">
+						<td>총무공지</td>
+					</c:when>
+					<c:otherwise>
+						<td>경조사</td>
+					</c:otherwise>
+				</c:choose>
+			</tr>
+			<tr class="thead">
 				<th>성명</th>
 				<td>${requestScope.boardvo.name}</td>
 			</tr>
-			<tr>
+			<tr class="thead">
 				<th>제목</th>
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
-			<tr>
-				<th>내용</th>
+			<tr class="thead">
+				<th style="height: 10em;">내용</th>
 				<td>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
 					<%-- 
@@ -307,11 +311,11 @@ function makeCommentPageBar(currentShowPageNo){
 					 --%>
 				</td>
 			</tr>
-			<tr>
+			<tr class="thead">
 				<th>조회수</th>
 				<td>${requestScope.boardvo.readCount}</td>
 			</tr>
-			<tr>
+			<tr class="thead">
 				<th>날짜</th>
 				<td>${requestScope.boardvo.regDate}</td>
 			</tr>
@@ -331,9 +335,8 @@ function makeCommentPageBar(currentShowPageNo){
 	<button type="button" onclick="javascript:location.href='employeeBoard.tw'">전체목록보기</button>
 	
 	<button type="button" onclick="javascript:location.href='${requestScope.gobackURL}'">검색된결과목록보기</button>
-	<%-- === #126. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후  사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. 
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/edit.action?seq=${requestScope.boardvo.seq}'">수정</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/del.action?seq=${requestScope.boardvo.seq}'">삭제</button> --%>
+	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/noticeEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/noticeDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
 
 
     <%-- === #83. 댓글쓰기 폼 추가 === 
@@ -372,8 +375,9 @@ function makeCommentPageBar(currentShowPageNo){
 -->
 	<!-- ==== #136. 댓글 페이지바 
 	<div id="pageBar" style="border:solid 0px gray; width: 90%; margin: 10px auto; text-align: center;"></div>  -->
-</div>
 
+
+</div>
 
 
 
