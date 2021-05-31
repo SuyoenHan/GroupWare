@@ -1,48 +1,123 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>
-<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
 <script type="text/javascript">
-	$(document).ready(function(){
-		$("div#submenu5").show();
-	});
+$(document).ready(function(){
+	
+	 $("select#sizePerPage").change(function(){
+			goSearch();
+		});
+   
+ //보기개수 선택시 선택값 유지시키기
+	if(${not empty requestScope.paraMap}){
+	  	$("select#sizePerPage").val("${requestScope.paraMap.sizePerPage}");
+	  }  
+	
+	
+});
+
+
+// Function Declaration
+
+	function goView(seq){
+	location.href="<%=ctxPath%>/t1/viewNotice.tw?seq="+seq;
+	
+		// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. ===
+		<%-- var frm = document.goViewFrm;
+		frm.seq.value = seq;
+		
+		frm.method="get";
+		frm.action="<%=ctxPath%>/view.action";
+		frm.submit(); --%>
+		
+	}//end of function goView('${boardvo.seq}') ---------------
+
+	function goSearch(){
+		var frm = document.searchFrm;
+		frm.action = "employeeBoard.tw";	//상대경로
+		frm.method = "GET";
+		$("form#searchFrm").submit();
+	}
+
 </script>
 
-	<h3>공지사항</h3>
-	<table class="table" style="width: 65%;">
-		<thead>
-			<tr class="thead">
-				<th width=5% align="center" id="postNum">No.</th>
-				<th width=40% align="center" id="subject">제목</th>
-				<th width=10% align="center" id="writer">작성자</th>
-				<th width=10% align="center" id="regDate">작성일</th>
-				<th width=5% align="center" id="readCount">조회수</th>
-				<th width=5% align="center" id="uploadFile">파일</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="tbody">
-				<td>2</td>
-				<td>금월 공지사항입니다.</td>
-				<td>이하나</td>
-				<td>21-05-20</td>
-				<td>3</td>
-				<td></td>
-			</tr>
-			<tr class="tbody">
-				<td>1</td>
-				<td>4월 공지사항입니다.</td>
-				<td>이하나</td>
-				<td>21-04-20</td>
-				<td>3</td>
-				<td></td>
-			</tr>
-		</tbody>
-		
-	</table>
 
+<div id="board-container">
+	<i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span>
+	<!-- 보기개수 선택&조건검색 -->
+	<div id="search-viewOption">
+		<form name="searchFrm" id="searchFrm" style="float:right;">
+			<select name="sizePerPage" id="sizePerPage" style="float:right; height: 28px; padding: 4px 0;">
+				<option value="">보기개수</option>
+				<option value="10">10개씩보기</option>
+				<option value="15">15개씩보기</option>
+				<option value="20">20개씩보기</option>
+			</select>
+			<select name="searchType" id="searchType" style=" height: 28px; ">
+				<option value="subject">제목</option>
+				<option value="name">작성자</option>
+				<option value="content">본문</option>
+			</select>
+			<input type="text" name="searchWord" id="searchWord" style="height: 28px; "autocomplete="off" />
+			<button type="button" class="btn-style float-right"><span style="color: #ffffff;">검색</span></button>
+		</form>
+	</div>
+	<!-- 게시판 글목록 -->
+	<div id="board-table-div">
+		<table id="board-table" class="table">
+			<thead>
+				<tr class="thead">
+					<th width=3% align="center" id="postNum">No.</th>
+					<th width=5% align="center" id="fk_categnum">
+						<select id="category">
+							<option value="">구분</option>
+							<option value="1">전체공지</option>
+							<option value="2">총무공지</option>
+							<option value="3">경조사</option>
+						</select>
+					</th>
+					<th width=50% align="center" id="subject">제목</th>
+					<th width=5% align="center" id="writer">작성자</th>
+					<th width=8% align="center" id="regDate">작성일</th>
+					<th width=3% align="center" id="readCount">조회수</th>
+					<th width=3% align="center" id="uploadFile">파일</th>
+				</tr>
+			</thead>
+			<tbody>
+			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
+				<tr class="tbody">
+					<td>${boardvo.seq}</td>
+					<c:choose>
+						<c:when test="${boardvo.fk_categnum eq '1'}">
+							<td>전체공지</td>
+						</c:when>
+						<c:when test="${boardvo.fk_categnum eq '2'}">
+							<td>총무공지</td>
+						</c:when>
+						<c:otherwise>
+							<td>경조사</td>
+						</c:otherwise>
+					</c:choose>
+					<td>
+					<%-- === 댓글쓰기가 없는 게시판 === --%>
+      				<span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span> 
+					</td>
+					<td>${boardvo.name}</td>
+					<td>${boardvo.regDate}</td>
+					<td>${boardvo.readCount}</td>
+					<td></td>
+				</tr>
+			</c:forEach>
+			</tbody>
+		</table>
 	
-	<button type="button" onclick="javascript:location.href='postupload.tw'">글쓰기</button>
+	 	 <%-- 페이지 바 --%>
+    	<div align="center" style="width: 70%; margin: 20px auto;">${requestScope.pageBar}</div>
+		
+		<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
+	</div>
+</div>
+

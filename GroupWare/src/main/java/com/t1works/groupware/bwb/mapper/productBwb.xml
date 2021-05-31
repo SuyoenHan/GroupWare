@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="productBwb">
+   
+   <!-- 미배정 업무정보 가져오기 -->
+   <select id="selectProudctList" parameterType="HashMap" resultType="com.t1works.groupware.bwb.model.ProductBwbVO">
+      	select rno,pNo,fk_dcode,assignDate,startDate,dueDate,endDate,fk_employeeid,hurryno,ingdetail,pName,fk_managerid,name
+		from
+		(
+		select row_number() over(order by P.pNo asc) as rno, P.pNo, name,
+		       T.fk_dcode,to_char(assignDate,'yyyy-mm-dd') as assignDate ,
+		       to_char(P.startDate ,'yyyy-mm-dd') as startDate, to_char(dueDate ,'yyyy-mm-dd') as dueDate,
+		       to_char(P.endDate ,'yyyy-mm-dd') as endDate,
+		       T.fk_employeeid,hurryno,ingdetail,pname, T.fk_managerid
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+        join tbl_employee E
+        on E.employeeid = T.fk_managerid
+		where T.fk_managerid = #{fk_managerid} and assigndate is null
+		)V
+		where rno between #{startRno} and #{endRno}
+		order by dueDate asc
+   </select>
+	
+   <!-- 미배정 업무 총 갯수 구해오기 -->
+   <select id="selectNoAssignedProduct" parameterType="String" resultType="int">
+   	  	select count(*)
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+		where fk_managerid = #{employeeid} and assigndate is null		
+   </select>
+   
+   <!-- 부장의 해당부서팀의 직원들 가져오기 -->
+   <select id="selectMemberList" parameterType="HashMap" resultType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		select employeeid,name
+   		from tbl_employee
+   		where fk_dcode = #{fk_dcode} and employeeid != #{employeeid}
+   </select>
+   
+   <!-- 업무테이블에서 배정자 update해주기 -->
+   <update id="goAssign" parameterType="HashMap">
+   		update tbl_todo set fk_employeeid = #{employeeid}, assignDate = sysdate, hurryno = #{hurryno}
+   		where fk_pNo = #{pNo}
+   </update>
+   
+   
+   <select id="selectAssignedTotal" parameterType="String" resultType="int">
+   		select count(*)
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+		where fk_managerid = #{employeeid} and assigndate is not null	
+   </select>
+   
+   
+   <!-- 배정된 업무 가져오기 -->
+   <select id="selectAssignedList" parameterType="HashMap" resultType="com.t1works.groupware.bwb.model.ProductBwbVO">
+   		select rno,pNo,fk_dcode,assignDate,nvl(startDate,'-') as startDate,dueDate,endDate,fk_employeeid,hurryno,ingdetail,pName,fk_managerid,name
+		from
+		(
+		select row_number() over(order by hurryno desc, dueDate asc) as rno, P.pNo, name,
+		       T.fk_dcode,to_char(assignDate,'yyyy-mm-dd') as assignDate ,
+		       to_char(T.startDate ,'yyyy-mm-dd') as startDate, to_char(dueDate ,'yyyy-mm-dd') as dueDate,
+		       to_char(P.endDate ,'yyyy-mm-dd') as endDate,
+		       T.fk_employeeid,hurryno,ingdetail,pname, T.fk_managerid
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+        join tbl_employee E
+        on E.employeeid = T.fk_managerid
+		where T.fk_managerid = #{fk_managerid} and assignDate is not null
+		)V
+		where rno between #{startRno} and #{endRno}
+   </select>
+   
+   <!-- 배정된 부서 업무 모두 뽑아오기((기간,검색어 허용)) -->
+   <select id="selectAllDepartmentToDo" parameterType="HashMap" resultType="com.t1works.groupware.bwb.model.ProductBwbVO">
+    	select rno,pNo,fk_dcode,nvl(assignDate,'-') as assignDate,nvl(startDate,'-') as startDate,nvl(dueDate,'-') as dueDate,nvl(endDate,'-') as endDate,fk_employeeid,hurryno,nvl(ingdetail,'-') as ingdetail,pName,fk_managerid,name,employeeName
+		from
+		(
+		select row_number() over(order by hurryno desc, dueDate asc) as rno, P.pNo,E.name as name,E1.name as employeeName,
+		       T.fk_dcode,to_char(assignDate,'yyyy-mm-dd') as assignDate,
+		       to_char(T.startDate ,'yyyy-mm-dd') as startDate, to_char(dueDate ,'yyyy-mm-dd') as dueDate,
+		       to_char(T.endDate ,'yyyy-mm-dd') as endDate,
+		       T.fk_employeeid,hurryno,ingdetail,pname, T.fk_managerid as fk_managerid
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+        join tbl_employee E
+        on E.employeeid = T.fk_managerid
+        join tbl_employee E1
+        on E1.employeeid = T.fk_employeeid
+		where T.fk_managerid = #{employeeid} and pname like '%' || #{searchProject} || '%' and E1.name like '%' || #{searchWhoCharge} || '%' ${statusChoice}
+		<if test='period neq "-1"'>
+            and dueDate >= to_date(to_char(sysdate-to_number(#{period}),'yyyy/mm/dd'),'yyyy/mm/dd')
+        </if>
+		)V
+		where rno between #{startRno} and #{endRno}
+   </select>
+   
+   <select id="selectdepartProduct" parameterType="HashMap" resultType="int">
+   		select count(*)
+		from tbl_todo T
+		join tbl_product P
+		on P.pNo = T.fk_pNo
+        join tbl_employee E
+        on E.employeeid = T.fk_managerid
+        join tbl_employee E1
+        on E1.employeeid = T.fk_employeeid
+		where T.fk_managerid = #{employeeid} and pname like '%' || #{searchProject} || '%' and E1.name like '%' || #{searchWhoCharge} || '%' ${statusChoice}
+		<if test='period neq "-1"'>
+            and dueDate >= to_date(to_char(sysdate-to_number(#{period}),'yyyy/mm/dd'),'yyyy/mm/dd')
+        </if>
+   </select>
+   
+</mapper>

@@ -51,6 +51,12 @@ public interface InterReservationOdyService {
 	// 차량 예약 삭제하기
 	int delReserveCar(String rscno);
 
+	// 사무용품 반납하기
+	int returnReserveGoods(String rsgno);
+
+	// 차량 반납하기
+	int returnReserveCar(String rscno);
+
 
 
 	

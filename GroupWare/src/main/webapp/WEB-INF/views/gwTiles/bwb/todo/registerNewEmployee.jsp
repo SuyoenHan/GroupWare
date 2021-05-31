@@ -13,8 +13,8 @@
 		margin-left: 200px;
 		border:solid 1px black;
 		margin-top:100px;
-		width: 1000px;
-		height: 200px;
+		width: 1150px;
+		height: 150px;
 		font-size:13pt;
 		text-align: center;
 		
@@ -31,11 +31,12 @@
 	
 	div#button{
 		margin-top: 15px;
-		margin-left: 1080px;
+		margin-left: 1170px;
+		margin-bottom: 30px;
 	}
 	
 	button.buttons{
-		width: 60px;
+		width: 90px;
 		height: 40px;
 	}
 </style>
@@ -43,8 +44,6 @@
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		
-		$("div#submenu7").show();
 		
 		
 		var fk_pcode = $("select#fk_pcode").val();
@@ -130,12 +129,16 @@
 			
 		// 등록완료 버튼 클릭 시
 		$("button#newPerson").click(function(){
-			
+
 			var employeeid = $("input#employeeid").val();
 			var email = $("input#email").val();
 			var name = $("input#name").val();
-			var cmobile = $("input#cmobile").val();
-			var mobile = $("input#mobile").val();
+			var cmobile1 = $("input#cmobile1").val();
+			var cmobile2 = $("input#cmobile2").val();
+			var cmobile3 = $("input#cmobile3").val();
+			var mobile1 = $("input#mobile1").val();
+			var mobile2 = $("input#mobile2").val();
+			var mobile3 = $("input#mobile3").val();
 			var fk_dcode = $("select#fk_dcode").val();
 			var dname = $("select#fk_dcode option:selected").text();
 			var fk_pcode = $("select#fk_pcode").val();
@@ -146,7 +149,8 @@
 			
 			var bemail = regExp.test(email);
 			
-			if(name.trim()!="" && cmobile.trim()!="" && mobile.trim()!="" && bemail){
+			if(name.trim()!="" && cmobile1.trim()!="" && cmobile2.trim()!="" && cmobile3.trim()!="" && 
+					mobile1.trim()!="" && mobile2.trim()!="" && mobile3.trim()!="" && bemail){
 				
 				var bool = confirm(name+"님을 "+dname+"부서"+" "+pname+"직위로 등록하시겠습니까?");
 				
@@ -194,19 +198,29 @@
    			<tr>
    				<td rowspan="3" style="width:100px !important; padding-left:-30px;"> <input type="file" style="width:150px; font-size:13px !important;"  /> </td> 
    				<td style="width:80px" class="InfoMenu">사번</td>
-   				<td style="width:160px"> <input type="text" id="employeeid" name="employeeid"/> </td>
+   				<td style="width:160px"> <input type="text" id="employeeid" name="employeeid" style="width:110px" /> </td>
    				<td style="width:110px" class="InfoMenu">이메일</td>
-   				<td><input type="email" id="email" name="email"/></td>
-   				<td style="width:110px" class="InfoMenu">주민번호</td>
-   				<td colspan="3"><input type="text" id="jubun1" name="jubun1"/>-<input type="password" id="jubun2" name="jubun2"/></td>
+   				<td><input type="email" id="email" name="email" style="width:230px" /></td>
+   				<td style="width:100px" class="InfoMenu">주민번호</td>
+   				<td colspan="3">
+   				<input type="text" id="jubun1" name="jubun1" style="width:80px" /> - <input type="password" id="jubun2" name="jubun2" style="width:80px" />
+   				</td>
    			</tr>
    			<tr> 
    				<td class="InfoMenu">성명</td>
-   				<td><input type="text" id="name" name="name"/></td>
+   				<td><input type="text" id="name" name="name" style="width:110px" /></td>
    				<td class="InfoMenu">전화번호</td>
-   				<td><input type="text" id="cmobile" name="cmobile"/></td>
+   				<td>
+   				<input type="text" id="cmobile1" name="cmobile1" style="width:50px"/> -
+   				<input type="text" id="cmobile2" name="cmobile2" style="width:60px"/> -
+   				<input type="text" id="cmobile3" name="cmobile3" style="width:60px"/>
+   				</td>
    				<td class="InfoMenu">핸드폰</td>
-   				<td colspan="3"><input type="text" id="mobile" name="mobile"/></td>
+   				<td colspan="3">
+   				<input type="text" id="mobile1" name="mobile1" style="width:60px"/> -
+   				<input type="text" id="mobile2" name="mobile2" style="width:70px"/> -
+   				<input type="text" id="mobile3" name="mobile3" style="width:70px"/>
+   				</td>
    			</tr>
    			<tr> 
    				<td class="InfoMenu">소속</td>
@@ -226,9 +240,9 @@
    					</select>
    				</td>
    				<td class="InfoMenu">총연차</td>
-   				<td style="width:50px"><input type="text" id="offcnt" name="offcnt" readonly="readonly" /></td>
+   				<td style="width:50px"><input type="text" id="offcnt" name="offcnt" readonly="readonly" style="width:30px" /></td>
    				<td style="width:50px" class="InfoMenu">직무</td>
-   				<td><input type="text" id="duty" name="duty" readonly="readonly" /></td>
+   				<td><input type="text" id="duty" name="duty" readonly="readonly" style="width:110px"/></td>
    			</tr>
   			</tbody>
    		</table>

@@ -11,16 +11,54 @@
 	</select>
 
 
-	<insert id="registerSchedule" parameterType="com.t1works.groupware.ody.model.ScheduleOdyVO">
-		insert into tbl_schedule(sdno, startdate,enddate,subject,color,place,joinEmp,content,fk_scno,fk_bcno,fk_employeeid)
-		values(sdnoSeq.nextval, to_date(#{startdate},'yyyyMMddhh24miss'), to_date(#{enddate}, 'yyyyMMddhh24miss'), #{subject}, #{color}, #{place}, #{joinEmp}, #{content}, #{fk_scno},#{fk_bcno}, #{fk_employeeid})
+	<insert id="registerSchedule" parameterType="HashMap">
+		insert into tbl_schedule(sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_bcno,fk_employeeid)
+		values(sdnoSeq.nextval, to_date(#{startdate},'yyyyMMddhh24miss'), to_date(#{enddate}, 'yyyyMMddhh24miss'), #{subject}, #{color}, #{place}, #{joinemployee}, #{content}, #{fk_scno},#{fk_bcno}, #{fk_employeeid})
 	</insert>
 
 	<select id="getScheduleList" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO" parameterType="HashMap">
-		select sdno, startdate,enddate,subject,color,place,joinEmp,content,fk_scno,fk_employeeid
+		select sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_employeeid,fk_bcno
 		from tbl_schedule
         where fk_employeeid=#{fk_employeeid} or fk_bcno=#{fk_bcno}		
 		order by sdno desc
 	</select>
 
+	<select id="searchJoinEmpList" resultType="com.t1works.groupware.ody.model.MemberOdyVO" parameterType="String">
+		select employeeid, name
+		from tbl_employee
+		where name like '%'||#{joinEmp}||'%'
+	</select>
+	
+	<select id="getDetailSchedule" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select sdno, to_char(startdate,'yyyy-mm-dd hh24:mi') as startdate,to_char(enddate,'yyyy-mm-dd hh24:mi') as enddate, subject, color
+		      , nvl(place,'-') as place, nvl(joinemployee,'공유자가 없습니다.') as joinemployee, nvl(content,'') as content, S.fk_scno
+              , S.fk_employeeid as fk_employeeid , S.fk_bcno as fk_bcno , E.name as name ,G.scname as scname
+		from tbl_schedule S join tbl_employee E
+		on S.fk_employeeid = E.employeeid
+		join tbl_scal_category G
+		on S.fk_scno = G.scno
+		where sdno = #{sdno}
+	</select>
+	
+	<delete id="delSchedule" parameterType="String">
+		delete from tbl_schedule
+		where sdno=#{sdno}
+	</delete>
+	
+	<update id="editEndSchedule" parameterType="HashMap">
+		update tbl_schedule set startdate = to_date(#{startdate},'yyyyMMddhh24miss')
+								,enddate = to_date(#{enddate}, 'yyyyMMddhh24miss')
+								,subject =#{subject}
+								,color =#{color}
+								,place =#{place}
+								,joinemployee =#{joinemployee}
+								,content =#{content}
+								,fk_scno =#{fk_scno}
+								,fk_bcno =#{fk_bcno}
+								,fk_employeeid =#{fk_employeeid}
+		where sdno = #{sdno}
+	</update>
+	
+	
+	
 </mapper>

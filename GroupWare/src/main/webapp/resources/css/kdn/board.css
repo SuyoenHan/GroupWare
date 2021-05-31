@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+.float-right{float:right;}
+
+.btn-style {
+	background-color: #0071bd;
+	padding: 5px 7px;
+	border: none;
+	font-size: 13px;
+	border-radius: 2px;
+	margin: 0 5px;
+	display: block;
+}
+
+/* board.jsp 공지사항 게시판 목록 css */
+
+#board-container{
+	padding: 20px;
+}
+
+div#search-viewOption{
+	float: right;
+	margin-top:40px;
+	margin-right: 10px;
+	margin: 40px 10px 10px 0;
+	/* border: solid 1px orange; */
+}
+
+
+div#board-table-div {
+	clear: both;
+	display: block;
+	margin: 40px auto 15px auto;
+	width: 99%;
+	/* border: solid 1px red; */
+}
+
+table#board-table{
+	font-size: 10pt;
+	border-bottom: solid 1px #ccc;
+}
+
+tr.tbody{
+	border-top: none;
+}
+
+tr.thead > th, select#category  {
+	background-color: #395673;
+	color: #ffffff;
+	border:none;
+}
+
+
+div p:not(.disabled)
+/* postupload.jsp 게시판 글쓰기 css */
+table#board-table > th, table#board-table > td, input, textarea, select {border: solid #ccc 1px;}
+   
+#table { border-collapse: collapse; width: 99%; }
+#table th, #table td{padding: 5px;}
+#table th{width: 50em; background-color: #395673; color: #ffffff;}
+#table td{width: 500em;}
+.long {width: 470px;}
+.short {width: 120px;}
+
+#btn-container{margin-top: 20px; margin-right: 20px;}

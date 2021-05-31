@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+/* mail_inbox.jsp 받은메일함 페이지 css */
+
+@font-face {
+    font-family: 'NEXON Lv2 Gothic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+table {
+	font-size: 10pt;
+}
+
+.table-bordered>thead>tr>td {
+	border-bottom-width: none!important;
+}
+
+tr.tbody{
+	border-top: none;
+}
+
+body > table > thead > tr > th{
+	background-color: #0071bd;
+	color: white;
+}
+
+/* new_mail.jsp 메일쓰기 페이지 css */
+
+input, textarea {border: solid #ccc 1px;}
+
+#table {border-collapse: collapse;
+        width: 1024px;
+       }
+#table th, #table td{padding: 5px;}
+#table th{width: 120px;}
+#table td{width: 90%;}
