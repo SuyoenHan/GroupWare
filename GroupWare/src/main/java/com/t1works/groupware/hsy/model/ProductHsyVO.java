@@ -13,8 +13,9 @@ public class ProductHsyVO {
 	private String price;      // 인당 가격
 	
 	// select용 변수
-	private String period;     // 여행기간 => 0박 0일
+	private String period;      // 여행기간 => 0박 0일
 	private String remainCnt;   // 최대예약인원-현재예약인원
+	private String rno;         // 순번
 	
 	public String getpNo() {
 		return pNo;
@@ -91,6 +92,13 @@ public class ProductHsyVO {
 	}
 	public void setRemainCnt(String remainCnt) {
 		this.remainCnt = remainCnt;
+	}
+	
+	public String getRno() {
+		return rno;
+	}
+	public void setRno(String rno) {
+		this.rno = rno;
 	}
 	
 	

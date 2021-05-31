@@ -31,5 +31,8 @@ public interface InterProductBwbService {
 	
 	// 부서 총 업무 갯수알아오기
 	int selectdepartProduct(Map<String, String> paraMap);
+	
+	// === 특정 업무 클릭 시 modal창의 header정보 가져오기
+	Map<String, String> deptgetOneInfoheader(String pNo);
 
 }
