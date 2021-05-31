@@ -64,5 +64,21 @@ public class ProductBwbDAO implements InterProductBwbDAO {
 		int totalProduct = sqlsession.selectOne("productBwb.selectAssignedTotal",employeeid);
 		return totalProduct;
 	}
+	
+	// 배정된 부서 업무 모두 뽑아오기((기간,검색어 허용))
+	@Override
+	public List<ProductBwbVO> selectAllDepartmentToDo(Map<String, String> paraMap) {
+
+		List<ProductBwbVO> productList = sqlsession.selectList("productBwb.selectAllDepartmentToDo",paraMap);
+		return productList;
+	}
+	
+	// 부서 총 업무 갯수 알아오기
+	@Override
+	public int selectdepartProduct(Map<String, String> paraMap) {
+		
+		int departProduct = sqlsession.selectOne("productBwb.selectdepartProduct", paraMap);
+		return departProduct;
+	}
 
 }

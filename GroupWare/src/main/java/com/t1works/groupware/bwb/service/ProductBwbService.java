@@ -68,6 +68,22 @@ public class ProductBwbService implements InterProductBwbService {
 		return totalProduct;
 	}
 	
+	// 배정된 부서 업무 모두 뽑아오기((기간,검색어 허용))
+	@Override
+	public List<ProductBwbVO> selectAllDepartmentToDo(Map<String, String> paraMap) {
+		
+		List<ProductBwbVO> productList = dao.selectAllDepartmentToDo(paraMap);
+		return productList;
+	}
+	
+	// 부서 총 업무 갯수알아오기
+	@Override
+	public int selectdepartProduct(Map<String, String> paraMap) {
+		
+		int departProduct = dao.selectdepartProduct(paraMap);
+		return departProduct;
+	}
+	
 	
 	
 
