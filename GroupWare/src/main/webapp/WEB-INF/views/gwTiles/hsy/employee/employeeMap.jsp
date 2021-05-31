@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <style type="text/css">
 
-	div#employeeMapContainer{
+	div#employeeMapContainer{ 
 		border: solid 0px red;
 		overflow: hidden;
 		width:70%;
