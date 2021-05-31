@@ -80,5 +80,13 @@ public class ProductBwbDAO implements InterProductBwbDAO {
 		int departProduct = sqlsession.selectOne("productBwb.selectdepartProduct", paraMap);
 		return departProduct;
 	}
+	
+	// === #3. 특정 업무 클릭 시 modal창의 header정보 가져오기
+	@Override
+	public Map<String, String> deptgetOneInfoheader(String pNo) {
+		
+		Map<String, String> paraMap = sqlsession.selectOne("productBwb.deptgetOneInfoheader", pNo);
+		return paraMap;
+	}
 
 }

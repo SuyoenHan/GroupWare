@@ -884,9 +884,18 @@ public class MemberBwbController {
 	// 부서업무중 특정행을 클릭시 업무정보 보이기
 	@ResponseBody
 	@RequestMapping(value="/t1/deptgetOneInfoheader.tw",produces="text/plain;charset=UTF-8")
-	public String deptgetOneInfoheader() {
+	public String requiredLogin_deptgetOneInfoheader(HttpServletRequest request, HttpServletResponse response) {
 		
-		return "";
+		String pNo = request.getParameter("pNo");
+		
+		// === #1. 특정 업무 클릭 시 modal창의 header정보 가져오기
+		Map<String,String> paraMap = service4.deptgetOneInfoheader(pNo);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("paraMap", paraMap);
+		
+		
+		return jsonObj.toString();
 	}
 	
 }
