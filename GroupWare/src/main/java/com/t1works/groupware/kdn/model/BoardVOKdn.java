@@ -15,6 +15,7 @@ public class BoardVOKdn {
 	   private String previoussubject;  // 이전글제목
 	   private String nextseq;          // 다음글번호
 	   private String nextsubject;      // 다음글제목
+	   private String privatePost;		// 비밀글 여부
 	   
 	   
 	   private String fk_categnum;		// 카테고리번호 
@@ -146,6 +147,14 @@ public class BoardVOKdn {
 
 	public void setNextsubject(String nextsubject) {
 		this.nextsubject = nextsubject;
+	}
+
+	public String getPrivatePost() {
+		return privatePost;
+	}
+
+	public void setPrivatePost(String privatePost) {
+		this.privatePost = privatePost;
 	}
 
 	

@@ -7,14 +7,34 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	$("input#searchWord").keydown(function(){
+		if(event.keyCode == 13){
+			goSearch();
+		}
+	});
+	
 	 $("select#sizePerPage").change(function(){
 			goSearch();
 		});
    
- //보기개수 선택시 선택값 유지시키기
+	
+	$("select#category").change(function(){
+		if($(this).val() == ""){
+			$("input[name=fk_categnum]").val($("select#category").val());
+		}
+		
+		$("input[name=fk_categnum]").val($("select#category").val());
+		goSearch();
+	});
+	
+ 	//보기개수 선택시 선택값 유지시키기
 	if(${not empty requestScope.paraMap}){
+		$("select#category").val("${requestScope.paraMap.fk_categnum}");
+		$("select#searchType").val("${requestScope.paraMap.searchType}");
+		$("input#searchWord").val("${requestScope.paraMap.searchWord}");
 	  	$("select#sizePerPage").val("${requestScope.paraMap.sizePerPage}");
 	  }  
+	
 	
 	
 });
@@ -23,7 +43,7 @@ $(document).ready(function(){
 // Function Declaration
 
 	function goView(seq){
-	location.href="<%=ctxPath%>/t1/viewNotice.tw?seq="+seq;
+		location.href="<%=ctxPath%>/t1/viewNotice.tw?seq="+seq;
 	
 		// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. ===
 		<%-- var frm = document.goViewFrm;
@@ -46,15 +66,16 @@ $(document).ready(function(){
 
 
 <div id="board-container">
-	<i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span>
+	<a href="javascript:location.href='employeeBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span></a>
 	<!-- 보기개수 선택&조건검색 -->
 	<div id="search-viewOption">
 		<form name="searchFrm" id="searchFrm" style="float:right;">
+			<input type="hidden" name="fk_categnum" />
 			<select name="sizePerPage" id="sizePerPage" style="float:right; height: 28px; padding: 4px 0;">
 				<option value="">보기개수</option>
+				<option value="5">5개씩보기</option>
 				<option value="10">10개씩보기</option>
 				<option value="15">15개씩보기</option>
-				<option value="20">20개씩보기</option>
 			</select>
 			<select name="searchType" id="searchType" style=" height: 28px; ">
 				<option value="subject">제목</option>
@@ -62,7 +83,7 @@ $(document).ready(function(){
 				<option value="content">본문</option>
 			</select>
 			<input type="text" name="searchWord" id="searchWord" style="height: 28px; "autocomplete="off" />
-			<button type="button" class="btn-style float-right"><span style="color: #ffffff;">검색</span></button>
+			<button type="button" class="btn-style float-right" onclick="goSearch()"><span style="color: #ffffff;">검색</span></button>
 		</form>
 	</div>
 	<!-- 게시판 글목록 -->
@@ -71,7 +92,7 @@ $(document).ready(function(){
 			<thead>
 				<tr class="thead">
 					<th width=3% align="center" id="postNum">No.</th>
-					<th width=5% align="center" id="fk_categnum">
+					<th width=5% align="center" id="category">
 						<select id="category">
 							<option value="">구분</option>
 							<option value="1">전체공지</option>
@@ -103,7 +124,8 @@ $(document).ready(function(){
 					</c:choose>
 					<td>
 					<%-- === 댓글쓰기가 없는 게시판 === --%>
-      				<span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span> 
+      				<%-- <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span> --%> 
+					<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" >${boardvo.subject}</a>
 					</td>
 					<td>${boardvo.name}</td>
 					<td>${boardvo.regDate}</td>
@@ -117,7 +139,10 @@ $(document).ready(function(){
 	 	 <%-- 페이지 바 --%>
     	<div align="center" style="width: 70%; margin: 20px auto;">${requestScope.pageBar}</div>
 		
-		<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
+		<%-- 인사팀, 총무팀의  대리, 부장 글쓰기 가능 --%>
+		<c:if test="${(loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')) || loginuser.fk_dcode eq '5' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')  }">
+			<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
+		</c:if>
 	</div>
 </div>
 
