@@ -84,6 +84,14 @@ public class ProductBwbService implements InterProductBwbService {
 		return departProduct;
 	}
 	
+	// === #2. 특정 업무 클릭 시 modal창의 header정보 가져오기
+	@Override
+	public Map<String, String> deptgetOneInfoheader(String pNo) {
+		
+		Map<String, String> paraMap = dao.deptgetOneInfoheader(pNo);
+		return paraMap;
+	}
+	
 	
 	
 
