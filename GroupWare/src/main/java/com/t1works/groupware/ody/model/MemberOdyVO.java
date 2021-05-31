@@ -5,7 +5,7 @@ public class MemberOdyVO {
 	   
 	   private String employeeid;      // 사번
 	   private String name;            // 직원명
-	  
+	   private String dname;           // 부서명
 
 
 	   public String getEmployeeid() {
@@ -22,6 +22,14 @@ public class MemberOdyVO {
 	   
 	   public void setName(String name) {
 	      this.name = name;
+	   }
+
+	   public String getDname() {
+			return dname;
+	   }
+	
+	   public void setDname(String dname) {
+			this.dname = dname;
 	   }
 	   
 	 

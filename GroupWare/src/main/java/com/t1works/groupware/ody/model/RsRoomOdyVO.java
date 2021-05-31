@@ -10,8 +10,7 @@ public class RsRoomOdyVO {
 	private int rtime; // 시간
 	private int rstatus; // 상태
 	private String name; // 직원명
-	private String rdepartment; // 직원부서명
-	
+	private String rdname;
 	public int getRsroomno() {
 		return rsroomno;
 	}
@@ -60,11 +59,12 @@ public class RsRoomOdyVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getRdepartment() {
-		return rdepartment;
+
+	public String getRdname() {
+		return rdname;
 	}
-	public void setRdepartment(String rdepartment) {
-		this.rdepartment = rdepartment;
+	public void setRdname(String rdname) {
+		this.rdname = rdname;
 	}
 	
 }

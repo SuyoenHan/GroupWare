@@ -181,8 +181,13 @@ $(document).ready(function(){
     		func_reserve();
     	});
     
-        // 모알창에서 예약
+    	$("div#myModal").modal('hide');
+    	
+        // 모달창에서 예약
     	$("button#realReserve").click(function(event){
+    		 event.stopPropagation();
+             event.preventDefault();
+             
              var purpose = $("input#purpose").val().trim();
              
              if(purpose == ""){
@@ -218,7 +223,7 @@ $(document).ready(function(){
 		var name=Array();
 		var fk_employeeid=Array();
 		var rsubject=Array();
-		var rdepartment=Array();
+		var rdname=Array();
 		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
 		
@@ -229,7 +234,7 @@ $(document).ready(function(){
 			name.push(item.name);
 			fk_employeeid.push(item.fk_employeeid);
 			rsubject.push(item.rsubject);
-			rdepartment.push(item.rdepartment);
+			rdname.push(item.rdname);
 		});
 		
 	
@@ -284,7 +289,7 @@ $(document).ready(function(){
 			if( index > -1){
 
 				html += "<tr><td style='vertical-align: middle;' ><label id='id_time' ><font color='"+fontType+"'>"+timeText(rtime[index])+"</label></span></td>";
-				html += "<td style='vertical-align: middle;'>"+rdepartment[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+rdname[index]+"</td>";
 				html += "<td style='vertical-align: middle;'>"+name[index]+"</td>";
 				html += "<td style='vertical-align: middle;'>"+rsubject[index]+"</td>";
 				
@@ -509,8 +514,6 @@ $(document).ready(function(){
 					<input type="hidden" id="roomno" value="" name="fk_roomno"/>
 					<input type="hidden" id="chgdate" value="" name="rdate"/>
 					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
-					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
-					<input type="hidden" name="rdepartment" value="${requestScope.dname}"/>
 					<input type="hidden" id="rtime" value="" name="rtime"/>
 				</div>
          	</form>
