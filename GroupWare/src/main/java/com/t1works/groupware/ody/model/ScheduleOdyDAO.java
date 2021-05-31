@@ -33,8 +33,8 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 
 	// 등록된 일정 가져오기
 	@Override
-	public List<ScheduleOdyVO> getScheduleList(Map<String,String> paraMap) {
-		List<ScheduleOdyVO> scheduleList = sqlsession5.selectList("schedule_ody.getScheduleList",paraMap);
+	public List<ScheduleOdyVO> getScheduleList(String fk_employeeid) {
+		List<ScheduleOdyVO> scheduleList = sqlsession5.selectList("schedule_ody.getScheduleList",fk_employeeid);
 		return scheduleList;
 	}
 
@@ -65,6 +65,64 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 		int n = sqlsession5.update("schedule_ody.editEndSchedule",paraMap);
 		return n;
 	}
+
+	// 총 게시물 건수(totalCount)
+	@Override
+	public int getTotalCount(Map<String, String> paraMap) {
+		int n = sqlsession5.selectOne("schedule_ody.getTotalCount",paraMap);
+		return n;
+	}
+
+	// 페이징 처리한 글목록 가져오기
+	@Override
+	public List<ScheduleOdyVO> scheduleListSearchWithPaging(Map<String, String> paraMap) {
+		List<ScheduleOdyVO> scheduleList = sqlsession5.selectList("schedule_ody.scheduleListSearchWithPaging",paraMap);
+		return scheduleList;
+	}
+
+	// 내 캘린더 정보 가져오기
+	@Override
+	public List<ScalCategoryOdyVO> getEmpSList(String employeeid) {
+		List<ScalCategoryOdyVO> empSList = sqlsession5.selectList("schedule_ody.getEmpSList",employeeid);
+		return empSList;
+	}
+
+	// 전체 캘린더 정보 가져오기
+	@Override
+	public List<ScalCategoryOdyVO> getFullSList() {
+		List<ScalCategoryOdyVO>  fullSList = sqlsession5.selectList("schedule_ody.getFullSList");
+		return  fullSList;
+	}
+
+	// 내 캘린더 추가
+	@Override
+	public int addMyCalendar(Map<String, String> paraMap) {
+		int n = sqlsession5.insert("schedule_ody.addMyCalendar",paraMap);
+		return n;
+	}
+
+	// 소분류 캘린더 삭제
+	@Override
+	public int deleteCalendar(String scno) {
+		int n = sqlsession5.delete("schedule_ody.deleteCalendar",scno);
+		return n;
+	}
+
+	// 사내 캘린더 추가
+	@Override
+	public int addComCalendar(Map<String, String> paraMap) {
+		int n = sqlsession5.insert("schedule_ody.addComCalendar",paraMap);
+		return n;
+	}
+
+	// 캘린더 수정하기
+	@Override
+	public int editCalendar(Map<String, String> paraMap) {
+		int n = sqlsession5.update("schedule_ody.editCalendar",paraMap);
+		return n;
+	}
+
+	 
 
 	
 }

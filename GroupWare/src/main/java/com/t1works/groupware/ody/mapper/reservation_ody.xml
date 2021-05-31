@@ -13,15 +13,18 @@
 
 	<!-- 회의실 예약 리스트 -->
 	<select id="getReserveRoomList" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO" parameterType="HashMap">
-		select rsroomno,fk_roomno, fk_employeeid, name, rsubject, rdate, rtime, rdepartment
-		from tbl_rsroom
+		select rsroomno, fk_roomno, R.fk_employeeid, E.name, rsubject, rdate, rtime, D.dname as rdname
+		from tbl_rsroom R join tbl_employee E
+		on R.fk_employeeid = E.employeeid
+		join tbl_department D
+		on E.fk_dcode = D.dcode
 		where fk_roomno=#{roomno} and rdate = #{rdate}
 	</select>
 	
 	<!-- 회의실 예약하기 -->
 	<insert id="insert_rsRoom" parameterType="HashMap">
-		insert into tbl_rsroom(rsroomno,fk_roomno,fk_employeeid,name,rsubject,rdate,rtime ,rstatus, rdepartment)
-		values(rsroomnoSeq.nextval, #{fk_roomno},#{fk_employeeid},#{name},#{rsubject},#{rdate},#{rtime},1,#{rdepartment})
+		insert into tbl_rsroom(rsroomno,fk_roomno,fk_employeeid,rsubject,rdate,rtime)
+		values(rsroomnoSeq.nextval, #{fk_roomno},#{fk_employeeid},#{rsubject},#{rdate},#{rtime})
 	</insert>
 
 
@@ -34,8 +37,11 @@
 	
 	<!-- 사무용품 예약 리스트 -->	
 	<select id="getReserveGoodsList" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO" parameterType="HashMap">
-		select rsgno,fk_gno, fk_employeeid, name, rgsubject, rgdate, rgtime, rgdepartment, gstatus
-		from tbl_rsgoods
+		select  rsgno,fk_gno, R.fk_employeeid as fk_employeeid, E.name as name , rgsubject, rgdate, rgtime, gstatus, D.dname as rdname
+		from tbl_rsgoods R join tbl_employee E
+		on R.fk_employeeid = E.employeeid
+		join tbl_department D
+		on E.fk_dcode = D.dcode
 		where fk_gno=#{gno} and rgdate = #{rgdate}
 	</select>
 
@@ -47,8 +53,9 @@
 
 	<!-- 차량 예약 리스트 -->	
 	<select id="getReserveCarList" resultType="com.t1works.groupware.ody.model.RsCarOdyVO" parameterType="HashMap">
-		select rscno, fk_cno, fk_employeeid, name, rdestination, nvl(rcpeople,' ') as rcpeople, rcsubject, rcdate, rctime, cstatus
-		from tbl_rscar
+		select rscno, fk_cno, fk_employeeid, E.name as name, rdestination, nvl(rcpeople,' ') as rcpeople, rcsubject, rcdate, rctime, cstatus
+		from tbl_rscar R join tbl_employee E
+		on R.fk_employeeid = E.employeeid
 		where fk_cno=#{cno} and rcdate = #{rcdate}
 	</select>
 
@@ -61,8 +68,8 @@
 	
 	<!-- 사무용품 신청하기 -->
 	<insert id="insert_rsGoods" parameterType="HashMap">
-		insert into tbl_rsgoods(rsgno,fk_gno,fk_employeeid,name,rgsubject,rgdate,rgtime ,gstatus, rgdepartment)
-		values(rsgnoSeq.nextval, #{gno},#{fk_employeeid},#{name},#{rgsubject},#{rgdate},#{rgtime},1,#{rgdepartment})
+		insert into tbl_rsgoods(rsgno,fk_gno,fk_employeeid,rgsubject,rgdate,rgtime)
+		values(rsgnoSeq.nextval, #{gno},#{fk_employeeid},#{rgsubject},#{rgdate},#{rgtime})
 	</insert>
 	
 	<!-- 회의실 예약 삭제하기 -->
@@ -73,8 +80,8 @@
 	
 	<!-- 차량 예약하기 -->
 	<insert id="insert_rsCar">
-		insert into tbl_rscar(rscno,fk_cno,fk_employeeid,name,rcsubject,rcdate,rctime ,cstatus, rdestination, rcpeople)
-		values(rscnoSeq.nextval, #{cno},#{fk_employeeid},#{name},#{rcsubject},#{rcdate},#{rctime},1,#{rdestination}, #{rcpeople})
+		insert into tbl_rscar(rscno,fk_cno,fk_employeeid,rcsubject,rcdate,rctime ,rdestination, rcpeople)
+		values(rscnoSeq.nextval, #{cno},#{fk_employeeid},#{rcsubject},#{rcdate},#{rctime},#{rdestination}, #{rcpeople})
 	</insert>
 	
 	<!-- 사무용품 예약 삭제하기 -->

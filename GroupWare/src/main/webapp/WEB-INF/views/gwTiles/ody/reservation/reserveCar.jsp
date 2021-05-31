@@ -306,6 +306,7 @@ $(document).ready(function(){
 				html += "<td style='vertical-align: middle;' >"+rdestination[index]+"</td>";
 				html += "<td style='vertical-align: middle; ' >"+rcsubject[index]+"</td>";
 				console.log(rcpeople[index]);
+				
 				if(rcpeople[index]==undefined){
 					html +="<td></td>"
 				}
@@ -314,33 +315,44 @@ $(document).ready(function(){
 				}
 				
 				if(fk_employeeid[index] != employeeid) {
-						html += "<td></td></tr>";
+						html += "<td></td><td></td></tr>";
 				} 
 				else {
-					if(parseInt(curTime)>parseInt(chgdate)){
-						if(cstatus[index]=='1'){
-							html += "<td><button id='btn_return' class='btn' onclick='returnCar("+rscno[index]+")';>반납</button></td></tr>";
-						}
-						else{
-							html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-						}
+					if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
+						html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+				}
+				else if(parseInt(curTime)==parseInt(chgdate)){
+					
+					if(i<curHour){
+						html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 					}
-					else if(parseInt(curTime)==parseInt(chgdate)){
-						if(cstatus[index]=='1' && i<=curHour){
-							html += "<td><button id='btn_return' class='btn' onclick='returnCar("+rscno[index]+")';>반납</button></td></tr>";
-						}
-						else{
-							html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-						}	
+					else if(i==curHour){
+						html += "<td style='vertical-align: middle;'>사용중</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 					}
 					else{
-						html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						if(cstatus[index]=='0'){
+							html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+						}
+						else if(cstatus[index]=='1'){
+							html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+						}
 					}
+		
+				}
+				else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
+					if(cstatus[index]=='0'){
+						html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+					}
+					else if(cstatus[index]=='1'){
+						html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+					}
+				}
+					
 				}
 			} 
 			else {
 				html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
-				html += "<td></td><td></td><td></td><td></td><td></td><tr>";
+				html += "<td></td><td></td><td></td><td></td><td></td><td></td><tr>";
 			}
 			$("tbody#rstimeList").append(html);
 		}// end of for----
@@ -523,11 +535,12 @@ $(document).ready(function(){
 				<col width="15%">
 				<col>
 				<col width="10%">
+				<col width="10%">
 			</colgroup>
 			
 			<thead>
 				<tr>
-					<th colspan="6">예약시간 선택</th>
+					<th colspan="7">예약시간 선택</th>
 				</tr>
 				<tr>
 				   <th>사용시간</th>
@@ -535,12 +548,13 @@ $(document).ready(function(){
 				   <th>도착지</th>
 				   <th>목적</th>
 				   <th>탑승자</th>
-				   <th>반납 / 삭제</th>
+				   <th>예약현황</th>
+				   <th>취소 / 삭제</th>
 				</tr>
 			</thead>
 			<tbody id="rstimeList">
 				<tr>
-					<td colspan="6">입력된 정보가 없습니다.</td>
+					<td colspan="7">입력된 정보가 없습니다.</td>
 				</tr>
 			</tbody>
 		</table>
@@ -597,7 +611,6 @@ $(document).ready(function(){
 					<input type="hidden" id="chgdate" value="" name="rcdate"/>
 					<input type="hidden" id="rctime" value="" name="rctime"/>
 					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
-					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
 				</div>
          	</form>
         </div>

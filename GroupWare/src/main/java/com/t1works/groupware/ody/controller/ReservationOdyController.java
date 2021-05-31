@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.t1works.groupware.bwb.model.MemberBwbVO;
+
 import com.t1works.groupware.ody.model.*;
 import com.t1works.groupware.ody.service.InterReservationOdyService;
 
@@ -35,16 +35,7 @@ public class ReservationOdyController {
 	@RequestMapping(value="/t1/rsRoom.tw")
 	public String requiredLogin_room(HttpServletRequest request, HttpServletResponse response) {
 		
-		
-		HttpSession session = request.getSession();
-		
-		MemberBwbVO loginuser =(MemberBwbVO) session.getAttribute("loginuser");
-
-		// 부서 코드 이용해서 부서명 알아오기
-		String dcode= loginuser.getFk_dcode();
-		String dname= service.selectDepartment(dcode);
-		
-		request.setAttribute("dname", dname);
+	
 		List<RoomOdyVO> roomList= service.getRoomList();
 		
 	
@@ -78,7 +69,7 @@ public class ReservationOdyController {
 				jsonObj.put("rsubject", rsvo.getRsubject()); // {"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}
 				jsonObj.put("rdate", rsvo.getRdate());
 				jsonObj.put("rtime", rsvo.getRtime());
-				jsonObj.put("rdepartment", rsvo.getRdepartment());
+				jsonObj.put("rdname", rsvo.getRdname());
 				
 				
 				jsonArr.put(jsonObj); // [{"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}] 
@@ -99,12 +90,11 @@ public class ReservationOdyController {
 		String fk_roomno = request.getParameter("fk_roomno");
 		String rdate= request.getParameter("rdate");
 		String fk_employeeid= request.getParameter("fk_employeeid");
-		String name= request.getParameter("name");
 		String rdepartment= request.getParameter("rdepartment");
 		String rsubject= request.getParameter("rsubject");
 
 		
-		
+		int n=0;
 		for(int i=0;i<rArr.length;i++) {
 			String rtime= rArr[i];
 		//	System.out.println(rtime);
@@ -112,15 +102,24 @@ public class ReservationOdyController {
 			paraMap.put("fk_roomno", fk_roomno);
 			paraMap.put("rdate", rdate);
 			paraMap.put("fk_employeeid", fk_employeeid);
-			paraMap.put("name", name);
 			paraMap.put("rdepartment", rdepartment);
 			paraMap.put("rsubject", rsubject);
 			paraMap.put("rtime", rtime);
-			int n = service.insert_rsRoom(paraMap);
+			n = service.insert_rsRoom(paraMap);
 		}
 	
+
+		if(n>0) {
+			mav.addObject("message","해당 회의실이 예약되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/rsRoom.tw");
+		}
+		else {
+			mav.addObject("message","회의실 예약을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/rsRoom.tw");
+		}
 		
-		mav.setViewName("redirect:/t1/rsRoom.tw");
+		mav.setViewName("msg");
+
 		return mav;
 	}
 	
@@ -129,15 +128,6 @@ public class ReservationOdyController {
 	@RequestMapping(value="/t1/rsGoods.tw")
 	public String requiredLogin_goods(HttpServletRequest request, HttpServletResponse response) {
 		
-		HttpSession session = request.getSession();
-		
-		MemberBwbVO loginuser =(MemberBwbVO) session.getAttribute("loginuser");
-
-		// 부서 코드 이용해서 부서명 알아오기
-		String dcode= loginuser.getFk_dcode();
-		String dname= service.selectDepartment(dcode);
-		
-		request.setAttribute("dname", dname);
 		
 		List<GoodsOdyVO> goodsList= service.getGoodsList();
 		
@@ -172,7 +162,7 @@ public class ReservationOdyController {
 				jsonObj.put("rgsubject", rsgvo.getRgsubject()); // {"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}
 				jsonObj.put("rgdate", rsgvo.getRgdate());
 				jsonObj.put("rgtime", rsgvo.getRgtime());
-				jsonObj.put("rgdepartment", rsgvo.getRgdepartment());
+				jsonObj.put("rdname", rsgvo.getRdname());
 				jsonObj.put("gstatus", rsgvo.getGstatus());
 				
 				jsonArr.put(jsonObj); // [{"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}] 
@@ -252,11 +242,10 @@ public class ReservationOdyController {
 			String gno = request.getParameter("gno");
 			String rgdate= request.getParameter("rgdate");
 			String fk_employeeid= request.getParameter("fk_employeeid");
-			String name= request.getParameter("name");
 			String rgdepartment= request.getParameter("rgdepartment");
 			String rgsubject= request.getParameter("rgsubject");
 
-			
+			int n=0;
 			
 			for(int i=0;i<rgArr.length;i++) {
 				String rgtime= rgArr[i];
@@ -265,15 +254,23 @@ public class ReservationOdyController {
 				paraMap.put("gno", gno);
 				paraMap.put("rgdate", rgdate);
 				paraMap.put("fk_employeeid", fk_employeeid);
-				paraMap.put("name", name);
 				paraMap.put("rgdepartment", rgdepartment);
 				paraMap.put("rgsubject", rgsubject);
 				paraMap.put("rgtime", rgtime);
-				int n = service.insert_rsGoods(paraMap);
+				n = service.insert_rsGoods(paraMap);
 			}
-		
 			
-			mav.setViewName("redirect:/t1/rsGoods.tw");
+			
+			if(n>0) {
+				mav.addObject("message","해당 사무용품이 예약되었습니다.");
+				mav.addObject("loc",request.getContextPath()+"/t1/rsGoods.tw");
+			}
+			else {
+				mav.addObject("message","사무용품 예약을 실패하였습니다.");
+				mav.addObject("loc",request.getContextPath()+"/t1/rsGoods.tw");
+			}
+			
+			mav.setViewName("msg");
 			return mav;
 		}
 		
@@ -305,7 +302,7 @@ public class ReservationOdyController {
 		return jsonObj.toString();
 	}
 	
-	// 차량 예약내역 가져오기
+	// 차량 예약하기
 	@RequestMapping(value="/t1/addReserveCar.tw", method= {RequestMethod.POST})
 	public ModelAndView addReserveCar(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
@@ -316,12 +313,11 @@ public class ReservationOdyController {
 		String cno = request.getParameter("cno");
 		String rcdate= request.getParameter("rcdate");
 		String fk_employeeid= request.getParameter("fk_employeeid");
-		String name= request.getParameter("name");
 		String rdestination= request.getParameter("rdestination");
 		String rcpeople= request.getParameter("rcpeople");
 		String rcsubject= request.getParameter("rcsubject");
 
-		
+		int n=0;
 		
 		for(int i=0;i<rcArr.length;i++) {
 			String rctime= rcArr[i];
@@ -330,16 +326,24 @@ public class ReservationOdyController {
 			paraMap.put("cno", cno);
 			paraMap.put("rcdate", rcdate);
 			paraMap.put("fk_employeeid", fk_employeeid);
-			paraMap.put("name", name);
 			paraMap.put("rdestination", rdestination);
 			paraMap.put("rcpeople", rcpeople);
 			paraMap.put("rcsubject", rcsubject);
 			paraMap.put("rctime", rctime);
-			int n = service.insert_rsCar(paraMap);
+			n = service.insert_rsCar(paraMap);
 		}
 	
+		if(n>0) {
+			mav.addObject("message","해당 차량이 예약되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/rsCar.tw");
+		}
+		else {
+			mav.addObject("message","차량을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/rsCar.tw");
+		}
 		
-		mav.setViewName("redirect:/t1/rsCar.tw");
+		mav.setViewName("msg");
+
 		return mav;
 	}
 	

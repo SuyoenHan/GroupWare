@@ -6,8 +6,8 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-	// === postupload.jsp 게시판 글쓰기 ===
-      
+
+	
       // === #167. 스마트 에디터 구현 시작 ===
        
        // === 스마트 에디터 구현 끝 ===
@@ -37,8 +37,6 @@ $(document).ready(function(){
          // === 스마트에디터 구현 시작 ===
          //스마트에디터 사용시 무의미하게 생기는 p태그 제거
           
-              
-           
            
            // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
            // 글내용 유효성 검사 
@@ -46,9 +44,6 @@ $(document).ready(function(){
            
            // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
            
-       
-          
-        
         
        // === 스마트에디터 구현 끝 ===
          
@@ -59,10 +54,12 @@ $(document).ready(function(){
             return;
          }
          
+         
+         
          // 폼(form) 을 전송(submit)
          var frm = document.postFrm;
          frm.method = "POST";
-         frm.action = "uploadComplete.tw";
+         frm.action = "genUploadComplete.tw";
          frm.submit();   
       });
       
@@ -75,7 +72,7 @@ $(document).ready(function(){
 
 
 <div id="board-container">
-	 <i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">공지사항</span>
+	 <a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">자유게시판</span></a>
 	
 	 <form name="postFrm"> 
 	    <table id="table">
@@ -83,18 +80,8 @@ $(document).ready(function(){
 	          <th>성명</th>
 	          <td>
 	              <input type="hidden" name="name" class="short" value="${sessionScope.loginuser.name}" readonly />
-	              <span>${sessionScope.loginuser.name}</span>
-	          </td>
-	       </tr>
-	       <tr>
-	          <th>구분</th>
-	          <td>
 	              <input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />
-	              <select name="fk_categnum" style="width: 100px; border-color: #ccc;">
-	              	<option value="1">전체공지</option>
-	              	<option value="2">총무공지</option>
-	              	<option value="3">경조사</option>
-	              </select>
+	              <span>${sessionScope.loginuser.name}</span>
 	          </td>
 	       </tr>
 	       <tr>
@@ -116,7 +103,7 @@ $(document).ready(function(){
 	       <tr>
 	          <th>비밀번호</th>
 	          <td>
-	             <input type="password" name="pw" id="pw" class="short" />       
+	             <input type="password" name="pw" id="pw" class="short" />
 	          </td>
 	       </tr>
 	    </table>
