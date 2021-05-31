@@ -137,6 +137,10 @@ $(document).ready(function(){
 		// input을 datepicker로 선언
 		$("input#fromDate").datepicker();                    
 		$("input#toDate").datepicker();
+		
+		
+		
+		
 	});
 	
 	
@@ -217,11 +221,11 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
-						html += "<tr class='tr_hover'>";
+						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
 						html += "<td align='center'>"+ item.ncatname +"</td>";
-						html += "<td align='center'>"+ item.ano +"</td>";						
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
 						html += "</tr>";
@@ -234,6 +238,14 @@ $(document).ready(function(){
 				}
 				
 				$("tbody#commentDisplay").html(html);
+				
+				
+				// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
+				$("tr.docuInfo").click(function(){					
+					var ano = $(this).children(".ano").text();
+					location.href="<%= ctxPath%>/t1/myDocuNorm_detail.tw?ano="+ano;
+				});
+				
 				
 				// 페이지바 함수 호출
 				makeCommentPageBar(currentShowPageNo);
@@ -323,11 +335,9 @@ $(document).ready(function(){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		});
-	}
-	
-	
-	
+	}	
 </script>
+
 <div class="section">
 <img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
 <span style="font-size: 14pt; font-weight: bold;">수신함</span>
@@ -419,6 +429,6 @@ $(document).ready(function(){
 			<tbody id="commentDisplay"></tbody>		
 		</table>
 		
-		<div id="pageBar" style="border:solid 0px gray; width: 90%; margin-left: 42%;"></div>
+		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
 	</form>
 </div>
