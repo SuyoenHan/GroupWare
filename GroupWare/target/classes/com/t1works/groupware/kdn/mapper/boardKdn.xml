@@ -12,10 +12,13 @@
 	</insert>
 	
 	<!-- 총 게시물 건수(totalCount) 구하기 -->
-	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+	<select id="getNoticeTotalCount" parameterType="HashMap" resultType="int">
 	 	select count(*)
 	 	from tbl_noticeboard
 	 	where status=1
+	 	<if test='fk_categnum != ""'>
+	 		and fk_categnum = #{fk_categnum}
+	 	</if>
 	 	<if test='searchWord != ""'>
 	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 	 	</if>
@@ -31,6 +34,9 @@
 		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 		from tbl_noticeboard
 		where status = 1
+		<if test='fk_categnum != ""'>
+	 		and fk_categnum = #{fk_categnum}
+	 	</if>
 		<if test='searchWord != ""'>
 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 		</if>
@@ -46,6 +52,72 @@
 	
 	<!--  (댓글쓰기가 없는 게시판에서) 공지사항 글 1개 보여주기  ==  -->
 	<select id="getView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		select previousseq, previoussubject, seq, fk_categnum, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
+		from
+		(
+			select lag(seq,1) over(order by seq desc) as previousseq
+			     , lag(subject,1) over(order by seq desc) as previoussubject
+			     
+			     , seq, fk_categnum, fk_employeeid, name, subject, content  
+			     , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			     
+			     ,lead(seq,1) over(order by seq desc) as nextseq
+			     ,lead(subject,1) over(order by seq desc) as nextsubject
+			from tbl_noticeboard
+			where status = 1
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	<!-- === 공지사항 1개글 수정하기 === -->
+	<update id="noticeEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		 update tbl_noticeboard set fk_categnum =#{fk_categnum}, subject=#{subject}, content=#{content}
+		 where seq=#{seq} and pw = #{pw}
+	</update>
+	
+	<!-- == 공지사항 글1개 삭제하기 == -->
+	<delete id="noticeDel" parameterType="HashMap">
+		delete from tbl_noticeboard
+		where seq = #{seq} and pw = #{pw}
+	</delete>
+	
+	
+	<!-- (건의사항) 총 게시물 건수(totalCount) 구하기 -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+		from tbl_suggestionboard
+	 	where status=1
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+	
+	
+	<!-- (건의사항)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
+	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		select rno, seq, fk_employeeid, name, subject, readCount, regDate, privatePost
+		from
+		(
+		select row_number() over(order by seq desc) as rno,
+		       seq, fk_employeeid, name, subject, readCount, privatePost,
+		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+		from tbl_suggestionboard
+		where status = 1
+		<if test='searchWord != ""'>
+		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+		</if>
+		) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- (건의사항) 파일 첨부가 없는 글쓰기 하기 -->
+	<insert id="suggPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status)
+		values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default)
+	</insert>
+	
+	<!--  (댓글쓰기가 없는 게시판에서) 건의사항 글 1개 보여주기  ==  -->
+	<select id="getSuggPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
 		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
 		from
 		(
@@ -57,10 +129,100 @@
 			     
 			     ,lead(seq,1) over(order by seq desc) as nextseq
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
-			from tbl_noticeboard
+			from tbl_suggestionboard
 			where status = 1
 		) V
 		where V.seq = #{seq}
 	</select>
+	
+	<!--  건의사항 글조회수 1증가 하기  ==  -->	
+	<update id="setAddSuggReadCount" parameterType="String">
+		update tbl_suggestionboard set readCount = readCount+1
+		where seq = #{seq}
+	</update>
+	
+	<!-- === 건의사항 1개글 수정하기 === -->
+	<update id="suggEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		 update tbl_suggestionboard set subject=#{subject}, content=#{content}
+		 where seq=#{seq} and pw = #{pw}
+	</update>
+	
+	<!-- == 건의사항 글1개 삭제하기 == -->
+	<delete id="suggDel" parameterType="HashMap">
+		delete from tbl_suggestionboard
+		where seq = #{seq} and pw = #{pw}
+	</delete>
+	
+	
+	
+	<!-- (자유게시판) 파일 첨부가 없는 글쓰기 하기 -->
+	<insert id="genPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		insert into tbl_generalboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate,  status)
+		values(seq_generalboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default)
+	</insert>
+	
+	<!-- (자유게시판) 총 게시물 건수(totalCount) 구하기 -->
+	<select id="getGenTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+		from tbl_generalboard
+	 	where status=1
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+	
+	<!-- (자유게시판)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
+	<select id="genListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		select rno, seq, fk_employeeid, name, subject, readCount, regDate
+		from
+		(
+		select row_number() over(order by seq desc) as rno,
+		       seq, fk_employeeid, name, subject, readCount, 
+		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+		from tbl_generalboard
+		where status = 1
+		<if test='searchWord != ""'>
+		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+		</if>
+		) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+
+	<!--  (댓글쓰기가 없는 게시판에서) 자유게시판 글 1개 보여주기  ==  -->
+	<select id="getGenPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
+		from
+		(
+			select lag(seq,1) over(order by seq desc) as previousseq
+			     , lag(subject,1) over(order by seq desc) as previoussubject
+			     
+			     , seq, fk_employeeid, name, subject, content  
+			     , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			     
+			     ,lead(seq,1) over(order by seq desc) as nextseq
+			     ,lead(subject,1) over(order by seq desc) as nextsubject
+			from tbl_generalboard
+			where status = 1
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	<!--  자유게시판 글조회수 1증가 하기  ==  -->	
+	<update id="setAddGenReadCount" parameterType="String">
+		update tbl_generalboard set readCount = readCount+1
+		where seq = #{seq}
+	</update>
+	
+	<!-- === 자유게시판 1개글 수정하기 === -->
+	<update id="generalEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+		 update tbl_generalboard set subject=#{subject}, content=#{content}
+		 where seq=#{seq} and pw = #{pw}
+	</update>
+	
+	<!-- == 건의사항 글1개 삭제하기 == -->
+	<delete id="generalDel" parameterType="HashMap">
+		delete from tbl_generalboard
+		where seq = #{seq} and pw = #{pw}
+	</delete>
 
 </mapper>

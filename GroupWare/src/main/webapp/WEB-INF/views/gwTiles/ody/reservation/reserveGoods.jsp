@@ -181,10 +181,12 @@ $(document).ready(function(){
     		func_reserve();
     	});
     
+    	$("div#myModal").modal('hide');
+    	
         // 모달창에서 예약 버튼 클릭
     	$("button#realReserve").click(function(event){
-    	//	 event.stopPropagation();
-        //   event.preventDefault();
+    		 event.stopPropagation();
+       		 event.preventDefault();
              
              var purpose = $("input#purpose").val().trim();
              
@@ -220,7 +222,7 @@ $(document).ready(function(){
 		var name=Array();
 		var fk_employeeid=Array();
 		var rgsubject=Array();
-		var rgdepartment=Array();
+		var rdname=Array();
 		var gstatus=Array();
 		var employeeid = $("input[name=fk_employeeid]").val();
 		$("tbody#rstimeList tr").remove(); // 입력하신 정보가 없습니다. 사라지게 만들기
@@ -232,7 +234,7 @@ $(document).ready(function(){
 			name.push(item.name);
 			fk_employeeid.push(item.fk_employeeid);
 			rgsubject.push(item.rgsubject);
-			rgdepartment.push(item.rgdepartment);
+			rdname.push(item.rdname);
 			gstatus.push(item.gstatus);
 		});
 		
@@ -287,34 +289,44 @@ $(document).ready(function(){
 			if( index > -1){
 
 				html += "<tr><td style='vertical-align: middle;'><label id='id_time' class="+clickEvent+" ><font color='"+fontType+"'>"+timeText(rgtime[index])+"</label></span></td>";
-				html += "<td style='vertical-align: middle;'>"+rgdepartment[index]+"</td>";
+				html += "<td style='vertical-align: middle;'>"+rdname[index]+"</td>";
 				html += "<td style='vertical-align: middle;'>"+name[index]+"</td>";
 				html += "<td style='vertical-align: middle;'>"+rgsubject[index]+"</td>";
 				
 			
 				
 				if(fk_employeeid[index] != employeeid) {
-						html += "<td></td></tr>";
+						html += "<td></td><td></td></tr>";
 				} 
 				else {
-					   if(parseInt(curTime)>parseInt(chgdate)){
-							if(gstatus[index]=='1'){
-								html += "<td><button id='btn_return' class='btn' onclick='returnGoods("+rsgno[index]+")';>반납</button></td></tr>";
-							}
-							else{
-								html += "<td><button id='btn_delete' class='btn' onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
-							}
+					   if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
+								html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
 						}
 						else if(parseInt(curTime)==parseInt(chgdate)){
-							if(gstatus[index]=='1' && i<=curHour){
-								html += "<td><button id='btn_return' class='btn'  onclick='returnGoods("+rsgno[index]+")';>반납</button></td></tr>";
+							
+							if(i<curHour){
+								html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+							}
+							else if(i==curHour){
+								html += "<td style='vertical-align: middle;'>사용중</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
 							}
 							else{
-								html += "<td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
-							}	
+								if(gstatus[index]=='0'){
+									html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>취소</button></td></tr>";
+								}
+								else if(gstatus[index]=='1'){
+									html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>취소</button></td></tr>";
+								}
+							}
+				
 						}
-						else{
-							html += "<td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+						else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
+							if(gstatus[index]=='0'){
+								html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>취소</button></td></tr>";
+							}
+							else if(gstatus[index]=='1'){
+								html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rsgno[index]+")';>취소</button></td></tr>";
+							}
 						}
 						
 					}
@@ -322,7 +334,7 @@ $(document).ready(function(){
 				else {
 	
 					html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
-					html += "<td></td><td></td><td></td><td></td><tr>";
+					html += "<td></td><td></td><td></td><td></td><td></td><tr>";
 				}
 
 			$("tbody#rstimeList").append(html);
@@ -383,7 +395,7 @@ $(document).ready(function(){
 			
 			showTime(chkTime);
 			
-			
+			// 등로 버튼 클릭시 모달창 띄움
 			$("button[id='btn_Reserve']").attr("data-target","#myModal");
 			$("td#goodsname").html(goodsname);
 			
@@ -413,7 +425,7 @@ $(document).ready(function(){
 		$("input#rgtime").val(val);
 	}
 	
-	// 삭제하기 버튼 글릭
+	// 삭제하기 버튼 클릭
 	function deleteReserve(rsgno){
 
 		$.ajax({
@@ -431,6 +443,7 @@ $(document).ready(function(){
 		});
 	}
 	
+	// 반납하기 버튼 클릭
 	function returnGoods(rsgno){
 		$.ajax({
 			url: "<%= ctxPath%>/t1/rsGoods/returnReserveGoods.tw",
@@ -484,18 +497,20 @@ $(document).ready(function(){
 				<col width="15%">
 				<col>
 				<col width="10%">
+				<col width="10%">
 			</colgroup>
 			
 			<thead>
 				<tr>
-					<th colspan="5">예약시간 선택</th>
+					<th colspan="6">예약시간 선택</th>
 				</tr>
 				<tr>
 				   <th>사용시간</th>
 				   <th>신청부서</th>
 				   <th>담당자</th>
 				   <th>목적</th>
-				   <th>삭제</th>
+				   <th>예약현황</th>
+				   <th>취소 /삭제</th>
 				</tr>
 			</thead>
 			<tbody id="rstimeList">
@@ -508,7 +523,7 @@ $(document).ready(function(){
 	
 	
 	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
-		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
+		<button id="btn_Reserve" class="btn"  data-toggle="modal" data-target="" >등록</button>
 	</div>
 
 </div>
@@ -545,8 +560,6 @@ $(document).ready(function(){
 					<input type="hidden" id="chgdate" value="" name="rgdate"/>
 					<input type="hidden" id="rgtime" value="" name="rgtime"/>
 					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
-					<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
-					<input type="hidden" name="rgdepartment" value="${requestScope.dname}"/>
 				</div>
          	</form>
         </div>

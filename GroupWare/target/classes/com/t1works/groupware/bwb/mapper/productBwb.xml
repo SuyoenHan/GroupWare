@@ -102,6 +102,7 @@
 		where rno between #{startRno} and #{endRno}
    </select>
    
+   <!-- 부서 업무의 갯수 가져오기 -->
    <select id="selectdepartProduct" parameterType="HashMap" resultType="int">
    		select count(*)
 		from tbl_todo T
