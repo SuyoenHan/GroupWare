@@ -4,18 +4,17 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import net.nurigo.java_sdk.api.Message;
-
 @Component
 @Controller
 public class SendSmsHsyController {
+	
 	
 	// 문자보내는 매핑 url
 	@ResponseBody
@@ -30,7 +29,7 @@ public class SendSmsHsyController {
 		String api_secret = "BARXKSL0EHFBGFO60JXSKGBOSNZQIWYY";  // 한수연 api_secret
 		
 		// net.nurigo.java_sdk.api.Message 
-		Message coolsms = new Message(api_key, api_secret);	
+		// Message coolsms = new Message(api_key, api_secret);	
 		
 		// 2) 문자보낼 때 필요한 정보 가져오기
 		String mobile= request.getParameter("mobile"); // 받는사람 번호
@@ -48,9 +47,9 @@ public class SendSmsHsyController {
 		JSONObject jsobj= null;
 		
 		try {
-			jsobj = (JSONObject)coolsms.send(paraMap);
+			//jsobj = (JSONObject)coolsms.send(paraMap);
 		} catch (Exception e) {
-			System.out.println("문자보내기에 실패하셨습니다.");		
+			//System.out.println("문자보내기에 실패하셨습니다.");		
 		}
 	    /*
         	org.json.JSONObject 이 아니라 

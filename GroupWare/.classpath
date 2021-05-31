@@ -35,7 +35,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/NCS/workspace(jsp)/MyMVC/휴대폰문자보내기(coolsms)/java-sdk-2.2/lib/javaSDK-2.2.jar"/>
-	<classpathentry kind="lib" path="C:/NCS/workspace(jsp)/MyMVC/휴대폰문자보내기(coolsms)/java-sdk-2.2/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
