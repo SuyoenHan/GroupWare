@@ -136,10 +136,7 @@ $(document).ready(function(){
 
 		// input을 datepicker로 선언
 		$("input#fromDate").datepicker();                    
-		$("input#toDate").datepicker();
-		
-		
-		
+		$("input#toDate").datepicker();		
 		
 	});
 	

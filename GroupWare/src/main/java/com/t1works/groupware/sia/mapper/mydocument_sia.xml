@@ -4,6 +4,7 @@
 
 <mapper namespace="mydocument_sia">
 
+	<!-- 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_reclist" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		select rownum, atitle, ano, astatus, asdate, ncat, ncatname 
 		from
@@ -47,6 +48,152 @@
 		</if>
 		<if test='a != ""'>
 			and ncat in(${a})
+		</if>
+	</select>
+	
+	
+	<!-- 내문서함 - 문서 한 개 상세보기 -->
+	<select id="myDocuNorm_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile 
+		<choose>
+			<when test="ncat eq '1'">
+				, mdate
+			</when>
+			<when test="ncat eq '2'">
+				, fk_wiimdate 
+			</when>
+			<when test="ncat eq '3'">
+				, nvl(comname, '없습니다.') as comname
+			</when>
+			<otherwise>
+				, afile
+			</otherwise> 
+		</choose>
+		from tbl_approval a
+		<choose>
+			<when test="ncat eq '1'">
+				left join tbl_minutes m 
+				on m.fk_ano = a.ano
+			</when>
+			<when test="ncat eq '2'">
+				left join tbl_wiimjang w 
+				on w.fk_ano = a.ano
+			</when>
+			<when test="ncat eq '3'">
+				left join tbl_coofficial c 
+				on c.fk_ano = a.ano
+			</when>
+		</choose>		
+		left join tbl_norapproval n
+		on a.ano = n.fk_ano
+		left join 
+		(
+			select employeeid, name, fk_dcode
+			from tbl_employee 
+		) e
+		on a.fk_employeeid = e.employeeid
+		left join 
+		(
+			select dcode, dname
+			from tbl_department
+		) d
+		on e.fk_dcode = d.dcode
+		where anocode = 1 and ano = #{ano}
+	</select>
+	
+	
+	<!-- 내문서함 - 수신함 - 지출결재문서에 해당하는 문서 조회하기 -->
+	<select id="getSpend_reclist" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select rownum, atitle, ano, astatus, asdate, scat, scatname 
+		from
+		(
+			select row_number() over(order by asdate desc) as rno, rownum, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
+			from tbl_approval A join tbl_spenda B
+			on A.ano = B.fk_ano
+			where apaper = '0'
+			<if test='fromDate != "" or toDate != ""'>
+				and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+			</if>
+			<if test='astatus != ""'>
+				and astatus = #{astatus}
+			</if>
+			<if test='sort != "" and searchWord != ""'>
+				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+			</if>
+			<if test='a != ""'>
+				and scat in(${a})
+			</if>
+		) V
+		where rno between #{startRno} and #{endRno}
+		order by asdate desc
+	</select>
+	
+	
+	<!-- 검색에 해당하는 수신함-지출결재 글의 총 페이지수를 알아오기 -->
+	<select id="getSpendTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*) / #{sizePerPage})
+		from tbl_approval A join tbl_spenda B
+		on A.ano = B.fk_ano
+		where apaper = '0'
+		<if test='fromDate != "" or toDate != ""'>
+			and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+		</if>
+		<if test='astatus != ""'>
+			and astatus = #{astatus}
+		</if>
+		<if test='sort != "" and searchWord != ""'>
+			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+		</if>
+		<if test='a != ""'>
+			and scat in(${a})
+		</if>
+	</select>
+	
+	
+	<!-- 내문서함 - 수신함 - 근태결재문서에 해당하는 문서 조회하기 -->
+	<select id="getVacation_reclist" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select rownum, atitle, ano, astatus, asdate, vno, vcatname 
+		from
+		(
+			select row_number() over(order by asdate desc) as rno, rownum, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
+			from tbl_approval A join tbl_vacation B
+			on A.ano = B.fk_ano
+			where apaper = '0'
+			<if test='fromDate != "" or toDate != ""'>
+				and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+			</if>
+			<if test='astatus != ""'>
+				and astatus = #{astatus}
+			</if>
+			<if test='sort != "" and searchWord != ""'>
+				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+			</if>
+			<if test='a != ""'>
+				and vno in(${a})
+			</if>
+		) V
+		where rno between #{startRno} and #{endRno}
+		order by asdate desc
+	</select>
+	
+	
+	<!-- 검색에 해당하는 수신함-근태결재 글의 총 페이지수를 알아오기 -->
+	<select id="getVacationTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*) / #{sizePerPage})
+		from tbl_approval A join tbl_vacation B
+		on A.ano = B.fk_ano
+		where apaper = '0'
+		<if test='fromDate != "" or toDate != ""'>
+			and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+		</if>
+		<if test='astatus != ""'>
+			and astatus = #{astatus}
+		</if>
+		<if test='sort != "" and searchWord != ""'>
+			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+		</if>
+		<if test='a != ""'>
+			and vno in(${a})
 		</if>
 	</select>
 	
