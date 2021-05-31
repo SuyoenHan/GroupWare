@@ -25,5 +25,11 @@ public interface InterProductBwbService {
 	
 	// 배정 업무 총 갯수 구해오기(totalProduct)
 	int selectAssignedTotal(String employeeid);
+	
+	// 배정된 부서 업무 모두 뽑아오기((기간,검색어 허용))
+	List<ProductBwbVO> selectAllDepartmentToDo(Map<String, String> paraMap);
+	
+	// 부서 총 업무 갯수알아오기
+	int selectdepartProduct(Map<String, String> paraMap);
 
 }

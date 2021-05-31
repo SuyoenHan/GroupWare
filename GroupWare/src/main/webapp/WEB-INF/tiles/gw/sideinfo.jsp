@@ -158,7 +158,7 @@
 		                <a href="<%=ctxPath%>/t1/leaderTodo.tw">나의업무현황</a>
 		            </li>
 		            <li class="clickable">
-	             		<a href="<%=ctxPath%>/t1/departmentTodo.tw ">부서업무현황</a>
+	             		<a href="<%=ctxPath%>/t1/departmentTodo.tw">부서업무현황</a>
 		            </li>
 		            <li class="clickable">
 	             		<a href="<%=ctxPath%>/t1/departmentPerformance.tw">부서실적현황</a>
