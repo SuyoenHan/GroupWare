@@ -58,6 +58,16 @@
 	
 	span.blinkState {opacity:0;}
 	
+	div#productA{
+		margin:50px 0px; 
+		font-size:13pt;
+	}
+	
+	div#productA a{
+		text-decoration: none;
+		color: #696969;
+	}
+	
 </style>
 
 <script type="text/javascript">
@@ -104,38 +114,45 @@
 </script>
 
 <div id="content">
-
-	<c:forEach var="pvo" items="${pvoList}" varStatus="status">
-		<c:if test="${status.count%3 eq 1}">
-			<div class="outerBox" style="margin-left:0px;" onclick="goProductDetail('${pvo.pNo}')">
-				<div class="imgBox">
-					<span class="state"></span>
-					<img src="<%=ctxPath%>/resources/images/productHsy/${pvo.pImage}" width="100" height="100" />
+	<c:if test="${not empty pvoList}">
+		<c:forEach var="pvo" items="${pvoList}" varStatus="status">
+			<c:if test="${status.count%3 eq 1}">
+				<div class="outerBox" style="margin-left:0px;" onclick="goProductDetail('${pvo.pNo}')">
+					<div class="imgBox">
+						<span class="state"></span>
+						<img src="<%=ctxPath%>/resources/images/productHsy/${pvo.pImage}" width="100" height="100" />
+					</div>
+					<div class="productTitle" id="${pvo.remainCnt}">${pvo.pName}</div>
+					<div class="productDate">
+						${pvo.startDate}&nbsp;-&nbsp;${pvo.endDate}<br>
+						[${pvo.period}]
+					</div>
 				</div>
-				<div class="productTitle" id="${pvo.remainCnt}">${pvo.pName}</div>
-				<div class="productDate">
-					${pvo.startDate}&nbsp;-&nbsp;${pvo.endDate}<br>
-					[${pvo.period}]
+			</c:if>
+			
+			<c:if test="${status.count%3 ne 1}">
+				<div class="outerBox" onclick="goProductDetail(${pvo.pNo})">
+					<div class="imgBox">
+						<span class="state"></span>
+						<img src="<%=ctxPath%>/resources/images/productHsy/${pvo.pImage}" width="100" height="100" />
+					</div>
+					<div class="productTitle" id="${pvo.remainCnt}">${pvo.pName}</div>
+					<div class="productDate">
+						${pvo.startDate}&nbsp;-&nbsp;${pvo.endDate}<br>
+						[${pvo.period}]
+					</div>
 				</div>
-			</div>
-		</c:if>
-		
-		<c:if test="${status.count%3 ne 1}">
-			<div class="outerBox" onclick="goProductDetail(${pvo.pNo})">
-				<div class="imgBox">
-					<span class="state"></span>
-					<img src="<%=ctxPath%>/resources/images/productHsy/${pvo.pImage}" width="100" height="100" />
-				</div>
-				<div class="productTitle" id="${pvo.remainCnt}">${pvo.pName}</div>
-				<div class="productDate">
-					${pvo.startDate}&nbsp;-&nbsp;${pvo.endDate}<br>
-					[${pvo.period}]
-				</div>
-			</div>
-		</c:if>	
-	</c:forEach>
+			</c:if>	
+		</c:forEach>
+	</c:if>
+	<c:if test="${empty pvoList}">
+		<div align="center" style="margin: 50px 0px 0px 60px;">상품 준비 중 입니다!!</div>
+	</c:if>
 	
 	<!-- float처리 제거를 위함 -->
-	<div style="clear:both; margin-bottom:70px;"></div>
+	<div style="clear:both; margin-bottom:100px;"></div>
+	
+	<div align="center" id="productA">${pageBar}</div>
+	
 	
 </div>

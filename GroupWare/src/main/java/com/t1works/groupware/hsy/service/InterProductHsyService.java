@@ -9,8 +9,8 @@ import com.t1works.groupware.hsy.model.TwLocationHsyVO;
 
 public interface InterProductHsyService {
 
-	//  여행사 홈페이지에서 보여줄 상품정보 가져오기
-	List<ProductHsyVO> selectProductInfoForHome();
+	//  여행사 홈페이지에서 보여줄 상품정보 가져오기 => 페이징바 처리
+	List<ProductHsyVO> selectProductInfoForHome(Map<String,String> paraMap);
 
 	// pNo 존재하는지 확인하기
 	int isExistPno(String pNo);
@@ -50,5 +50,8 @@ public interface InterProductHsyService {
 
 	// 고객테이블에 update하고 제품테이블에 update (transaction처리)
 	int changeCountAjax(ClientHsyVO cvo) throws Throwable;
+
+	// 상품목록 총 페이지 수
+	int selectProductTotalPage(Map<String, String> paraMap);
 
 }
