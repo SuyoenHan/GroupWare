@@ -727,7 +727,7 @@ public class MemberBwbController {
 		System.out.println("period");
 		
 		// 기간에서 선택한 period get방식 처리
-		if(period == null) {
+		if(period == null || period.equalsIgnoreCase("undefined")) {
 			period ="-1";
 		}
 		else if(!(period.equalsIgnoreCase("7")||period.equalsIgnoreCase("30")||period.equalsIgnoreCase("-1")||period.equalsIgnoreCase("90"))) {
@@ -769,7 +769,7 @@ public class MemberBwbController {
 			} // end of for(int i=0; i<len; i++) {-------------------
 		}
 		
-		System.out.println("statusChoice"+statusChoice);
+		
 		
 		// 프로젝트명을 검색한 searchProject get방식 처리
 		if(searchProject==null) {
@@ -790,7 +790,7 @@ public class MemberBwbController {
 		paraMap.put("statusChoice", statusChoice);
 		
 		
-		int totalTodo = 0;	    // 부서 총 업무 갯수
+		int totalTodo = 0;	        // 부서 총 업무 갯수
 		int sizePerPage = 3;	    // 한페이지당 보여주는 갯수
 		int currentShowPageNo = 0;  // 현제페이지 번호
 		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)
@@ -878,6 +878,15 @@ public class MemberBwbController {
 		mav.setViewName("bwb/todo/departmentTodo.gwTiles");
 		
 		return mav;
+	}
+	
+	
+	// 부서업무중 특정행을 클릭시 업무정보 보이기
+	@ResponseBody
+	@RequestMapping(value="/t1/deptgetOneInfoheader.tw",produces="text/plain;charset=UTF-8")
+	public String deptgetOneInfoheader() {
+		
+		return "";
 	}
 	
 }
