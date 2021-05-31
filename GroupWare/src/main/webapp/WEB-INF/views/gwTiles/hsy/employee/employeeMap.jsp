@@ -8,51 +8,61 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <style type="text/css">
 
-	div#employeeMap {
-		background-color: #0071bd;
-		color: #fff;
-		font-weight: bold;
-	}
-
-	div#content{
-		width: 85%;
-		padding: 30px;
+	div#employeeMapContainer{
+		border: solid 0px red;
+		overflow: hidden;
+		width:70%;
+		margin: 0 auto;
+		position: relative;
+		left: -250px;
+		padding-bottom: 100px;
 	}
 	
 	div#employeeMapTitle{
-		margin-bottom:30px;
+		border: solid 0px red;
+		margin: 70px 0px 30px 50px;
 		font-size: 22pt;
 		font-weight: bold;
 	}
 	
 	div#employeeBox{
-		background-color: #e9e9ed;
+		border: solid 0px red;
+		border: solid 2px #003d66;
+		margin: 0px 0px 30px 50px;
 		float: left;
-		width: 30%;
+		width: 26%;
 		padding: 0px 20px;
 	}
 	
 	div.companyName{
 		font-size: 15pt;
 		padding: 15px 0px;
+		color:#004d80;
+		font-weight: bold;
 	}
 	
 	div.clickMenu{
-		border-top: solid 2px #cfcfcf;
+		border-top: solid 1px #003d66;
 		font-size: 15pt;
 		padding: 15px 0px;
+		color:#004d80;
+		font-weight: bold;
 	}
 	
 	div#allBt {
 		float: left;
 		margin-bottom: 20px;
+		border: solid 0px red;
+		margin: 20px 0px 20px 50px;
+		border: solid 0px red;
+		width: 26%;
 	}
 	
 	div#allBt button{
-		width: 150px;
+		width: 47.5%;
 		height: 30px;
-		margin-left: 20px;
-		background-color: #5e5e5e;
+		margin-left: 11px;
+		background-color: #003d66;
 		color:#fff;
 		border: none;
 	}
@@ -71,10 +81,7 @@
 		list-style-type: none;
 	}
 	
-	div.modalLocation{
-		margin-top:100px;
-		margin-left:150px;
-	}
+	div.modalLocation {margin-top:100px;}
 	
 	table#employeeListTable tr.employeeListTr{
 		cursor:pointer;
@@ -82,14 +89,14 @@
 	}
 	
 	table#employeeListTable tr{
-		border-top: solid 1px #696969;
-		border-bottom: solid 1px #696969;
+		border-top: solid 1px #003d66;
+		border-bottom: solid 1px #003d66;
 		text-align: center;
 	}
 	
 	table#employeeListTable tr.employeeListTr:hover{
-		background-color: #0071bd;
-		color: #fff;
+		background-color: #ccebff;
+		color: #006bb3;
 	}
 	
 	ul.hideInfo li:hover{
@@ -113,33 +120,41 @@
 	}
 
 	table#oneEmployeeTable th, table#oneEmployeeTable td {
-		border: solid 1px #696969;
+		border: solid 1px #bdc2bd;
 		border-collapse: collapse;
 		height: 50px;
 		vertical-align: middle;
 	}
 	
-	table#oneEmployeeTable th {text-align: center;}
+	table#oneEmployeeTable th {
+		text-align: center;
+		color: #fff;
+		background-color: #003d66;
+	}
+	
 	table#oneEmployeeTable td {padding-left: 30px;}
 		
 	button.sendMail{
-		background-color: #0071bd;
-		color: #fff;
 		cursor:pointer;
-		margin-left: 40px;
-		border: none;
+		margin-left: 65px;
 		width: 120px;
 		height: 30px;
+		border: solid 1px #caceca;
+		border-radius: 4px;
+		text-shadow: 0px 1px 0px #ccc;
 	}
 	
+	button.sendMail:hover{
+		font-weight: bold;
+		color: #003d66;
+		border: solid 1px #003d66;
+	}
 </style>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 	$(document).ready(function(){
-		
-		/* func_height1(); // sidemenu와 content길이 맞추는 메소드 */
 		
 		$("ul.hideInfo").hide();
 		$("div.hideDeptInfo").hide();
@@ -305,8 +320,6 @@
 		
 </script>
 
-<div id="content" style="background-color: #fff;">
-	
 	<div id="employeeMapContainer">
 		<div id="employeeMapTitle">T1Works 주소록</div>
 		
@@ -316,15 +329,15 @@
 		</div>
 		
 		<div style="float:right;">
-			<select id="searchType" style="height: 30px; width: 120px; cursor:pointer;">
+			<select id="searchType" style="height: 30px; width: 120px; cursor:pointer; position:relative; top: -65px;">
 				<option value="">&nbsp;&nbsp;선택하세요</option>
 				<option value="name">&nbsp;&nbsp;직원명</option>
 				<option value="dname">&nbsp;&nbsp;소속</option>
 				<option value="pname">&nbsp;&nbsp;직위</option>
 				<option value="email">&nbsp;&nbsp;이메일</option>
 			</select>
-			<input type="text" id="searchWord" placeholder="   검색어를 입력하세요." style="height: 30px; width: 230px;" />
-			<button type="button" onclick="javascript:goSearchEmployee();" style="height: 30px; background-color: #5e5e5e; color:#fff; border:none;">검색</button>
+			<input type="text" id="searchWord" placeholder="   검색어를 입력하세요." style="height: 30px; width: 230px; position:relative; top: -65px;" />
+			<button type="button" onclick="javascript:goSearchEmployee();" style="height: 30px; background-color: #003d66; color:#fff; border:none; position:relative; top: -65px;">검색</button>
 		</div>
 		
 		<div style="clear:both;"></div>
@@ -364,10 +377,10 @@
 			
 		</div>
 		
-		<div style="border: solid 0px red; float:right; width: 700px;">
-			<div style="margin-bottom:20px;"><h4>직원목록</h4></div>
+		<div style="border: solid 0px red; float:right; width: 700px; position:relative; top: -60px;">
+			<div style="margin-bottom:20px; font-weight:bold; padding-left: 15px;"><h4>직원목록</h4></div>
 			<table id="employeeListTable">
-				<tr style="height:50px; background-color: #e9e9ed; font-weight: bold; ">
+				<tr style="height:50px; background-color: #003d66; color:#fff; font-weight: bold; ">
 					<th style="width: 100px; text-align: center;">사번</th>
 					<th style="width: 100px; text-align: center;">직원명</th>
 					<th style="width: 90px; text-align: center;">직위</th>
@@ -416,6 +429,4 @@
 		    	</div>
 	  		</div>
 		</div>
-		
 	</div>
-</div>

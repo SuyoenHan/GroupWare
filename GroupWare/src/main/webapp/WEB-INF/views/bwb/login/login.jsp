@@ -73,6 +73,29 @@ margin: 60px auto;
          }
       });// end of $("button#login").click(function(){ 
       
+    	  
+       // 엔터시에도 로그인
+       $("input#passwd").keyup(function(event){
+    	  
+    	   if(event.keyCode == 13){
+    		     var employeeid = $("input#employeeid").val().trim();
+    	         var passwd = $("input#passwd").val().trim();
+    	   
+    	         if(employeeid!="" && passwd!=""){
+    	            
+    	            var frm = document.loginFrm;
+    	            frm.method="post";
+    	            frm.action="<%=ctxPath %>/t1/home.tw";
+    	            frm.submit();
+    	         }
+    	         else{
+    	            alert("아이디와 암호를 올바르게 입력해주세요");
+    	         }
+    	   }
+    	   
+       });
+       
+    	  
    }); // end of $(document).ready(function(){
       
    

@@ -1,9 +1,11 @@
 package com.t1works.groupware.hsy.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.ProductHsyVO;
+import com.t1works.groupware.hsy.model.TwLocationHsyVO;
 
 public interface InterProductHsyService {
 
@@ -27,5 +29,26 @@ public interface InterProductHsyService {
 
 	// 해당제품에 특정고객의 예약이 존재하는지 확인
 	int isExistClientAjax(ClientHsyVO cvo);
+
+	// 회사위치테이블에 있는 정보 가져오기  
+	List<TwLocationHsyVO> twLocationAjax();
+
+	// 해당 고객명, 연락처에 일치하는 고객예약항목이 있는지 검사
+	int checkClientMobile(Map<String,String> paraMap);
+
+	// 특정고객의 예약정보를 가져오기
+	List<ClientHsyVO> moreReserveListAjax(Map<String, String> paraMap);
+
+	// 해당 연락처의 예약정보 총 개수 구하기
+	int getTotalReserveCount(String clientmobile);
+
+	// 여행확정 상품인지 확인하기
+	Map<String, String> checkProductStatus(String pNo);
+
+	// 고객테이블에 delete하고 제품테이블에 update (transaction처리)
+	int deleteUpdateClientAjax(ClientHsyVO cvo) throws Throwable;
+
+	// 고객테이블에 update하고 제품테이블에 update (transaction처리)
+	int changeCountAjax(ClientHsyVO cvo) throws Throwable;
 
 }

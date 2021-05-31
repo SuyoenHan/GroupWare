@@ -50,7 +50,7 @@ public class MemberHsyController {
 			currentShowPageNo = "1"; 
 		}
 		
-		String sizePerPage= "7"; // 5행씩 고정
+		String sizePerPage= "7"; // 7행씩 고정
 		if(!"7".equals(sizePerPage)) sizePerPage = "7";
 		
 		String searchType= request.getParameter("searchType"); // name, dname, pname, email
@@ -74,7 +74,7 @@ public class MemberHsyController {
 		paraMap.put("searchWord", searchWord);  // null인경우 존재 
 		int totalPage = service.selectTotalPage(paraMap);
 		
-		if( Integer.parseInt(currentShowPageNo) > totalPage ) {
+		if( Integer.parseInt(currentShowPageNo) > totalPage || Integer.parseInt(currentShowPageNo) < 1) {
 			currentShowPageNo = "1";
 			paraMap.put("currentShowPageNo", currentShowPageNo);
 		}
@@ -99,24 +99,24 @@ public class MemberHsyController {
 		if(searchWord == null) searchWord="";
 		
 		if(pageNo != 1) {
-			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo=1&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[맨처음]</a>&nbsp;"; 
-			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+(pageNo-1)+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[이전]</a>&nbsp;";
+			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo=1&searchType="+searchType+"&searchWord="+searchWord+"'>[맨처음]</a>&nbsp;"; 
+			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+(pageNo-1)+"&searchType="+searchType+"&searchWord="+searchWord+"'>[이전]</a>&nbsp;";
 		}
 		
 		while(!(loop>blockSize || pageNo > totalPage) ) {
 			if(pageNo == Integer.parseInt(currentShowPageNo)) {
-				pageBar += "&nbsp;<span style='color:#fff; background-color: #5e5e5e; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
+				pageBar += "&nbsp;<span style='color:#fff; background-color: #003d66; font-weight:bold; padding:2px 4px;'>"+pageNo+"</span>&nbsp;";
 			}
 			else {
-				pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>"+pageNo+"</a>&nbsp;";
+				pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+pageNo+"&searchType="+searchType+"&searchWord="+searchWord+"'>"+pageNo+"</a>&nbsp;";
 			}
 			loop++;
 			pageNo++;
 		}// end of while-----------------------------
 		
 		if(pageNo <= totalPage) {
-			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+pageNo+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[다음]</a>&nbsp";
-			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+totalPage+"&sizePerPage="+sizePerPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[마지막]</a>&nbsp";
+			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+pageNo+"&searchType="+searchType+"&searchWord="+searchWord+"'>[다음]</a>&nbsp";
+			pageBar += "&nbsp;<a href='employeeMap.tw?currentShowPageNo="+totalPage+"&searchType="+searchType+"&searchWord="+searchWord+"'>[마지막]</a>&nbsp";
 		}
 		
 		mav.addObject("pageBar", pageBar);
@@ -153,9 +153,5 @@ public class MemberHsyController {
 	
 	} // end of public String employeeInfoAjaxHsy(HttpServletRequest request) {-----
 	
-	
-	
-	
-
 	
 }
