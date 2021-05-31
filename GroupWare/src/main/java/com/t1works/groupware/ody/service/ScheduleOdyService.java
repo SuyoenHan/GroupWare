@@ -36,8 +36,8 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 
 	// 등록된 일정 가져오기
 	@Override
-	public List<ScheduleOdyVO> getScheduleList(Map<String,String> paraMap) {
-		List<ScheduleOdyVO> scheduleList = sdao.getScheduleList(paraMap);
+	public List<ScheduleOdyVO> getScheduleList(String fk_employeeid) {
+		List<ScheduleOdyVO> scheduleList = sdao.getScheduleList(fk_employeeid);
 		return scheduleList;
 	}
 
@@ -68,6 +68,63 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 		int n= sdao.editEndSchedule(paraMap);
 		return n;
 	}
-	
+
+	// 총 게시물 건수(totalCount)
+	@Override
+	public int getTotalCount(Map<String, String> paraMap) {
+		int n = sdao.getTotalCount(paraMap);
+		return n;
+	}
+
+	 // 페이징 처리한 글목록 가져오기
+	@Override
+	public List<ScheduleOdyVO> scheduleListSearchWithPaging(Map<String, String> paraMap) {
+		 List<ScheduleOdyVO> scheduleList = sdao.scheduleListSearchWithPaging(paraMap);
+		return scheduleList;
+	}
+
+	// 내 캘린더 정보 가져오기
+	@Override
+	public List<ScalCategoryOdyVO> getEmpSList(String employeeid) {
+		 List<ScalCategoryOdyVO> empSList = sdao.getEmpSList(employeeid);
+		return empSList;
+	}
+
+	// 전체 캘린더 정보 가져오기
+	@Override
+	public List<ScalCategoryOdyVO> getFullSList() {
+		List<ScalCategoryOdyVO> fullSList = sdao.getFullSList();
+		return fullSList;
+	}
+
+	// 내 캘린더 추가
+	@Override
+	public int addMyCalendar(Map<String, String> paraMap) {
+		int n = sdao.addMyCalendar(paraMap);
+		return n;
+	}
+
+	// 소분류 캘린더 삭제
+	@Override
+	public int deleteCalendar(String scno) {
+		int n = sdao.deleteCalendar(scno);
+		return n;
+	}
+
+	// 사내 캘린더 추가 기능
+	@Override
+	public int addComCalendar(Map<String, String> paraMap) {
+		int n = sdao.addComCalendar(paraMap);
+		return n;
+	}
+
+	// 캘린더 수정
+	@Override
+	public int editCalendar(Map<String, String> paraMap) {
+		int n = sdao.editCalendar(paraMap);
+		return n;
+	}
+
+
 	
 }

@@ -4,21 +4,40 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <style type="text/css">
+
+table#schedule{
+	margin-top: 70px;
+}
+
+table#schedule th, td{
+ 	padding: 10px 5px;
+ 	vertical-align: middle;
+}
+
 a{
-    color: #000;
+    color: #395673;
     text-decoration: none;
     cursor: pointer;
 }
 
 a:hover {
-    color: #000;
+    color: #395673;
     cursor: pointer;
     text-decoration: none;
 	font-weight: bold;
 }
-table#schedule th {
-	vertical-align: middle;
+
+button.btn_normal{
+	background-color: #0071bd;
+	border: none;
+	color: white;
+	width: 70px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+	margin-right: 10px;
 }
+
 </style>
 
 <script type="text/javascript">
@@ -48,6 +67,8 @@ $(document).ready(function(){
 	else{
 		$("input#allday").prop("checked",false);
 	}
+
+	
 });
 
 
@@ -77,10 +98,18 @@ function delSchedule(sdno){
 	}
 }
 
+
+function editSchedule(sdno){
+	var frm =  document.goEdit;
+	frm.action = "<%= ctxPath%>/t1/schedule/editSchedule.tw";
+	frm.method = "post";
+	frm.submit();
+}
+
 </script>
 
-<div style="margin-left: 80px;">
-<h3 style="display: inline-block;">일정 상세보기</h3>&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
+<div style="margin-left: 80px; width: 88%;">
+<h3 style="display: inline-block;">일정 상세보기</h3>&nbsp;&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
 
 		<table id="schedule" class="table table-bordered">
 			<tr>
@@ -102,8 +131,7 @@ function delSchedule(sdno){
 					전체 캘린더
 				</c:if>
 				<c:if test="${svo.fk_bcno eq '1'}">
-					<!-- join한 값 가져와야함 -->
-					${svo.scvo.scname}
+					내 캘린더 - ${svo.scname}
 				</c:if></td>
 			</tr>
 			<tr>
@@ -117,7 +145,11 @@ function delSchedule(sdno){
 			</tr>
 			<tr>
 				<th style="vertical-align: middle;">내용</th>
-				<td><textarea id="content" rows="10" cols="100" style="width: 95%; height: 200px;" readonly>${svo.content}</textarea></td>
+				<td><textarea id="content" rows="10" cols="100" style="height: 200px; border: none;" readonly>${svo.content}</textarea></td>
+			</tr>
+			<tr>
+				<th style="vertical-align: middle;">작성자</th>
+				<td>${svo.name}</td>
 			</tr>
 		</table>
 	<input type="hidden" value="${sessionScope.loginuser.employeeid}" />
@@ -126,14 +158,35 @@ function delSchedule(sdno){
 	<c:set var="bcno" value="${svo.fk_bcno}"/>
 	<c:set var="employeeid" value="${sessionScope.loginuser.employeeid}"/>
 
-		<c:if test="${bcno eq'2' && loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
-			<button type="button" id="edit" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule/editSchedule.tw?sdno=${svo.sdno}'">수정</button>
-			<button type="button" class="btn" onclick="delSchedule('${svo.sdno}')">삭제</button>
+	<div style="float: right;">
+		<c:if test="${not empty requestScope.listgobackURL}">
+			<c:if test="${bcno eq'2' && loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
+				<button type="button" id="edit" class="btn_normal" onclick="editSchedule('${svo.sdno}')">수정</button>
+				<button type="button" class="btn_normal" onclick="delSchedule('${svo.sdno}')">삭제</button>
+			</c:if>
+			<c:if test="${bcno eq '1' && fk_employeeid eq employeeid}">
+				<button type="button" id="edit" class="btn_normal" onclick="editSchedule('${svo.sdno}')">수정</button>
+				<button type="button" class="btn_normal" onclick="delSchedule('${svo.sdno}')">삭제</button>
+			</c:if>
+				<button type="button" id="cancel" class="btn_normal" style="margin-right: 0px;" onclick="javascript:location.href='<%= ctxPath%>/${requestScope.listgobackURL}'">취소</button>
 		</c:if>
-		<c:if test="${bcno eq '1' && fk_employeeid eq employeeid}">
-			<button type="button" id="edit" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule/editSchedule.tw?sdno=${svo.sdno}'">수정</button>
-			<button type="button" class="btn" onclick="delSchedule('${svo.sdno}')">삭제</button>
+		<c:if test="${empty requestScope.listgobackURL}">
+			<c:if test="${bcno eq'2' && loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
+				<button type="button" id="edit" class="btn_normal" onclick="editSchedule('${svo.sdno}')">수정</button>
+				<button type="button" class="btn_normal" onclick="delSchedule('${svo.sdno}')">삭제</button>
+			</c:if>
+			<c:if test="${bcno eq '1' && fk_employeeid eq employeeid}">
+				<button type="button" id="edit" class="btn_normal" onclick="editSchedule('${svo.sdno}')">수정</button>
+				<button type="button" class="btn_normal" onclick="delSchedule('${svo.sdno}')">삭제</button>
+			</c:if>
+				<button type="button" id="cancel" class="btn_normal" style="margin-right: 0px;" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule.tw'">취소</button>
 		</c:if>
-			<button type="button" id="cancel" class="btn" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule.tw'">취소</button>
-		
+	
+	</div>
 </div>
+
+<form name="goEdit">
+	<input type="hidden" value="${svo.sdno}" name="sdno"/>
+	<input type="hidden" name="gobackURL1" value="${requestScope.gobackURL1}"/>
+	
+</form>
