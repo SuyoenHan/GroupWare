@@ -4,7 +4,8 @@
 
 <mapper namespace="payment_Jsh">
 
-	<select id="generalPayment_List"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+
+<select id="generalPayment_List"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			select  row_number() over(order by a.ano desc ) as RNO,
 			       		 a.ano ,ncatname, atitle, name ,dname,asdate    
 			from tbl_approval a left join tbl_norapproval n
@@ -22,6 +23,165 @@
 			where anocode= 1
 	</select>
 
+  <!-- === 페이징 처리를 안한 검색어가 있는 전체 글목록 보여주기 === -->
+	<select id="electronListSearch"  parameterType="HashMap"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select  a.ano ,ncatname, atitle, name ,dname,asdate    
+			from tbl_approval a left join tbl_norapproval n
+			on a.ano = n.fk_ano
+			left join 
+			(select employeeid ,name , fk_dcode
+			 from tbl_employee 
+			)e
+			on a.fk_employeeid = e.employeeid
+			left join 
+			(select dcode, dname
+			from tbl_department
+			)d
+			on e.fk_dcode = d.dcode
+			where anocode= 1
+				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
+			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			     </if>
+			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
+			     	 	and ncat= #{searchCategory}
+			     </if>
+			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
+			     	 	and ncat= #{searchCategory}
+			     </if>
+			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
+				     	 and ncat= #{searchCategory}
+				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+				  </if>
+		      order by  a.ano desc
+	</select>
+
+  <!-- === 검색어 입력시 자동글 완성하기  === -->
+     <select id="wordSearchShow" parameterType="HashMap" resultType="String">
+			<choose>
+				<when test="searchType eq 'name'"> <!-- if -->
+		            select distinct ${searchType}
+		        </when>
+		         <otherwise>   <!-- else -->
+            		select ${searchType}
+         		</otherwise>
+			</choose>
+			from tbl_approval a left join tbl_norapproval n
+					  on a.ano = n.fk_ano
+					  left join 
+				  	 (select employeeid ,name , fk_dcode
+					  from tbl_employee 
+					 )e
+					 on a.fk_employeeid = e.employeeid
+				     where anocode= 1
+			 			 and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+		    <if test="searchType neq 'name'">
+		     order by  a.ano desc
+		    </if>
+	</select>
 
 
+ <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
+		<select id="getTotalCount" parameterType="HashMap" resultType="int">
+			select  count(*) 
+			from tbl_approval  a left join tbl_norapproval n
+			on a.ano = n.fk_ano
+			where anocode= '1'
+				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
+			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			     </if>
+			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
+			     	 	and ncat= #{searchCategory}
+			     </if>
+			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
+			     	 	and ncat= #{searchCategory}
+			     </if>
+			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
+				     	 and ncat= #{searchCategory}
+				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+				  </if>
+		</select>
+
+		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
+		<select id="electronListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select ano ,ncatname, atitle, name ,dname,asdate   
+			from
+			(
+			select row_number() over(order by a.ano desc) AS rno  
+			      ,a.ano ,ncatname, atitle, name ,dname,asdate    
+			from tbl_approval a left join tbl_norapproval n
+			on a.ano = n.fk_ano
+			left join 
+			(select employeeid ,name , fk_dcode
+			from tbl_employee 
+			)e
+			on a.fk_employeeid = e.employeeid
+			left join 
+			(select dcode, dname
+			from tbl_department
+			)d
+			on e.fk_dcode = d.dcode
+			where anocode= 1
+					<if test=' searchCategory == "" and searchWord != "" '>
+			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			     </if>
+			      <if test=' searchCategory != ""    and searchWord == "" '>
+			     	 	and ncat= #{searchCategory}
+			     </if>
+			     <if test=' searchCategory != ""   and searchWord != "" '>
+				     	 and ncat= #{searchCategory}
+				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+				  </if>
+				 ) V
+		      	where rno between #{startRno} and #{endRno}
+		</select>
+		
+		
+		<!-- // 하나의 일반결재내역 문서 보여주기 -->
+		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			  <choose>
+				<when test="ncatname eq'회의록'">
+				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile, mdate
+				</when>
+				<when test="ncatname eq'위임장'">
+				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile, fk_wiimdate 
+				</when>
+				<when test="ncatname eq'협조공문'">
+				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile ,nvl(comname,'없습니다.') as comname
+				</when>
+				<otherwise>
+				select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile
+				</otherwise> 
+				</choose>
+			 
+			from tbl_approval a 
+				<if test="ncatname eq'회의록'">
+					left join tbl_minutes m 
+					on m.fk_ano = a.ano
+				</if>
+				<if test="ncatname eq'위임장'">
+					left join tbl_wiimjang w 
+					on w.fk_ano = a.ano
+				</if>
+				<if test="ncatname eq'협조공문'">
+					left join tbl_coofficial c 
+					on c.fk_ano = a.ano
+				</if>
+			left join tbl_norapproval n
+			on a.ano = n.fk_ano
+			left join 
+			(select employeeid ,name , fk_dcode
+			from tbl_employee 
+			)e
+			on a.fk_employeeid = e.employeeid
+			left join 
+			(select dcode, dname
+			from tbl_department
+			)d
+			on e.fk_dcode = d.dcode
+			where anocode= 1 and ano=#{ano}
+		</select>
 </mapper>
+
+
+
+
