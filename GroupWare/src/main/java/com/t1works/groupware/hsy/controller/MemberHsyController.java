@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.hsy.model.DepartmentHsyVO;
@@ -186,11 +188,9 @@ public class MemberHsyController {
 		Calendar currentDate = Calendar.getInstance();
 		int currentYear = currentDate.get(Calendar.YEAR);
 		int currentMonth = currentDate.get(Calendar.MONTH)+1;
-		int currentDay = currentDate.get(Calendar.DATE);
 		
 		mav.addObject("currentYear", currentYear);
 		mav.addObject("currentMonth", currentMonth);
-		mav.addObject("currentDay", currentDay);
 		
 		mav.setViewName("hsy/employee/salary.gwTiles");
 		return mav;
@@ -223,6 +223,41 @@ public class MemberHsyController {
 		
 	} // end of public String passwdCheckForSalary(MemberHsyVO mvo) {----
 	
+
+	// 선택한 년도의 월급이 존재하는 월들의 정보 가져오는 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/salaryListInfoByYear.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String salaryListInfoByYear(HttpServletRequest request) {
+		
+		String employeeid= request.getParameter("employeeid");
+	
+		// 1) 특정직원의 소속, 직위, 기본급 가져오기
+		MemberHsyVO mvo= service.employeeInfoAjaxHsy(employeeid);
+		
+		JsonObject jsonObj= new JsonObject();
+		jsonObj.addProperty("dname", mvo.getDname());
+		jsonObj.addProperty("pname", mvo.getPname());
+		jsonObj.addProperty("salary", mvo.getSalary());
+		
+		return new Gson().toJson(jsonObj);
+		
+	} // end of public String salaryListInfoByYear(HttpServletRequest request)---
 	
 	
+	// 월급명세서 상페 페이지 매핑 url
+	@RequestMapping(value="/t1/salaryDetailForm.tw")
+	public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {
+		
+		String employeeid= request.getParameter("employeeid");
+		String year= request.getParameter("year");
+		String month= request.getParameter("month");
+		
+		mav.addObject("employeeid", employeeid);
+		mav.addObject("year", year);
+		mav.addObject("month", month);
+		
+		mav.setViewName("hsy/employee/salaryDetail.gwTiles");
+		return mav;
+		
+	} // end of public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {------
 }

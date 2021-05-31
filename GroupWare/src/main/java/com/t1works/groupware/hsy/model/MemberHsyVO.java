@@ -21,7 +21,7 @@ public class MemberHsyVO {
 	private String pname;         // 직위명
 	private String dname;         // 부서명
 	private String duty;          // 직무
-
+	private String salary;        // 기본급
 	
 	public String getEmployeeid() {
 		return employeeid;
@@ -135,6 +135,11 @@ public class MemberHsyVO {
 		this.duty = duty;
 	}
 	
-	
+	public String getSalary() {
+		return salary;
+	}
+	public void setSalary(String salary) {
+		this.salary = salary;
+	}
 	
 }

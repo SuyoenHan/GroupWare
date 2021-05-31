@@ -41,8 +41,8 @@
 	
 	<!-- 해당 연락처의 예약정보 총 개수 구하기 -->
 	<select id="getTotalReserveCount" parameterType="String" resultType="Integer">
-		select count(*) as count from tbl_client
-		where clientmobile=#{clientmobile}
+		select count(*) as count from tbl_client join tbl_product P on pNo=fk_pNo
+		where clientmobile=#{clientmobile} and startDate > sysdate
 	</select>
 	
 	 

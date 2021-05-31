@@ -98,6 +98,7 @@
 		where fk_pno in ( select fk_pNo
 						  from tbl_todo
 						  where to_date(to_char(sysdate,'yyyy/mm/dd'),'yyyy/mm/dd')-to_date(to_char(duedate,'yyyy/mm/dd'),'yyyy/mm/dd') > 0 )
+		and (startDate is not null) and (endDate is null) and (assignDate is not null) 
 	</update>
 	
 	<!-- 진행중인 업무 상태변경(진행중 또는 보류)에 따라 update하기 -->
