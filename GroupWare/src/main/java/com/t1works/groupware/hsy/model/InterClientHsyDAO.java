@@ -25,7 +25,10 @@ public interface InterClientHsyDAO {
 	// 고객테이블에 해당예약건 update
 	int updateClientAjax(ClientHsyVO cvo);
 
-	// pNo를 이용하여 필요한 고객정보 가져오기
-	List<ClientHsyVO> selectClientInfoByPno(String pNo);
+	// pNo를 이용하여 필요한 고객정보 가져오기 (페이징 처리)
+	List<ClientHsyVO> selectClientInfoByPno(Map<String, String> paraMap);
+
+	// 특정업무에 관한 고객의 totalPage 수 알아오기
+	int getclientLisTotalPage(Map<String, String> paraMap);
 
 }
