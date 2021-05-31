@@ -6,24 +6,38 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <style>
-
+div#containerview{
+	margin: 30px 0px 30px 50px;
+	width: 80%;
+}
 table, th, td {border: solid 1px gray;}
 
 #table1 {
-	float:right; 
+	float: right; 
 	width: 300px; 
 	border-collapse: collapse;
 	margin-right: 200px;
-	margin-bottom: 80px;
+	margin-bottom: 50px;
 }
-    
+
+#table1 th, #table1 td{
+	text-align: center;
+}
+#table1 th {
+	background-color: #395673; 
+	color: #ffffff;
+}
+
 th{
-	background-color: #DDD;
+	background-color: #ccd9e6;
+	padding: 7px;
+}
+td{
+	padding: 7px;
 }
 
 #table2 {
-	width: 80%;
-	height: 700px;
+	width: 70%;
 	margin: 50px auto;
 }
 
@@ -36,16 +50,15 @@ th{
 	});
 </script>
 
-<div id="containerview">
-	<hr style="border: 2px gray;">
-		<h3 align="center"></h3>
-	<hr>
+<div id="containerview">	
+	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.ncatname}</h2>
+	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
-	<div id="astatus" >
+	<div id="astatus">
 		<table id="table1">
 		
 			<tr>
-				<th style="width:100px; height:70px; ">대리</th>
+				<th style="width:100px; height:40px;">대리</th>
 				<th>부장</th>
 				<th>사장</th>
 			</tr>
@@ -59,65 +72,63 @@ th{
 		
 		<table id="table2">
 			<tr>
-				<th style="width:200px;">수신참조</th>
-				<td></td>
+				<th style="width:150px;">수신참조</th>
+				<td>${requestScope.avo.arecipient1}</td>
 			</tr>
 			
 			<tr>
 				<th>제목</th>
-				<td></td>
+				<td>${requestScope.avo.atitle}</td>
 			</tr>
 			
 			
 			<tr>
 				<th>작성자</th>
-				<td></td>
+				<td>${requestScope.avo.name}</td>
 			</tr>
 			
 			<tr>
 				<th>소속</th>
-				<td></td>
+				<td>${requestScope.avo.dname}</td>
 			</tr>
-		<%-- 	
-			<c:if test="${requestScope.ncatname eq '회의록'}">
+			
+			<c:if test="${requestScope.ncat eq '1'}">
 				<tr>
 					<th>회의시간</th>
-					<td>${epvo.mdate}</td>
+					<td>${requestScope.avo.mdate}</td>
 				</tr>
 			</c:if>
-			<c:if test="${requestScope.ncatname eq '위임장'}">
+			<c:if test="${requestScope.ncat eq '2'}">
 				<tr>
 					<th>위임기간</th>
-					<td>${epvo.fk_wiimdate}</td>
+					<td>${requestScope.avo.fk_wiimdate}</td>
 				</tr>
 			</c:if>
-			<c:if test="${requestScope.ncatname eq '협조공문'}">
+			<c:if test="${requestScope.ncat eq '3'}">
 				<tr>
 					<th>타회사명</th>
-					<td>${epvo.comname}</td>
+					<td>${requestScope.avo.comname}</td>
 				</tr>
 			</c:if>
-		--%>	
 			<tr>
 				<th>문서상태</th>
-				<td></td>
+				<td>${requestScope.avo.apaper}</td>
 			</tr>
 			
 			<tr>
 				<th>문서번호</th>
-				<td></td>
+				<td>${requestScope.avo.ano}</td>
 			</tr>
 			
 			<tr>
-				<th style="height:350px;">글내용</th>
-				<td></td>
+				<th style="height:250px;">글내용</th>
+				<td>${requestScope.avo.acontent}</td>
 			</tr>
 			
 			<tr>
 				<th>첨부파일</th>
-				<td></td>
-			</tr>			
-			
+				<td>${requestScope.avo.afile}</td>
+			</tr>
 		</table>
 	</div>
 </div>
