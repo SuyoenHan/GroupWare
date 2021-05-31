@@ -4,31 +4,39 @@
 
 <mapper namespace="schedule_ody">
 
+	<!-- 캘린더 소분류 정보 -->
 	<select id="getSmallCategory" resultType="com.t1works.groupware.ody.model.ScalCategoryOdyVO" parameterType="HashMap">
 		select 	scno, fk_bcno, scname
 		from tbl_scal_category
 		where fk_bcno = #{fk_bcno} and fk_employeeid= #{fk_employeeid}
+		order by scno desc
 	</select>
 
-
+	<!-- 일정관리 등록 -->
 	<insert id="registerSchedule" parameterType="HashMap">
 		insert into tbl_schedule(sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_bcno,fk_employeeid)
 		values(sdnoSeq.nextval, to_date(#{startdate},'yyyyMMddhh24miss'), to_date(#{enddate}, 'yyyyMMddhh24miss'), #{subject}, #{color}, #{place}, #{joinemployee}, #{content}, #{fk_scno},#{fk_bcno}, #{fk_employeeid})
 	</insert>
 
-	<select id="getScheduleList" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO" parameterType="HashMap">
+	<!-- 등록된 일정에 대한 정보(달력에 표시됨)-->
+	<select id="getScheduleList" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO" parameterType="String">
 		select sdno, startdate,enddate,subject,color,place,joinemployee,content,fk_scno,fk_employeeid,fk_bcno
 		from tbl_schedule
-        where fk_employeeid=#{fk_employeeid} or fk_bcno=#{fk_bcno}		
+		where fk_employeeid=#{fk_employeeid}	
+		or fk_bcno= 2
+		or fk_bcno != 2 and joinemployee like '%'||lower(#{fk_employeeid})||'%'
 		order by sdno desc
 	</select>
 
+	<!-- 공유자 - 직원에 대한 정보 -->
 	<select id="searchJoinEmpList" resultType="com.t1works.groupware.ody.model.MemberOdyVO" parameterType="String">
-		select employeeid, name
-		from tbl_employee
-		where name like '%'||#{joinEmp}||'%'
+		select employeeid, name, dname
+		from tbl_employee E join tbl_department D
+		on E.fk_dcode = D.dcode
+		where name like '%'||lower(#{joinEmp})||'%'
 	</select>
 	
+	<!-- 등록된 일정에 대한 세부 정보 -->
 	<select id="getDetailSchedule" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
 		select sdno, to_char(startdate,'yyyy-mm-dd hh24:mi') as startdate,to_char(enddate,'yyyy-mm-dd hh24:mi') as enddate, subject, color
 		      , nvl(place,'-') as place, nvl(joinemployee,'공유자가 없습니다.') as joinemployee, nvl(content,'') as content, S.fk_scno
@@ -40,11 +48,13 @@
 		where sdno = #{sdno}
 	</select>
 	
+	<!-- 등록된 일정 삭제 -->
 	<delete id="delSchedule" parameterType="String">
 		delete from tbl_schedule
 		where sdno=#{sdno}
 	</delete>
 	
+	<!-- 등록된 일정 수정하기 -->
 	<update id="editEndSchedule" parameterType="HashMap">
 		update tbl_schedule set startdate = to_date(#{startdate},'yyyyMMddhh24miss')
 								,enddate = to_date(#{enddate}, 'yyyyMMddhh24miss')
@@ -59,6 +69,190 @@
 		where sdno = #{sdno}
 	</update>
 	
+	<!-- 총 검색 건수 알아오기 -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_schedule
+		<choose>
+				<when test='fk_bcno == "" '>
+				    where fk_employeeid = #{fk_employeeid}
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				or fk_bcno = 2
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				<if test='searchType eq "joinemployee" and searchWord !="" '>
+				 or fk_employeeid != #{fk_employeeid}
+				 <if test='searchWord !="" '>
+					and joinemployee like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				</if>
+			</when>
+			<when test='fk_bcno == "1" '>
+			where  fk_employeeid = #{fk_employeeid}
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+			</when>
+			<when test='fk_bcno == "2" '>
+				where fk_bcno = 2
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				<if test='searchType eq "joinemployee" and searchWord !="" '>
+				 or fk_employeeid != #{fk_employeeid}
+				 <if test='searchWord !="" '>
+					and joinemployee like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				</if>
+			</when>
+		</choose>
+	</select>
 	
 	
+	
+	<!-- 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
+	<select id="scheduleListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select rno,sdno,fk_employeeid, subject, startdate, enddate, name, scname, bcname, content
+		from
+		(
+		    select row_number() over(order by sdno desc) as rno, sdno, subject, S.fk_employeeid as fk_employeeid ,B.bcname as bcname,content,
+				    to_char(startdate, 'yyyy-mm-dd hh24:mi:ss') as startdate , to_char(enddate, 'yyyy-mm-dd hh24:mi:ss') as enddate, E.name as name, G.scname as scname
+				    from tbl_schedule S join tbl_employee E
+		            on S.fk_employeeid = E.employeeid
+		            join tbl_scal_category G
+		            on S.fk_scno = G.scno
+		            join tbl_bcal_category B
+		            on G.fk_bcno = B.bcno
+		        <choose>
+					<when test='fk_bcno == "" '>
+				    where S.fk_employeeid = #{fk_employeeid}
+				    
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				or S.fk_bcno = 2
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				<if test='searchType eq "joinemployee" and searchWord !="" '>
+				 or S.fk_employeeid != #{fk_employeeid}
+				 <if test='searchWord !="" '>
+					and joinemployee like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				</if>
+			</when>
+			<when test='fk_bcno == "1" '>
+			where S.fk_employeeid = #{fk_employeeid}
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+			</when>
+			<when test='fk_bcno == "2" '>
+				where S.fk_bcno = 2
+				<if test='searchWord !="" '>
+					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				<if test='searchType eq "joinemployee" and searchWord !="" '>
+				 or S.fk_employeeid != #{fk_employeeid}
+				 <if test='searchWord !="" '>
+					and joinemployee like '%'||lower(#{searchWord})||'%'
+				</if> 
+				<if test='startdate !="" and  enddate !=""'>
+					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				</if>
+				</if>
+			</when>
+		</choose>
+				
+			) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	
+	<!-- 내 캘린더 정보 -->
+	<select id="getEmpSList" parameterType="String" resultType="com.t1works.groupware.ody.model.ScalCategoryOdyVO">
+		select scno, scname, fk_bcno
+		from tbl_scal_category
+		where fk_employeeid = #{employeeid} and fk_bcno=1
+	</select>
+	
+	<!-- 전체 캘린더 정보 -->
+	<select id="getFullSList" parameterType="String" resultType="com.t1works.groupware.ody.model.ScalCategoryOdyVO">
+		select scno, scname, fk_bcno
+		from tbl_scal_category
+		where fk_bcno=2
+	</select>
+	
+	
+	<!-- 내 캘린더 추가 -->
+	<insert id="addMyCalendar" parameterType="HashMap">
+		insert into tbl_scal_category(scno, fk_bcno, scname,fk_employeeid)
+		values(scnoSeq.nextval,1,#{scname},#{employeeid})
+	</insert>
+	
+	<!-- 사내 캘린더 추가 -->
+	<insert id="addComCalendar" parameterType="HashMap">
+		insert into tbl_scal_category(scno, fk_bcno, scname,fk_employeeid)
+		values(scnoSeq.nextval,2,#{scname},#{employeeid})
+	</insert>
+	
+	<!-- 캘린더 소분류 카테고리 삭제 -->
+	<delete id="deleteCalendar" parameterType="String">
+		delete from tbl_scal_category
+		where scno = #{scno}
+	</delete>
+	
+	<!-- 캘린더 수정하기 -->
+	<update id="editCalendar" parameterType="HashMap">
+		update tbl_scal_category set scname=#{scname}
+		where scno=#{scno}
+	</update>
 </mapper>

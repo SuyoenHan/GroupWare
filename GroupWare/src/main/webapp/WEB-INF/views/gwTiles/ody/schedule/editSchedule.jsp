@@ -4,9 +4,37 @@
 <% String ctxPath = request.getContextPath(); %>   
 
 <style type="text/css">
+
+table#schedule{
+	margin-top: 70px;
+}
+
+table#schedule th, td{
+ 	padding: 10px 5px;
+ 	vertical-align: middle;
+}
+
+select.schedule{
+	height: 30px;
+}
+
+a{
+    color: #395673;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:hover {
+    color: #395673;
+    cursor: pointer;
+    text-decoration: none;
+	font-weight: bold;
+}
+
 #joinEmp:focus{
 	outline: none;
-	}
+}
+
 .plusEmp{
 		float:left; 
 		background-color:#333333; 
@@ -22,6 +50,16 @@
 .ui-autocomplete {
 max-height: 100px;
 overflow-y: auto;
+}
+
+button.btn_normal{
+	background-color: #0071bd;
+	border: none;
+	color: white;
+	width: 70px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
 }
 </style>
 
@@ -174,7 +212,7 @@ $(document).ready(function(){
 								$.each(json,function(index,item){
 									var inputEmp = item.name;
 									if(!joinEmp.includes(inputEmp)){
-										list.push(inputEmp);
+										list.push(inputEmp+"("+item.employeeid+"/"+item.dname+")");
 									}
 								});
 							$("input#joinEmp").autocomplete({
@@ -215,7 +253,7 @@ $(document).ready(function(){
 			});
 		
 		// 
-		$("select[name=calType]").val(${svo.fk_bcno});
+		$("select[name=calType]").val("${svo.fk_bcno}");
 		
 		
 		// 수정 버튼 클릭
@@ -321,21 +359,21 @@ function addJoinEmp(value){
 
 
 </script>
-<div style="margin-left: 80px;">
-<h3>일정 수정하기</h3>
+<div style="margin-left: 80px; width: 88%;">
+<h3 style="display: inline-block;">일정 수정하기</h3>&nbsp;&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span style="color: #395673;">◀캘린더로 돌아가기</span></a>
 
 	<form name="scheduleFrm">
 		<table id="schedule" class="table  table-bordered">
 			<tr>
 				<th>일자</th>
 				<td>
-					<input type="date" id="startDate" value=""/>&nbsp; 
-					<select id="startHour"></select> 시
-					<select id="startMin"></select> 분
-					- <input type="date" id="endDate" value=""/>&nbsp;
-					<select id="endHour"></select> 시
-					<select id="endMin"></select> 분&nbsp;
-					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/>&nbsp;<span>종일</span></label>
+					<input type="date" id="startDate" value="" style="height: 30px;"/>&nbsp; 
+					<select id="startHour" class="schedule"></select> 시
+					<select id="startMin" class="schedule"></select> 분
+					- <input type="date" id="endDate" value="" style="height: 30px;"/>&nbsp;
+					<select id="endHour" class="schedule"></select> 시
+					<select id="endMin" class="schedule"></select> 분&nbsp;
+					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1" />&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
 					<div style="display: none;"><span id="startdate">${svo.startdate}</span><span id="enddate">${svo.enddate}</span></div>
@@ -343,27 +381,29 @@ function addJoinEmp(value){
 			</tr>
 			<tr>
 				<th>제목</th>
-				<td><input type="text" id="subject" name="subject" value="${svo.subject}"/></td>
+				<td><input type="text" id="subject" name="subject" value="${svo.subject}" class="form-control"/></td>
 			</tr>
 			
 			<tr>
 				<th>캘린더선택</th>
 				<td>
-					<select class="calType" name="fk_bcno">
-						<c:if test="${sessionScope.loginuser.employeeid eq 'tw005' }">
+					<select class="calType schedule" name="fk_bcno">
+						<c:choose>
+						<c:when test="${loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4'}">
 							<option value="">선택하세요</option>
 							<option value="1">내 캘린더</option>
-							<option value="2">전체 캘린더</option>
-						</c:if>
-						<c:if test="${sessionScope.loginuser.employeeid ne 'tw005' }">
+							<option value="2">사내 캘린더</option>
+						</c:when>
+						<c:otherwise>
 							<option value="">선택하세요</option>
 							<option value="1">내 캘린더</option>
-						</c:if>
+						</c:otherwise>
+						</c:choose>
 					</select>
 			
 				
 				&nbsp;
-				<select class="scategory" name="fk_scno">
+				<select class="scategory schedule" name="fk_scno" >
 				</select>
 				</td>
 			</tr>
@@ -373,24 +413,28 @@ function addJoinEmp(value){
 			</tr>
 			<tr>
 				<th>장소</th>
-				<td><input type="text" name="place" value="${svo.place}"/></td>
+				<td><input type="text" name="place" value="${svo.place}" class="form-control"/></td>
 			</tr>
 			
 			<tr>
 				<th>공유</th>
 				<td>
 				<span id="storedEmp" style="display: none;">${svo.joinemployee}</span>
-				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/>
+				<input type="text" id="joinEmp" name="joinEmp" class="form-control"/><input type="hidden" name="joinemployee" />
 				<div class="extraArea"></div>
 				</td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><textarea rows="10" cols="100" style="width: 95%; height: 200px;" name="content" id="content">${svo.content}</textarea></td>
+				<td><textarea rows="10" cols="100" style="height: 200px;" name="content" id="content" class="form-control">${svo.content}</textarea></td>
 			</tr>
 		</table>
 		<input type="hidden" value="${sessionScope.loginuser.employeeid}" name="fk_employeeid"/>
 		<input type="hidden" value="${svo.sdno}" name="sdno"/>
 	</form>
-	<button type="button" class="btn" id="edit">수정</button>
+	
+	<div style="float: right;">
+		<button type="button" class="btn_normal" id="edit" style="margin-right: 10px;">수정</button>
+		<button type="button" class="btn_normal"  onclick="javascript:location.href='<%= ctxPath%>/${requestScope.gobackURL1}'">취소</button>
+	</div>
 </div>

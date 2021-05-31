@@ -5,16 +5,16 @@
 <style type="text/css">
 
 table#schedule{
-	border: solid 1px #CCD1D1;
-	border-collapse: collapse;
+	margin-top: 70px;
 }
-
-th, td{
- 	border: solid 1px #CCD1D1;
+table#schedule th, td{
  	padding: 10px 5px;
  	vertical-align: middle;
 }
 
+select.schedule{
+	height: 30px;
+}
 #joinEmp:focus{
 	outline: none;
 	}
@@ -33,6 +33,17 @@ th, td{
 .ui-autocomplete {
 max-height: 100px;
 overflow-y: auto;
+}
+
+  
+button.btn_normal{
+	background-color: #0071bd;
+	border: none;
+	color: white;
+	width: 70px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
 }
 </style>
 
@@ -136,12 +147,12 @@ overflow-y: auto;
 					dataType:"json",
 					success : function(json){
 						var list = [];
-						console.log("수:"+json.length);
+				//		console.log("수:"+json.length);
 						if(json.length > 0){
 								$.each(json,function(index,item){
 									var inputEmp = item.name;
 									if(!joinEmp.includes(inputEmp)){
-										list.push(inputEmp);
+										list.push(inputEmp+"("+item.employeeid+"/"+item.dname+")");
 									}
 								});
 							$("input#joinEmp").autocomplete({
@@ -278,19 +289,20 @@ overflow-y: auto;
 
 </script>
 
+<div style="margin-left: 80px; width: 88%;">
 <h3>일정 등록</h3>
-<div>
+
 	<form name="scheduleFrm">
-		<table id="schedule">
+		<table id="schedule" class="table table-bordered">
 			<tr>
 				<th>일자</th>
 				<td>
-					<input type="date" id="startDate" value="${requestScope.chooseDate}"/>&nbsp; 
-					<select id="startHour"></select> 시
-					<select id="startMin"></select> 분
-					- <input type="date" id="endDate" value="${requestScope.chooseDate}"/>&nbsp;
-					<select id="endHour"></select> 시
-					<select id="endMin"></select> 분&nbsp;
+					<input type="date" id="startDate" value="${requestScope.chooseDate}" style="height: 30px;"/>&nbsp; 
+					<select id="startHour" class="schedule"></select> 시
+					<select id="startMin" class="schedule"></select> 분
+					- <input type="date" id="endDate" value="${requestScope.chooseDate}" style="height: 30px;"/>&nbsp;
+					<select id="endHour" class="schedule"></select> 시
+					<select id="endMin" class="schedule"></select> 분&nbsp;
 					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1"/>&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
 					<input type="hidden" name="enddate"/>
@@ -298,7 +310,7 @@ overflow-y: auto;
 			</tr>
 			<tr>
 				<th>제목</th>
-				<td><input type="text" id="subject" name="subject"/></td>
+				<td><input type="text" id="subject" name="subject" class="form-control"/></td>
 			</tr>
 			
 			<tr>
@@ -306,12 +318,12 @@ overflow-y: auto;
 				<td>
 				
 				
-					<select class="calType" name="fk_bcno">
+					<select class="calType schedule" name="fk_bcno">
 					<c:choose>
 						<c:when test="${loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
 							<option value="">선택하세요</option>
 							<option value="1">내 캘린더</option>
-							<option value="2">전체 캘린더</option>
+							<option value="2">사내 캘린더</option>
 						</c:when>
 						<c:otherwise>
 							<option value="">선택하세요</option>
@@ -322,7 +334,7 @@ overflow-y: auto;
 			
 				
 				&nbsp;
-				<select class="scategory" name="fk_scno">
+				<select class="scategory schedule" name="fk_scno" >
 				</select>
 				</td>
 			</tr>
@@ -332,22 +344,26 @@ overflow-y: auto;
 			</tr>
 			<tr>
 				<th>장소</th>
-				<td><input type="text" name="place"/></td>
+				<td><input type="text" name="place"  class="form-control"/></td>
 			</tr>
 			
 			<tr>
 				<th>공유</th>
 				<td>
-				<input type="text" id="joinEmp" name="joinEmp"/><input type="hidden" name="joinemployee"/>
+				<input type="text" id="joinEmp" name="joinEmp"  class="form-control"/><input type="hidden" name="joinemployee"/>
 				<div class="extraArea"></div>
 				</td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td><textarea rows="10" cols="100" style="width: 95%; height: 200px;" name="content" id="content"></textarea></td>
+				<td><textarea rows="10" cols="100" style="height: 200px;" name="content" id="content"  class="form-control"></textarea></td>
 			</tr>
 		</table>
 		<input type="hidden" value="${sessionScope.loginuser.employeeid}" name="fk_employeeid"/>
 	</form>
-	<button type="button" id="register" class="btn">저장</button>
+	
+	<div style="float: right;">
+	<button type="button" id="register" class="btn_normal" style="margin-right: 10px;">저장</button>
+	<button type="button" class="btn_normal" onclick="javascript:location.href='<%= ctxPath%>/t1/schedule.tw'">취소</button>
+	</div>
 </div>
