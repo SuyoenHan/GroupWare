@@ -5,7 +5,34 @@
 <mapper namespace="mydocument_sia">
 
 	<select id="getnorm_reclist" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rownum, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+		select rownum, atitle, ano, astatus, asdate, ncat, ncatname 
+		from
+		(
+			select row_number() over(order by asdate desc) as rno, rownum, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+			from tbl_approval A join tbl_norapproval B
+			on A.ano = B.fk_ano
+			where apaper = '0'
+			<if test='fromDate != "" or toDate != ""'>
+				and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+			</if>
+			<if test='astatus != ""'>
+				and astatus = #{astatus}
+			</if>
+			<if test='sort != "" and searchWord != ""'>
+				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+			</if>
+			<if test='a != ""'>
+				and ncat in(${a})
+			</if>
+		) V
+		where rno between #{startRno} and #{endRno}
+		order by asdate desc
+	</select>
+	
+	
+	<!-- 검색에 해당하는 글의 총 페이지수를 알아오기 -->
+	<select id="getTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
 		where apaper = '0'
@@ -21,6 +48,6 @@
 		<if test='a != ""'>
 			and ncat in(${a})
 		</if>
-		order by asdate desc
 	</select>
+	
 </mapper>
