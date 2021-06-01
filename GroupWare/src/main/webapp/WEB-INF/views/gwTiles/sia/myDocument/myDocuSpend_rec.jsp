@@ -214,9 +214,9 @@ $(document).ready(function(){
 						}
 						
 						html += "<tr class='tr_hover docuInfo'>";
-						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
+						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
-						html += "<td align='center'>"+ item.scatname +"</td>";
+						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
@@ -235,7 +235,8 @@ $(document).ready(function(){
 				// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
 				$("tr.docuInfo").click(function(){					
 					var ano = $(this).children(".ano").text();
-					location.href="<%= ctxPath%>/t1/myDocuSpend_detail.tw?ano="+ano;
+					var scatname = $(this).children(".scatname").text();
+					location.href="<%= ctxPath%>/t1/myDocuSpend_detail.tw?ano="+ano+"&scatname="+scatname;
 				});
 				
 				
@@ -395,7 +396,6 @@ $(document).ready(function(){
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
 					<select name="sort" id="sort">
-						<option>전체보기</option>
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;

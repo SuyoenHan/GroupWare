@@ -47,10 +47,51 @@ public class ApprovalSiaVO {
 	private String scat;		// 지출결재카테고리 (1:지출결의서, 2:법인카드사용신청서)	
 	private String scatname;	// 지출결재카테고리명 (1:지출결의서, 2:법인카드사용신청서)
 	
+	// 지출결의서
+	private String exdate;		// 지출일자
+	private int exprice;		// 지출금액
 	
+	// 법인카드사용신청서
+	private String codate;		// 사용예정일
+	private String cocardnum;	// 카드번호
+	private String copurpose;	// 지출목적 (1:교통비, 2:사무비품, 3:주유비, 4:출장비, 5:식비, 6:기타)
+	private int coprice;		// 예상금액
+		
+
 	// 근태결재
-	private String vno;		// 근태결재카테고리 (1:병가, 2:반차, 3:연차, 4:경조휴가, 5:출장, 6:추가근무)	
+	private String vno;			// 근태결재카테고리 (1:병가, 2:반차, 3:연차, 4:경조휴가, 5:출장, 6:추가근무)	
 	private String vcatname;	// 근태결재카테고리명 (1:병가, 2:반차, 3:연차, 4:경조휴가, 5:출장, 6:추가근무)
+	
+	// 병가
+	private String slstart;		// 사용예정시작일자
+	private String slend;		// 사용예정마지막일자
+	private int sldates;		// 사용일수
+	
+	// 반차
+	private String afdate;	// 사용예정일
+	private int afdan;		// 오전오후 (1: 오전, 2:오후)
+	private int afdates;	// 사용일수
+	
+	// 연차
+	private String daystart;	// 사용예정시작일자
+	private String dayend;		// 사용예정마지막일자
+	private int daydates;		// 사용일수
+	
+	// 경조휴가
+	private String congstart;	// 사용예정시작일자
+	private String congend;		// 사용예정마지막일자
+	private int congdates;		// 사용일수
+	
+	// 출장
+	private String bustart;		// 사용예정시작일자
+	private String buend;		// 사용예정마지막일자
+	private int budates;		// 사용일수
+	private String buplace;		// 출장지
+	private int bupeople;		// 출장인원
+	
+	// 추가근무
+	private String ewdate;		// 사용예정일
+	private int ewhours;		// 추가근무시간
 
 	public int getAno() {
 		return ano;
@@ -276,6 +317,54 @@ public class ApprovalSiaVO {
 		this.scatname = scatname;
 	}
 
+	public String getExdate() {
+		return exdate;
+	}
+
+	public void setExdate(String exdate) {
+		this.exdate = exdate;
+	}
+
+	public int getExprice() {
+		return exprice;
+	}
+
+	public void setExprice(int exprice) {
+		this.exprice = exprice;
+	}
+	
+	public String getCodate() {
+		return codate;
+	}
+
+	public void setCodate(String codate) {
+		this.codate = codate;
+	}
+
+	public String getCocardnum() {
+		return cocardnum;
+	}
+
+	public void setCocardnum(String cocardnum) {
+		this.cocardnum = cocardnum;
+	}
+
+	public String getCopurpose() {
+		return copurpose;
+	}
+
+	public void setCopurpose(String copurpose) {
+		this.copurpose = copurpose;
+	}
+
+	public int getCoprice() {
+		return coprice;
+	}
+
+	public void setCoprice(int coprice) {
+		this.coprice = coprice;
+	}
+	
 	public String getVno() {
 		return vno;
 	}
@@ -290,6 +379,159 @@ public class ApprovalSiaVO {
 
 	public void setVcatname(String vcatname) {
 		this.vcatname = vcatname;
-	}	
+	}
+
+	public String getSlstart() {
+		return slstart;
+	}
+
+	public void setSlstart(String slstart) {
+		this.slstart = slstart;
+	}
+
+	public String getSlend() {
+		return slend;
+	}
+
+	public void setSlend(String slend) {
+		this.slend = slend;
+	}
+
+	public int getSldates() {
+		return sldates;
+	}
+
+	public void setSldates(int sldates) {
+		this.sldates = sldates;
+	}
+
+	public String getAfdate() {
+		return afdate;
+	}
+
+	public void setAfdate(String afdate) {
+		this.afdate = afdate;
+	}
+
+	public int getAfdan() {
+		return afdan;
+	}
+
+	public void setAfdan(int afdan) {
+		this.afdan = afdan;
+	}
+
+	public int getAfdates() {
+		return afdates;
+	}
+
+	public void setAfdates(int afdates) {
+		this.afdates = afdates;
+	}
+
+	public String getDaystart() {
+		return daystart;
+	}
+
+	public void setDaystart(String daystart) {
+		this.daystart = daystart;
+	}
+
+	public String getDayend() {
+		return dayend;
+	}
+
+	public void setDayend(String dayend) {
+		this.dayend = dayend;
+	}
+
+	public int getDaydates() {
+		return daydates;
+	}
+
+	public void setDaydates(int daydates) {
+		this.daydates = daydates;
+	}
+
+	public String getCongstart() {
+		return congstart;
+	}
+
+	public void setCongstart(String congstart) {
+		this.congstart = congstart;
+	}
+
+	public String getCongend() {
+		return congend;
+	}
+
+	public void setCongend(String congend) {
+		this.congend = congend;
+	}
+
+	public int getCongdates() {
+		return congdates;
+	}
+
+	public void setCongdates(int congdates) {
+		this.congdates = congdates;
+	}
+
+	public String getBustart() {
+		return bustart;
+	}
+
+	public void setBustart(String bustart) {
+		this.bustart = bustart;
+	}
+
+	public String getBuend() {
+		return buend;
+	}
+
+	public void setBuend(String buend) {
+		this.buend = buend;
+	}
+
+	public int getBudates() {
+		return budates;
+	}
+
+	public void setBudates(int budates) {
+		this.budates = budates;
+	}
+
+	public String getBuplace() {
+		return buplace;
+	}
+
+	public void setBuplace(String buplace) {
+		this.buplace = buplace;
+	}
+
+	public int getBupeople() {
+		return bupeople;
+	}
+
+	public void setBupeople(int bupeople) {
+		this.bupeople = bupeople;
+	}
+
+	public String getEwdate() {
+		return ewdate;
+	}
+
+	public void setEwdate(String ewdate) {
+		this.ewdate = ewdate;
+	}
+
+	public int getEwhours() {
+		return ewhours;
+	}
+
+	public void setEwhours(int ewhours) {
+		this.ewhours = ewhours;
+	}
+	
 
 }

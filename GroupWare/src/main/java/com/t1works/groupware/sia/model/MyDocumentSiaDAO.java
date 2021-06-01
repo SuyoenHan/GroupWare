@@ -48,11 +48,19 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 	}
 
 
-	// 검색에 해당하는 수신함-일반결재 글의 총 페이지수를 알아오기
+	// 검색에 해당하는 수신함-지출결재 글의 총 페이지수를 알아오기
 	@Override
 	public int getSpendTotalPage(Map<String, String> paraMap) {
 		int totalPage = sqlsession4.selectOne("mydocument_sia.getSpendTotalPage", paraMap);
 		return totalPage;
+	}
+	
+	
+	// 내문서함 - 수신함 - 지출결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuSpend_detail", paraMap);
+		return avo;
 	}
 
 
@@ -70,5 +78,15 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		int totalPage = sqlsession4.selectOne("mydocument_sia.getVacationTotalPage", paraMap);
 		return totalPage;
 	}
+
+
+	// 내문서함 - 수신함 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVaction_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuVaction_detail", paraMap);
+		return avo;
+	}
+
+	
 
 }

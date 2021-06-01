@@ -33,7 +33,7 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	}
 
 
-	// 내문서함 - 문서 한 개 상세보기
+	// 내문서함 - 수신함 - 일반 결재 문서 한 개 상세보기
 	@Override
 	public ApprovalSiaVO myDocuNorm_detail(Map<String, String> paraMap) {
 		ApprovalSiaVO avo = dao.myDocuNorm_detail(paraMap);
@@ -55,6 +55,14 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		int totalPage = dao.getSpendTotalPage(paraMap);
 		return totalPage;
 	}
+	
+	
+	// 내문서함 - 수신함 - 지출 결재 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuSpend_detail(paraMap);
+		return avo;		
+	}
 
 	
 	// 내문서함 - 수신함 - 근태결재문서에 해당하는 문서 조회하기
@@ -71,5 +79,16 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		int totalPage = dao.getVacationTotalPage(paraMap);
 		return totalPage;
 	}
+
+
+	// 내문서함 - 수신함 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVaction_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuVaction_detail(paraMap);
+		return avo;
+	}
+
+
+	
 
 }

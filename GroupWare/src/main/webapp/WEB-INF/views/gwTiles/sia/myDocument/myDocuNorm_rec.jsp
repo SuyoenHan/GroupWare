@@ -196,7 +196,7 @@ $(document).ready(function(){
 				, "searchWord":$("input#searchWord").val()
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
-			success:function(json){
+			success:function(json){				
 				
 				var html = "";
 				
@@ -221,7 +221,7 @@ $(document).ready(function(){
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
-						html += "<td align='center'>"+ item.ncatname +"</td>";
+						html += "<td class='ncatname' align='center'>"+ item.ncatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
@@ -240,7 +240,8 @@ $(document).ready(function(){
 				// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
 				$("tr.docuInfo").click(function(){					
 					var ano = $(this).children(".ano").text();
-					location.href="<%= ctxPath%>/t1/myDocuNorm_detail.tw?ano="+ano;
+					var ncatname = $(this).children(".ncatname").text();
+					location.href="<%= ctxPath%>/t1/myDocuNorm_detail.tw?ano="+ano+"&ncatname="+ncatname;
 				});
 				
 				
@@ -325,7 +326,8 @@ $(document).ready(function(){
 					
 					pageBarHTML += "</ul>";
 					
-					$("div#pageBar").html(pageBarHTML);					
+					$("div#pageBar").html(pageBarHTML);
+					
 				}				
 			},
 			error: function(request, status, error){
@@ -401,7 +403,6 @@ $(document).ready(function(){
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
 					<select name="sort" id="sort">
-						<option>전체보기</option>
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;

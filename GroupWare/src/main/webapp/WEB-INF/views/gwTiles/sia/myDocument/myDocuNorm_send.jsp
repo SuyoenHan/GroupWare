@@ -400,8 +400,7 @@ $(document).ready(function(){
 			<tr>
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
-					<select>
-						<option>전체보기</option>
+					<select name="sort" id="sort">
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;

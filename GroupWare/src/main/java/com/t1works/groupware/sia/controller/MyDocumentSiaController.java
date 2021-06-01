@@ -28,7 +28,7 @@ public class MyDocumentSiaController {
 	
 	// 내문서함 클릭 시 수신함 일반결재문서로 이동!
 	@RequestMapping(value="/t1/myDocument.tw")
-	public String myDocument() {
+	public String myDocument() {		
 		return "sia/myDocument/myDocuNorm_rec.gwTiles";
 	}
 	
@@ -46,7 +46,17 @@ public class MyDocumentSiaController {
 	
 	// 내문서함 - 수신함 - 근태휴가결재문서
 	@RequestMapping(value="/t1/myDocuVacation_rec.tw")
-	public String myDocuVacation_rec() {
+	public String myDocuVacation_rec(HttpServletRequest request) {
+		
+		request.setAttribute("ano", request.getParameter("ano"));
+		request.setAttribute("anocode", request.getParameter("anocode"));
+		request.setAttribute("astatus", request.getParameter("astatus"));
+		request.setAttribute("fromDate", request.getParameter("fromDate"));
+		request.setAttribute("toDate", request.getParameter("toDate"));
+		request.setAttribute("vno", request.getParameter("vno"));
+		request.setAttribute("sort", request.getParameter("sort"));		
+		request.setAttribute("searchWord", request.getParameter("searchWord"));
+		
 		return "sia/myDocument/myDocuVacation_rec.gwTiles";		
 	}	
 	
@@ -245,15 +255,15 @@ public class MyDocumentSiaController {
 	}
 	
 	
-	// 내문서함 - 문서 한 개 상세보기
+	// 내문서함 - 수신함 - 일반결재 문서 한 개 상세보기
 	@RequestMapping(value="/t1/myDocuNorm_detail.tw", produces="text/plain;charset=UTF-8")
 	public ModelAndView myDocuNorm_detail(HttpServletRequest request, ModelAndView mav) {
 		String ano = request.getParameter("ano");		
-		String ncat = request.getParameter("ncat");
+		String ncatname = request.getParameter("ncatname");
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
-		paraMap.put("ncat", ncat);
+		paraMap.put("ncat", ncatname);
 		
 		try {
 			ApprovalSiaVO avo = service.myDocuNorm_detail(paraMap);			
@@ -271,7 +281,7 @@ public class MyDocumentSiaController {
 	
 	//////////////////////////////////////////////////////////////////////
 	
-	// 내문서함 - 수신함 - 지출결재문서에 해당하는 문서 조회하기
+	// 내문서함 - 수신함 - 지출결재문서에 해당하는 문서 조회하기 (Ajax 처리)
 	@ResponseBody
 	@RequestMapping(value="/t1/spend_reclist.tw", produces="text/plain;charset=UTF-8")
 	public String spend_reclist(HttpServletRequest request) {
@@ -343,6 +353,7 @@ public class MyDocumentSiaController {
 		
 		JSONArray jsonArr = new JSONArray();
 		
+		
 		if(approvalvo != null) {
 			for(ApprovalSiaVO appvo : approvalvo) {
 				JSONObject jsonObj = new JSONObject();
@@ -350,11 +361,12 @@ public class MyDocumentSiaController {
 				jsonObj.put("ano", appvo.getAno());
 				jsonObj.put("scatname", appvo.getScatname());
 				jsonObj.put("astatus", appvo.getAstatus());
-				jsonObj.put("asdate", appvo.getAsdate());
+				jsonObj.put("asdate", appvo.getAsdate());				
 				
 				jsonArr.put(jsonObj);
 			}
-		}
+		}		
+		
 		return jsonArr.toString();
 	}
 	
@@ -421,23 +433,23 @@ public class MyDocumentSiaController {
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("totalPage", totalPage); 
-		
+				
 		return jsonObj.toString();		
 	}
 	
 	
-	// 내문서함 - 문서 한 개 상세보기
+	// 내문서함 - 수신함 - 지출 결재 문서 한 개 상세보기
 	@RequestMapping(value="/t1/myDocuSpend_detail.tw", produces="text/plain;charset=UTF-8")
 	public ModelAndView myDocuSpend_detail(HttpServletRequest request, ModelAndView mav) {
 		String ano = request.getParameter("ano");		
-		String scat = request.getParameter("scat");
+		String scatname = request.getParameter("scatname");
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
-		paraMap.put("scat", scat);
+		paraMap.put("scatname", scatname);
 		
 		try {
-			ApprovalSiaVO avo = service.myDocuNorm_detail(paraMap);			
+			ApprovalSiaVO avo = service.myDocuSpend_detail(paraMap);
 			
 			mav.addObject("avo", avo);
 			
@@ -451,7 +463,7 @@ public class MyDocumentSiaController {
 	}
 	
 	//////////////////////////////////////////////////////////////////////
-	
+
 	// 내문서함 - 수신함 - 근태결재문서에 해당하는 문서 조회하기
 	@ResponseBody
 	@RequestMapping(value="/t1/vacation_reclist.tw", produces="text/plain;charset=UTF-8")
@@ -464,8 +476,8 @@ public class MyDocumentSiaController {
 		String vno = request.getParameter("vno");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
-		String currentShowPageNo = request.getParameter("currentShowPageNo");
-				
+		String currentShowPageNo = request.getParameter("currentShowPageNo");		
+		
 		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
 			astatus = "";
 		}
@@ -499,7 +511,7 @@ public class MyDocumentSiaController {
 			}
 		}
 		
-		if(currentShowPageNo == null) {
+		if(currentShowPageNo == null ||currentShowPageNo=="") {
 			currentShowPageNo = "1";
 		}
 		
@@ -507,7 +519,6 @@ public class MyDocumentSiaController {
 		
 		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
 		int endRno = startRno + sizePerPage - 1;
-		
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("anocode", anocode);  
@@ -524,6 +535,7 @@ public class MyDocumentSiaController {
 		
 		JSONArray jsonArr = new JSONArray();
 		
+		
 		if(approvalvo != null) {
 			for(ApprovalSiaVO appvo : approvalvo) {
 				JSONObject jsonObj = new JSONObject();
@@ -535,7 +547,8 @@ public class MyDocumentSiaController {
 				
 				jsonArr.put(jsonObj);
 			}
-		}
+		}		
+		
 		return jsonArr.toString();
 	}
 	
@@ -601,9 +614,44 @@ public class MyDocumentSiaController {
 		int totalPage = service.getVacationTotalPage(paraMap);
 		
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("totalPage", totalPage); 
+		jsonObj.put("totalPage", totalPage);		
 		
 		return jsonObj.toString();
+	}
+	
+	
+	// 내문서함 - 수신함 - 근태결재문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuVaction_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuVaction_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String vcatname = request.getParameter("vcatname");
+		
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("vcatname", request.getParameter("vcatname"));
+		mav.addObject("anocode", request.getParameter("anocode"));
+		mav.addObject("astatus", request.getParameter("astatus"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
+		mav.addObject("vno", request.getParameter("vno"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("vcatname", vcatname);
+		
+		try {
+			ApprovalSiaVO avo = service.myDocuVaction_detail(paraMap);
+			
+			mav.addObject("avo", avo);
+			
+		} catch (NumberFormatException e) {
+			
+		}
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuVacation_detail.gwTiles");
+		
+		return mav;
 	}
 	
 	
