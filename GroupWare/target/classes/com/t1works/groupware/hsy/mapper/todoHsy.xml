@@ -9,7 +9,7 @@
 		select ceil(count(*)/#{sizePerPage}) as cnt 
 		from tbl_todo where fk_employeeid=#{employeeid} 
 		<if test='requiredState=="0"'>
-		and startDate is null  <!-- 신규등록업무  -->
+			and startDate is null  <!-- 신규등록업무  -->
 		</if>
 		<if test='requiredState=="1"'>
 			and startDate is not null and endDate is null <!-- 진행중업무  -->
@@ -20,10 +20,10 @@
 				and endDate >= to_date(to_char(sysdate-7,'yyyy/mm/dd'),'yyyy/mm/dd')
 			</if>
 			<if test='periodOption=="month"'> <!-- 한달 이내 진행완료업무  -->
-			and endDate >= to_date(to_char(add_months(sysdate,-1),'yyyy/mm/dd'),'yyyy/mm/dd')
+				and endDate >= to_date(to_char(add_months(sysdate,-1),'yyyy/mm/dd'),'yyyy/mm/dd')
 			</if>
 			<if test='periodOption=="3months"'> <!-- 세달 이내 진행완료업무  -->
-			and endDate >= to_date(to_char(add_months(sysdate,-3),'yyyy/mm/dd'),'yyyy/mm/dd')
+				and endDate >= to_date(to_char(add_months(sysdate,-3),'yyyy/mm/dd'),'yyyy/mm/dd')
 			</if>
 		</if>
 	</select>

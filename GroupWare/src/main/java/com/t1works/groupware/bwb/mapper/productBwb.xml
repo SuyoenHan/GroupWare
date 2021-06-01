@@ -118,4 +118,16 @@
         </if>
    </select>
    
+   
+   <resultMap type="HashMap" id="deptgetOneMap">
+   		
+   		
+   		
+   </resultMap>
+   
+   <!-- === #4. 특정 업무 클릭 시 modal창의 header정보 가져오기 -->
+   <select id="deptgetOneInfoheader" parameterType="String" resultMap="deptgetOneMap">
+   		
+   </select>
+   
 </mapper>

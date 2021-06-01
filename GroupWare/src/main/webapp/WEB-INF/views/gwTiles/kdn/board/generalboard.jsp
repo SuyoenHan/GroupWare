@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix='fn' uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
@@ -99,7 +100,7 @@ $(document).ready(function(){
 			<tbody>
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
-					<td>${boardvo.seq}</td>
+					<td>${fn:length(boardList) - status.index}</td>
 					<td>
 					<%-- === 댓글쓰기가 없는 게시판 === --%>
       				<%-- <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span> --%> 

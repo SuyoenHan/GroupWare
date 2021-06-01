@@ -31,7 +31,7 @@ public class BoardKdnController {
 	// === 게시판 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/noticePostUpload.tw")
 	public ModelAndView requiredLogin_noticePostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardVOKdn boardvo, ModelAndView mav) {
-		mav.setViewName("kdn/noticepostupload.gwTiles");
+		mav.setViewName("kdn/board/noticepostupload.gwTiles");
 		return mav;
 	}
 	
@@ -175,7 +175,7 @@ public class BoardKdnController {
 		mav.addObject("gobackURL", gobackURL);
 		
 		mav.addObject("boardList", boardList);
-		mav.setViewName("kdn/noticeboard.gwTiles");
+		mav.setViewName("kdn/board/noticeboard.gwTiles");
 		
 		return mav;
 		
@@ -230,7 +230,7 @@ public class BoardKdnController {
 
 		}
 		
-		mav.setViewName("kdn/viewPost.gwTiles");
+		mav.setViewName("kdn/board/viewNoticePost.gwTiles");
 		
 		return mav;
 	}
@@ -291,7 +291,7 @@ public class BoardKdnController {
 	    	// 자신의 글을 수정할 경우
 	         // 가져온 1개글을 글수정할 폼이 있는 view 단으로 보내준다.
 	    	 mav.addObject("boardvo", boardvo);
-	    	 mav.setViewName("kdn/noticeEdit.gwTiles");
+	    	 mav.setViewName("kdn/board/noticeEdit.gwTiles");
 	     }
 		
 		return mav;
@@ -344,7 +344,7 @@ public class BoardKdnController {
 	     } else { // 자신의 글을 삭제할 경우
 	    	 // 글작성시 입력해준 글암호와 일치하는지 여부를 알아오도록 암호를 입력받아주는 del.jsp 페이지를 띄우도록 한다.
 	    	 mav.addObject("seq", seq);
-	    	 mav.setViewName("kdn/noticeDel.gwTiles");
+	    	 mav.setViewName("kdn/board/noticeDel.gwTiles");
 	     }
 		return mav;
 	}
@@ -431,7 +431,6 @@ public class BoardKdnController {
 		int startRno = 0;           // 시작 행번호
 	    int endRno = 0;             // 끝 행번호 
 		
-	    
 	    //System.out.println(boardTypeNo);
 	    
 	    totalCount = service.getTotalCount(paraMap);
@@ -459,6 +458,7 @@ public class BoardKdnController {
 	    
 	    // 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 		boardList = service.listSearchWithPaging(paraMap);
+		
 		
 		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
 		if(!"".equals(searchType) && !"".equals(searchWord)) {
@@ -504,7 +504,7 @@ public class BoardKdnController {
 		mav.addObject("pageBar", pageBar);
 		
 		mav.addObject("boardList", boardList);
-		mav.setViewName("kdn/suggestionboard.gwTiles");
+		mav.setViewName("kdn/board/suggestionboard.gwTiles");
 		
 		return mav;
 		
@@ -513,7 +513,7 @@ public class BoardKdnController {
 	// === 건의사항 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/suggPostUpload.tw")
 	public ModelAndView requiredLogin_suggestionPostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardVOKdn boardvo, ModelAndView mav) {
-		mav.setViewName("kdn/suggpostupload.gwTiles");
+		mav.setViewName("kdn/board/suggpostupload.gwTiles");
 		return mav;
 	}
 	
@@ -552,16 +552,16 @@ public class BoardKdnController {
 			if(loginuser != null) {
 				login_userid = loginuser.getEmployeeid();
 			}
+
 	
 			BoardVOKdn boardvo = null;
-			
+		
 			if("yes".equals(session.getAttribute("readCountPermission"))) { 
 				//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
 				
 				boardvo = service.getSuggPostView(seq, login_userid);
 				// 글조회수 증가와 함께 글1개를 조회를 해주는 것
 				
-				session.removeAttribute("readCountPermission");
 				session.removeAttribute("readCountPermission");
 				// 중요함!! session 에 저장된 readCountPermission 을 삭제한다.
 			
@@ -573,16 +573,60 @@ public class BoardKdnController {
 			
 			mav.addObject("boardvo", boardvo);
 			
-		
+			
 		}catch(NumberFormatException e) {
 
 		}
 		
-		mav.setViewName("kdn/viewSuggPost.gwTiles");
+		mav.setViewName("kdn/board/viewSuggPost.gwTiles");
+		
+		return mav;
+
+	}
+	
+	// === 건의사항 비밀글 조회 페이지 요청 === //
+	@RequestMapping(value="/t1/viewPrivatePost.tw")
+	public ModelAndView requiredLogin_viewPrivatePost(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String seq = request.getParameter("seq");
+		
+		String gobackURL = request.getParameter("gobackURL");
+		mav.addObject("gobackURL", gobackURL);
+		
+		HttpSession session = request.getSession();
+	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
+	    
+	    Integer.parseInt(seq);
+		
+		String login_userid = null;
+		
+		if(loginuser != null) {
+			login_userid = loginuser.getEmployeeid();
+		}
+
+		BoardVOKdn boardvo = null;
+	
+		if("yes".equals(session.getAttribute("readCountPermission"))) { 
+			//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
+			
+			boardvo = service.getSuggPostView(seq, login_userid);
+			// 글조회수 증가와 함께 글1개를 조회를 해주는 것
+			
+			session.removeAttribute("readCountPermission");
+			// 중요함!! session 에 저장된 readCountPermission 을 삭제한다.
+		
+		} else { // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
+			
+			boardvo = service.getSuggViewWithNoAddCount(seq);
+			// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것이다.
+		}
+		
+			mav.addObject("boardvo", boardvo);
+	    	mav.setViewName("kdn/board/suggpwconfirm.gwTiles");
 		
 		return mav;
 	}
-	
+	    
 	
 	// === 건의사항 글수정 페이지 요청 === //
 	@RequestMapping(value="/t1/suggEdit.tw")
@@ -610,7 +654,7 @@ public class BoardKdnController {
 	    	// 자신의 글을 수정할 경우
 	         // 가져온 1개글을 글수정할 폼이 있는 view 단으로 보내준다.
 	    	 mav.addObject("boardvo", boardvo);
-	    	 mav.setViewName("kdn/suggEdit.gwTiles");
+	    	 mav.setViewName("kdn/board/suggEdit.gwTiles");
 	     }
 		
 		return mav;
@@ -663,7 +707,7 @@ public class BoardKdnController {
 		     } else { // 자신의 글을 삭제할 경우
 		    	 // 글작성시 입력해준 글암호와 일치하는지 여부를 알아오도록 암호를 입력받아주는 del.jsp 페이지를 띄우도록 한다.
 		    	 mav.addObject("seq", seq);
-		    	 mav.setViewName("kdn/suggDel.gwTiles");
+		    	 mav.setViewName("kdn/board/suggDel.gwTiles");
 		     }
 			return mav;
 		}
@@ -831,7 +875,7 @@ public class BoardKdnController {
 		mav.addObject("pageBar", pageBar);
 		
 		mav.addObject("boardList", boardList);
-		mav.setViewName("kdn/generalboard.gwTiles");
+		mav.setViewName("kdn/board/generalboard.gwTiles");
 		
 		return mav;
 		
@@ -840,7 +884,7 @@ public class BoardKdnController {
 		// === 자유게시판 글쓰기 폼 페이지 요청 하기 ===
 		@RequestMapping(value="/t1/genPostUpload.tw")
 		public ModelAndView requiredLogin_generalPostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardVOKdn boardvo, ModelAndView mav) {
-			mav.setViewName("kdn/genpostupload.gwTiles");
+			mav.setViewName("kdn/board/genpostupload.gwTiles");
 			return mav;
 		}
 		
@@ -907,7 +951,7 @@ public class BoardKdnController {
 
 			}
 			
-			mav.setViewName("kdn/viewGenPost.gwTiles");
+			mav.setViewName("kdn/board/viewGenPost.gwTiles");
 			
 			return mav;
 		}
@@ -939,7 +983,7 @@ public class BoardKdnController {
 		    	// 자신의 글을 수정할 경우
 		         // 가져온 1개글을 글수정할 폼이 있는 view 단으로 보내준다.
 		    	 mav.addObject("boardvo", boardvo);
-		    	 mav.setViewName("kdn/generalEdit.gwTiles");
+		    	 mav.setViewName("kdn/board/generalEdit.gwTiles");
 		     }
 			
 			return mav;
@@ -993,7 +1037,7 @@ public class BoardKdnController {
 		     } else { // 자신의 글을 삭제할 경우
 		    	 // 글작성시 입력해준 글암호와 일치하는지 여부를 알아오도록 암호를 입력받아주는 del.jsp 페이지를 띄우도록 한다.
 		    	 mav.addObject("seq", seq);
-		    	 mav.setViewName("kdn/generalDel.gwTiles");
+		    	 mav.setViewName("kdn/board/generalDel.gwTiles");
 		     }
 			return mav;
 		}
