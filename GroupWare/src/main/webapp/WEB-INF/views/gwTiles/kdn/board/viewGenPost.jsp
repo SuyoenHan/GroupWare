@@ -7,7 +7,6 @@
 <link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
 <style type="text/css">
-	
 	.move {cursor: pointer;}
 	.moveColor {color: #660029; font-weight: bold;}
 	
@@ -20,8 +19,7 @@
 
 $(document).ready(function(){
 	
-	//goReadComment(); // 페이징처리 안한 댓글 읽어오기
-	//goViewComment(1); // 페이징처리 한 댓글 읽어오기
+	goViewComment(1); // 페이징처리 한 댓글 읽어오기
 	
 	$("span.move").hover(function(){
 		                    $(this).addClass("moveColor");
@@ -31,7 +29,82 @@ $(document).ready(function(){
                         });
 	
 }); // end of $(document).ready(function(){})------------------
-		
+
+//=== 댓글쓰기 ===
+function goWriteComment() {
+	
+	var contentVal = $("input#commentContent").val().trim();
+	if(contentVal == "") {
+		alert("댓글 내용을 입력하세요!!");
+		return; // 종료
+	}
+	
+	var form_data = $("form[name=writeCmntFrm]").serialize();
+	
+	$.ajax({
+		url:"<%= ctxPath%>/t1/addComment.tw",
+		data:form_data,
+		type:"post",
+		dataType:"json",
+		success:function(json){
+			// goReadComment();  // 페이징처리 안한 댓글 읽어오기
+			goViewComment(1); // 페이징처리 한 댓글 읽어오기 
+		   $("input#commentContent").val("");
+		   
+		},
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	 	}
+	});
+	
+}// end of function goAddWrite(){}--------------------------
+
+//=== Ajax로 불러온 댓글내용을 페이징처리하기 ===
+function goViewComment(currentShowPageNo) {
+	
+	$.ajax({
+		url:"<%= ctxPath%>/t1/commentList.tw",
+		data:{"fk_seq":"${requestScope.boardvo.seq}",
+			  "currentShowPageNo":currentShowPageNo},
+		dataType:"json",
+		success:function(json){ 
+			// []  또는 
+			// [{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열네번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열세번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열두번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열한번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열번째 댓글입니다."}] 
+			
+			var html = "";
+			
+			if(json.length > 0) {
+				$.each(json, function(index, item){
+					html += "<tr>";
+					html += "<td class='comment'>"+(index+1)+"</td>";
+					html += "<td>"+ item.content +"</td>";
+					
+					if($("input[name=fk_employeeid]").val() == item.fk_employeeid){
+						html+="<td class='comment'><button type='button'>수정</button><br><button type='button'>삭제</button></td>"
+					}
+					
+					html += "<td class='comment'>"+ item.name +"</td>";
+					html += "<td class='comment'>"+ item.regDate +"</td>";
+					html += "</tr>";
+				});
+			}
+			else {
+				html += "<tr>";
+				html += "<td colspan='4' class='comment'>댓글이 업습니다</td>";
+				html += "</tr>";
+			}
+			
+			$("tbody#commentDisplay").html(html);
+			
+			// 페이지바 함수 호출
+			//makeCommentPageBar(currentShowPageNo);
+		},
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	 	}
+	});
+	
+}// end of function goViewComment(currentShowPageNo) {}----------------------
 		
 		
 </script>
@@ -76,9 +149,9 @@ $(document).ready(function(){
 		</table>
 		
 		<br>
-		
-		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.previousseq}'">${requestScope.boardvo.previoussubject}</span></div>
-		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}'">${requestScope.boardvo.nextsubject}</span></div>
+		<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
+		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.previousseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.previoussubject}</span></div>
+		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span></div>
 
 	</c:if>
 	
@@ -87,10 +160,49 @@ $(document).ready(function(){
 	</c:if>
 	
 	<button type="button" onclick="javascript:location.href='generalBoard.tw'">전체목록보기</button>
-	
-	<button type="button" onclick="javascript:location.href='${requestScope.gobackURL}'">검색된결과목록보기</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	<button type="button" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">검색된결과목록보기</button>
+	<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	</c:if>
+	<%-- 댓글쓰기 폼 추가 === --%>
+    <c:if test="${not empty sessionScope.loginuser}">
+    	<h3 style="margin-top: 50px;">댓글쓰기 및 보기</h3>
+		<form name="writeCmntFrm" style="margin-top: 20px;">
+	        <input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />
+			<input type="hidden" name="name" value="${sessionScope.loginuser.name}" />  
+			댓글내용 : <input id="commentContent" type="text" name="content" class="long" /> 
+			
+			<%-- 댓글에 달리는 원게시물 글번호(즉, 댓글의 부모글 글번호) --%>
+			<input type="hidden" name="fk_seq" value="${requestScope.boardvo.seq}" /> 
+			
+			<button id="btnComment" type="button" onclick="goWriteComment()">확인</button> 
+			<button type="reset">취소</button> 
+		</form>
+    </c:if>
+
+	<c:if test="${empty sessionScope.loginuser}">
+    	<h3 style="margin-top: 50px;">댓글보기</h3>
+    </c:if>	
+    
+    <!-- ===== #94. 댓글 내용 보여주기 ===== -->
+	<table id="table2" class="table" style="margin-top: 2%; margin-bottom: 3%;">
+		<thead>
+		<tr>
+		    <th style="width: 10%; text-align: center;">번호</th>
+			<th style="width: 60%; text-align: center;">내용</th>
+			<th style="width: 10%; text-align: center;"></th>
+			<th style="width: 10%; text-align: center;">작성자</th>
+			<th style="text-align: center;">작성일자</th>
+		</tr>
+		</thead>
+		<tbody id="commentDisplay"></tbody>
+	</table>
+
+    <%-- ==== #136. 댓글 페이지바 ==== --%>
+    <div id="pageBar" style="border:solid 0px gray; width: 90%; margin: 10px auto; text-align: center;"></div> 
+
+
 </div>
 
 
