@@ -99,7 +99,7 @@ $(document).ready(function(){
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
 					<td><span class="postIndex">${fn:length(boardList) - status.index}</span>
-					<input name="postIndex" />
+					<input type="hidden" name="postIndex" />
 					</td>
 					<td>
       				<c:choose>
