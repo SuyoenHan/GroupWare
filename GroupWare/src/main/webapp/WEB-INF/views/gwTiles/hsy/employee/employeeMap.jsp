@@ -14,13 +14,13 @@
 		width:70%;
 		margin: 0 auto;
 		position: relative;
-		left: -250px;
+		left: -150px;
 		padding-bottom: 100px;
 	}
 	
 	div#employeeMapTitle{
 		border: solid 0px red;
-		margin: 70px 0px 30px 50px;
+		margin: 70px 0px 30px 80px;
 		font-size: 22pt;
 		font-weight: bold;
 	}

@@ -77,4 +77,22 @@
 		where fk_pNo= #{fk_pNo}
 	</select>
 	
+	
+	<!-- 월급명세서에 필요한 정보 가져오기 => 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) resultMap 정의-->
+	<resultMap type="HashMap" id="attendanceCntMap">
+		<result property="newTodoCnt" column="newTodoCnt" javaType="String"/>
+		<result property="ingTodoCnt" column="ingTodoCnt" javaType="String"/>
+		<result property="doneTodoCnt" column="doneTodoCnt" javaType="String"/>
+	</resultMap>
+	
+	<!-- 월급명세서에 필요한 정보 가져오기 => 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) -->
+	<select id="getAttendanceForSalary" parameterType="HashMap" resultMap="attendanceCntMap">
+	
+	
+	
+	
+	</select>
+	
+	
+	
 </mapper>

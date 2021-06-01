@@ -11,7 +11,7 @@
 		width:70%;
 		margin: 0 auto;
 		position: relative;
-		left: -250px;
+		left: -150px;
 	}
 
 	div#salaryTitle{
@@ -93,7 +93,7 @@
 	   			
 	   			if(currentYear==year){ // 1) 현재년도인경우 현재월 전월 까지만 행 표시
 	   				
-	   				for(var i=1;i<currentMonth-1;i++){
+	   				for(var i=1;i<currentMonth;i++){
 	   					html+= "<td>"+cnt+"</td>";
 	   					 
 			   			if(i==2){ // 2월 윤달 고려하여 근무기간 설정
@@ -239,7 +239,7 @@
 		$frm.action="<%=ctxPath%>/t1/salaryDetailForm.tw";
 			
 		var employeeid= "${loginuser.employeeid}";
-		var passwd= prompt("비밀번호를 입력하세요"); 
+		var passwd= prompt("비밀번호를 입력하세요","비밀번호를 입력하세요"); 
 		passwd=passwd.trim();
 		
 		// 2) 비밀번호를 입력한 후 확인 버튼을 누른 경우 => 입력한 비밀번호가 일치하는지 확인하기
@@ -255,7 +255,7 @@
 		   			}
 		   			else{
 		   				alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요!");
-		   				getSalaryDetail();
+		   				getSalaryDetail(year, month);
 		   			}
 		   		},
 		   		error: function(request, status, error){

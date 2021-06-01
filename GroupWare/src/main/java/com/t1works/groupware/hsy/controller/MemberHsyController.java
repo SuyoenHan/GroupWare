@@ -1,9 +1,8 @@
 package com.t1works.groupware.hsy.controller;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -229,6 +228,7 @@ public class MemberHsyController {
 	@RequestMapping(value="/t1/salaryListInfoByYear.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String salaryListInfoByYear(HttpServletRequest request) {
 		
+		
 		String employeeid= request.getParameter("employeeid");
 	
 		// 1) 특정직원의 소속, 직위, 기본급 가져오기
@@ -245,16 +245,182 @@ public class MemberHsyController {
 	
 	
 	// 월급명세서 상페 페이지 매핑 url
-	@RequestMapping(value="/t1/salaryDetailForm.tw")
+	@RequestMapping(value="/t1/salaryDetailForm.tw", method= {RequestMethod.POST})
 	public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {
 		
+		// 1) 월급명세서 출력하기를 선택한 년도와 월
 		String employeeid= request.getParameter("employeeid");
 		String year= request.getParameter("year");
 		String month= request.getParameter("month");
 		
+		// 월이 한자리인 경우 앞에 0 붙여서 넘기기
+		if(month.length()==1) month="0"+month;
 		mav.addObject("employeeid", employeeid);
 		mav.addObject("year", year);
 		mav.addObject("month", month);
+		
+		// 2) 현재날짜 가져오기
+		Calendar currentDate = Calendar.getInstance();
+		int currentYear = currentDate.get(Calendar.YEAR);
+		String currentMonth = String.valueOf(currentDate.get(Calendar.MONTH)+1);
+		String currentDay= String.valueOf(currentDate.get(Calendar.DATE));
+		
+		// 월이 한자리인 경우 앞에 0 붙여서 넘기기
+		if(currentMonth.length()==1) currentMonth="0"+currentMonth;
+
+		// 일이 한자리인 경우 앞에 0 붙여서 넘기기
+		if(currentDay.length()==1) currentDay="0"+currentDay;
+		
+		mav.addObject("currentYear", currentYear);
+		mav.addObject("currentMonth", currentMonth);
+		mav.addObject("currentDay",currentDay);
+		
+		// 3-1) 월급명세서에 필요한 정보 가져오기 => 인적사항 (사번/성명/소속/직급)
+		MemberHsyVO mvo= service.employeeInfoAjaxHsy(employeeid);
+		mav.addObject("mvo", mvo);
+		
+		// 3-2) 월급명세서에 필요한 정보 가져오기 => 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수)
+		
+		// 해당 직원의 근태결재 승인처리 완료된 문서번호 가져오기
+		List<String> anoList= service.getAttendanceAno(employeeid);
+		
+		// 근태결재 승인처리 완료된 문서번호 가공하기 => in절에 사용될 수 있도록 데이터 가공
+		String anoForIn="";
+		for(int i=0; i<anoList.size();i++) {   
+
+			String str= (i < anoList.size()-1) ? "," : "";
+			anoForIn+= anoList.get(i)+str;
+		} // end of for------------------------
+		
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("date",year+"-"+month);
+		paraMap.put("anoForIn", anoForIn);
+		
+		// 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기
+		Map<String,Integer> attendanceMap= service.getAttendanceForSalary(paraMap);
+		
+		
+		// 정상출근 일 수 => 해당 년도, 월의 평일 수에서 휴가사용일 제외 (해당 년도 월의 평일수를 구해서 view단으로 넘기기 => 자바스크립트에서 계산)
+		// ========== 특정 년도, 월의 평일 수 구하기 사전작업
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser= (MemberBwbVO) session.getAttribute("loginuser");
+		
+		String hiredate= loginuser.getHiredate();
+		
+		String hireYear= hiredate.substring(0,4);
+		String hireMonth= hiredate.substring(5,7);
+		String hireDay= hiredate.substring(8,10);
+		
+		int nYear= Integer.parseInt(year);
+		
+		String startDate = year+month+"01"; // 입사년도, 월과 다른 경우 시작일은 01일 부터 카운트
+		String endDate = "";
+		 
+		if(year.equals(hireYear) && month.equals(hireMonth)) { // 입사년도, 월과 같은 경우 시작일은 입사일부터 카운트
+			startDate=year+month+hireDay; // 입사년도, 월과 같은 경우 시작일은 입사일부터 카운트
+		}
+		
+		if("02".equals(month)) {  // 월급명세서 출력 선택날짜가 2월인 경우 윤달 고려
+			if(nYear%4==0) endDate=year+month+29; // 윤달인 경우
+			else endDate=year+month+28; // 윤달이 아닌 경우
+		}
+		else if("04".equals(month)||"06".equals(month)||"09".equals(month)||"11".equals(month)) { // 마지막날이 30일인 경우
+			endDate=year+month+30;
+		}
+		else { // 마지막날이 31일인 경우
+			endDate=year+month+31;
+		}
+		
+		// System.out.println(startDate);
+		// System.out.println(endDate);
+		
+		// ========== 특정 년도, 월의 평일 수 구하기
+		
+	    // 공휴일 설정 (신정, 삼일절, 어린이날, 성탄절 설정)
+	    List<Map<String,String>> holidayList = new ArrayList<>();
+	    Map<String, String> holidayMap = new HashMap<>();
+
+	    holidayMap.put("holidayDt", year+"0101");	//신정
+	    holidayList.add(holidayMap);
+
+	    holidayMap = new HashMap<>();
+	    holidayMap.put("holidayDt", year+"0301");	//삼일절
+	    holidayList.add(holidayMap);
+
+	    holidayMap = new HashMap<>();
+	    holidayMap.put("holidayDt", year+"0505");	//어린이날
+	    holidayList.add(holidayMap);
+
+	    holidayMap = new HashMap<>();
+	    holidayMap.put("holidayDt", year+"1225");	//성탄절
+	    holidayList.add(holidayMap);
+
+
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	    int workDays=0;
+	    
+	    try{
+			Calendar start = Calendar.getInstance();
+	        start.setTime(sdf.parse(startDate)); //시작일 날짜 설정
+
+	      	Calendar end = Calendar.getInstance();
+	      	end.setTime(sdf.parse(endDate)); //종료일 날짜 설정
+
+	      	Calendar hol = Calendar.getInstance();
+
+			int workingDays = 0;
+	    	int holDays = 0;
+	    	
+	      	while (!start.after(end)) {
+	      		int day = start.get(Calendar.DAY_OF_WEEK);	 //주말인지 확인하기
+	      		int holday = 0; 
+
+	      		if ((day != Calendar.SATURDAY) && (day != Calendar.SUNDAY)){
+		      		workingDays++;	//평일 수 증가
+		      	}
+	      		
+		      	//시작일과 공휴일이 같을때 공휴일이 주말인지 체크 => 주말이 아니면 holDays +1 증가
+		      	if(!holidayList.isEmpty()){
+		      		for(int i=0;i<holidayList.size();i++){
+			      		hol.setTime(sdf.parse((String)holidayList.get(i).get("holidayDt").toString()));	//실제 공휴일 날짜 설정
+			      		holday = hol.get(Calendar.DAY_OF_WEEK); //주말인지 확인하기
+			      		if (start.equals(hol) &&(holday != Calendar.SATURDAY) && (holday != Calendar.SUNDAY)){	//공휴일수: 공휴일이 평일인경우 +1
+				      		holDays++;
+			      		}	  
+		      		} // end of for-----------------
+		      	}
+		      	start.add(Calendar.DATE, 1);
+	      	} // end of while-----------------------
+	      	
+	    // System.out.printf("최종일수 %d", workingDays-holDays); //평일 수 - 평일인 공휴일수
+
+	    workDays = workingDays-holDays;  // 해당 월의 총 근무수 (연차를 사용하지 않은 경우)
+				
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	    
+	    // 3-3) 월급명세서에 필요한 정보 가져오기 => 근속수당 계산을 위해 근속년도 view단으로 넘기기
+	    int continueYear= nYear-Integer.parseInt(hireYear);
+	    
+	    if(continueYear%5==0  && hireMonth.equals(month)) { // 근속수당 100만원 지급 (5년마다)
+	    	mav.addObject("continueYear", continueYear);
+	    }
+	    else { // 근속수당 해당 없는 경우
+	    	mav.addObject("continueYear", 0);
+	    }
+	    
+		mav.addObject("workDays", workDays);
+		mav.addObject("attendanceMap", attendanceMap);
+		
+		
+		// 3-4) 월급명세서에 필요한 정보 가져오기 => 해당 년도, 월의  총 야근 시간 가져오기
+		int totalLateWorkTime= service.getTotalLateWorkTime(paraMap);
+		mav.addObject("totalLateWorkTime", totalLateWorkTime); // 야근시간이 없는 경우 0
+		
 		
 		mav.setViewName("hsy/employee/salaryDetail.gwTiles");
 		return mav;
