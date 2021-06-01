@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix='fn' uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
@@ -16,24 +17,22 @@ $(document).ready(function(){
 	 $("select#sizePerPage").change(function(){
 			goSearch();
 		});
+	
+	 $("select#sizePerPage").change(function(){
+			goSearch();
+			if(${not empty requestScope.paraMap}){
+			  	$("select#sizePerPage").val("${requestScope.paraMap.sizePerPage}");
+			  }
+			
+		});
    
-	
-	$("select#category").change(function(){
-		if($(this).val() == ""){
-			$("input[name=fk_categnum]").val($("select#category").val());
-		}
-		
-		$("input[name=fk_categnum]").val($("select#category").val());
-		goSearch();
-	});
-	
  	//보기개수 선택시 선택값 유지시키기
 	if(${not empty requestScope.paraMap}){
-		$("select#category").val("${requestScope.paraMap.fk_categnum}");
 		$("select#searchType").val("${requestScope.paraMap.searchType}");
 		$("input#searchWord").val("${requestScope.paraMap.searchWord}");
 	  	$("select#sizePerPage").val("${requestScope.paraMap.sizePerPage}");
 	  }  
+	
 	
 	
 	
@@ -43,7 +42,7 @@ $(document).ready(function(){
 // Function Declaration
 
 	function goView(seq){
-		location.href="<%=ctxPath%>/t1/viewNotice.tw?seq="+seq;
+		location.href="<%=ctxPath%>/t1/viewGenPost.tw?seq="+seq;
 	
 		// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. ===
 		<%-- var frm = document.goViewFrm;
@@ -57,7 +56,7 @@ $(document).ready(function(){
 
 	function goSearch(){
 		var frm = document.searchFrm;
-		frm.action = "employeeBoard.tw";	//상대경로
+		frm.action = "generalBoard.tw";	//상대경로
 		frm.method = "GET";
 		$("form#searchFrm").submit();
 	}
@@ -66,11 +65,10 @@ $(document).ready(function(){
 
 
 <div id="board-container">
-	<a href="javascript:location.href='employeeBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span></a>
+	<a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">자유게시판</span></a>
 	<!-- 보기개수 선택&조건검색 -->
 	<div id="search-viewOption">
 		<form name="searchFrm" id="searchFrm" style="float:right;">
-			<input type="hidden" name="fk_categnum" />
 			<select name="sizePerPage" id="sizePerPage" style="float:right; height: 28px; padding: 4px 0;">
 				<option value="">보기개수</option>
 				<option value="5">5개씩보기</option>
@@ -92,14 +90,6 @@ $(document).ready(function(){
 			<thead>
 				<tr class="thead">
 					<th width=3% align="center" id="postNum">No.</th>
-					<th width=5% align="center" id="category">
-						<select id="category">
-							<option value="">구분</option>
-							<option value="1">전체공지</option>
-							<option value="2">총무공지</option>
-							<option value="3">경조사</option>
-						</select>
-					</th>
 					<th width=50% align="center" id="subject">제목</th>
 					<th width=5% align="center" id="writer">작성자</th>
 					<th width=8% align="center" id="regDate">작성일</th>
@@ -110,22 +100,14 @@ $(document).ready(function(){
 			<tbody>
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
-					<td>${boardvo.seq}</td>
-					<c:choose>
-						<c:when test="${boardvo.fk_categnum eq '1'}">
-							<td>전체공지</td>
-						</c:when>
-						<c:when test="${boardvo.fk_categnum eq '2'}">
-							<td>총무공지</td>
-						</c:when>
-						<c:otherwise>
-							<td>경조사</td>
-						</c:otherwise>
-					</c:choose>
+					<td>${fn:length(boardList) - status.index}</td>
 					<td>
 					<%-- === 댓글쓰기가 없는 게시판 === --%>
       				<%-- <span class="subject" onclick="goView('${boardvo.seq}')">${boardvo.subject}</span> --%> 
 					<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" >${boardvo.subject}</a>
+      				<c:if test="${boardvo.privatePost eq 1}">
+      				<i class="fas fa-lock"></i>
+      				</c:if> 
 					</td>
 					<td>${boardvo.name}</td>
 					<td>${boardvo.regDate}</td>
@@ -139,10 +121,7 @@ $(document).ready(function(){
 	 	 <%-- 페이지 바 --%>
     	<div align="center" style="width: 70%; margin: 20px auto;">${requestScope.pageBar}</div>
 		
-		<%-- 인사팀, 총무팀의  대리, 부장 글쓰기 가능 --%>
-		<c:if test="${(loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')) || loginuser.fk_dcode eq '5' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')  }">
-			<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
-		</c:if>
+		<button type="button" class="btn-style float-right" onclick="javascript:location.href='genPostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
 	</div>
 </div>
 

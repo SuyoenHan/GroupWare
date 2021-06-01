@@ -2,7 +2,8 @@ package com.t1works.groupware.kdn.model;
 
 public class BoardVOKdn {
 
-	private String seq;          // 글번호 
+	private String seq;          // 게시글 시퀀스번호 
+	private String postIndex;			 // 실제 게시판 글번호
 	   private String fk_employeeid;    // 사용자ID
 	   private String name;         // 글쓴이 
 	   private String subject;      // 글제목
@@ -43,6 +44,14 @@ public class BoardVOKdn {
 
 	public void setSeq(String seq) {
 		this.seq = seq;
+	}
+
+	public String getPostIndex() {
+		return postIndex;
+	}
+
+	public void setPostIndex(String postIndex) {
+		this.postIndex = postIndex;
 	}
 
 	public String getFk_employeeid() {
