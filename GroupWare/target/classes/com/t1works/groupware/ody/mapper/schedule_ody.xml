@@ -139,10 +139,10 @@
 	
 	<!-- 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
 	<select id="scheduleListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
-		select rno,sdno,fk_employeeid, subject, startdate, enddate, name, scname, bcname, content
+		select rno,sdno,fk_employeeid, subject, startdate, enddate, name, scname, bcname, content, fk_bcno
 		from
 		(
-		    select row_number() over(order by sdno desc) as rno, sdno, subject, S.fk_employeeid as fk_employeeid ,B.bcname as bcname,content,
+		    select row_number() over(order by sdno desc) as rno, sdno, subject, S.fk_employeeid as fk_employeeid ,B.bcname as bcname,content, S.fk_bcno as fk_bcno,
 				    to_char(startdate, 'yyyy-mm-dd hh24:mi:ss') as startdate , to_char(enddate, 'yyyy-mm-dd hh24:mi:ss') as enddate, E.name as name, G.scname as scname
 				    from tbl_schedule S join tbl_employee E
 		            on S.fk_employeeid = E.employeeid
@@ -222,6 +222,7 @@
 		select scno, scname, fk_bcno
 		from tbl_scal_category
 		where fk_employeeid = #{employeeid} and fk_bcno=1
+		order by scno desc
 	</select>
 	
 	<!-- 전체 캘린더 정보 -->
@@ -229,14 +230,28 @@
 		select scno, scname, fk_bcno
 		from tbl_scal_category
 		where fk_bcno=2
+		order by scno desc
 	</select>
 	
+	<!-- 내 캘린더명 조회 -->
+	<select id="existMyCalendar" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_scal_category
+		where fk_employeeid = #{employeeid} and scname = #{scname} and fk_bcno=1
+	</select>
 	
 	<!-- 내 캘린더 추가 -->
 	<insert id="addMyCalendar" parameterType="HashMap">
 		insert into tbl_scal_category(scno, fk_bcno, scname,fk_employeeid)
 		values(scnoSeq.nextval,1,#{scname},#{employeeid})
 	</insert>
+	
+	<!-- 사내 캘린더명 조회 -->
+	<select id="existComCalendar" parameterType="String" resultType="int">
+		select count(*)
+		from tbl_scal_category
+		where scname=#{scname} and fk_bcno = 2 
+	</select>
 	
 	<!-- 사내 캘린더 추가 -->
 	<insert id="addComCalendar" parameterType="HashMap">
@@ -255,4 +270,28 @@
 		update tbl_scal_category set scname=#{scname}
 		where scno=#{scno}
 	</update>
+	
+	<!-- 내 일정만 보여주기 -->
+	<select id="getMyCalendarList" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select sdno, startdate, enddate, subject, color
+		from tbl_schedule
+		where fk_employeeid = #{employeeid} and fk_bcno=1
+	</select>
+	
+	
+	<!-- 홈페이지 달력에서 선택한 일정 보여주기 -->
+	<select id="myCalendarInfo" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select sdno, to_char(startdate,'YYYY-MM-DD') as startdate, to_char(startdate,'hh24:mi') as stime,  to_char(enddate,'YYYY-MM-DD') as enddate,to_char(enddate,'hh24:mi') as etime,  subject, color
+		from tbl_schedule
+		where fk_employeeid = #{employeeid} and 
+			  #{date} between to_char(startdate,'YYYY-MM-DD') and to_char(enddate,'YYYY-MM-DD')
+	</select>
+	
+	<!-- 오늘 내일정 보여주기 -->
+	<select id="todayMyCal" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
+		select sdno, to_char(startdate,'YYYY-MM-DD') as startdate, to_char(startdate,'hh24:mi') as stime,  to_char(enddate,'YYYY-MM-DD') as enddate,to_char(enddate,'hh24:mi') as etime,  subject, color
+		from tbl_schedule
+		where fk_employeeid = #{employeeid} and 
+			  to_char(sysdate,'YYYY-MM-DD') between to_char(startdate,'YYYY-MM-DD') and to_char(enddate,'YYYY-MM-DD')
+	</select>
 </mapper>
