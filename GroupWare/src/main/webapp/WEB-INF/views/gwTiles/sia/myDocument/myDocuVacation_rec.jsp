@@ -82,9 +82,7 @@
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
-$(document).ready(function(){
-	
-	
+$(document).ready(function(){	
 	
 	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
 	$(document).on('click','tr.docuInfo',function(){
@@ -93,10 +91,8 @@ $(document).ready(function(){
 			var no = $(item).val();
 			checkArr.push(no);			
 		});
-	//	alert(checkArr);
 		
-		var checkArres = checkArr.join();		
-	//	alert(checkArres);
+		var checkArres = checkArr.join();	
 		
 		var ano = $(this).children(".ano").text();
 		var vcatname = $(this).children(".vcatname").text();		
@@ -126,9 +122,7 @@ $(document).ready(function(){
 		
 		for(var i=0; i<v.length; i++){
 			$("input:checkbox[id='chx"+v[i]+"']").prop("checked", true);
-		}
-		
-		
+		}		
 	}
 	
 	$("input#searchWord").bind("keydown", function(event){
@@ -217,8 +211,7 @@ $(document).ready(function(){
 	
 	function goSearch2(currentShowPageNo){	
 		
-		$.ajax({			
-			
+		$.ajax({
 			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
 			data:{"astatus":"${astatus}"
 				, "fromDate":"${fromDate}"
