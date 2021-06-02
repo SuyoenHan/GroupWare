@@ -1,5 +1,6 @@
 package com.t1works.groupware.jsh.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,14 @@ public interface InterPaymentJshService {
 
 	// 하나의 일반결재내역 문서 보여주기
 	ElectronPayJshVO generalOneView(Map<String, String> paraMap);
+
+	//하나의 일반결재내역에서 결재의견목록 보여주기
+	List<ElectronPayJshVO> oneOpinionList(Map<String, String> paraMap);
+
+	//일반결재 글쓰기
+	ElectronPayJshVO login_Write(Map<String, String> paraMap);
+
+
 
 
 
