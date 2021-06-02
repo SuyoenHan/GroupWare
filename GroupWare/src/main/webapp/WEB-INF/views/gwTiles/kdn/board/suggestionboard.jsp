@@ -37,6 +37,8 @@ $(document).ready(function(){
 	function goView(seq){
 		var frm = document.goViewFrm;
 		frm.seq.value = seq;
+		frm.searchType.value = "${requestScope.paraMap.searchType}";
+	    frm.searchWord.value = "${requestScope.paraMap.searchWord}";
 		
 		frm.method="get";
 		frm.action="<%=ctxPath%>/t1/viewSuggPost.tw";
@@ -137,6 +139,8 @@ $(document).ready(function(){
     <form name="goViewFrm">
     	<input type="hidden" name="seq"/>
     	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+    	<input type="hidden" name="searchType" />
+      	<input type="hidden" name="searchWord" />
     </form>
 </div>
 

@@ -65,6 +65,9 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_noticeboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>
@@ -131,6 +134,9 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_suggestionboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>
@@ -152,6 +158,38 @@
 		delete from tbl_suggestionboard
 		where seq = #{seq} and pw = #{pw}
 	</delete>
+	
+	<!--  === 건의사항 댓글쓰기(tbl_generalboardcomment 테이블에 insert) === -->
+	<insert id="addSuggComment" parameterType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		insert into tbl_suggestionboardcomment(seq, fk_employeeid, name, content, regDate, fk_seq)
+		values(seq_generalboardcomment.nextval, #{fk_employeeid}, #{name}, #{content}, default, #{fk_seq})
+	</insert>
+	
+	<!--  ===  건의사항 tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) === -->
+	<update id="updateSuggCmntCount" parameterType="String">
+		update tbl_suggestionboard set commentCount = commentCount + 1
+		where seq = #{fk_seq} 
+	</update>
+	
+	<!-- === 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
+	<select id="getSuggCmntListPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		select name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
+		from
+		(
+			select row_number() over(order by seq desc) as rno, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			,fk_employeeid
+			from tbl_suggestionboardcomment
+			where fk_seq = #{fk_seq}
+		) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- === 건의사항 원글 글번호(fk_seq)에 해당하는 댓글의 총 페이지수를 알아오기 === -->
+	<select id="getSuggCmntTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*)/#{sizePerPage})
+		from tbl_suggestionboardcomment
+		where fk_seq = #{fk_seq}
+	</select>
 	
 	
 	
@@ -203,6 +241,9 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_generalboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>

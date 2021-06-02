@@ -78,7 +78,7 @@ $(document).ready(function(){
 	 <i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">공지사항</span>
 	
 	 <form name="postFrm"> 
-	    <table id="table">
+	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
 	          <td>
