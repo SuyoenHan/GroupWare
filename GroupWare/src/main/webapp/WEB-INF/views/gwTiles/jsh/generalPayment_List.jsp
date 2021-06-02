@@ -121,7 +121,18 @@
 		 
 		  function goView(ano,ncatname){
 		      
-		      location.href="<%= ctxPath%>/t1/view.tw?ano="+ano+"&ncatname="+ncatname;
+			  <%-- location.href="<%= ctxPath%>/t1/view.tw?ano="+ano+"&ncatname="+ncatname; --%>
+			// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+			    //           사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+			    //           현재 페이지 주소를 뷰단으로 넘겨준다.
+			    	var frm =document.goViewFrm;
+			    	frm.ano.value = ano;
+			    	frm.ncatname.value = ncatname;
+			    	
+			    	frm.method = "get";
+			    	frm.action = "<%= ctxPath%>/t1/view.tw";
+			        frm.submit();
+			  
 		      
 		   }// end of function goView(seq){}--------------------
 		   
@@ -140,7 +151,7 @@
    <%-- === #101. 글검색 폼 추가하기 : 카테고리로 검색을 하도록 한다. === --%>
    <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/generalPayment_List.tw">
       <select name="searchCategory" id="searchCategory" style="height: 26px;">
-         <option value="">카테고리</option>
+         <option value="">::일반결재문서종류::</option>
          <option value="1">회의록</option>
          <option value="2">위임장</option>
          <option value="3">외부공문</option>
@@ -181,11 +192,23 @@
       </c:forEach>  
    </table>    
     
-     <input type="button"  style="margin-top:10px; "onclick="location.href='<%= ctxPath%>/t1/generalPayment_List.tw'"  value="전체목록"/>    
+     
       <!-- === #122. 페이지바 보여주기  -->
    <div align="center" style="with:70%; border:solid 0px gray ; margin:20px auto;">
    			${requestScope.pageBar}
    </div>
+   
+   
+    <%-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+                  페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+	        사용자가 "검색된결과목록보기" 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+	        현재 페이지 주소를 뷰단으로 넘겨준다. --%>
+   <form name="goViewFrm">
+   	<input type="hidden" name="ano"/>
+   	<input type="hidden" name="ncatname"/>
+	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+   </form>
+   
    
    
    

@@ -72,6 +72,23 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 		ElectronPayJshVO epvo =sqlsession6.selectOne("payment_Jsh.generalOneView",paraMap);
 		return epvo;
 	}
+
+
+	//하나의 일반결재내역에서 결재의견 목록 보여주기
+	@Override
+	public List<ElectronPayJshVO> oneOpinionList(Map<String, String> paraMap) {
+		List<ElectronPayJshVO> opinionList = sqlsession6.selectList("payment_Jsh.oneOpinionList",paraMap);
+		return opinionList;
+	}
+
+
+
+	//일반결재 글쓰기
+	@Override
+	public ElectronPayJshVO login_Write(Map<String, String> paraMap) {
+		ElectronPayJshVO write_view =sqlsession6.selectOne("payment_Jsh.login_Write",paraMap);
+		return write_view;
+	}
 	
 	
 	

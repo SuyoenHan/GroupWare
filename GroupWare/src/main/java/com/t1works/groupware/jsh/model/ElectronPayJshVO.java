@@ -56,10 +56,24 @@ public class ElectronPayJshVO {
 /////// 부서
 	   private String dcode;        // 부서코드
 	   private String dname;		 // 부서명
-	   private String managerid;	   // 부서장사번
-	   private String duty;  		      // 직무
+	   private String managerid;	 // 부서장사번
+	   private String duty;  		 // 직무
 		
-	//////
+//////
+	 //직급
+	   private String pname;  // 직급명
+	   
+	   
+/////////////전자결재 의견작성
+	   private String ono;      // 의견순번
+	   //private String fk_ano;   // 문서번호
+	  // private String fk_employeeid;    // 작성자
+	   private String ocontent; // 의견내용
+	   private String odate;    // 작성일자
+	   
+	   
+	   
+	   
 	   
 	   
 	public String getAno() {
@@ -256,13 +270,20 @@ public class ElectronPayJshVO {
 		this.duty = duty;
 	}
 
-	
+	//직급
+	public String getPname() {
+		return pname;
+	}
+	public void setPname(String pname) {
+		this.pname = pname;
+	}
 	
 
 	
 	public String getMno() {
 		return mno;
 	}
+	
 	public void setMno(String mno) {
 		this.mno = mno;
 	}
@@ -305,5 +326,25 @@ public class ElectronPayJshVO {
 	}
 	
 	
+	//전자결재 의견작성
+	public String getOno() {
+		return ono;
+	}
+	public void setOno(String ono) {
+		this.ono = ono;
+	}
+	
+	public String getOcontent() {
+		return ocontent;
+	}
+	public void setOcontent(String ocontent) {
+		this.ocontent = ocontent;
+	}
+	public String getOdate() {
+		return odate;
+	}
+	public void setOdate(String odate) {
+		this.odate = odate;
+	}
 	
 }
