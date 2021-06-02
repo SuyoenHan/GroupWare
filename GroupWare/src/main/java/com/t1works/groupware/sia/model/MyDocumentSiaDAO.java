@@ -87,6 +87,22 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return avo;
 	}
 
+
+	// 내문서함 - 수신함 - 근태결재 결재의견 작성하기
+	@Override
+	public int addOpinion(ApprovalSiaVO avo) {
+		int n = sqlsession4.insert("mydocument_sia.addOpinion", avo);
+		return n;
+	}
+
+
+	// 내문서함 - 수신함 - 근태결재 결재의견 조회하기
+	@Override
+	public List<ApprovalSiaVO> getOpinionList(String parentAno) {
+		List<ApprovalSiaVO> avo = sqlsession4.selectList("mydocument_sia.getOpinionList", parentAno);
+		return avo;
+	}
+
 	
 
 }

@@ -221,8 +221,9 @@
 			<if test='a != ""'>
 				and vno in(${a})
 			</if>
+			and arecipient1=#{userid} or arecipient2=#{userid} or arecipient3=#{userid}
 		) V
-		where rno between #{startRno} and #{endRno}
+		where rno between #{startRno} and #{endRno}		
 		order by asdate desc
 	</select>
 	
@@ -259,7 +260,7 @@
 	
 	<!-- 내문서함 - 문서 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVaction_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
@@ -311,7 +312,7 @@
 		on a.ano = h.fk_ano
 		left join 
 		(
-			select employeeid, name, fk_dcode
+			select employeeid, name, fk_dcode, fk_pcode
 			from tbl_employee 
 		) i
 		on a.fk_employeeid = i.employeeid
@@ -321,10 +322,31 @@
 			from tbl_department
 		) j
 		on i.fk_dcode = j.dcode
+		left join tbl_position p
+		on i.fk_pcode = p.pcode
 		where anocode = 3 and ano = #{ano}
 	</select>
 	
 	
+	<!-- 내문서함 - 수신함 - 근태결재 결재의견 작성하기 -->
+	<insert id="addOpinion" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		insert into tbl_aopinion(ono, fk_ano, fk_employeeid, ocontent, odate)
+		values(seq_tbl_aopinion.nextval, #{parentAno}, #{employeeid}, #{ocontent}, default)
+	</insert>
+	
+	
+	<!-- 내문서함 - 수신함 - 근태결재 결재의견 조회하기 -->
+	<select id="getOpinionList" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select dname, name, pname, to_char(odate, 'yyyy-mm-dd hh24:mi:ss') AS odate, ocontent
+		from tbl_aopinion a left join tbl_employee e
+		on a.fk_employeeid = e.employeeid
+		left join tbl_department d
+		on e.fk_dcode = d.dcode
+		left join tbl_position p
+		on e.fk_pcode = p.pcode
+		where fk_ano = #{parentAno}
+		order by odate
+	</select>
 	
 	
 </mapper>

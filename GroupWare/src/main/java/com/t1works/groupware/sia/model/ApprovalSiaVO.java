@@ -18,16 +18,6 @@ public class ApprovalSiaVO {
 	private String afile;			// 첨부파일
 	private String apaper;			// 문서상태 (0:수신, 1:발신, 2:임시보관)
 	
-	private String rno;
-
-	public String getRno() {
-		return rno;
-	}
-
-	public void setRno(String rno) {
-		this.rno = rno;
-	}
-
 	// 일반결재
 	private String ncat;		// 일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
 	private int fk_ano;			// 문서번호
@@ -44,13 +34,17 @@ public class ApprovalSiaVO {
 	
 	// 직원
 	private String employeeid;	// 사번
-	private String fk_dcode;	// 부서코드	
+	private String fk_dcode;	// 부서코드
+	private String fk_pcode;	// 직급코드
 	private String name;		// 직원명
 	
 	// 부서
 	private String dcode;		// 부서코드
 	private String dname;		// 부서명
 	
+	// 직급
+	private String pcode;		// 직급코드
+	private String pname;		// 직급명
 	
 	// 지출결재
 	private String scat;		// 지출결재카테고리 (1:지출결의서, 2:법인카드사용신청서)	
@@ -101,39 +95,48 @@ public class ApprovalSiaVO {
 	// 추가근무
 	private String ewdate;		// 사용예정일
 	private int ewhours;		// 추가근무시간
+	
+	
+	// 전자결재 의견작성
+	private String ocontent;	// 의견내용
+	private String odate;		// 작성일자
 
+	private String rno;
+
+	private String parentAno;
+	
 	public int getAno() {
 		return ano;
 	}
-	
+
 	public void setAno(int ano) {
 		this.ano = ano;
 	}
-	
+
 	public String getFk_employeeid() {
 		return fk_employeeid;
 	}
-	
+
 	public void setFk_employeeid(String fk_employeeid) {
 		this.fk_employeeid = fk_employeeid;
 	}
-	
+
 	public String getAnocode() {
 		return anocode;
 	}
-	
+
 	public void setAnocode(String anocode) {
 		this.anocode = anocode;
 	}
-	
+
 	public String getArecipient1() {
 		return arecipient1;
 	}
-	
+
 	public void setArecipient1(String arecipient1) {
 		this.arecipient1 = arecipient1;
 	}
-	
+
 	public String getArecipient2() {
 		return arecipient2;
 	}
@@ -149,23 +152,23 @@ public class ApprovalSiaVO {
 	public void setArecipient3(String arecipient3) {
 		this.arecipient3 = arecipient3;
 	}
-	
+
 	public String getAtitle() {
 		return atitle;
 	}
-	
+
 	public void setAtitle(String atitle) {
 		this.atitle = atitle;
 	}
-	
+
 	public String getAstatus() {
 		return astatus;
 	}
-	
+
 	public void setAstatus(String astatus) {
 		this.astatus = astatus;
 	}
-	
+
 	public String getApprovaldate1() {
 		return approvaldate1;
 	}
@@ -189,35 +192,35 @@ public class ApprovalSiaVO {
 	public void setApprovaldate3(String approvaldate3) {
 		this.approvaldate3 = approvaldate3;
 	}
-	
+
 	public String getAcontent() {
 		return acontent;
 	}
-	
+
 	public void setAcontent(String acontent) {
 		this.acontent = acontent;
 	}
-	
+
 	public String getAsdate() {
 		return asdate;
 	}
-	
+
 	public void setAsdate(String asdate) {
 		this.asdate = asdate;
 	}
-	
+
 	public String getAfile() {
 		return afile;
 	}
-	
+
 	public void setAfile(String afile) {
 		this.afile = afile;
 	}
-	
+
 	public String getApaper() {
 		return apaper;
 	}
-	
+
 	public void setApaper(String apaper) {
 		this.apaper = apaper;
 	}
@@ -286,6 +289,14 @@ public class ApprovalSiaVO {
 		this.fk_dcode = fk_dcode;
 	}
 
+	public String getFk_pcode() {
+		return fk_pcode;
+	}
+
+	public void setFk_pcode(String fk_pcode) {
+		this.fk_pcode = fk_pcode;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -308,6 +319,22 @@ public class ApprovalSiaVO {
 
 	public void setDname(String dname) {
 		this.dname = dname;
+	}
+
+	public String getPcode() {
+		return pcode;
+	}
+
+	public void setPcode(String pcode) {
+		this.pcode = pcode;
+	}
+
+	public String getPname() {
+		return pname;
+	}
+
+	public void setPname(String pname) {
+		this.pname = pname;
 	}
 
 	public String getScat() {
@@ -341,7 +368,7 @@ public class ApprovalSiaVO {
 	public void setExprice(int exprice) {
 		this.exprice = exprice;
 	}
-	
+
 	public String getCodate() {
 		return codate;
 	}
@@ -373,7 +400,7 @@ public class ApprovalSiaVO {
 	public void setCoprice(int coprice) {
 		this.coprice = coprice;
 	}
-	
+
 	public String getVno() {
 		return vno;
 	}
@@ -541,6 +568,37 @@ public class ApprovalSiaVO {
 	public void setEwhours(int ewhours) {
 		this.ewhours = ewhours;
 	}
-	
+
+	public String getOcontent() {
+		return ocontent;
+	}
+
+	public void setOcontent(String ocontent) {
+		this.ocontent = ocontent;
+	}
+
+	public String getOdate() {
+		return odate;
+	}
+
+	public void setOdate(String odate) {
+		this.odate = odate;
+	}
+
+	public String getRno() {
+		return rno;
+	}
+
+	public void setRno(String rno) {
+		this.rno = rno;
+	}
+
+	public String getParentAno() {
+		return parentAno;
+	}
+
+	public void setParentAno(String parentAno) {
+		this.parentAno = parentAno;
+	}	
 
 }

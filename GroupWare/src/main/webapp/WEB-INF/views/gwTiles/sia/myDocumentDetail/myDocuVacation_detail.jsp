@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <% String ctxPath = request.getContextPath(); %>
 
@@ -70,6 +71,11 @@ td.opinion{
 	
 	$(document).ready(function(){
 		
+		goViewOpinion();
+		
+		$("input#reset").click(function(){			
+			$("textarea#ocontent").val("");
+		});
 	});
 	
 	
@@ -81,7 +87,62 @@ td.opinion{
 		$myFrm.submit();
 	}
 	
-
+	
+	function goAddWrite(){
+		var opinionVal = $("textarea#ocontent").val().trim();
+		if(opinionVal == ""){
+			alert("의견을 작성하세요!!");
+			return; // 종료
+		}
+		
+		var form_data = $("form[name=addWriteFrm]").serialize();
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/addOpinion.tw",
+			data:form_data,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				goViewOpinion(1);
+				
+				$("textarea#ocontent").val("");
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}// end of function goAddWrite(){}--------------------
+	
+	
+	function goViewOpinion(){
+		$.ajax({
+			url:"<%= ctxPath%>/t1/opinionList.tw",
+			data:{"parentAno":"${requestScope.avo.ano}"},
+			dataType:"json",
+			success:function(json){				
+								
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){						
+						html += "<div>▶"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;["+item.odate+"]</div>";
+						html += "<div>"+ item.ocontent +"</div>";
+						html += "<hr style='margin: 2px;'>";
+					});
+				}
+				else{
+					html += "<div>의견이 존재하지 않습니다.</div>";
+				}
+				
+				$("td#opinionDisplay").html(html);
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+	}// end of function goViewOpinion(){}--------------------
+	
 </script>
 
 <div id="containerview">	
@@ -177,7 +238,7 @@ td.opinion{
 			
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.avo.asdate}</div>
-		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
+		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
 		
 		
 		<table id="table3">
@@ -189,18 +250,25 @@ td.opinion{
 		<table id="table4">
 			<tr>
 				<th>결재의견</th>
-				<td ></td>
-			</tr>
-		</table>
-		<table id="table5">
-			<tr>
-				<th>의견작성</th>
-				<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
-				</td>
-				<td class="opinion" style="width:10%;" align="right"><input type="button" class="btn btn-info" value="작성"/></td>
+				<td id="opinionDisplay"></td>
 			</tr>
 		</table>
 		
+		<form name="addWriteFrm">
+			<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
+			<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
+			<input type="hidden" name="parentAno" value="${requestScope.avo.ano}" />
+			
+			<table id="table5">
+				<tr>				
+					<th>의견작성</th>
+					<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
+					</td>
+					<td class="opinion" style="width:10%;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
+					<input type="button" id="reset" class="btn btn-default" value="취소"/></td>				
+				</tr>
+			</table>
+		</form>
 		
 		
 		<div style="margin-top: 20px;">

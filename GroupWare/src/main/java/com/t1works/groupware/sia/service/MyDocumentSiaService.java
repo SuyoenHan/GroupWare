@@ -87,6 +87,22 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		ApprovalSiaVO avo = dao.myDocuVaction_detail(paraMap);
 		return avo;
 	}
+	
+
+	// 내문서함 - 수신함 - 근태결재 결재의견 작성하기
+	@Override
+	public int addOpinion(ApprovalSiaVO avo) {
+		int n = dao.addOpinion(avo);
+		return n;
+	}
+
+
+	// 내문서함 - 수신함 - 근태결재 결재의견 조회하기
+	@Override
+	public List<ApprovalSiaVO> getOpinionList(String parentAno) {
+		List<ApprovalSiaVO> avo = dao.getOpinionList(parentAno);
+		return avo;
+	}
 
 
 	

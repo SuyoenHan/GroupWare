@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
 import com.t1works.groupware.sia.service.InterMyDocumentSiaService;
 
@@ -28,7 +31,7 @@ public class MyDocumentSiaController {
 	
 	// 내문서함 클릭 시 수신함 일반결재문서로 이동!
 	@RequestMapping(value="/t1/myDocument.tw")
-	public String myDocument() {		
+	public String requiredLogin_myDocument(HttpServletRequest request, HttpServletResponse response) {		
 		return "sia/myDocument/myDocuNorm_rec.gwTiles";
 	}
 	
@@ -46,7 +49,7 @@ public class MyDocumentSiaController {
 	
 	// 내문서함 - 수신함 - 근태휴가결재문서
 	@RequestMapping(value="/t1/myDocuVacation_rec.tw")
-	public String myDocuVacation_rec(HttpServletRequest request) {		
+	public String requiredLogin_myDocuVacation_rec(HttpServletRequest request, HttpServletResponse response) {		
 		
 		request.setAttribute("ano", request.getParameter("ano"));
 		request.setAttribute("astatus", request.getParameter("astatus"));
@@ -473,7 +476,7 @@ public class MyDocumentSiaController {
 	@ResponseBody
 	@RequestMapping(value="/t1/vacation_reclist.tw", produces="text/plain;charset=UTF-8")
 	public String vacation_reclist(HttpServletRequest request) {
-		
+					
 		String anocode = request.getParameter("anocode");
 		String astatus = request.getParameter("astatus");
 		String fromDate = request.getParameter("fromDate");
@@ -525,6 +528,10 @@ public class MyDocumentSiaController {
 		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
 		int endRno = startRno + sizePerPage - 1;
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("anocode", anocode);  
 		paraMap.put("astatus", astatus);
@@ -535,11 +542,11 @@ public class MyDocumentSiaController {
 		paraMap.put("a", a);
 		paraMap.put("startRno", String.valueOf(startRno));
 		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
 		
-		List<ApprovalSiaVO> approvalvo = service.getVacation_reclist(paraMap);
+		List<ApprovalSiaVO> approvalvo = service.getVacation_reclist(paraMap);		
 		
-		JSONArray jsonArr = new JSONArray();
-		
+		JSONArray jsonArr = new JSONArray();		
 		
 		if(approvalvo != null) {
 			for(ApprovalSiaVO appvo : approvalvo) {
@@ -643,22 +650,77 @@ public class MyDocumentSiaController {
 		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
 		
 		
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
 		paraMap.put("vcatname", vcatname);
+		paraMap.put("employeeid", employeeid);
 		
 		try {
-			ApprovalSiaVO avo = service.myDocuVaction_detail(paraMap);
+			// 근태결재문서 한 개 상세보기
+			ApprovalSiaVO avo = service.myDocuVaction_detail(paraMap);						
 			
-			mav.addObject("avo", avo);
+			mav.addObject("avo", avo);		
 			
 		} catch (NumberFormatException e) {
 			
 		}
 		
+		
 		mav.setViewName("sia/myDocumentDetail/myDocuVacation_detail.gwTiles");
 		
 		return mav;
+	}
+	
+	
+	// 내문서함 - 수신함 - 근태결재 결재의견 작성하기
+	@ResponseBody
+	@RequestMapping(value="/t1/addOpinion.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String addOpinion(ApprovalSiaVO avo) { // 그대로 보여주는 것이기 때문에 return 타입은 String
+		
+		int n = service.addOpinion(avo);
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+		jsonObj.put("employeeid", avo.getEmployeeid());
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 내문서함 - 수신함 - 근태결재 결재의견 조회하기
+	@ResponseBody
+	@RequestMapping(value="/t1/opinionList.tw", method= {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
+	public String readComment(HttpServletRequest request) {
+		
+		String parentAno = request.getParameter("parentAno");
+		
+		List<ApprovalSiaVO> opinionList = service.getOpinionList(parentAno);
+		
+		JSONArray jsonArr = new JSONArray(); // []
+		
+		if(opinionList != null) {
+			for(ApprovalSiaVO avo : opinionList) {
+				JSONObject jsonObj = new JSONObject();				
+				jsonObj.put("dname", avo.getDname());
+				jsonObj.put("name", avo.getName());
+				jsonObj.put("pname", avo.getPname());
+				jsonObj.put("odate", avo.getOdate());
+				jsonObj.put("ocontent", avo.getOcontent());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		return jsonArr.toString();		
 	}
 	
 	
