@@ -18,6 +18,15 @@ public class ApprovalSiaVO {
 	private String afile;			// 첨부파일
 	private String apaper;			// 문서상태 (0:수신, 1:발신, 2:임시보관)
 	
+	private String rno;
+
+	public String getRno() {
+		return rno;
+	}
+
+	public void setRno(String rno) {
+		this.rno = rno;
+	}
 
 	// 일반결재
 	private String ncat;		// 일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)

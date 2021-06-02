@@ -31,11 +31,20 @@ public class ProductHsyService implements InterProductHsyService {
 	private InterTwLocationHsyDAO tldao;
 
 	
-	// 여행사 홈페이지에서 보여줄 상품정보 가져오기
+	// 여행사 홈페이지에서 보여줄 상품정보 가져오기 => 페이징바 처리
 	@Override
-	public List<ProductHsyVO> selectProductInfoForHome() {
+	public List<ProductHsyVO> selectProductInfoForHome(Map<String,String> paraMap) {
 
-		List<ProductHsyVO> pvoList= pdao.selectProductInfoForHome();
+		int currentShowPageNo= Integer.parseInt(paraMap.get("currentShowPageNo"));
+		int sizePerPage= Integer.parseInt(paraMap.get("sizePerPage"));
+		
+		String start=String.valueOf((currentShowPageNo * sizePerPage) - (sizePerPage - 1));
+		String end=String.valueOf((currentShowPageNo * sizePerPage));
+		 
+		paraMap.put("start", start);
+		paraMap.put("end", end);
+		
+		List<ProductHsyVO> pvoList= pdao.selectProductInfoForHome(paraMap);
 		
 		// 여행시작일과 여행 종료일 데이터 형태 바꿔주기
 		for(ProductHsyVO pvo: pvoList) {
@@ -74,6 +83,11 @@ public class ProductHsyService implements InterProductHsyService {
 			}
 			
 			pvo.setEndDate(year+"년 "+month+"월 "+day+"일");
+			
+			// 3) 당일치기 상품인 경우를 고려하여 period 데이터 형태 바꿔주기
+			if("0".equals(pvo.getPeriod().substring(0, 1))){
+				pvo.setPeriod("당일여행");
+			}
 			
 		} // end of for(ProductHsyVO pvo: pvoList) {-------------
 		
@@ -142,6 +156,11 @@ public class ProductHsyService implements InterProductHsyService {
 		
 		if(pvo.getMiniNo().length()==1) {
 			pvo.setMiniNo("0"+pvo.getMiniNo());
+		}
+		
+		// 4) 당일치기 상품인 경우를 고려하여 period 데이터 형태 바꿔주기
+		if("0".equals(pvo.getPeriod().substring(0, 1))){
+			pvo.setPeriod("당일여행");
 		}
 		
 		return pvo;
@@ -350,6 +369,16 @@ public class ProductHsyService implements InterProductHsyService {
 		*/
 	
 	} // end of public int changeCountAjax(ClientHsyVO cvo) throws Throwable {----
+
+
+	// 상품목록 총 페이지 수
+	@Override
+	public int selectProductTotalPage(Map<String, String> paraMap) {
+
+		int n=pdao.selectProductTotalPage(paraMap);
+		return n;
+		
+	} // end of public int selectProductTotalPage(Map<String, String> paraMap) {-----
 
 	
 }

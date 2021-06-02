@@ -1,9 +1,13 @@
 package com.t1works.groupware.hsy.controller;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.t1works.groupware.hsy.model.*;
+import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
+import com.t1works.groupware.hsy.model.DepartmentHsyVO;
+import com.t1works.groupware.hsy.model.MemberHsyVO;
 import com.t1works.groupware.hsy.service.InterMemberHsyService;
 
 @Component
@@ -23,6 +30,9 @@ public class MemberHsyController {
 	
 	@Autowired 
 	private InterMemberHsyService service;
+	
+	@Autowired 
+	private InterHomepageBwbService service2;
 	
 	
 	// 주소록(조직도) 매핑 주소
@@ -152,6 +162,67 @@ public class MemberHsyController {
 		return jsonObj.toString();
 	
 	} // end of public String employeeInfoAjaxHsy(HttpServletRequest request) {-----
+	
+	
+	
+	// 월급관리 url 매핑
+	@RequestMapping(value="/t1/salary.tw")        // 로그인이 필요한 url
+	public ModelAndView requiredLogin_salary(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser= (MemberBwbVO) session.getAttribute("loginuser");
+		
+		// 1) 특정 직원의 입사일 가져오기 => 입사일을 년도, 월, 일 단위로 나눠서 뷰단으로 넘기기
+		String hiredate= loginuser.getHiredate();
+		
+		// System.out.println(loginuser.getHiredate());
+		// 2010-07-10 00:00:00.0
+		
+		mav.addObject("hireYear", hiredate.substring(0,4));
+		mav.addObject("hireMonth", hiredate.substring(5,7));
+		mav.addObject("hireDay", hiredate.substring(8,10));
+		
+		// 2) 현재날짜 가져오기 => 년도, 월, 일 단위로 나눠서 뷰단으로 넘기기
+		Calendar currentDate = Calendar.getInstance();
+		int currentYear = currentDate.get(Calendar.YEAR);
+		int currentMonth = currentDate.get(Calendar.MONTH)+1;
+		int currentDay = currentDate.get(Calendar.DATE);
+		
+		mav.addObject("currentYear", currentYear);
+		mav.addObject("currentMonth", currentMonth);
+		mav.addObject("currentDay", currentDay);
+		
+		mav.setViewName("hsy/employee/salary.gwTiles");
+		return mav;
+		
+	} // end of public ModelAndView requiredLogin_salary(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) ----
+	
+	
+	
+	// 입력 비밀번호가 일치하는지 확인하는 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/passwdCheckForSalary.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String passwdCheckForSalary(HttpServletRequest request) {
+		
+		String employeeid=request.getParameter("employeeid");
+		String passwd=request.getParameter("passwd");
+		
+		Map<String,String> paraMap = new HashMap<>();
+        paraMap.put("employeeid", employeeid);
+        paraMap.put("passwd", passwd);
+        
+        // 입력한 비밀번호가 일치하는지에 따라 json에 값 넣어주기
+        MemberBwbVO mvo= service2.selectMember(paraMap);
+        
+        JSONObject jsonObj= new JSONObject();
+		if(mvo==null) jsonObj.put("n", 0);   // 비밀번호가 일치하지 않는 경우
+		else jsonObj.put("n", 1); // 비밀번호가 일치하는 경우
+		
+		
+		return jsonObj.toString();
+		
+	} // end of public String passwdCheckForSalary(MemberHsyVO mvo) {----
+	
 	
 	
 }

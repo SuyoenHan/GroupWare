@@ -21,7 +21,7 @@
 		<table id="right-menu-style">
 		   	<tbody>
 		   		<tr style="height: 30px;">
-		   			<td class="home"><i class="fas fa-home fa-2x"></i></td>
+		   			<td class="t1tour-shortcut"><i class="fas fa-plane fa-2x"></i></td>
 		   			<td class="mypage"><i class="far fa-user-circle fa-2x"></i></td>
 		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
 		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
@@ -34,7 +34,7 @@
 		   			</td>
 		   		</tr>
 		   		<tr style="height: 20px;">
-		   			<td class="home">홈</td>
+		   			<td class="t1tour-shortcut">티원투어</td>
 		   			<td class="mypage">마이페이지</td>
 		   			<td class="schedule">일정관리</td>
 		   			<td class="rsv">예약현황</td>

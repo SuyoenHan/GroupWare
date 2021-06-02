@@ -5,12 +5,18 @@
 <mapper namespace="productHsy">
 
 	<!-- 여행사 홈페이지에서 보여줄 상품정보 가져오기 -->
-	<select id="selectProductInfoForHome" resultType="com.t1works.groupware.hsy.model.ProductHsyVO">
-		select pNo, pName, to_char(startDate,'yyyy-mm-dd') as startDate,
-		       to_char(endDate,'yyyy-mm-dd') as endDate, pImage, to_char(endDate-startdate) ||'박 '|| to_char(endDate-startdate+1) ||'일' as period,
-		       to_char(to_number(maxNo)-to_number(nowNo)) as remainCnt 
-		from tbl_product
-		order by startDate
+	<select id="selectProductInfoForHome" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.ProductHsyVO">
+		select rno, pNo, pName, startDate, endDate, pImage, period, remainCnt
+		from
+		(
+			select row_number() over(order by startDate) as rno, pNo, pName, to_char(startDate,'yyyy-mm-dd') as startDate,
+			       to_char(endDate,'yyyy-mm-dd') as endDate, pImage, to_char(endDate-startdate) ||'박 '|| to_char(endDate-startdate+1) ||'일' as period,
+			       to_char(to_number(maxNo)-to_number(nowNo)) as remainCnt 
+			from tbl_product
+			where startDate > sysdate
+		) V1
+		where rno between #{start} and #{end}
+		order by rno
 	</select>
 
 
@@ -66,5 +72,10 @@
 		update tbl_product set nowNo= to_number(nowNo)-to_number(#{cnumber})
 		where pNo= #{fk_pNo}
 	</update>
+	
+	<!-- 상품목록 총 페이지 수 -->
+	<select id="selectProductTotalPage" parameterType="HashMap" resultType="Integer">
+		select ceil(count(*)/#{sizePerPage}) as cnt from tbl_product
+	</select>
 	
 </mapper>

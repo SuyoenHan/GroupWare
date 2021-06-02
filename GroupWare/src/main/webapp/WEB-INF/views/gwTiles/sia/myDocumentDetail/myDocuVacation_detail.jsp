@@ -27,7 +27,7 @@ table, th, td {border: solid 1px gray;}
 	background-color: #395673; 
 	color: #ffffff;
 }
-#table2 th {
+#table2 th, #table3 th, #table4 th, #table5 th {
 	width: 150px;
 }
 
@@ -43,12 +43,27 @@ td{
 	width: 70%;
 	margin: 50px auto;
 }
+#table3 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table4 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table5 {
+	width: 70%;
+	margin: 10px auto;
+}
 input.btn {
 	width: 70px;
 	border-radius: 0;
 	font-weight: bold;
 }
 
+td.opinion{
+	border: solid 1px white;
+}
 </style>
 
 <script type="text/javascript">
@@ -164,27 +179,53 @@ input.btn {
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.avo.asdate}</div>
 		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
 		
+		
+		<table id="table3">
+			<tr>
+				<th>결재로그</th>
+				<td></td>
+			</tr>
+		</table>
+		<table id="table4">
+			<tr>
+				<th>결재의견</th>
+				<td ></td>
+			</tr>
+		</table>
+		<table id="table5">
+			<tr>
+				<th>의견작성</th>
+				<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
+				</td>
+				<td class="opinion" style="width:10%;" align="right"><input type="button" class="btn btn-info" value="작성"/></td>
+			</tr>
+		</table>
+		
+		
+		
 		<div style="margin-top: 20px;">
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 50%">
+			<span style="margin-left: 50%;">
 				<input type="button" class="btn btn-primary" value="결재"/>
 				<input type="button" class="btn btn-warning" value="보류"/>
 				<input type="button" class="btn btn-danger" value="반려"/>
 			</span>
-		</div>		
+		</div>
+		
+		<br><br>
 	</div>
 	
 	<form name="myFrm">
 		<input type="hidden" name="ano" value="${ano}" />
-		<input type="hidden" name="vcatname" value="${vcatname}" />
-		<input type="hidden" name="anocode" value="3" />
+		<input type="hidden" name="vcatname" value="${vcatname}" />		
 		<input type="hidden" name="astatus" value="${astatus}" />
 		<input type="hidden" name="fromDate" value="${fromDate}" />
 		<input type="hidden" name="toDate" value="${toDate}" />
 		<input type="hidden" name="vno" value="${vno}" />
 		<input type="hidden" name="sort" value="${sort}" />
 		<input type="hidden" name="searchWord" value="${searchWord}" />
+		<input type="hidden" name="currentShowPageNo" value="${currentShowPageNo}" />
 	</form>
 </div>
