@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class BoardDAOKdn implements InterBoardDAOKdn {
+public class BoardKdnDAO implements InterBoardKdnDAO {
 	
 	@Resource
 	private SqlSessionTemplate sqlsession3; // 원격DB에 연결
@@ -18,7 +18,7 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 	// =========== 공지사항 =============
 	// 공지사항 글쓰기
 	@Override
-	public int noticePostUpload(BoardVOKdn boardvo) {
+	public int noticePostUpload(BoardKdnVO boardvo) {
 		int n = sqlsession3.insert("board.noticePostUpload", boardvo);
 		return n;
 	}
@@ -32,8 +32,8 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 공지사항 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 	@Override
-	public List<BoardVOKdn> noticeBoardListSearchWithPaging(Map<String, String> paraMap) {
-		List<BoardVOKdn> boardList = sqlsession3.selectList("board.noticeBoardListSearchWithPaging", paraMap);
+	public List<BoardKdnVO> noticeBoardListSearchWithPaging(Map<String, String> paraMap) {
+		List<BoardKdnVO> boardList = sqlsession3.selectList("board.noticeBoardListSearchWithPaging", paraMap);
 		return boardList;
 	}
 	
@@ -45,14 +45,14 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 공지사항 글1개 조회하기
 	@Override
-	public BoardVOKdn getView(String seq) {
-		BoardVOKdn boardvo = sqlsession3.selectOne("board.getView", seq);
+	public BoardKdnVO getView(String seq) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getView", seq);
 		return boardvo;
 	}
 	
 	// 공지사항 글 수정하기
 	@Override
-	public int noticeEdit(BoardVOKdn boardvo) {
+	public int noticeEdit(BoardKdnVO boardvo) {
 		int n = sqlsession3.update("board.noticeEdit", boardvo);
 		return n;
 	}
@@ -69,8 +69,8 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// (건의사항) 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 	@Override
-	public List<BoardVOKdn> listSearchWithPaging(Map<String, String> paraMap) {
-		List<BoardVOKdn> boardList = sqlsession3.selectList("board.listSearchWithPaging", paraMap);
+	public List<BoardKdnVO> listSearchWithPaging(Map<String, String> paraMap) {
+		List<BoardKdnVO> boardList = sqlsession3.selectList("board.listSearchWithPaging", paraMap);
 		return boardList;
 	}
 
@@ -83,15 +83,15 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 건의사항 게시판 글쓰기 완료 요청
 	@Override
-	public int suggPostUpload(BoardVOKdn boardvo) {
+	public int suggPostUpload(BoardKdnVO boardvo) {
 		int n = sqlsession3.insert("board.suggPostUpload", boardvo);
 		return n;
 	}
 
 	// 건의사항 글1개 조회하기
 	@Override
-	public BoardVOKdn getSuggPostView(String seq) {
-		BoardVOKdn boardvo = sqlsession3.selectOne("board.getSuggPostView", seq);
+	public BoardKdnVO getSuggPostView(String seq) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getSuggPostView", seq);
 		return boardvo;
 	}
 
@@ -103,7 +103,7 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 건의사항 글 수정하기
 	@Override
-	public int suggEdit(BoardVOKdn boardvo) {
+	public int suggEdit(BoardKdnVO boardvo) {
 		int n = sqlsession3.update("board.suggEdit", boardvo);
 		return n;
 	}
@@ -120,7 +120,7 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 	
 	// 자유게시판 글쓰기 완료 요청
 	@Override
-	public int genPostUpload(BoardVOKdn boardvo) {
+	public int genPostUpload(BoardKdnVO boardvo) {
 		int n = sqlsession3.insert("board.genPostUpload", boardvo);
 		return n;
 	}
@@ -134,15 +134,15 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 	@Override
-	public List<BoardVOKdn> genListSearchWithPaging(Map<String, String> paraMap) {
-		List<BoardVOKdn> boardList = sqlsession3.selectList("board.genListSearchWithPaging", paraMap);
+	public List<BoardKdnVO> genListSearchWithPaging(Map<String, String> paraMap) {
+		List<BoardKdnVO> boardList = sqlsession3.selectList("board.genListSearchWithPaging", paraMap);
 		return boardList;
 	}
 
 	// 자유게시판 글1개 조회하기
 	@Override
-	public BoardVOKdn getGenPostView(String seq) {
-		BoardVOKdn boardvo = sqlsession3.selectOne("board.getGenPostView", seq);
+	public BoardKdnVO getGenPostView(String seq) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getGenPostView", seq);
 		return boardvo;
 	}
 
@@ -155,7 +155,7 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 
 	// 글 수정하기
 	@Override
-	public int generalEdit(BoardVOKdn boardvo) {
+	public int generalEdit(BoardKdnVO boardvo) {
 		int n = sqlsession3.update("board.generalEdit", boardvo);
 		return n;
 	}
@@ -166,6 +166,35 @@ public class BoardDAOKdn implements InterBoardDAOKdn {
 		int n = sqlsession3.delete("board.generalDel",paraMap);
 		return n;
 	}
+
+	// 댓글쓰기(tbl_generalboardcomment 테이블에 insert)
+	@Override
+	public int addComment(CommentKdnVO commentvo) {
+		int n = sqlsession3.insert("board.addComment", commentvo);
+		return n;
+	}
+
+	// tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update)
+	@Override
+	public int updateCommentCount(String fk_seq) {
+		int n = sqlsession3.update("board.updateCommentCount",fk_seq);
+		return n;
+	}
+
+	// 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
+	@Override
+	public List<CommentKdnVO> getCommentListPaging(Map<String, String> paraMap) {
+		List<CommentKdnVO> commentList = sqlsession3.selectList("board.getCommentListPaging", paraMap);
+		return commentList;
+	}
+	
+	// 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
+	@Override
+	public int getCommentTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession3.selectOne("board.getCommentTotalPage", paraMap);
+		return totalPage;
+	}
+
 
 	
 

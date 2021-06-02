@@ -1,6 +1,6 @@
 package com.t1works.groupware.kdn.model;
 
-public class BoardVOKdn {
+public class BoardKdnVO {
 
 	private String seq;          // 게시글 시퀀스번호 
 	private String postIndex;			 // 실제 게시판 글번호
@@ -21,9 +21,9 @@ public class BoardVOKdn {
 	   
 	   private String fk_categnum;		// 카테고리번호 
 	   
-	   public BoardVOKdn() {}
+	   public BoardKdnVO() {}
 	   
-	   public BoardVOKdn(String seq, String fk_employeeid, String name, String subject, String content, String pw, String readCount,
+	   public BoardKdnVO(String seq, String fk_employeeid, String name, String subject, String content, String pw, String readCount,
 			String regDate, String status, String fk_categnum) {
 		super();
 		this.seq = seq;
