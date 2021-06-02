@@ -164,6 +164,7 @@ button.btn_normal{
 						<option value="2">사내 캘린더</option>
 					</select>&nbsp;&nbsp;	
 					<select id="searchType" name="searchType" style="height: 30px;">
+						<option value="">선택</option>
 						<option value="subject">제목</option>
 						<option value="content">내용</option>
 						<option value="joinemployee">공유자</option>
@@ -182,13 +183,18 @@ button.btn_normal{
 			</div>
 	</div>
 	<table id="schedule" class="table table-bordered">
-		<tr>
-			<th style="text-align: center; width: 20%;">일자</th>
-			<th style="text-align: center; width: 15%;">캘린더</th>
-			<th style="text-align: center; width: 10%;">등록자</th>
-			<th style="text-align: center; width: 30%">제목</th>
-			<th style="text-align: center;">내용</th>
-		</tr>
+	
+		<thead>
+			<tr>
+				<th style="text-align: center; width: 20%;">일자</th>
+				<th style="text-align: center; width: 15%;">캘린더</th>
+				<th style="text-align: center; width: 10%;">등록자</th>
+				<th style="text-align: center; width: 30%">제목</th>
+				<th style="text-align: center;">내용</th>
+			</tr>
+		</thead>
+		
+		<tbody>
 		<c:if test="${empty scheduleList}">
 			<tr>
 				<td colspan="5" style="text-align: center;">검색 결과가 없습니다.</td>
@@ -206,7 +212,7 @@ button.btn_normal{
 					</tr>
 				</c:forEach>
 			</c:if>
-		
+		</tbody>
 	</table>
 
 <div align="center" style="width: 70%; border: solid 0px gray; margin: 20px auto;">${requestScope.pageBar}</div>
