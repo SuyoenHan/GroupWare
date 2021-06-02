@@ -70,7 +70,8 @@
 	<!-- 사번에 해당하는 직원정보 가져오기  -->
 	<select id="employeeInfoAjaxHsy" parameterType="String" resultType="com.t1works.groupware.hsy.model.MemberHsyVO">
 		select employeeid, email, name, nvl2(mobile,(substr(mobile,1,3)||'-'||substr(mobile,4,4)||'-'||substr(mobile,8)),'-') as mobile,
-	      	   substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, nvl(dname,'-') as dname, pname, salary, nvl(duty,'-') as duty
+	      	   substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, nvl(dname,'-') as dname,
+	      	   pname, salary, nvl(duty,'-') as duty, commissionpercase
 		from tbl_employee left join tbl_department on fk_dcode=dcode
 		left join tbl_position on fk_pcode=pcode
 		where employeeid= #{employeeid}
@@ -119,5 +120,22 @@
 		where fk_employeeid=#{employeeid} 
 		and to_char(doLateSysdate,'yyyy-mm')= #{date}
 	</select>
+	
+	
+	<!-- 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기 Map 정의 -->
+	<resultMap type="HashMap" id="getDoneCntMap">
+		<result property="specificDoneCnt" column="specificDoneCnt" javaType="String"/>
+		<result property="prevDoneCnt" column="prevDoneCnt" javaType="String"/>
+	</resultMap>
+	
+	<!-- 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기 -->
+	<select id="getDoneCnt" parameterType="HashMap" resultMap="getDoneCntMap">
+		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
+		        and to_char(endDate,'yyyy-mm')= #{date}) as specificDoneCnt
+		      ,(select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
+				and to_char(endDate,'yyyy-mm')=#{prevDate}) as prevDoneCnt
+		from dual
+	</select>
+	
 	
 </mapper>

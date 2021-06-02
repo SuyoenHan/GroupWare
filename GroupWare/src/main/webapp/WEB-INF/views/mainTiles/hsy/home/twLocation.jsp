@@ -5,7 +5,7 @@
 <style type="text/css">
 
    div#title {
-      font-size: 18pt;
+      font-size: 25pt;
       border: solid 0px red;
       padding: 12px 0;
       text-align: center;
@@ -20,41 +20,42 @@
         padding: 5px 3px;
      }
      
-     div.mycontent>.title {
-        font-size: 12pt;
-        font-weight: bold;
-        background-color:  #0071bd;
-        color: #fff;
-        text-align: center;
-     }
-     
-     div.mycontent>.title>a {
-        text-decoration: none;
-        color: #fff;
-     }
-     
-     
-     div.mycontent>.desc {
-      /* border: solid 1px red; */
-        padding: 10px 0 0 0;
-        color: #000;
-        font-weight: normal;
-        font-size: 9pt;
-     }
-     
-     div.mycontent img {
-        width: 150px;
-        height: 70px;
-        margin-left:22px;
-     }
-     
-     div.mycontent span{
-    	margin-left:22px;
-     }
-	
+    div.mycontent>.title {
+       font-size: 12pt;
+       font-weight: bold;
+       background-color:  #0071bd;
+       color: #fff;
+       text-align: center;
+    }
+    
+    div.mycontent>.title>a {
+       text-decoration: none;
+       color: #fff;
+    }
+    
+    
+    div.mycontent>.desc {
+     /* border: solid 1px red; */
+       padding: 10px 0 0 0;
+       color: #000;
+       font-weight: normal;
+       font-size: 9pt;
+    }
+    
+    div.mycontent img {
+       width: 150px;
+       height: 70px;
+       margin-left:22px;
+    }
+    
+    div.mycontent span{
+   	margin-left:22px;
+    }
+
 	div#goHome span{
 		cursor: pointer;
 		color: #9e9e9e;
+		font-size:15pt;
 	}
 	
 	div#goHome span:hover{
@@ -63,15 +64,17 @@
 	}
 	
 	div#goHome{
-		margin: 40px 0px 60px 600px;
+		width:95%;
+		text-align: center;
+		margin: 50px 0px 50px 0px;
 	}
 	
 </style>
 
 
-<div id="content">
-	<div id="title">T1Works 여행사 지점 위치 안내</div>
-	<div id="map" style="width:60%; height:450px; margin-left:240px; margin-bottom: 20px;"></div>
+<div id="content" style="clear: both;">
+	<div id="title" style="padding-top:50px;">티원투어 지점 위치 안내</div>
+	<div id="map" style="width:60%; height:500px; margin-left:270px; margin-bottom: 20px;"></div>
 	<div id="goHome"><span onclick="location.href='<%=ctxPath%>/t1/travelAgency.tw'">홈페이지로 이동</span></div>
 </div>
 

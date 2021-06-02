@@ -18,10 +18,12 @@ public class MemberHsyVO {
 	
 	
 	// select용 변수 생성
-	private String pname;         // 직위명
-	private String dname;         // 부서명
-	private String duty;          // 직무
-	private String salary;        // 기본급
+	private String pname;         		// 직위명
+	private String dname;         		// 부서명
+	private String duty;          		// 직무
+	private String salary;        		// 기본급
+	private String commissionpercase; 	// 건당 성과금
+	
 	
 	public String getEmployeeid() {
 		return employeeid;
@@ -140,6 +142,13 @@ public class MemberHsyVO {
 	}
 	public void setSalary(String salary) {
 		this.salary = salary;
+	}
+	
+	public String getCommissionpercase() {
+		return commissionpercase;
+	}
+	public void setCommissionpercase(String commissionpercase) {
+		this.commissionpercase = commissionpercase;
 	}
 	
 }

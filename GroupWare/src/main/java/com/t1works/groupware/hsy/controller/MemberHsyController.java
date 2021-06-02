@@ -275,7 +275,7 @@ public class MemberHsyController {
 		mav.addObject("currentMonth", currentMonth);
 		mav.addObject("currentDay",currentDay);
 		
-		// 3-1) 월급명세서에 필요한 정보 가져오기 => 인적사항 (사번/성명/소속/직급)
+		// 3-1) 월급명세서에 필요한 정보 가져오기 => 인적사항 (사번/성명/소속/직급) + 건당성과금(성과금 계산을 위함)
 		MemberHsyVO mvo= service.employeeInfoAjaxHsy(employeeid);
 		mav.addObject("mvo", mvo);
 		
@@ -296,6 +296,7 @@ public class MemberHsyController {
 		Map<String,String> paraMap= new HashMap<>();
 		paraMap.put("employeeid", employeeid);
 		paraMap.put("date",year+"-"+month);
+		paraMap.put("prevDate", year+"-"+(Integer.parseInt(month)-1));
 		paraMap.put("anoForIn", anoForIn);
 		
 		// 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기
@@ -422,7 +423,11 @@ public class MemberHsyController {
 		mav.addObject("totalLateWorkTime", totalLateWorkTime); // 야근시간이 없는 경우 0
 		
 		
-		mav.setViewName("hsy/employee/salaryDetail.gwTiles");
+		// 3-5) 월급명세서에 필요한 정보 가져오기 => 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기
+		Map<String,String> doneCntMap= service.getDoneCnt(paraMap);
+		mav.addObject("doneCntMap", doneCntMap);
+		
+		mav.setViewName("hsy/salaryDetail");
 		return mav;
 		
 	} // end of public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {------

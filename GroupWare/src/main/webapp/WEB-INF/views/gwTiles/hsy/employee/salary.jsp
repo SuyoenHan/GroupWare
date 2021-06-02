@@ -30,7 +30,8 @@
 	
 	select#salaryYear {
 		cursor: pointer;
-		width: 100px;
+		width: 120px;
+		height: 30px;
 	}
 
 </style>
@@ -45,7 +46,7 @@
 		var hireYear=Number("${hireYear}");
 		
 		var html="";
-		for(var i=currentYear; i>=hireYear; i--) {html+="<option value="+i+">&nbsp;&nbsp;&nbsp;&nbsp;"+i+"년</option>";}
+		for(var i=currentYear; i>=hireYear; i--) {html+="<option value="+i+">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+i+"년</option>";}
 		$("select#salaryYear").html(html);
 
 		// 선택한 년도의 월급이 존재하는 월들만 행들로 나타내주는 함수 호출 (default 현재년도)
@@ -81,12 +82,11 @@
 	   		success:function(json){
 	   			
 	   			var html= '<tr style="height:50px; background-color: #003d66; color:#fff; font-weight: bold; ">'+
-							  '<th style="width: 10%; text-align: center;">순번</th>'+
-							  '<th style="width: 25%; text-align: center;">근무기간</th>'+
-							  '<th style="width: 10%; text-align: center;">소속</th>'+
-							  '<th style="width: 10%; text-align: center;">직위</th>'+
-							  '<th style="width: 35%; text-align: center;">급여합계</th>'+
-							  '<th style="width: 10%; text-align: center;">월급명세서</th>'+
+							  '<th style="width: 10%; text-align: center; border: solid 0px red;">순번</th>'+
+							  '<th style="width: 30%; text-align: center; border: solid 0px red;">근무기간</th>'+
+							  '<th style="width: 20%; text-align: center; border: solid 0px red;">소속부서</th>'+
+							  '<th style="width: 10%; text-align: center; border: solid 0px red;">직위</th>'+
+							  '<th style="text-align: center; border: solid 0px red;">급여명세서</th>'+
 						  '</tr>'+
 	   					  '<tr class="salaryListTr">';
 	   			var cnt=1;  // 순번 표시를 위함
@@ -97,24 +97,23 @@
 	   					html+= "<td>"+cnt+"</td>";
 	   					 
 			   			if(i==2){ // 2월 윤달 고려하여 근무기간 설정
-			   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
-			   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
+			   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
+			   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
 			   			}		 
 			   			else if(i==4 || i==6 || i==9 ||i==11){ // 30일까지 존재하는 달
-			   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-			   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
+			   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+			   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
 			   			}		 
 			   			else{ // 31일까지 존재하는 달
-			   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-			   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
+			   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+			   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
 			   			}
 			   			
 				   	   	html+=     "<td>"+json.dname+"</td>"+
 				   				   "<td>"+json.pname+"</td>"+
-				   				   "<td>"+json.salary+"</td>"+
 				   				   "<td>"+
-				   						"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm'>"+
-				   						 	 "<span class='glyphicon glyphicon-print'></span>&nbsp;print"+
+				   						"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm' style='width:50% !important;'>"+
+				   						 	 "<span class='glyphicon glyphicon-print'></span>&nbsp;&nbsp;&nbsp;명세서&nbsp;출력"+
 				   						"</a>"+
 				   				   "</td>"+
 			   				   "</tr>";
@@ -130,55 +129,54 @@
 	   						
 	   						if(hireDay<10){ // 입사일이 두자리가 아닌 경우 앞에 0 붙여주기
 	   							if(i==2){ // 2월 윤달 고려하여 근무기간 설정
-					   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
-					   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
+					   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
+					   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
 					   			}		 
 					   			else if(i==4 || i==6 || i==9 ||i==11){ // 30일까지 존재하는 달
-					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
+					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
 					   			}		 
 					   			else{ // 31일까지 존재하는 달
-					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;0"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
+					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;0"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
 					   			}	
 	   						} // end of if----------------------------
 	   						else{ // 입사일이 두자리인 경우 그대로 표시
 	   							if(i==2){ // 2월 윤달 고려하여 근무기간 설정
-					   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
-					   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
+					   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
+					   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
 					   			}		 
 					   			else if(i==4 || i==6 || i==9 ||i==11){ // 30일까지 존재하는 달
-					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
+					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
 					   			}		 
 					   			else{ // 31일까지 존재하는 달
-					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;"+hireDay+"일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
+					   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+					   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;"+hireDay+"일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
 					   			}	
 	   						}
 	   					} // end of if---------------------------------
 	   					else{
 	   						if(i==2){ // 2월 윤달 고려하여 근무기간 설정
-				   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
-				   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
+				   				if(year%4==0) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;29일</td>"; // 윤달인 경우
+				   				else html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;28일</td>"; // 윤달이 아닌 경우
 				   			}		 
 				   			else if(i==4 || i==6 || i==9 ||i==11){ // 30일까지 존재하는 달
-				   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-				   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
+				   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;30일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+				   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;30일</td>";  // 월이 2자리인 경우 그대로 표시
 				   			}		 
 				   			else{ // 31일까지 존재하는 달
-				   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
-				   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;-&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
+				   				if(i<10) html+="<td>"+year+"년&nbsp;0"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;0"+i+"월&nbsp;31일</td>"; // 월이 2자리가 아닌 경우 앞에 0 표시
+				   				else html+="<td>"+year+"년&nbsp;"+i+"월&nbsp;01일&nbsp;&nbsp;-&nbsp;&nbsp;"+year+"년&nbsp;"+i+"월&nbsp;31일</td>"; // 월이 2자리인 경우 그대로 표시
 				   			}
 	   					} // end of else----------------------------------
 			   			
 	   					html+=     "<td>"+json.dname+"</td>"+
 		   				   		   "<td>"+json.pname+"</td>"+
-		   				   		   "<td>"+json.salary+"</td>"+
 		   				   		   "<td>"+
-		   								"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm'>"+
-		   						 	        "<span class='glyphicon glyphicon-print'></span>&nbsp;print"+
-		   								"</a>"+
+				   				   		"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm' style='width:50% !important;'>"+
+			   						 	 	"<span class='glyphicon glyphicon-print'></span>&nbsp;&nbsp;&nbsp;명세서&nbsp;출력"+
+			   							"</a>"+
 		   				   		   "</td>"+
 	   				   			"</tr>";
 	   					cnt++;			
@@ -204,11 +202,10 @@
 			   			
 	   					html+=     "<td>"+json.dname+"</td>"+
 				   				   "<td>"+json.pname+"</td>"+
-				   				   "<td>"+json.salary+"</td>"+
 				   				   "<td>"+
-				   						"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm'>"+
-				   						 	 "<span class='glyphicon glyphicon-print'></span>&nbsp;print"+
-				   						"</a>"+
+						   				"<a href='javascript:getSalaryDetail("+year+","+i+");' class='btn btn-primary btn-sm' style='width:50% !important;'>"+
+			   						 		 "<span class='glyphicon glyphicon-print'></span>&nbsp;&nbsp;&nbsp;명세서&nbsp;출력"+
+			   							"</a>"+
 				   				   "</td>"+
 	   				  		 "</tr>";
 	   					cnt++;	 
@@ -234,9 +231,6 @@
 		var $frm= document.salaryHiddenForm;
 		$frm.year.value=year;
 		$frm.month.value=month;
-		
-		$frm.method="POST";
-		$frm.action="<%=ctxPath%>/t1/salaryDetailForm.tw";
 			
 		var employeeid= "${loginuser.employeeid}";
 		var passwd= prompt("비밀번호를 입력하세요","비밀번호를 입력하세요"); 
@@ -250,8 +244,14 @@
 		   		data:{"employeeid":employeeid,"passwd":passwd},
 		   		dataType:"json",
 		   		success:function(json){
-		   			if(json.n==1){ // 비밀번호가 일치하는 경우 => 월급명세서 화면으로 이동
+		   			if(json.n==1){ // 비밀번호가 일치하는 경우 => 월급명세서 화면으로 이동 (새창으로 띄우기)
+		   				
+		   				window.open("", "salary_window", "width=1200px, height=600px, top=50px, left=50px, scrollbars=yes");
+		   				$frm.method="POST";	
+		   				$frm.target="salary_window"	
+		   				$frm.action="<%=ctxPath%>/t1/salaryDetailForm.tw";   			
 		   				$frm.submit();
+		   			
 		   			}
 		   			else{
 		   				alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요!");
@@ -273,7 +273,7 @@
 	
 	<div id="salaryTitle">${loginuser.name}님의 월급 내역 조회</div>
 	<div style="margin: 30px 0px 30px 50px;">
-		<span style="font-weight:bold; margin-right:10px;">검색년도</span>
+		<span style="padding-top:20px; font-size:12pt; margin-right:10px;">검색년도</span>
 		<select id="salaryYear"></select>
 	</div>
 	

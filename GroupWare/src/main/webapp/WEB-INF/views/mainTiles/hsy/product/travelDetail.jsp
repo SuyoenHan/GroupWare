@@ -107,6 +107,13 @@
 		
 		// 예약하기 버튼 클릭시 예약정보 입력창 보이기
 		$("span#reserveBt").click(function(){
+			
+			// 현재예약인원이 최대 예약인원과 같은 경우 alert 띄워주고 이벤트 종료
+			if(Number("${pvo.maxNo}") <= Number("${pvo.nowNo}")){
+				alert("예약이 마감된 상품입니다.");
+				return false;
+			}
+			
 			$("div#reserveInfo").slideDown(1000);
 			$("input[name=clientname]").focus();
 			
@@ -398,5 +405,5 @@
 		</form>
 	</div>
 	
-	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span onclick="javascript:goProductList();">목록으로</span></div>
+	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span style="font-size:15pt;" onclick="javascript:goProductList();">목록으로</span></div>
 </div>

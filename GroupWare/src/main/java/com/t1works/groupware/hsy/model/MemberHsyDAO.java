@@ -88,6 +88,16 @@ public class MemberHsyDAO implements InterMemberHsyDAO {
 	} // end of public int getTotalLateWorkTime(Map<String, String> paraMap) {----
 
 	
+	// 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기
+	@Override
+	public Map<String, String> getDoneCnt(Map<String, String> paraMap) {
+		
+		Map<String,String> doneCntMap= sqlsession2.selectOne("memberHsy.getDoneCnt",paraMap);
+		return doneCntMap;
+		
+	} // end of public Map<String, String> getDoneCnt(Map<String, String> paraMap) {-----
+
+	
 
 
 }
