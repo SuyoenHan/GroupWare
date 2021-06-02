@@ -200,11 +200,20 @@
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where apaper = '0'
-			<if test='fromDate != "" or toDate != ""'>
-				and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+			<if test='fromDate != "" and toDate != ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+			</if>
+			<if test='fromDate != "" and toDate == ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+			</if>
+			<if test='fromDate == "" and toDate != ""'>
+				and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
 			</if>
 			<if test='astatus != ""'>
 				and astatus = #{astatus}
+			</if>
+			<if test='sort == "" and searchWord != ""'>
+				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -224,11 +233,20 @@
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
 		where apaper = '0'
-		<if test='fromDate != "" or toDate != ""'>
-			and to_char(asdate, 'yyyy-mm-dd') between #{fromDate} and #{toDate}
+		<if test='fromDate != "" and toDate != ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+		</if>
+		<if test='fromDate != "" and toDate == ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+		</if>
+		<if test='fromDate == "" and toDate != ""'>
+			and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
 		</if>
 		<if test='astatus != ""'>
 			and astatus = #{astatus}
+		</if>
+		<if test='sort == "" and searchWord != ""'>
+			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'

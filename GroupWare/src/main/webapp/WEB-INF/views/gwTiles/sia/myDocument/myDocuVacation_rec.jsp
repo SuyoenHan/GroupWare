@@ -84,23 +84,51 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	
+	
 	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
-	$(document).on('click','tr.docuInfo',function(){					
+	$(document).on('click','tr.docuInfo',function(){
+		var checkArr = new Array();	
+		$("input[name=vno]:checked").each(function(index,item){			
+			var no = $(item).val();
+			checkArr.push(no);			
+		});
+	//	alert(checkArr);
+		
+		var checkArres = checkArr.join();		
+	//	alert(checkArres);
+		
 		var ano = $(this).children(".ano").text();
 		var vcatname = $(this).children(".vcatname").text();		
 		var fromDate= $("input#fromDate").val();
-		var toDate= $("input#toDate").val();		
+		var toDate= $("input#toDate").val();
+		var astatus = $("select#astatus").val();
+		var vno = checkArres;
 		var sort= $("select#sort").val();		
 		var searchWord= $("input#searchWord").val();
 		
-		goView(ano, sort, vcatname, searchWord);
+		goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord);
 	});
 	
-	if("${sort}"==""){
+	if("${sort}"=="" && "${searchWord}"=="" && "${fromDate}"=="" && "${toDate}"=="" && "${astatus}"=="" && "${vno}"==""){
 		goSearch(1);
 	}
 	else {
-		goSearch2(1);
+		goSearch2('${currentShowPageNo}');
+		
+		$("select#astatus").val("${astatus}");
+		$("input#fromDate").val("${fromDate}");
+		$("input#toDate").val("${toDate}");
+		$("select#sort").val("${sort}");
+		$("input#searchWord").val("${searchWord}");
+		
+		var v = "${vno}".split(',');		
+		
+		for(var i=0; i<v.length; i++){
+			$("input:checkbox[id='chx"+v[i]+"']").prop("checked", true);
+		}
+		
+		
 	}
 	
 	$("input#searchWord").bind("keydown", function(event){
@@ -187,16 +215,7 @@ $(document).ready(function(){
 			
 	}
 	
-	function goSearch2(currentShowPageNo){
-		var checkArr = new Array();	
-		$("input[name=vno]:checked").each(function(index,item){			
-			var vno = $(item).val();
-			checkArr.push(vno);			
-		});
-		// console.log(checkArr);
-		
-		var checkArres = checkArr.join();
-		
+	function goSearch2(currentShowPageNo){	
 		
 		$.ajax({			
 			
@@ -231,15 +250,14 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
-						html += "<tr class='tr_hover docuInfo' onclick='goView("+item.ano+","+item.vcatname+","+status+","+searchWord+")'>";
+						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
 						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
-						html += "</tr>";
-						
+						html += "</tr>";						
 						
 					});
 				}
@@ -266,8 +284,8 @@ $(document).ready(function(){
 	function goSearch(currentShowPageNo){			
 		var checkArr = new Array();	
 		$("input[name=vno]:checked").each(function(index,item){			
-			var vno = $(item).val();
-			checkArr.push(vno);			
+			var no = $(item).val();
+			checkArr.push(no);			
 		});
 		// console.log(checkArr);
 		
@@ -280,8 +298,7 @@ $(document).ready(function(){
 		
 		$.ajax({
 			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
-			data:{"anocode":"3"
-				, "astatus":$("select#astatus").val()
+			data:{"astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
 				, "vno": checkArres
@@ -345,6 +362,8 @@ $(document).ready(function(){
 	
 	// 페이지바 Ajax로 만들기
 	function makeCommentPageBar(currentShowPageNo){
+		
+		$("input[name=currentShowPageNo]").val(currentShowPageNo);
 		
 		var checkArr = new Array();	
 		$("input[name=vno]:checked").each(function(index,item){			
@@ -422,13 +441,17 @@ $(document).ready(function(){
 			}
 		});
 	}	
-
-	function goView(ano, sort, vcatname, searchWord){
+	
+	function goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord){
 		var frm = document.goViewFrm;
 		frm.ano.value = ano;
 		frm.sort.value = sort;
 		frm.vcatname.value = vcatname;
 		frm.searchWord.value = searchWord;
+		frm.fromDate.value = fromDate;
+		frm.toDate.value = toDate;
+		frm.astatus.value = astatus;
+		frm.vno.value = vno;
 		
 		frm.method = "get";
 		frm.action = "<%= ctxPath%>/t1/myDocuVaction_detail.tw";
@@ -505,6 +528,7 @@ $(document).ready(function(){
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
 					<select name="sort" id="sort">
+						<option value="">전체보기</option>
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;
@@ -532,15 +556,16 @@ $(document).ready(function(){
 		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
 	</form>
 	
+	
 	<form name="goViewFrm">
 		<input type="hidden" name="ano" value="" />
-		<input type="hidden" name="vcatname" value="" />
-		<input type="hidden" name="anocode" value="" />
+		<input type="hidden" name="vcatname" value="" />		
 		<input type="hidden" name="astatus" value="" />
 		<input type="hidden" name="fromDate" value="" />
 		<input type="hidden" name="toDate" value="" />
 		<input type="hidden" name="vno" value="" />
 		<input type="hidden" name="sort" value="" />
 		<input type="hidden" name="searchWord" value="" />
+		<input type="hidden" name="currentShowPageNo" value="" />
 	</form>
 </div>

@@ -178,13 +178,13 @@ input.btn {
 	
 	<form name="myFrm">
 		<input type="hidden" name="ano" value="${ano}" />
-		<input type="hidden" name="vcatname" value="${vcatname}" />
-		<input type="hidden" name="anocode" value="3" />
+		<input type="hidden" name="vcatname" value="${vcatname}" />		
 		<input type="hidden" name="astatus" value="${astatus}" />
 		<input type="hidden" name="fromDate" value="${fromDate}" />
 		<input type="hidden" name="toDate" value="${toDate}" />
 		<input type="hidden" name="vno" value="${vno}" />
 		<input type="hidden" name="sort" value="${sort}" />
 		<input type="hidden" name="searchWord" value="${searchWord}" />
+		<input type="hidden" name="currentShowPageNo" value="${currentShowPageNo}" />
 	</form>
 </div>

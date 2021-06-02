@@ -46,16 +46,16 @@ public class MyDocumentSiaController {
 	
 	// 내문서함 - 수신함 - 근태휴가결재문서
 	@RequestMapping(value="/t1/myDocuVacation_rec.tw")
-	public String myDocuVacation_rec(HttpServletRequest request) {
+	public String myDocuVacation_rec(HttpServletRequest request) {		
 		
 		request.setAttribute("ano", request.getParameter("ano"));
-		request.setAttribute("anocode", request.getParameter("anocode"));
 		request.setAttribute("astatus", request.getParameter("astatus"));
 		request.setAttribute("fromDate", request.getParameter("fromDate"));
 		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("vno", request.getParameter("vno"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
+		request.setAttribute("currentShowPageNo", request.getParameter("currentShowPageNo"));
 		
 		return "sia/myDocument/myDocuVacation_rec.gwTiles";		
 	}	
@@ -331,6 +331,11 @@ public class MyDocumentSiaController {
 		if(currentShowPageNo == null) {
 			currentShowPageNo = "1";
 		}
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
 		
 		int sizePerPage = 10;
 		
@@ -544,6 +549,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("vcatname", appvo.getVcatname());
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
+				jsonObj.put("rno", appvo.getRno());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -627,14 +633,15 @@ public class MyDocumentSiaController {
 		String vcatname = request.getParameter("vcatname");
 		
 		mav.addObject("ano", request.getParameter("ano"));
-		mav.addObject("vcatname", request.getParameter("vcatname"));
-		mav.addObject("anocode", request.getParameter("anocode"));
+		mav.addObject("vcatname", request.getParameter("vcatname"));		
 		mav.addObject("astatus", request.getParameter("astatus"));
 		mav.addObject("fromDate", request.getParameter("fromDate"));
 		mav.addObject("toDate", request.getParameter("toDate"));
 		mav.addObject("vno", request.getParameter("vno"));
 		mav.addObject("sort", request.getParameter("sort"));		
 		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+		
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
