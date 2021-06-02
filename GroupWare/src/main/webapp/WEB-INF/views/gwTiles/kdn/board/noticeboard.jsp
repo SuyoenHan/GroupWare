@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix='fn' uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>
 
@@ -20,7 +21,7 @@ $(document).ready(function(){
 	
 	$("select#category").change(function(){
 		if($(this).val() == ""){
-			$("input[name=fk_categnum]").val($("select#category").val());
+			$("input[name=fk_categnum]").val("");
 		}
 		
 		$("input[name=fk_categnum]").val($("select#category").val());
@@ -43,15 +44,12 @@ $(document).ready(function(){
 // Function Declaration
 
 	function goView(seq){
-		location.href="<%=ctxPath%>/t1/viewNotice.tw?seq="+seq;
-	
-		// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. ===
-		<%-- var frm = document.goViewFrm;
+		var frm = document.goViewFrm;
 		frm.seq.value = seq;
 		
 		frm.method="get";
-		frm.action="<%=ctxPath%>/view.action";
-		frm.submit(); --%>
+		frm.action="<%=ctxPath%>/t1/viewNotice.tw";
+		frm.submit();
 		
 	}//end of function goView('${boardvo.seq}') ---------------
 
@@ -110,7 +108,7 @@ $(document).ready(function(){
 			<tbody>
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
-					<td>${boardvo.seq}</td>
+					<td>${fn:length(boardList) - status.index}</td>
 					<c:choose>
 						<c:when test="${boardvo.fk_categnum eq '1'}">
 							<td>전체공지</td>
@@ -144,5 +142,13 @@ $(document).ready(function(){
 			<button type="button" class="btn-style float-right" onclick="javascript:location.href='noticePostUpload.tw'"><span style="color: #ffffff;">글쓰기</span></button>
 		</c:if>
 	</div>
+	
+	<%-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+             페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 "검색결과목록보기" 버튼을 클릭했을때
+             돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. --%>
+    <form name="goViewFrm">
+    	<input type="hidden" name="seq"/>
+    	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+    </form>
 </div>
 

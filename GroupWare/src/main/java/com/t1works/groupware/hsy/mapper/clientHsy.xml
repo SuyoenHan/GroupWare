@@ -32,8 +32,8 @@
 					select pNo, pName, to_char(startDate,'yyyy-mm-dd') as startDate, to_char(endDate,'yyyy-mm-dd') as endDate,
      			    to_char(endDate-startdate) ||'박 '|| to_char(endDate-startdate+1) ||'일' as period, price, clientname, clientmobile, cnumber
 					from tbl_product join tbl_client on pNo=fk_pNo
-					where clientmobile=#{clientmobile}
-					order by startDate desc
+					where clientmobile=#{clientmobile} and startDate > sysdate
+					order by startDate asc
 				) V1
 		) V2
 		where rno between #{start} and #{end}
@@ -58,11 +58,23 @@
 		where fk_pNo=#{fk_pNo} and clientmobile=#{clientmobile}
 	</delete>
 	
-	<!-- pNo를 이용하여 필요한 고객정보 가져오기 -->
-	<select id="selectClientInfoByPno" parameterType="String" resultType="com.t1works.groupware.hsy.model.ClientHsyVO">
-		select fk_pNo, clientmobile, clientname, cnumber
-		from tbl_client
-		where fk_pNo= #{pNo}
+	<!-- pNo를 이용하여 필요한 고객정보 가져오기 (페이징처리)-->
+	<select id="selectClientInfoByPno" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		select clientmobile, clientname, cnumber
+		from
+		(
+			select row_number() over(order by to_number(cnumber) desc) as rno, clientmobile, clientname, cnumber
+			from tbl_client
+			where fk_pNo= #{pNo}
+		) V
+		where rno between #{startRno} and #{endRno}
+		order by rno
+	</select>
+	
+	<!-- 특정업무에 관한 고객의 totalPage 수 알아오기 -->
+	<select id="getclientLisTotalPage" parameterType="HashMap" resultType="Integer">
+		select ceil(count(*)/#{sizePerPage}) from tbl_client
+		where fk_pNo= #{fk_pNo}
 	</select>
 	
 </mapper>

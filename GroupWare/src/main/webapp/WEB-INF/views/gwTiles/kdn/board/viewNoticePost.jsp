@@ -30,20 +30,31 @@ $(document).ready(function(){
                         	$(this).removeClass("moveColor");
                         });
 	
-}); // end of $(document).ready(function(){})------------------
-		
-		
+});// end of $(document).ready(function(){})------------------
 		
 </script>
 
 <div id="board-container">
-	<a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 40px;">자유게시판</span></a>
-
+	<a href="javascript:location.href='employeeBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 40px;">공지사항</span></a>
 	<c:if test="${not empty requestScope.boardvo}">
 		<table id="post-table" class="table">
 			<tr class="thead">
-				<th>글번호</th>
+				<th style="width: 20em;">글번호</th>
 				<td>${requestScope.boardvo.seq}</td>
+			</tr>
+			<tr class="thead">
+				<th>구분</th>
+				<c:choose>
+					<c:when test="${requestScope.boardvo.fk_categnum eq '1'}">
+						<td>전체공지</td>
+					</c:when>
+					<c:when test="${requestScope.boardvo.fk_categnum eq '1'}">
+						<td>총무공지</td>
+					</c:when>
+					<c:otherwise>
+						<td>경조사</td>
+					</c:otherwise>
+				</c:choose>
 			</tr>
 			<tr class="thead">
 				<th>성명</th>
@@ -54,7 +65,7 @@ $(document).ready(function(){
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
 			<tr class="thead">
-				<th>내용</th>
+				<th style="height: 10em;">내용</th>
 				<td>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
 					<%-- 
@@ -76,9 +87,9 @@ $(document).ready(function(){
 		</table>
 		
 		<br>
-		
-		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.previousseq}'">${requestScope.boardvo.previoussubject}</span></div>
-		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}'">${requestScope.boardvo.nextsubject}</span></div>
+		<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
+		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewNotice.tw?seq=${requestScope.boardvo.previousseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.previoussubject}</span></div>
+		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewNotice.tw?seq=${requestScope.boardvo.nextseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span></div>
 
 	</c:if>
 	
@@ -86,11 +97,13 @@ $(document).ready(function(){
 		<div style="padding: 50px 0; font-size: 16pt; color: red;">존재하지 않습니다</div>
 	</c:if>
 	
-	<button type="button" onclick="javascript:location.href='generalBoard.tw'">전체목록보기</button>
+	<button type="button" onclick="javascript:location.href='employeeBoard.tw'">전체목록보기</button>
 	
-	<button type="button" onclick="javascript:location.href='${requestScope.gobackURL}'">검색된결과목록보기</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	<button type="button" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">검색된결과목록보기</button>
+	<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/noticeEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/noticeDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	</c:if>
 </div>
 
 

@@ -103,7 +103,7 @@
 
 		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
 		<select id="electronListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select ano ,ncatname, atitle, name ,dname,asdate   
+			select ano ,ncatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate   
 			from
 			(
 			select row_number() over(order by a.ano desc) AS rno  
@@ -121,7 +121,7 @@
 			)d
 			on e.fk_dcode = d.dcode
 			where anocode= 1
-					<if test=' searchCategory == "" and searchWord != "" '>
+				 <if test=' searchCategory == "" and searchWord != "" '>
 			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			     </if>
 			      <if test=' searchCategory != ""    and searchWord == "" '>
@@ -138,19 +138,19 @@
 		
 		<!-- // 하나의 일반결재내역 문서 보여주기 -->
 		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			  
+			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile ,astatus
 			  <choose>
 				<when test="ncatname eq'회의록'">
-				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile, mdate
+				 , mdate 
 				</when>
 				<when test="ncatname eq'위임장'">
-				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile, fk_wiimdate 
+				, fk_wiimdate 
 				</when>
 				<when test="ncatname eq'협조공문'">
-				 select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile ,nvl(comname,'없습니다.') as comname
+				 ,nvl(comname,'없습니다.') as comname
 				</when>
-				<otherwise>
-				select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile
-				</otherwise> 
+				
 				</choose>
 			 
 			from tbl_approval a 
@@ -180,6 +180,29 @@
 			on e.fk_dcode = d.dcode
 			where anocode= 1 and ano=#{ano}
 		</select>
+		
+		
+		<!-- //하나의 일반결재내역에서 결재의견 목록 보여주기 -->
+		<select id="oneOpinionList" parameterType="HashMap"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select dname ,name, pname,odate,ocontent
+			from tbl_aopinion a left join tbl_employee e
+				 on a.fk_employeeid = e.employeeid
+					left join tbl_department d
+				 on e.fk_dcode = d.dcode
+					left join tbl_position p
+				 on e.fk_pcode=p.pcode
+			where fk_ano =#{ano}
+		
+		</select>
+		
+		<!-- //일반결재 글쓰기 -->
+		<select id="login_Write" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select dname ,d.dcode , e.managerid
+			from tbl_employee e left join tbl_department d
+			on d.dcode = e.fk_dcode
+			where employeeid = #{userid}
+		</select>
+		
 </mapper>
 
 

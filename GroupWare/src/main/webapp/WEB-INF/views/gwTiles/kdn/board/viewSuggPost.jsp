@@ -74,9 +74,9 @@ $(document).ready(function(){
 		</table>
 		
 		<br>
-		
-		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewSuggestion.tw?seq=${requestScope.boardvo.previousseq}'">${requestScope.boardvo.previoussubject}</span></div>
-		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewSuggestion.tw?seq=${requestScope.boardvo.nextseq}'">${requestScope.boardvo.nextsubject}</span></div>
+		<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
+		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewSuggPost.tw?seq=${requestScope.boardvo.previousseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.previoussubject}</span></div>
+		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewSuggPost.tw?seq=${requestScope.boardvo.nextseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span></div>
 
 	</c:if>
 	
@@ -86,9 +86,11 @@ $(document).ready(function(){
 	
 	<button type="button" onclick="javascript:location.href='suggestionBoard.tw'">전체목록보기</button>
 	
-	<button type="button" onclick="javascript:location.href='${requestScope.gobackURL}'">검색된결과목록보기</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/suggEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
-	<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/suggDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	<button type="button" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">검색된결과목록보기</button>
+	<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/suggEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/suggDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+	</c:if>
 </div>
 
 
