@@ -9,11 +9,11 @@
 		select rno, pNo, pName, startDate, endDate, pImage, period, remainCnt
 		from
 		(
-			select row_number() over(order by startDate) as rno, pNo, pName, to_char(startDate,'yyyy-mm-dd') as startDate,
-			       to_char(endDate,'yyyy-mm-dd') as endDate, pImage, to_char(endDate-startdate) ||'박 '|| to_char(endDate-startdate+1) ||'일' as period,
+			select row_number() over(order by P.startDate) as rno, pNo, pName, to_char(P.startDate,'yyyy-mm-dd') as startDate,
+			       to_char(P.endDate,'yyyy-mm-dd') as endDate, pImage, to_char(P.endDate-P.startdate) ||'박 '|| to_char(P.endDate-P.startdate+1) ||'일' as period,
 			       to_char(to_number(maxNo)-to_number(nowNo)) as remainCnt 
-			from tbl_product
-			where startDate > sysdate
+			from tbl_product P join tbl_todo T on pNo=fk_pNo
+			where P.startDate > sysdate and T.endDate is null
 		) V1
 		where rno between #{start} and #{end}
 		order by rno
@@ -75,7 +75,9 @@
 	
 	<!-- 상품목록 총 페이지 수 -->
 	<select id="selectProductTotalPage" parameterType="HashMap" resultType="Integer">
-		select ceil(count(*)/#{sizePerPage}) as cnt from tbl_product
+		select ceil(count(*)/#{sizePerPage}) as cnt
+		from tbl_product P join tbl_todo T on pNo=fk_pNo
+		where P.startDate > sysdate and T.endDate is null
 	</select>
 	
 </mapper>
