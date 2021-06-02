@@ -5,7 +5,10 @@
 %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <style>
 
 </style>
@@ -35,8 +38,48 @@
 			location.href="<%= ctxPath%>/t1/departmentTodo.tw?period="+period+"&statusChoice_es="+statusChoice_es+"&searchProject="+searchProject+"&searchWhoCharge="+searchWhoCharge;
 
 			
-		});
+		});// end of $("button#whatSearch").click(function(){
+			
+			
+		$("div.getOneInfo").click(function(){
+			
+			var startdate = $(this).find("span.startDate").text();
+			var pNo = $(this).find("input.pNo").val();
+			
+			console.log(startdate);
+			console.log(pNo);
+			
+			
+			if(startdate=="-"){
+				alert("해당업무는 시작이 되지 않았습니다. \n다른업무를 선택해주세요.");
+				return;
+			}
+			else{
+				$("div#myModal").modal();
+				getOneDoInfo(pNo);
+			}
+			
+		}); // end of $("div#btn").click(function(){
 		
+		// Function Declaration
+		function getOneDoInfo(pNo){
+			
+			$.ajax({
+				url:"<%= ctxPath%>/t1/deptgetOneInfoheader.tw",
+				type:"get",
+				data:{"pNo":pNo},
+				dataType:json,
+				success:function(json){
+					
+					
+					
+				}
+			}); // end of $.ajax({ 
+			
+			
+		}
+			
+			
 	})// end of $(document).ready(function(){
 
 </script>
@@ -90,12 +133,13 @@
 		<div id="infoContent">
 			<c:if test="${not empty productList}">
 				<c:forEach var="product" items="${productList}">
-					<div>
+					<div class="getOneInfo">
+					<input type="hidden" class="pNo" value="${product.pNo}"/>
 					<span>${product.rno}</span>
 					<span>${product.pName}</span>
 					<span>${product.name}</span>
 					<span>${product.assignDate}</span>
-					<span>${product.startDate}</span>
+					<span class="startDate">${product.startDate}</span>
 					<span>${product.dueDate}</span>
 					<span>${product.endDate}</span>
 					<span>${product.employeeName}</span>
@@ -123,4 +167,22 @@
 		
 		<div id="pageBar">${pageBar}</div>
 	</div>
+
+   <!-- Modal -->
+   <div class="modal fade" id="myModal" role="dialog">
+     <div class="modal-dialog modal-lg">
+       <div class="modal-content">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal">&times;</button>
+           <h4 class="modal-title">진행상태</h4>
+         </div>
+         <div class="modal-body">
+         <p>This is a large modal.</p>
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

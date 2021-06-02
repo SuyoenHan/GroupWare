@@ -92,12 +92,20 @@ public class ClientHsyDAO implements InterClientHsyDAO {
 	}// end of public int updateClientAjax(ClientHsyVO cvo) {--------
 
 	
-	// pNo를 이용하여 필요한 고객정보 가져오기
+	// pNo를 이용하여 필요한 고객정보 가져오기 (페이징처리)
 	@Override
-	public List<ClientHsyVO> selectClientInfoByPno(String pNo) {
-		List<ClientHsyVO> cvoList=sqlsession2.selectList("clientHsy.selectClientInfoByPno",pNo);
+	public List<ClientHsyVO> selectClientInfoByPno(Map<String,String> paraMap) {
+		List<ClientHsyVO> cvoList=sqlsession2.selectList("clientHsy.selectClientInfoByPno",paraMap);
 		return cvoList;
 	} // end of public List<ClientHsyVO> selectClientInfoByPno(String pNo) {-----
+
+	
+	// 특정업무에 관한 고객의 totalPage 수 알아오기
+	@Override
+	public int getclientLisTotalPage(Map<String, String> paraMap) {
+		int totalPage= sqlsession2.selectOne("clientHsy.getclientLisTotalPage",paraMap);
+		return totalPage;
+	} // end of public int getclientLisTotalPage(Map<String, String> paraMap) {------
 	
 	
 	

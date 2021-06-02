@@ -29,7 +29,10 @@ public interface InterTodoHsyService {
 	// 기간별로 완료한 업무 총건수 나눠서 표시
 	Map<String, String> selectCntTodoByPeriod(String employeeid);
 	
-	// pNo를 이용하여 필요한 고객정보 가져오기
-	List<ClientHsyVO> selectClientInfoByPno(String pNo);
+	// pNo를 이용하여 필요한 고객정보 가져오기 (페이징처리)
+	List<ClientHsyVO> selectClientInfoByPno(Map<String, String> paraMap);
+
+	// 특정업무에 관한 고객의 totalPage 수 알아오기
+	int getclientLisTotalPage(Map<String, String> paraMap);
 
 }

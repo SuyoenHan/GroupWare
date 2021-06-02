@@ -252,11 +252,28 @@ public class TodoHsyController {
 			pNo="1"; 
 		}
 		
-		// 2) pNo를 이용하여 필요한 고객정보 가져오기
-		List<ClientHsyVO> cvoList= service.selectClientInfoByPno(pNo);
+		// 2) 페이징바 처리한 고객정보 가져오기 사전작업 => post방식
+		String currentShowPageNo=request.getParameter("currentShowPageNo");
+		if(currentShowPageNo==null) {
+			currentShowPageNo="1";
+		}
+		
+		int sizePerPage=3;
+		
+		int startRno = (( Integer.parseInt(currentShowPageNo) - 1 ) * sizePerPage) + 1;
+	    int endRno = startRno + sizePerPage - 1; 
+		
+	    Map<String,String> paraMap= new HashMap<>();
+	    paraMap.put("pNo", pNo);
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    
+	
+		// 3) paraMap을 이용하여 해당 currentShowPageNo에 속하는 고객정보 가져오기
+		List<ClientHsyVO> cvoList= service.selectClientInfoByPno(paraMap);
 		
 		JSONArray jsonArr= new JSONArray();
-		for(ClientHsyVO cvo: cvoList) {
+		for(ClientHsyVO cvo: cvoList) { // 고객정보가 없는 경우 => 자바스크립트에 처리 (jsonArr.length==0)
 			
 			JSONObject jsonObj= new JSONObject();
 			jsonObj.put("clientname",cvo.getClientname());
@@ -270,5 +287,38 @@ public class TodoHsyController {
 		return jsonArr.toString();
 		
 	} // end of public String selectProductInfoForModal(HttpServletRequest request) {-----
+	
+	
+	// 특정업무 상세 정보 조회3 (고객에 대한 정보 totalPage 알아오기)
+	@ResponseBody
+	@RequestMapping(value="/t1/getclientLisTotalPage.tw",method= {RequestMethod.GET})
+	public String getclientLisTotalPage(HttpServletRequest request) {
+		
+		String fk_pNo= request.getParameter("fk_pNo");
+		String sizePerPage= request.getParameter("sizePerPage");		
+		if(!"3".equals(sizePerPage)) sizePerPage = "3";
+		
+		// fk_pNo 존재하는지 확인하기 (url 장난 방지) => 숫자형태가 아닌 문자입력 또는 존재하지 않는 pNo 입력한 경우
+		int n= service2.isExistPno(fk_pNo);
+		
+		JSONObject jsonObj= new JSONObject();
+		
+		if(n!=0) { //  fk_pNo 존재하는 경우
+			Map<String,String> paraMap= new HashMap<>();
+			paraMap.put("fk_pNo", fk_pNo);
+			paraMap.put("sizePerPage", sizePerPage);
+			
+			// 특정업무에 관한 고객의 totalPage 수 알아오기
+			int totalPage= service.getclientLisTotalPage(paraMap);
+			jsonObj.put("totalPage", totalPage); 
+		}
+		else { // fk_pNo 존재하지 않는 경우
+			jsonObj.put("totalPage", 0); 
+		}
+		
+		return jsonObj.toString();
+		
+	} // end of public String getclientLisTotalPage(HttpServletRequest request) {-------
+	
 	
 }

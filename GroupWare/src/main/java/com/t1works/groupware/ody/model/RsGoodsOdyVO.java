@@ -6,11 +6,11 @@ public class RsGoodsOdyVO {
 	private int fk_gno; // 사무용품 번호
 	private String fk_employeeid; // 사번
 	private String name; // 직원명
-	private String rgdepartment; // 신청부서 
 	private String rgsubject; // 목적
 	private String rgdate; // 예약날짜
 	private int rgtime; // 예약 시간
 	private int gstatus; // 반납 여부?
+	private String rdname;
 	
 	public int getRsgno() {
 		return rsgno;
@@ -36,12 +36,7 @@ public class RsGoodsOdyVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getRgdepartment() {
-		return rgdepartment;
-	}
-	public void setRgdepartment(String rgdepartment) {
-		this.rgdepartment = rgdepartment;
-	}
+	
 	public String getRgsubject() {
 		return rgsubject;
 	}
@@ -65,6 +60,12 @@ public class RsGoodsOdyVO {
 	}
 	public void setGstatus(int gstatus) {
 		this.gstatus = gstatus;
+	}
+	public String getRdname() {
+		return rdname;
+	}
+	public void setRdname(String rdname) {
+		this.rdname = rdname;
 	}
 	
 	

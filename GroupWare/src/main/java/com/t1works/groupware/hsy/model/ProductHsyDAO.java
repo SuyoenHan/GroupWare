@@ -16,9 +16,9 @@ public class ProductHsyDAO implements InterProductHsyDAO {
 
 	// 여행사 홈페이지에서 보여줄 상품정보 가져오기
 	@Override
-	public List<ProductHsyVO> selectProductInfoForHome() {
+	public List<ProductHsyVO> selectProductInfoForHome(Map<String,String> paraMap) {
 
-		List<ProductHsyVO> pvoList= sqlsession2.selectList("productHsy.selectProductInfoForHome");
+		List<ProductHsyVO> pvoList= sqlsession2.selectList("productHsy.selectProductInfoForHome",paraMap);
 		return pvoList;
 	}
 
@@ -99,5 +99,15 @@ public class ProductHsyDAO implements InterProductHsyDAO {
 		// n==1  업데이트성공 
 		
 	} // end of public int updateMinusNowNo(ClientHsyVO cvo) {
+
+	
+	// 상품목록 총 페이지 수
+	@Override
+	public int selectProductTotalPage(Map<String, String> paraMap) {
+		
+		int n= sqlsession2.selectOne("productHsy.selectProductTotalPage", paraMap);
+		return n;
+	
+	} // end of public int selectProductTotalPage(Map<String, String> paraMap) {----
 	
 }

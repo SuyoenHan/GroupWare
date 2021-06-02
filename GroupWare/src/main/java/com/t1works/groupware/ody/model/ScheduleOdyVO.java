@@ -13,9 +13,13 @@ public class ScheduleOdyVO {
 	private int fk_bcno;// 캘린더 대분류 번호
 	private String fk_employeeid; // 사번
 	
+	
 	private ScalCategoryOdyVO scvo;
+	private String scname; // 캘린더 소분류의 이름
 	private BcalCategoryVO bcvo;
-
+	private String bcname; // 캘린더 소분류의 이름
+	
+	private String name; // 작성자
 	public String getStartdate() {
 		return startdate;
 	}
@@ -46,12 +50,7 @@ public class ScheduleOdyVO {
 	public void setPlace(String place) {
 		this.place = place;
 	}
-	public String getjoinemployee() {
-		return joinemployee;
-	}
-	public void setJoinEmp(String joinemployee) {
-		this.joinemployee = joinemployee;
-	}
+
 	public String getContent() {
 		return content;
 	}
@@ -94,4 +93,29 @@ public class ScheduleOdyVO {
 	public void setBcvo(BcalCategoryVO bcvo) {
 		this.bcvo = bcvo;
 	}
+	public String getScname() {
+		return scname;
+	}
+	public void setScname(String scname) {
+		this.scname = scname;
+	}
+	public String getBcname() {
+		return bcname;
+	}
+	public void setBcname(String bcname) {
+		this.bcname = bcname;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getJoinemployee() {
+		return joinemployee;
+	}
+	public void setJoinemployee(String joinemployee) {
+		this.joinemployee = joinemployee;
+	}
+
 }
