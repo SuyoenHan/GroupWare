@@ -180,6 +180,14 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		String jubun = sqlsession.selectOne("memberBwb.selectJubun", string);
 		return jubun;
 	}
+
+	// 부장을 제외한 직원 ID를 가져오기
+	@Override
+	public List<MemberBwbVO> selectMemberList(String dcode) {
+		
+		List<MemberBwbVO> memberList = sqlsession.selectList("memberBwb.selectMemberList", dcode);
+		return memberList;
+	}
 	
     
    

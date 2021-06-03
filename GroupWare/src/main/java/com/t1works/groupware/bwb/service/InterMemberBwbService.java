@@ -37,5 +37,8 @@ public interface InterMemberBwbService {
 	// 비밀번호 변경하기
 	int updatePasswd(Map<String, String> paraMap);
 	
+	// 부장을 제외한 직원 ID를 가져오기
+	List<MemberBwbVO> selectMemberList(String dcode);
+	
 
 }

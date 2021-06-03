@@ -328,5 +328,5 @@
         <div id="leftOffcnt">남은 연차 일수 : XX일</div>
      </div>
      
-  </div>
+  </div><%-- end of div(myInfo) 백원빈 --%>
 </div>

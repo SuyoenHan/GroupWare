@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -718,13 +719,16 @@ public class MemberBwbController {
 		String employeeid = loginuser.getEmployeeid();
 		mav.addObject("loginuser", loginuser);
 		
+		String dcode = loginuser.getFk_dcode();
+		// 부서장의 부서명 알아오기
+		String dname= service2.selectdname(dcode);
+		mav.addObject("dname", dname);
+		
 		String currentShowPageNo_str = request.getParameter("currentShowPageNo");
 		String period = request.getParameter("period");
 		String statusChoice_es = request.getParameter("statusChoice_es");
 		String searchProject = request.getParameter("searchProject");
 		String searchWhoCharge = request.getParameter("searchWhoCharge");
-		System.out.println("statusChoice_es"+statusChoice_es);
-		System.out.println("period");
 		
 		// 기간에서 선택한 period get방식 처리
 		if(period == null || period.equalsIgnoreCase("undefined")) {
@@ -737,7 +741,7 @@ public class MemberBwbController {
 		String statusChoice ="";
 		
 		// 상태값에서 선택한 statusChoice_es get방식 처리, 1:미배정, 2:미시작 3:진행중 4:보류 5:지연 6:완료  
-		if(statusChoice_es==null || statusChoice_es.equalsIgnoreCase("")) {
+		if(statusChoice_es==null || statusChoice_es.equalsIgnoreCase("")||statusChoice_es.equalsIgnoreCase("null")) {
 			statusChoice="";
 		}			
 		else if(statusChoice_es!=null ) { 
@@ -881,7 +885,7 @@ public class MemberBwbController {
 	}
 	
 	
-	// 부서업무중 특정행을 클릭시 업무정보 보이기
+	// 부서업무중 특정행을 클릭시 업무정보 보이기(ajax처리)
 	@ResponseBody
 	@RequestMapping(value="/t1/deptgetOneInfoheader.tw",produces="text/plain;charset=UTF-8")
 	public String requiredLogin_deptgetOneInfoheader(HttpServletRequest request, HttpServletResponse response) {
@@ -889,13 +893,206 @@ public class MemberBwbController {
 		String pNo = request.getParameter("pNo");
 		
 		// === #1. 특정 업무 클릭 시 modal창의 header정보 가져오기
-		Map<String,String> paraMap = service4.deptgetOneInfoheader(pNo);
+		ProductBwbVO pvo = service4.deptgetOneInfoheader(pNo);
 		
 		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("paraMap", paraMap);
-		
+		jsonObj.put("ingdetail", pvo.getIngdetail());
+		jsonObj.put("pname", pvo.getpName());
+		jsonObj.put("minino", pvo.getMiniNo());
+		jsonObj.put("maxno", pvo.getMaxNo());
+		jsonObj.put("nowno", pvo.getMaxNo());
+		jsonObj.put("startDate", pvo.getStartDate());
+		jsonObj.put("endDate", pvo.getEndDate());
+		jsonObj.put("period", pvo.getPeriod());
 		
 		return jsonObj.toString();
 	}
+	
+	
+	// 부서업무 중 특정업무에 대한 고객리스트 페이징처리해서 뽑아오기(ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectClient.tw",produces="text/plain;charset=UTF-8",method= {RequestMethod.POST})
+	public String selectClient(HttpServletRequest request) {
+		
+		String pNo = request.getParameter("pNo");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+		
+		if(currentShowPageNo==null) {
+    		currentShowPageNo = "1";
+    	}
+		
+		int sizePerPage = 3;
+		int startRno = (( Integer.parseInt(currentShowPageNo) - 1 ) * sizePerPage) + 1;
+        int endRno = startRno + sizePerPage - 1;
+        
+        Map<String,String> paraMap = new HashMap<>();
+        paraMap.put("pNo", pNo);
+        paraMap.put("startRno", String.valueOf(startRno));
+        paraMap.put("endRno", String.valueOf(endRno));
+		
+		// 부서업무 중 특정업무에 대한 고객리스트 뽑아오기(ajax처리)
+		List<ProductBwbVO> clientList = service4.selectClient(paraMap);
+		JSONArray jsonArr = new JSONArray();
+		
+		for(ProductBwbVO pvo:clientList) {
+			
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("clientmobile", pvo.getClientmobile());
+			jsonObj.put("clientname", pvo.getClientname());
+			jsonObj.put("cnumber", pvo.getCnumber());
+			
+			jsonArr.put(jsonObj);
+			
+		} // end of for() ----
+		
+		return jsonArr.toString();
+	}// end of public String selectClient(HttpServletRequest request) {
+	
+	
+	// 페이징바 호출
+	@ResponseBody
+	@RequestMapping(value="/t1/clientPagebar.tw",produces="text/plain;charset=UTF-8")
+	public String clientPagebar(HttpServletRequest request) {
+		
+		
+		String sizePerPage = request.getParameter("sizePerPage");
+		String pNo = request.getParameter("pNo");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("pNo", pNo);
+		
+		// 해당 상품에 대한 고객명단의 총 페이지수 알아오기
+		int totalPage = service4.selectTotalClient(paraMap);
+        
+        JSONObject jsonObj = new JSONObject();
+    	jsonObj.put("totalPage", totalPage);
+		
+		return jsonObj.toString();
+		
+	}// end of public String clientPagebar(HttpServletRequest request) {
+	
+	
+	// CS팀장 로그인 시 부서 실적현황 주소 맵핑
+	@RequestMapping(value="/t1/departmentPerformance.tw")
+	public ModelAndView requiredLogin_departmentPerformance(HttpServletRequest request, HttpServletResponse response,ModelAndView mav) {
+		
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		// 로그인 한 CS부장의 부서코드 알아오기
+		String dcode = loginuser.getFk_dcode();
+		
+		// 해당부서의 실적의 가장 예전 날짜, 최근 날짜 가지고 오기
+		Map<String,String> paraMap = service4.selectOldNewDate(dcode);
+		paraMap.put("dcode", dcode);
+		
+		// 부서명 가지고오기
+		String dname = service2.selectdname(dcode);
+		paraMap.put("dname", dname);
+		
+		mav.addObject("paraMap", paraMap);
+		
+		String selectedMonth = paraMap.get("maxMonth");
+		String selectedYear = paraMap.get("maxYear");
+		
+		// 해당 부서의 직원명,건수,이름 가져오기(부장제외)
+		Map<String,String> paraMap2 = new HashMap<>();
+		paraMap2.put("selectedMonth", selectedMonth);
+		paraMap2.put("selectedYear", selectedYear);
+		paraMap2.put("dcode", dcode);
+		
+		
+
+		
+		// CS부장의 자기 팀의 직원별 건수 가지고 오기
+		// int teamDoneCount = service4.selectDoneCount("1");
+		
+		/*
+		 select count(*) as cnt,fk_employeeid
+		from tbl_todo
+		where fk_dcode='2' and enddate is not null
+		group by fk_employeeid
+		*/
+		
+		mav.setViewName("bwb/todo/departmentPerformance.gwTiles");
+		
+		return mav;
+		
+	}// end of public ModelAndView requiredLogin_departmentPerformance
+	
+	// 선택한 월부터 -2개월 전까지 뽑아오기(ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectPerformanceMonth.tw",produces="text/plain;charset=UTF-8")
+	public String selectPerformanceMonth(HttpServletRequest request) {
+		
+		String selectedYear = request.getParameter("selectedYear");
+		String selectedMonth = request.getParameter("selectedMonth");
+		
+		
+		int iselectedMonth = Integer.parseInt(selectedMonth);
+		if(iselectedMonth<10) {
+			selectedMonth = "0"+selectedMonth;
+		}
+		
+		// 가장 최근날짜 만들기  2021-02 2021-03 2021-04
+		String firstDate = selectedYear+"-"+selectedMonth;
+		
+		// 선택날짜를 가지고 -1달,-2달 값 가지고 오기
+		Map<String,String> paraMap = service4.changeDate(firstDate);
+		
+		// 기준년월 - 2월 만들어주기
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("lastDate", paraMap.get("lastDate"));
+		jsonObj.put("middleDate", paraMap.get("middleDate"));
+		jsonObj.put("firstDate", firstDate);
+		
+		return jsonObj.toString();
+	};// end of public String selectPerformanceMonth(HttpServletRequest request) {
+	
+	
+	
+	// 선택한 년,월에 해당하는 실적 데이터 가지고 오기(ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectPerformance.tw",produces="text/plain;charset=UTF-8")
+	public String selectPerformance(HttpServletRequest request) {
+		
+		String dcode = request.getParameter("dcode");
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+
+		// 넘어온 날짜 배열로 만들어주기.
+		String[] performanceWhenArr = performanceWhenArres.split(","); 
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("firstDate", performanceWhenArr[2]);
+
+		// 부장을 제외한 직원 ID,이름을 가져오기
+		List<MemberBwbVO> memberList = service2.selectMemberList(dcode);
+
+		// [{"employeeid":tw0019, "2021-04": 0, "2021-03":1, "2021-02":0}, {} ,{}]
+		
+		JSONArray jsonArr = new JSONArray();
+		for(MemberBwbVO mvo : memberList) {
+				JSONObject jsonObj = new JSONObject();
+				
+				String employeeid = mvo.getEmployeeid();
+				paraMap.put("employeeid", employeeid);
+				
+				// chart에 들어가기 위한 name값,3개월에 대한 각각 실적건수
+				Map<String,String> resultMap = service4.selectCntPerformance(paraMap);
+				jsonObj.put("ppreveCnt", resultMap.get("ppreveCnt"));
+				jsonObj.put("prevCnt", resultMap.get("prevCnt"));
+				jsonObj.put("selectCnt", resultMap.get("selectCnt"));
+				jsonObj.put("name", mvo.getName());
+				jsonArr.put(jsonObj);
+			
+		} // end of for
+		
+		// System.out.println(jsonArr);
+		return jsonArr.toString();
+	}
+	
 	
 }
