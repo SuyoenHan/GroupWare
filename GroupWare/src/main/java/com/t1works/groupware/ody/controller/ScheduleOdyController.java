@@ -58,6 +58,7 @@ public class ScheduleOdyController {
 						jsObj.put("color", svo.getColor());
 						jsObj.put("sdno", svo.getSdno());
 						jsObj.put("bcno", svo.getFk_bcno());
+						jsObj.put("scno", svo.getFk_scno());
 						jsObj.put("fk_employeeid", svo.getFk_employeeid());
 						jsObj.put("joinemployee", svo.getJoinemployee());
 						jsArr.put(jsObj);
@@ -340,12 +341,12 @@ public class ScheduleOdyController {
 		}
 		
 		if(str_sizePerPage == null || 
-				   !("3".equals(str_sizePerPage) || "5".equals(str_sizePerPage) || "10".equals(str_sizePerPage))) {
+				   !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage))) {
 				str_sizePerPage ="10";
 		}
 		
 		if(searchType==null || (!"subject".equals(searchType) && !"name".equals(searchType) && !"content".equals(searchType)  && !"joinemployee".equals(searchType))) {
-			searchType="subject";
+			searchType="";
 		}
 		
 		if(searchWord== null || "".equals(searchWord) || searchWord.trim().isEmpty()) {// 
@@ -359,6 +360,7 @@ public class ScheduleOdyController {
 		if(enddate==null || "".equals(enddate)) {
 			enddate="";
 		}
+		
 		
 		Map<String, String> paraMap = new HashMap<String, String>();
 		paraMap.put("searchType", searchType);
@@ -378,10 +380,9 @@ public class ScheduleOdyController {
 	    int endRno = 0;             // 끝 행번호 
 	    
 	    
-	    // 총 게시물 건수(totalCount)
+	    // 총 일정 건수(totalCount)
 	    totalCount = service.getTotalCount(paraMap);
-	//    System.out.println("~~~확인용 totalCount:"+totalCount);
-	    
+      
 	    totalPage = (int)Math.ceil((double)totalCount/sizePerPage); 
 
 		if(str_currentShowPageNo == null) {
@@ -411,10 +412,9 @@ public class ScheduleOdyController {
 	    scheduleList = service.scheduleListSearchWithPaging(paraMap);
 	    // 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
 		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
-		if(!"".equals(searchType) && !"".equals(searchWord) && !"".equals(startdate) && !"".equals(enddate)) {
-			 mav.addObject("paraMap", paraMap);
-		}	
-		
+	
+		mav.addObject("paraMap", paraMap);
+	
 		
 		// === #121. 페이지바 만들기 === //
 		
@@ -427,12 +427,12 @@ public class ScheduleOdyController {
 	   
 		String pageBar = "<ul style='list-style:none;'>";
 		
-		String url = "list.action";
+		String url = "searchSchedule.tw";
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo!=1) {
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_employeeid="+fk_employeeid+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_employeeid="+fk_employeeid+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
 		}
 		while(!(loop>blockSize || pageNo>totalPage)) {
 			
@@ -440,7 +440,7 @@ public class ScheduleOdyController {
 				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
 			}
 			else {
-				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_employeeid="+fk_employeeid+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
 			
 			loop++;
@@ -449,8 +449,8 @@ public class ScheduleOdyController {
 		
 		// === [다음][마지막] 만들기 === //
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_employeeid="+fk_employeeid+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&searchType="+searchType+"&searchWord="+searchWord+"&fk_employeeid="+fk_employeeid+"&fk_bcno="+fk_bcno+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
 		}
 		pageBar += "</ul>";
 		
@@ -524,8 +524,13 @@ public class ScheduleOdyController {
 		paraMap.put("employeeid",employeeid);
 		
 		
-			int n = service.addMyCalendar(paraMap);
+			int n = 0;
 		
+			try {
+				n = service.addMyCalendar(paraMap);
+			}catch (Throwable e) {
+				
+			}
 		
 		JSONObject jsObj = new JSONObject();
 		if(n==1) {
@@ -544,8 +549,16 @@ public class ScheduleOdyController {
 		Map<String, String> paraMap = new HashMap<String, String>();
 		paraMap.put("scname",scname);
 		paraMap.put("employeeid",employeeid);
-		int n = service.addComCalendar(paraMap);
 		
+		int n = 0;
+		
+		try {
+			n = service.addComCalendar(paraMap);
+		}catch (Throwable e) {
+			
+		}
+		
+	
 		JSONObject jsObj = new JSONObject();
 		if(n==1) {
 			jsObj.put("n", n);
@@ -570,19 +583,26 @@ public class ScheduleOdyController {
 		return jsObj.toString();
 	}
 	
-	// 캘린더명 수정하기 
+	// 내 캘린더명 수정하기 
 	@ResponseBody
-	@RequestMapping(value="/t1/editCalendar.tw" ,method = {RequestMethod.POST})
+	@RequestMapping(value="/t1/editMyCalendar.tw" ,method = {RequestMethod.POST})
 	public String editCalendar(HttpServletRequest request) {
 		String scno = request.getParameter("scno");
 		String scname = request.getParameter("scname");
+		String employeeid= request.getParameter("employeeid");
 		
 		Map<String,String> paraMap = new HashMap<>();
 		paraMap.put("scno", scno);
 		paraMap.put("scname", scname);
+		paraMap.put("employeeid", employeeid);
 		
-		int n = service.editCalendar(paraMap);
+		int n = 0;
 		
+		try {
+			n = service.editMyCalendar(paraMap);
+		}catch (Throwable e) {
+			
+		}
 		JSONObject jsObj = new JSONObject();
 		if(n==1) {
 			jsObj.put("n", n);
@@ -591,6 +611,127 @@ public class ScheduleOdyController {
 	}
 
 
+	// 사내 캘린더명 수정하기 
+	@ResponseBody
+	@RequestMapping(value="/t1/editComCalendar.tw" ,method = {RequestMethod.POST})
+	public String editComCalendar(HttpServletRequest request) {
+			String scno = request.getParameter("scno");
+			String scname = request.getParameter("scname");
+			String employeeid= request.getParameter("employeeid");
+			
+			Map<String,String> paraMap = new HashMap<>();
+			paraMap.put("scno", scno);
+			paraMap.put("scname", scname);
+			paraMap.put("employeeid", employeeid);
+			
+			int n = 0;
+			
+			try {
+				n = service.editComCalendar(paraMap);
+			}catch (Throwable e) {
+				
+			}
+			JSONObject jsObj = new JSONObject();
+			if(n==1) {
+				jsObj.put("n", n);
+			}
+			return jsObj.toString();
+	}
+
+	
+	// 홈페이지에서 내 캘린더 보이기
+	@ResponseBody
+	@RequestMapping(value="/t1/showMyCalendarHome.tw", method = {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
+	public String showMyCalendarHome(HttpServletRequest request) {
+		
+		String employeeid = request.getParameter("employeeid");
+		
+		List<ScheduleOdyVO> myCalendarList = service.getMyCalendarList(employeeid);
+		
+	
+		JSONArray jsArr = new JSONArray();
+		
+		if(myCalendarList!=null) {
+			for(ScheduleOdyVO svo : myCalendarList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("subject", svo.getSubject());
+				jsObj.put("startdate", svo.getStartdate());
+				jsObj.put("enddate", svo.getEnddate());
+				jsObj.put("color", svo.getColor());
+				jsObj.put("sdno", svo.getSdno());
+			
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
+
+	
+	
+	// 홈페이지에서 해당 날짜를 클릭했을 때 내 일정 가져오기
+	
+	@ResponseBody
+	@RequestMapping(value="/t1/myCalendarInfo.tw",method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String myCalendarInfo(HttpServletRequest request) {
+		
+		String employeeid = request.getParameter("employeeid");
+		String date = request.getParameter("date");
+		
+		Map<String,String> paraMap = new HashMap<String, String>();
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("date", date);
+		
+		List<ScheduleOdyVO> mycalInfoList = service.myCalendarInfo(paraMap);
+		
+		JSONArray jsArr = new JSONArray();
+		
+		if(mycalInfoList!=null) {
+			for(ScheduleOdyVO svo : mycalInfoList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("subject", svo.getSubject());
+				jsObj.put("startdate", svo.getStartdate());
+				jsObj.put("enddate", svo.getEnddate());
+				jsObj.put("color", svo.getColor());
+				jsObj.put("sdno", svo.getSdno());
+				jsObj.put("stime", svo.getStime());
+				jsObj.put("etime", svo.getEtime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
+
+
+
+	@ResponseBody
+	@RequestMapping(value="/t1/todayMyCal.tw",method = {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String todayMyCal(HttpServletRequest request) {
+		
+		String employeeid = request.getParameter("employeeid");
+	
+		List<ScheduleOdyVO> todayMyCalList = service.todayMyCal(employeeid);
+		
+		JSONArray jsArr = new JSONArray();
+		
+		if(todayMyCalList!=null) {
+			for(ScheduleOdyVO svo : todayMyCalList) {
+				JSONObject jsObj = new JSONObject();
+				jsObj.put("subject", svo.getSubject());
+				jsObj.put("startdate", svo.getStartdate());
+				jsObj.put("enddate", svo.getEnddate());
+				jsObj.put("color", svo.getColor());
+				jsObj.put("sdno", svo.getSdno());
+				jsObj.put("stime", svo.getStime());
+				jsObj.put("etime", svo.getEtime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
+	
 
 
 

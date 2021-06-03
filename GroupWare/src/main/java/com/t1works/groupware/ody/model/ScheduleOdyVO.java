@@ -12,8 +12,21 @@ public class ScheduleOdyVO {
 	private int fk_scno; // 캘린더 소분류 번호
 	private int fk_bcno;// 캘린더 대분류 번호
 	private String fk_employeeid; // 사번
+	private String stime;
+	private String etime;
 	
-	
+	public String getStime() {
+		return stime;
+	}
+	public void setStime(String stime) {
+		this.stime = stime;
+	}
+	public String getEtime() {
+		return etime;
+	}
+	public void setEtime(String etime) {
+		this.etime = etime;
+	}
 	private ScalCategoryOdyVO scvo;
 	private String scname; // 캘린더 소분류의 이름
 	private BcalCategoryVO bcvo;

@@ -17,7 +17,7 @@ import com.t1works.groupware.kdn.model.InterBoardKdnDAO;
 
 @Component
 @Service
-public class BoardServiceKdn implements InterBoardServiceKdn {
+public class BoardKdnService implements InterBoardKdnService {
 
 	@Autowired
 	private InterBoardKdnDAO dao;
@@ -47,13 +47,13 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 
 	// 공지사항 글조회수 증가와 함께 글1개를 조회를 해주는 것
 	@Override
-	public BoardKdnVO getView(String seq, String login_userid) {
-		BoardKdnVO boardvo = dao.getView(seq);	// 공지사항 글1개 조회하기
+	public BoardKdnVO getView(Map<String, String> paraMap, String login_userid) {
+		BoardKdnVO boardvo = dao.getView(paraMap);	// 공지사항 글1개 조회하기
 		
 		if(login_userid != null && boardvo != null && !login_userid.equals(boardvo.getFk_employeeid())) {
 			// 로그인이 되어있어야하고 boardvo 데이터가 있어야하고 게시글 작성자 아이디가 게시글 조회하는 유저 아이디와 다를때 
-			dao.setAddReadCount(seq); // 글 조회수 1 증가하기
-			boardvo = dao.getView(seq);
+			dao.setAddReadCount(paraMap); // 글 조회수 1 증가하기
+			boardvo = dao.getView(paraMap);
 		}
 		
 		return boardvo;
@@ -61,8 +61,8 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 
 	// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것
 	@Override
-	public BoardKdnVO getViewWithNoAddCount(String seq) {
-		BoardKdnVO boardvo = dao.getView(seq);	//글1개 조회하기
+	public BoardKdnVO getViewWithNoAddCount(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = dao.getView(paraMap);	//글1개 조회하기
 		return boardvo;
 	}
 
@@ -106,13 +106,13 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 
 	// (건의사항) 글조회수 증가와 함께 글1개를 조회를 해주는 것
 	@Override
-	public BoardKdnVO getSuggPostView(String seq, String login_userid) {
-		BoardKdnVO boardvo = dao.getSuggPostView(seq);	// 공지사항 글1개 조회하기
+	public BoardKdnVO getSuggPostView(Map<String, String> paraMap, String login_userid) {
+		BoardKdnVO boardvo = dao.getSuggPostView(paraMap);	// 공지사항 글1개 조회하기
 		
 		if(login_userid != null && boardvo != null && !login_userid.equals(boardvo.getFk_employeeid())) {
 			// 로그인이 되어있어야하고 boardvo 데이터가 있어야하고 게시글 작성자 아이디가 게시글 조회하는 유저 아이디와 다를때 
-			dao.setAddSuggReadCount(seq); // 글 조회수 1 증가하기
-			boardvo = dao.getSuggPostView(seq);
+			dao.setAddSuggReadCount(paraMap); // 글 조회수 1 증가하기
+			boardvo = dao.getSuggPostView(paraMap);
 		}
 		
 		return boardvo;
@@ -120,8 +120,8 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 
 	// (건의사항) 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것
 	@Override
-	public BoardKdnVO getSuggViewWithNoAddCount(String seq) {
-		BoardKdnVO boardvo = dao.getSuggPostView(seq);	//글1개 조회하기
+	public BoardKdnVO getSuggViewWithNoAddCount(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = dao.getSuggPostView(paraMap);	//글1개 조회하기
 		return boardvo;
 	}
 
@@ -137,6 +137,37 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 	public int suggDel(Map<String, String> paraMap) {
 		int n = dao.suggDel(paraMap);
 		return n;
+	}
+	
+	// 건의사항 댓글쓰기
+	@Override
+	public int addSuggComment(CommentKdnVO commentvo) {
+		int n=0, result=0;
+	      
+	    n = dao.addSuggComment(commentvo); // 댓글쓰기(tbl_comment 테이블에 insert)
+	    //  n <== 1 
+	      
+	    if(n==1) {
+	       result = dao.updateSuggCmntCount(commentvo.getFk_seq()); // tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) 
+	    //  m <== 1     
+	    }
+	      
+		return result;
+		
+	}
+	
+	// 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
+	@Override
+	public List<CommentKdnVO> getSuggCmntListPaging(Map<String, String> paraMap) {
+		List<CommentKdnVO> commentList = dao.getSuggCmntListPaging(paraMap);
+		return commentList;
+	}
+
+	// 건의사항 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
+	@Override
+	public int getSuggCmntTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getSuggCmntTotalPage(paraMap);
+		return totalPage;
 	}
 	
 	// ========== 자유게시판 ===========
@@ -163,13 +194,13 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 	}
 
 	// (자유게시판) 글조회수 증가와 함께 글1개를 조회를 해주는 것
-	public BoardKdnVO getGenPostView(String seq, String login_userid) {
-		BoardKdnVO boardvo = dao.getGenPostView(seq);	// 공지사항 글1개 조회하기
+	public BoardKdnVO getGenPostView(Map<String, String> paraMap, String login_userid) {
+		BoardKdnVO boardvo = dao.getGenPostView(paraMap);	// 공지사항 글1개 조회하기
 		
 		if(login_userid != null && boardvo != null && !login_userid.equals(boardvo.getFk_employeeid())) {
 			// 로그인이 되어있어야하고 boardvo 데이터가 있어야하고 게시글 작성자 아이디가 게시글 조회하는 유저 아이디와 다를때 
-			dao.setAddGenReadCount(seq); // 글 조회수 1 증가하기
-			boardvo = dao.getGenPostView(seq);
+			dao.setAddGenReadCount(paraMap); // 글 조회수 1 증가하기
+			boardvo = dao.getGenPostView(paraMap);
 		}
 		
 		return boardvo;
@@ -177,8 +208,8 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 	
 	// (자유게시판) 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것
 	@Override
-	public BoardKdnVO getGenViewWithNoAddCount(String seq) {
-		BoardKdnVO boardvo = dao.getGenPostView(seq);	//글1개 조회하기
+	public BoardKdnVO getGenViewWithNoAddCount(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = dao.getGenPostView(paraMap);	//글1개 조회하기
 		return boardvo;
 	}
 
@@ -226,6 +257,10 @@ public class BoardServiceKdn implements InterBoardServiceKdn {
 		int totalPage = dao.getCommentTotalPage(paraMap);
 		return totalPage;
 	}
+
+	
+
+	
 
 	
 

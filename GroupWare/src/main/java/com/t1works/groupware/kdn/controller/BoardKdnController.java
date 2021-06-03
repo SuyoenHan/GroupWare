@@ -24,13 +24,13 @@ import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.kdn.model.BoardKdnVO;
 import com.t1works.groupware.kdn.model.CommentKdnVO;
-import com.t1works.groupware.kdn.service.InterBoardServiceKdn;
+import com.t1works.groupware.kdn.service.InterBoardKdnService;
 
 @Controller
 public class BoardKdnController {
 	
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
-	private InterBoardServiceKdn service;
+	private InterBoardKdnService service;
 	
 	// === 게시판 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/noticePostUpload.tw")
@@ -67,7 +67,6 @@ public class BoardKdnController {
 		
 		boardTypeNo = "1";
 		String fk_categnum = request.getParameter("fk_categnum");
-		
 		
 		String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
@@ -191,6 +190,20 @@ public class BoardKdnController {
 		
 		// 조회하고자 하는 글번호 받아오기
 		String seq = request.getParameter("seq");
+		
+		// 글목록에서 검색되어진 글내용일 경우 이전글제목, 다음글제목은 검색되어진 결과물내의 이전글과 다음글이 나오도록 하기 위한 것이다.  
+	      String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+	      /////////////////////////////////////////////////////////////////////////////
+		
 		// === 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다.
 		String gobackURL = request.getParameter("gobackURL");
 		if(gobackURL != null) {
@@ -215,16 +228,15 @@ public class BoardKdnController {
 			if("yes".equals(session.getAttribute("readCountPermission"))) { 
 				//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
 				
-				boardvo = service.getView(seq, login_userid);
+				boardvo = service.getView(paraMap, login_userid);
 				// 글조회수 증가와 함께 글1개를 조회를 해주는 것
 				
-				session.removeAttribute("readCountPermission");
 				session.removeAttribute("readCountPermission");
 				// 중요함!! session 에 저장된 readCountPermission 을 삭제한다.
 			
 			} else { // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
 				
-				boardvo = service.getViewWithNoAddCount(seq);
+				boardvo = service.getViewWithNoAddCount(paraMap);
 				// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것이다.
 				
 			}
@@ -278,10 +290,20 @@ public class BoardKdnController {
 		// 수정해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
 		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
 		// 글 수정해야할 글1개 내용 가져오기
 		
 		// 글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
-		BoardKdnVO boardvo = service.getViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getViewWithNoAddCount(paraMap);
 				
 		HttpSession session = request.getSession();
 	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
@@ -333,8 +355,20 @@ public class BoardKdnController {
 		
 		// 삭제해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
+		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+		
 		// 삭제해야할 글1개 내용 가져와서 로그인한 사람이 쓴 글이라면 글삭제가 가능하지만 다른 사람이 쓴 글은 삭제가 불가하도록 해야 한다.
-		BoardKdnVO boardvo = service.getViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getViewWithNoAddCount(paraMap);
 		//글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
 		
 		HttpSession session = request.getSession();
@@ -547,6 +581,18 @@ public class BoardKdnController {
 		
 		String seq = request.getParameter("seq");
 		// === 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다.
+		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+		
 		String gobackURL = request.getParameter("gobackURL");
 		if(gobackURL != null) {
 			gobackURL = gobackURL.replaceAll(" ", "&");
@@ -571,7 +617,7 @@ public class BoardKdnController {
 			if("yes".equals(session.getAttribute("readCountPermission"))) { 
 				//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
 				
-				boardvo = service.getSuggPostView(seq, login_userid);
+				boardvo = service.getSuggPostView(paraMap, login_userid);
 				// 글조회수 증가와 함께 글1개를 조회를 해주는 것
 				
 				session.removeAttribute("readCountPermission");
@@ -579,7 +625,7 @@ public class BoardKdnController {
 			
 			} else { // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
 				
-				boardvo = service.getSuggViewWithNoAddCount(seq);
+				boardvo = service.getSuggViewWithNoAddCount(paraMap);
 				// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것이다.
 			}
 			
@@ -602,6 +648,17 @@ public class BoardKdnController {
 		
 		String seq = request.getParameter("seq");
 		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+		
 		String gobackURL = request.getParameter("gobackURL");
 		mav.addObject("gobackURL", gobackURL);
 		
@@ -621,7 +678,7 @@ public class BoardKdnController {
 		if("yes".equals(session.getAttribute("readCountPermission"))) { 
 			//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
 			
-			boardvo = service.getSuggPostView(seq, login_userid);
+			boardvo = service.getSuggPostView(paraMap, login_userid);
 			// 글조회수 증가와 함께 글1개를 조회를 해주는 것
 			
 			session.removeAttribute("readCountPermission");
@@ -629,7 +686,7 @@ public class BoardKdnController {
 		
 		} else { // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
 			
-			boardvo = service.getSuggViewWithNoAddCount(seq);
+			boardvo = service.getSuggViewWithNoAddCount(paraMap);
 			// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것이다.
 		}
 		
@@ -647,10 +704,20 @@ public class BoardKdnController {
 		// 수정해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
 		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
 		// 글 수정해야할 글1개 내용 가져오기
 		
 		// 글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
-		BoardKdnVO boardvo = service.getSuggViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getSuggViewWithNoAddCount(paraMap);
 				
 		HttpSession session = request.getSession();
 	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
@@ -702,8 +769,21 @@ public class BoardKdnController {
 		
 		// 삭제해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
+		
+		String searchType = request.getParameter("searchType");
+	      String searchWord = request.getParameter("searchWord");
+	      
+	      Map<String,String> paraMap = new HashMap<>();
+	      paraMap.put("seq", seq);
+	      paraMap.put("searchType", searchType);
+	      paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+		
+		
 		// 삭제해야할 글1개 내용 가져와서 로그인한 사람이 쓴 글이라면 글삭제가 가능하지만 다른 사람이 쓴 글은 삭제가 불가하도록 해야 한다.
-		BoardKdnVO boardvo = service.getSuggViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getSuggViewWithNoAddCount(paraMap);
 		//글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
 		
 		HttpSession session = request.getSession();
@@ -749,15 +829,92 @@ public class BoardKdnController {
            mav.addObject("message", "글삭제 성공!!");
            mav.addObject("loc", request.getContextPath()+"/t1/suggestionBoard.tw");
         }
-        
         mav.setViewName("msg");
-        
-        
 		return mav;
-		
 	}
 	
+	// === 건의사항 댓글쓰기(ajax 처리) === 
+	@ResponseBody
+	@RequestMapping(value="/t1/addSuggComment.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String addSuggComment(CommentKdnVO commentvo) {
+		try {
+			service.addSuggComment(commentvo);
+		} catch (Throwable e) {
+
+		}
+		// 댓글쓰기(insert) 및 원게시물(tbl_board 테이블)에 댓글의 개수 증가(update 1씩 증가)하기 
+
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("name", commentvo.getName());
+		
+		return jsonObj.toString();
+	}
+		
+	// === 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) ===
+	@ResponseBody
+	@RequestMapping(value="/t1/suggCommentList.tw", method= {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
+	public String suggCommentList(HttpServletRequest request) {
+		
+		String fk_seq = request.getParameter("fk_seq");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+		
+		if(currentShowPageNo == null) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
+		
+		int startRno = (( Integer.parseInt(currentShowPageNo) - 1 ) * sizePerPage) + 1;
+	    int endRno = startRno + sizePerPage - 1; 
+		
+	    Map<String, String> paraMap = new HashMap<>();
+	    paraMap.put("fk_seq", fk_seq);
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    
+		List<CommentKdnVO> commentList = service.getSuggCmntListPaging(paraMap);
+		
+		JSONArray jsonArr = new JSONArray(); // []
+		
+		if(commentList != null) {
+			for(CommentKdnVO cmtvo : commentList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("content", cmtvo.getContent());
+				jsonObj.put("name", cmtvo.getName());
+				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
+				jsonObj.put("regDate", cmtvo.getRegDate());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		//System.out.println(jsonArr.toString());
+		
+		return jsonArr.toString();
+		// "[]" 또는
+		// "[{"content":"댓글내용물", "name":"작성자명", "regDate":"작성일자"}]
+	}
 	
+	// === 건의사항 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리) ===
+	@ResponseBody
+	@RequestMapping(value="/t1/getSuggCmntTotalPage.tw", method= {RequestMethod.GET})
+	public String getSuggCmntTotalPage(HttpServletRequest request) {
+		
+		String fk_seq = request.getParameter("fk_seq");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("fk_seq", fk_seq);
+		paraMap.put("sizePerPage", sizePerPage);
+		// 원글 글번호(parentSeq)에 해당하는 댓글의 총 페이지수를 알아오기
+		int totalPage = service.getSuggCmntTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); // {"totalPage"}
+		
+		return jsonObj.toString();
+		// "{"totalPage":5}"
+	}
 	
 	
 	
@@ -923,6 +1080,18 @@ public class BoardKdnController {
 	public ModelAndView requiredLogin_viewGenPost(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		String seq = request.getParameter("seq");
+		
+		String searchType = request.getParameter("searchType");
+	    String searchWord = request.getParameter("searchWord");
+	      
+	    Map<String,String> paraMap = new HashMap<>();
+	    paraMap.put("seq", seq);
+	    paraMap.put("searchType", searchType);
+	    paraMap.put("searchWord", searchWord);
+	      
+	      mav.addObject("searchType", searchType);
+	      mav.addObject("searchWord", searchWord);
+	      
 		// === 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다.
 		String gobackURL = request.getParameter("gobackURL");
 		if(gobackURL != null) {
@@ -949,7 +1118,7 @@ public class BoardKdnController {
 				//글목록보기를 클릭한 다음에 특정글을 조회해온 경우
 				
 				
-				boardvo = service.getGenPostView(seq, login_userid);
+				boardvo = service.getGenPostView(paraMap, login_userid);
 				// 글조회수 증가와 함께 글1개를 조회를 해주는 것
 				//System.out.println("~~~ 확인용 content : " + boardvo.getContent());
 				
@@ -958,7 +1127,7 @@ public class BoardKdnController {
 			
 			} else { // 웹브라우저에서 새로고침(F5)을 클릭한 경우이다.
 				
-				boardvo = service.getGenViewWithNoAddCount(seq);
+				boardvo = service.getGenViewWithNoAddCount(paraMap);
 				// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것이다.
 			}
 			
@@ -982,10 +1151,21 @@ public class BoardKdnController {
 		// 수정해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
 		
+		String searchType = request.getParameter("searchType");
+	    String searchWord = request.getParameter("searchWord");
+	      
+	    Map<String,String> paraMap = new HashMap<>();
+	    paraMap.put("seq", seq);
+	    paraMap.put("searchType", searchType);
+	    paraMap.put("searchWord", searchWord);
+	      
+	    mav.addObject("searchType", searchType);
+	    mav.addObject("searchWord", searchWord);
+		
 		// 글 수정해야할 글1개 내용 가져오기
 		
 		// 글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
-		BoardKdnVO boardvo = service.getGenViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getGenViewWithNoAddCount(paraMap);
 				
 		HttpSession session = request.getSession();
 	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
@@ -1038,8 +1218,20 @@ public class BoardKdnController {
 		
 		// 삭제해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
+		
+		String searchType = request.getParameter("searchType");
+	    String searchWord = request.getParameter("searchWord");
+	      
+	    Map<String,String> paraMap = new HashMap<>();
+	    paraMap.put("seq", seq);
+	    paraMap.put("searchType", searchType);
+	    paraMap.put("searchWord", searchWord);
+	      
+	    mav.addObject("searchType", searchType);
+	    mav.addObject("searchWord", searchWord);
+	      
 		// 삭제해야할 글1개 내용 가져와서 로그인한 사람이 쓴 글이라면 글삭제가 가능하지만 다른 사람이 쓴 글은 삭제가 불가하도록 해야 한다.
-		BoardKdnVO boardvo = service.getGenViewWithNoAddCount(seq);
+		BoardKdnVO boardvo = service.getGenViewWithNoAddCount(paraMap);
 		//글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
 		
 		HttpSession session = request.getSession();
@@ -1148,11 +1340,7 @@ public class BoardKdnController {
 			}
 		}
 		
-		//System.out.println(jsonArr.toString());
-		
 		return jsonArr.toString();
-		// "[]" 또는
-		// "[{"content":"댓글내용물", "name":"작성자명", "regDate":"작성일자"}]
 	}
 	
 	// === 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리) ===
@@ -1166,15 +1354,11 @@ public class BoardKdnController {
 		Map<String,String> paraMap = new HashMap<>();
 		paraMap.put("fk_seq", fk_seq);
 		paraMap.put("sizePerPage", sizePerPage);
-		System.out.println("parentSeq : "+fk_seq);
-		System.out.println("sizePerPage : "+sizePerPage);
 		// 원글 글번호(parentSeq)에 해당하는 댓글의 총 페이지수를 알아오기
 		int totalPage = service.getCommentTotalPage(paraMap);
 		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("totalPage", totalPage); // {"totalPage"}
-		
-		System.out.println("~~~ 확인용 totalPage: "+totalPage);
 		
 		return jsonObj.toString();
 		// "{"totalPage":5}"

@@ -84,7 +84,7 @@ $(document).ready(function(){
 	 <a href="javascript:location.href='suggestionBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-exclamation fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">건의사항</span></a>
 	
 	 <form name="postFrm"> 
-	    <table id="table">
+	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
 	          <td>
