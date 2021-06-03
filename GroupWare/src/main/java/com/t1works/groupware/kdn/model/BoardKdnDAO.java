@@ -143,6 +143,21 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return totalPage;
 	}
 	
+	// tbl_suggestionboard 테이블에서 groupno 컬럼의 최대값 구하기
+	@Override
+	public int getGroupnoMax() {
+		int max = sqlsession3.selectOne("board.getGroupnoMax");
+	    return max;
+	}
+	
+	// 건의사항 댓글 삭제
+	@Override
+	public int delSuggComment(String seq) {
+		int n = sqlsession3.delete("board.delSuggComment", seq);
+		return n;
+	}
+	
+	
 	// =========== 자유게시판  =============
 	
 	// 자유게시판 글쓰기 완료 요청
@@ -221,6 +236,10 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		int totalPage = sqlsession3.selectOne("board.getCommentTotalPage", paraMap);
 		return totalPage;
 	}
+
+	
+
+	
 
 	
 

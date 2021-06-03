@@ -7,7 +7,13 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$("input[name=privatePost]").val("0");
+	var privatePost = ${requestScope.privatePost};
+    $("input[name=privatePost]").val(privatePost);
+   
+    if(privatePost == 1){
+	   $("input#checkPrivate").prop("checked",true);
+    }
+	
 	$("input#checkPrivate").change(function(){
 		 if($(this).is(":checked") == true){
 			 $("input[name=privatePost]").val("1");
@@ -96,7 +102,12 @@ $(document).ready(function(){
 	       <tr>
 	          <th>제목</th>
 	          <td>
-	             <input type="text" name="subject" id="subject" style="width: 100%;" />       
+	          	<c:if test="${not empty requestScope.subject}">
+	             	<input type="text" name="subject" id="subject" style="width: 100%;" value="&rdca;&nbsp;Re:&nbsp;${requestScope.subject}"/> 
+	          	</c:if>
+	          	<c:if test="${empty requestScope.subject}">
+	             	<input type="text" name="subject" id="subject" style="width: 100%;" /> 
+	             </c:if>      
 	          </td>
 	       </tr>
 	       <tr>
@@ -113,11 +124,16 @@ $(document).ready(function(){
 	          <th>비밀번호</th>
 	          <td>
 	             <input type="password" name="pw" id="pw" class="short" />
-		             <input type="hidden" name="privatePost"/>
-		             <input type="checkbox" id="checkPrivate" />&nbsp;비밀글
+		         <input type="hidden" name="privatePost"/>
+		         <input type="checkbox" id="checkPrivate" />&nbsp;비밀글
 	          </td>
 	       </tr>
 	    </table>
+	      
+	  <input type="hidden" name="parentSeq" value="${requestScope.parentSeq}"/>
+      <input type="hidden" name="groupno" value="${requestScope.groupno}"/>
+      <input type="hidden" name="depthno" value="${requestScope.depthno}"/>
+	      
 	      
 	    <div id="btn-container" class="float-right">
 	       <button type="button" id="btnWrite" class="btn-style"><span style="color: #ffffff;">등록</span></button>

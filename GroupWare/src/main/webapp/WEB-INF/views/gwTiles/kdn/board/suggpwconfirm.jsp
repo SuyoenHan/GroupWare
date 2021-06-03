@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<% String ctxPath = request.getContextPath(); %>    
+<%@ taglib prefix='c' uri="http://java.sun.com/jsp/jstl/core" %>   
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<% String ctxPath = request.getContextPath(); %>
 
 <style type="text/css">
 
@@ -32,7 +34,7 @@
        // 폼(form)을 전송(submit)
        var frm = document.viewPrivPostFrm;
        frm.method = "POST";
-       frm.action = "<%= ctxPath%>/t1/viewSuggPost.tw";
+       frm.action = "<%= ctxPath%>/t1/viewSuggPost.tw?searchWord=${reqestScope.paraMap.searchWord}&gobackURL=${requestScope.gobackURL}";
        frm.submit();
     });
 	
@@ -40,7 +42,7 @@
 		if(event.keyCode == 13){
 			var frm = document.viewPrivPostFrm;
 		       frm.method = "POST";
-		       frm.action = "<%= ctxPath%>/t1/viewSuggPost.tw";
+		       frm.action = "<%= ctxPath%>/t1/viewSuggPost.tw?searchWord=${reqestScope.paraMap.searchWord}&gobackURL=${requestScope.gobackURL}";
 		       frm.submit();
 		}
 	});
@@ -51,7 +53,7 @@
 
 <div style="padding-left: 10%;">
    <h1>건의사항 비밀글 조회</h1>
-
+	<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
    <form name="viewPrivPostFrm">
       <table id="table">
          <tr>

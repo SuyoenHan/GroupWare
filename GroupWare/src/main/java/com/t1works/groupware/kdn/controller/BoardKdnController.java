@@ -556,6 +556,20 @@ public class BoardKdnController {
 	// === 건의사항 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/suggPostUpload.tw")
 	public ModelAndView requiredLogin_suggestionPostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardKdnVO boardvo, ModelAndView mav) {
+		
+		// === 답변글쓰기 추가로 인한  ===
+		String parentSeq = request.getParameter("parentSeq");
+		String groupno = request.getParameter("groupno");
+		String depthno = request.getParameter("depthno");
+		String subject = request.getParameter("subject");
+		String privatePost = request.getParameter("privatePost");
+		
+		mav.addObject("parentSeq", parentSeq);
+		mav.addObject("groupno", groupno);
+		mav.addObject("depthno", depthno);
+		mav.addObject("subject", subject);
+		mav.addObject("privatePost", privatePost);
+		
 		mav.setViewName("kdn/board/suggpostupload.gwTiles");
 		return mav;
 	}
@@ -598,7 +612,7 @@ public class BoardKdnController {
 			gobackURL = gobackURL.replaceAll(" ", "&");
 		}
 		mav.addObject("gobackURL", gobackURL);
-		
+
 		try {
 			Integer.parseInt(seq);
 			
@@ -659,8 +673,11 @@ public class BoardKdnController {
 	      mav.addObject("searchType", searchType);
 	      mav.addObject("searchWord", searchWord);
 		
-		String gobackURL = request.getParameter("gobackURL");
-		mav.addObject("gobackURL", gobackURL);
+	      String gobackURL = request.getParameter("gobackURL");
+			if(gobackURL != null) {
+				gobackURL = gobackURL.replaceAll(" ", "&");
+			}
+			mav.addObject("gobackURL", gobackURL);
 		
 		HttpSession session = request.getSession();
 	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
@@ -916,9 +933,21 @@ public class BoardKdnController {
 		// "{"totalPage":5}"
 	}
 	
-	
-	
-	
+	// 건의사항 댓글 삭제하기
+	@ResponseBody
+	@RequestMapping(value="/t1/delSuggComment.tw", method= {RequestMethod.GET})
+	public String delSuggComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		int n = service.delSuggComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}
 	
 	
 	

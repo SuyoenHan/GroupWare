@@ -100,6 +100,13 @@ public class BoardKdnService implements InterBoardKdnService {
 	// 건의사항 게시판 글쓰기 완료 요청
 	@Override
 	public int suggPostUpload(BoardKdnVO boardvo) {
+		// == 원글쓰기인지 , 답변글쓰기인지 구분하기 == 
+		if(boardvo.getParentSeq() == null || boardvo.getParentSeq().trim().isEmpty() ) {
+			// 원글쓰기 이라면 groupno 컬럼의 값은 groupno 컬럼의 최대값(max)+1 로 해야 한다. 
+			int groupno = dao.getGroupnoMax() + 1;
+			boardvo.setGroupno(String.valueOf(groupno));
+		}
+		
 		int n = dao.suggPostUpload(boardvo);
 		return n;
 	}
@@ -168,6 +175,13 @@ public class BoardKdnService implements InterBoardKdnService {
 	public int getSuggCmntTotalPage(Map<String, String> paraMap) {
 		int totalPage = dao.getSuggCmntTotalPage(paraMap);
 		return totalPage;
+	}
+	
+	// 건의사항 댓글 삭제하기
+	@Override
+	public int delSuggComment(String seq) {
+		int n = dao.delSuggComment(seq);
+		return n;
 	}
 	
 	// ========== 자유게시판 ===========
@@ -257,6 +271,8 @@ public class BoardKdnService implements InterBoardKdnService {
 		int totalPage = dao.getCommentTotalPage(paraMap);
 		return totalPage;
 	}
+
+	
 
 	
 

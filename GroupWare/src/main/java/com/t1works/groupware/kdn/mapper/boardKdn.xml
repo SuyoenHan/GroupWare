@@ -96,42 +96,58 @@
 	</select>
 	
 	
-	<!-- (건의사항)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
+	<!-- (건의사항-답글기능있음)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
 	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		select rno, seq, fk_employeeid, name, subject, readCount, regDate, privatePost
+		select seq, fk_employeeid, name, subject, readCount, regDate, privatePost, commentCount, groupno, parentSeq, depthno
 		from
 		(
-		select row_number() over(order by seq desc) as rno,
-		       seq, fk_employeeid, name, subject, readCount, privatePost,
-		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
-		from tbl_suggestionboard
-		where status = 1
-		<if test='searchWord != ""'>
-		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
-		</if>
-		) V
+		    select rownum as rno, seq, fk_employeeid, name, subject, readCount, regDate, privatePost, commentCount, groupno, parentSeq, depthno
+		    from
+		    (
+		        select seq, fk_employeeid, name, subject, readCount, privatePost,
+		               to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate,
+		               commentCount, groupno, parentSeq, depthno
+		        from tbl_suggestionboard
+		        where status = 1
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>
+		        start with parentSeq = 0
+		        connect by prior seq = parentSeq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T
 		where rno between #{startRno} and #{endRno}
 	</select>
 	
 	<!-- (건의사항) 파일 첨부가 없는 글쓰기 하기 -->
 	<insert id="suggPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status)
-		values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default)
+		<if test='parentSeq.equals("")'>
+			insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status, groupno, parentSeq, depthno)
+			values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default, #{groupno}, default, default)
+		</if>
+		<if test='!parentSeq.equals("")'>
+			insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status, groupno, parentSeq, depthno)
+			values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default, #{groupno}, #{parentSeq}, #{depthno}+1)
+		</if>
 	</insert>
 	
-	<!--  (댓글쓰기가 없는 게시판에서) 건의사항 글 1개 보여주기  ==  -->
+	<!--  건의사항(댓글쓰기&답변글 기능 있음) 글 1개 보여주기  ==  -->
 	<select id="getSuggPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
+		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate,privatePost, nextseq,nextsubject,
+				groupno, parentSeq, depthno
 		from
 		(
 			select lag(seq,1) over(order by seq desc) as previousseq
 			     , lag(subject,1) over(order by seq desc) as previoussubject
 			     
-			     , seq, fk_employeeid, name, subject, content  
+			     , seq, fk_employeeid, name, subject, content, privatePost  
 			     , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 			     
 			     ,lead(seq,1) over(order by seq desc) as nextseq
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
+			     
+			     ,groupno, parentSeq, depthno
 			from tbl_suggestionboard
 			where status = 1
 			<if test='searchType != "" and searchWord != ""'>
@@ -149,7 +165,7 @@
 	
 	<!-- === 건의사항 1개글 수정하기 === -->
 	<update id="suggEdit" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		 update tbl_suggestionboard set subject=#{subject}, content=#{content}
+		 update tbl_suggestionboard set subject=#{subject}, content=#{content}, privatePost=#{privatePost}
 		 where seq=#{seq} and pw = #{pw}
 	</update>
 	
@@ -173,10 +189,10 @@
 	
 	<!-- === 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
 	<select id="getSuggCmntListPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.CommentKdnVO">
-		select name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
+		select seq, name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
 		from
 		(
-			select row_number() over(order by seq desc) as rno, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			select row_number() over(order by seq desc) as rno, seq, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 			,fk_employeeid
 			from tbl_suggestionboardcomment
 			where fk_seq = #{fk_seq}
@@ -190,6 +206,20 @@
 		from tbl_suggestionboardcomment
 		where fk_seq = #{fk_seq}
 	</select>
+	
+	<!-- tbl_suggestionboard 테이블에서 groupno 컬럼의 최대값 구하기 === -->
+	<select id="getGroupnoMax" resultType="int">
+		select nvl(max(groupno), 0)
+		from tbl_suggestionboard
+	</select>
+	
+	<!-- 건의사항 댓글 삭제 -->
+	<delete id="delSuggComment" parameterType="String">
+		delete from tbl_suggestionboardcomment
+		where seq = #{seq}
+	</delete>
+	
+	
 	
 	
 	

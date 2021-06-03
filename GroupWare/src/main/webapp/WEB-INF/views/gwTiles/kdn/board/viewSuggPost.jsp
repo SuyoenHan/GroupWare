@@ -79,7 +79,7 @@ function goViewComment(currentShowPageNo) {
 					html += "<span style='display:inline-block; margin-bottom:5px; font-size:13px;'>"+item.regDate+"</span>&nbsp;&nbsp;"
 					
 					if($("input[name=fk_employeeid]").val() == item.fk_employeeid){
-						html+="<a style='margin-right:5px; font-size:13px; text-decoration: none;'>수정</a><a style='border-left: solid 1px gray; padding-left: 5px; font-size:13px; text-decoration: none;'>삭제</a><br>";
+						html+="<a style='margin-right:5px; font-size:13px; text-decoration: none;'>수정</a><a href='javascript:delSuggComment("+item.seq+")'style='border-left: solid 1px gray; padding-left: 5px; font-size:13px; text-decoration: none;'>삭제</a><br>";
 					} else {
 						html+="<br>";
 					}
@@ -106,6 +106,41 @@ function goViewComment(currentShowPageNo) {
 	});
 	
 }// end of function goViewComment(currentShowPageNo) {}----------------------
+
+// 댓글 삭제하기
+function delSuggComment(comment_seq){
+   
+   var bool = confirm("댓글을 삭제하시겠습니까?");
+   console.log("bool => " + bool);
+   
+   if(bool){
+	   $.ajax({
+		   url:"<%=request.getContextPath()%>/t1/delSuggComment.tw",
+		   data:{"seq":comment_seq},
+		   dataType:"json",
+		   success:function(json){
+			   if(json.n == 1){
+				   alert('댓글 삭제가 성공되었습니다.');
+				   goCommentListView();
+			   } else {
+				   alert('제품후기 삭제가 실패했습니다.');
+			   }
+			   
+		   },
+		   error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	       }
+		   
+		   
+	   });
+	   
+	   
+   }
+}  //end of function delMyReview(review_seq) -------
+
+
+
+
 
 //==== 댓글내용 페이지바  Ajax로 만들기 ==== // 
 function makeCommentPageBar(currentShowPageNo) {
@@ -216,9 +251,16 @@ function makeCommentPageBar(currentShowPageNo) {
 		</c:if>
 		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
 		<!-- <button type="button" class="float-right btn-style" onclick="javascript:location.href='suggestionBoard.tw'">전체목록보기</button> -->
+		<!-- 인사팀 대리만 답변글쓰기 가능 -->
+		<c:if test="${loginuser.fk_dcode eq '4' && loginuser.fk_pcode eq'2'}">
+		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggPostUpload.tw?parentSeq=${requestScope.boardvo.seq}&groupno=${requestScope.boardvo.groupno}&depthno=${requestScope.boardvo.depthno}&subject=${requestScope.boardvo.subject}&privatePost=${requestScope.boardvo.privatePost}'">답글쓰기</button>
+		</c:if>
+		
+		
+		
 		<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
-			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
-			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggDel.tw?seq=${requestScope.boardvo.seq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}'">삭제</button>
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggEdit.tw?seq=${requestScope.boardvo.seq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}'">수정</button>
 		</c:if>
 	</div>
 

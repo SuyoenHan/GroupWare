@@ -48,6 +48,11 @@ public interface InterBoardKdnDAO {
 	 
 	int getSuggCmntTotalPage(Map<String, String> paraMap); // 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
 	
+	int getGroupnoMax(); // tbl_suggestionboard 테이블에서 groupno 컬럼의 최대값 구하기
+	
+	int delSuggComment(String seq); // 건의사항 댓글 삭제하기
+	
+	
 	// === 자유게시판 ===
 	
 	int genPostUpload(BoardKdnVO boardvo); // 자유게시판 글쓰기 완료 요청
@@ -71,6 +76,10 @@ public interface InterBoardKdnDAO {
 	int getCommentTotalPage(Map<String, String> paraMap); // 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
 
 	List<CommentKdnVO> getCommentListPaging(Map<String, String> paraMap); // 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
+
+	
+
+	
 
 	
 
