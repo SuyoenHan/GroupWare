@@ -1,5 +1,7 @@
 package com.t1works.groupware.kdn.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class BoardKdnVO {
 
 	private String seq;          // 게시글 시퀀스번호 
@@ -17,9 +19,18 @@ public class BoardKdnVO {
 	   private String nextseq;          // 다음글번호
 	   private String nextsubject;      // 다음글제목
 	   private String privatePost;		// 비밀글 여부
-	   
-	   
 	   private String fk_categnum;		// 카테고리번호 
+	   private String commentCount;     // 댓글수 
+	   private String groupno; 			// 답변글쓰기에 있어서 그룹번호
+	   private String parentSeq;		// 답변글의 원글번호. 자신의 글(답변글)에 있어서 원글(부모글)이 누구인지에 대한 정보값
+	   private String depthno;			// 답변글 등록시 글목록에서 들여쓰기용
+	   
+	   private MultipartFile attach;
+	   
+	   private String fileName;    // WAS(톰캣)에 저장될 파일명(2020120809271535243254235235234.png) 
+	   private String orgFilename; // 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명
+	   private String fileSize;
+	   
 	   
 	   public BoardKdnVO() {}
 	   
@@ -164,6 +175,62 @@ public class BoardKdnVO {
 
 	public void setPrivatePost(String privatePost) {
 		this.privatePost = privatePost;
+	}
+
+	public String getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(String commentCount) {
+		this.commentCount = commentCount;
+	}
+
+	public String getGroupno() {
+		return groupno;
+	}
+
+	public void setGroupno(String groupno) {
+		this.groupno = groupno;
+	}
+
+	public String getParentSeq() {
+		return parentSeq;
+	}
+
+	public void setParentSeq(String parentSeq) {
+		this.parentSeq = parentSeq;
+	}
+
+	public String getDepthno() {
+		return depthno;
+	}
+
+	public void setDepthno(String depthno) {
+		this.depthno = depthno;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	

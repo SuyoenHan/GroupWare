@@ -56,6 +56,6 @@ public class CommentKdnVO {
 	public void setRegDate(String regDate) {
 		this.regDate = regDate;
 	}
-	
+
 	
 }

@@ -47,13 +47,22 @@
 		font-size: 15pt;
 	}
 	
+	span.productState2{
+		background-color:#004d80;
+		color:#fff;
+		font-weight: bold;
+		text-align: center;
+		padding-top:8px;
+		font-size: 15pt;
+	}
+	
 	span.state{
 		display: inline-block;
 		width: 110px;
 		height: 40px;
 		position:relative;
 		top: 48px;
-		left: 295px;
+		left: 340px;
 	}
 	
 	span.blinkState {opacity:0;}
@@ -78,7 +87,12 @@
 		$("div.productTitle").each(function(index,item){
 			
 			var remainCnt= Number($(item).prop('id'));
-			if(remainCnt<=6){ // 예약가능 인원이 6명 이하인 경우 마감임박 상품
+			
+			if(remainCnt<=0){ // 여행은 시작하지 않았지만 예약인원이 가득 찬 경우
+				$(item).prev().find("span.state").addClass("productState2");
+				$(item).prev().find("span.state").text("예약마감");
+			}
+			else if(remainCnt<=6){ // 예약가능 인원이 6명 이하인 경우 마감임박 상품
 				$(item).prev().find("span.state").addClass("productState");
 				$(item).prev().find("span.state").text("마감임박");
 			}

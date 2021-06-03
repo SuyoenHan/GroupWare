@@ -43,13 +43,36 @@ public interface InterScheduleOdyDAO {
 	// 내 캘린더 추가
 	int addMyCalendar(Map<String, String> paraMap);
 
+	// 내 캘린더의 소분류인 이름 존재 여부
+	int existMyCalendar(Map<String, String> paraMap);
+		
 	// 소분류 캘린더 삭제
 	int deleteCalendar(String scno);
 
+	// 사내 캘린더의 소분류인 이름 존재 여부
+	int existComCalendar(String scname);
+
+		
 	// 사내 캘린더 추가
 	int addComCalendar(Map<String, String> paraMap);
 
 	// 캘린더 수정하기
 	int editCalendar(Map<String, String> paraMap);
+
+	// 홈페이지에서 내 캘린더 보이기
+	List<ScheduleOdyVO> getMyCalendarList(String employeeid);
+
+	// 홈페이지에서 해당 날짜를 클릭했을 때 내 일정 가져오기
+	List<ScheduleOdyVO> myCalendarInfo(Map<String, String> paraMap);
+
+	// 오늘 날짜 내 캘린더 보여주기
+	List<ScheduleOdyVO> todayMyCal(String employeeid);
+
+
+
+
+
+	
+	
 
 }

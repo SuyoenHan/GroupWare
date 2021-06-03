@@ -13,6 +13,25 @@ table#rsroom th, td{
 	text-align: center;
 	vertical-align: middle;
 }
+
+button.btn_normal{
+	background-color: #0071bd;
+	border: none;
+	color: white;
+	width: 60px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+}
+
+button.btn_r{
+	border: solid 1px #ccc;
+	width:60px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+}
+
 /* 달력 css */
 div#calendarWrapper{
 	float: left;
@@ -86,10 +105,9 @@ if(curMonth.toString().length < 2){
 	curMonth = "0"+curMonth;
 }
 
-if(curDay.length < 2){
+if(curDay.toString().length < 2){
 	curDay = "0"+curDay;
 }
-
 var curYear = curDate.getFullYear();
 var curTime = curYear + "" + curMonth + "" + curDay;
 
@@ -294,10 +312,30 @@ $(document).ready(function(){
 				html += "<td style='vertical-align: middle;'>"+rsubject[index]+"</td>";
 				
 					if(fk_employeeid[index] != employeeid) {
-						html += "<td></td></tr>";
+						html += "<td></td><td></td></tr>";
 					} 
 					else {
-						html += "<td><button id='btn_delete' class='btn btn-secondary' onclick='deleteReserve("+rsroomno[index]+")';>삭제</button></td></tr>";
+					
+						if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
+							html += "<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>삭제</button></td></tr>";
+						}
+						else if(parseInt(curTime)==parseInt(chgdate)){
+							
+							if(i<curHour){
+								html += "<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>삭제</button></td></tr>";
+							}
+							else{
+								html +="<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>취소</button></td></tr>";
+							}
+				
+						}
+						else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
+							"<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>취소</button></td></tr>";
+						}
+						
+						
+						
+						
 					}
 			
 				
@@ -445,7 +483,7 @@ $(document).ready(function(){
 			        	</c:forEach>
 	          		</c:if>
 	         </table>
-	         <button id="btn_show" class="btn btn-secondary">예약현황보기</button>
+	         <button id="btn_show" class="btn_r" style="width: 120px;">예약현황보기</button>
 		</div>
 
 	
@@ -480,8 +518,8 @@ $(document).ready(function(){
 	</div>
 	
 	
-	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
-		<button id="btn_Reserve" class="btn btn-secondary"  data-toggle="modal" data-target="" >등록</button>
+	<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+		<button id="btn_Reserve" class="btn_normal"  data-toggle="modal" data-target="" >등록</button>
 	</div>
 </div>
 
@@ -521,8 +559,8 @@ $(document).ready(function(){
         
         <!-- Modal footer -->
         <div class="modal-footer">
-        	<button type="button" id="realReserve" class="btn btn-secondary" data-dismiss="modal">예약</button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        	<button type="button" id="realReserve" class="btn_normal" data-dismiss="modal">예약</button>
+          <button type="button" class="btn_r" data-dismiss="modal" >취소</button>
         </div>
         
       </div>

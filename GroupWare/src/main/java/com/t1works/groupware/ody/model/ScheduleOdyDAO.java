@@ -94,13 +94,22 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 		return  fullSList;
 	}
 
-	// 내 캘린더 추가
+	// 내 캘린더의 소분류 이름 존재 여부 --1 
+	@Override
+	public int existMyCalendar(Map<String, String> paraMap) {
+		int m = sqlsession5.selectOne("schedule_ody.existMyCalendar",paraMap);
+		return m;
+	}
+	
+	
+	// 내 캘린더 추가--2
 	@Override
 	public int addMyCalendar(Map<String, String> paraMap) {
 		int n = sqlsession5.insert("schedule_ody.addMyCalendar",paraMap);
 		return n;
 	}
 
+	
 	// 소분류 캘린더 삭제
 	@Override
 	public int deleteCalendar(String scno) {
@@ -108,21 +117,47 @@ public class ScheduleOdyDAO implements InterScheduleOdyDAO {
 		return n;
 	}
 
-	// 사내 캘린더 추가
+	// 사내 캘린더의 소분류인 이름 존재 여부 -- 1
+		@Override
+		public int existComCalendar(String scname) {
+			int m = sqlsession5.selectOne("schedule_ody.existComCalendar",scname);
+			return m;
+		}
+		
+	// 사내 캘린더 추가 -- 2
 	@Override
 	public int addComCalendar(Map<String, String> paraMap) {
 		int n = sqlsession5.insert("schedule_ody.addComCalendar",paraMap);
 		return n;
 	}
 
-	// 캘린더 수정하기
+	// 내 캘린더 수정하기 --2
 	@Override
 	public int editCalendar(Map<String, String> paraMap) {
 		int n = sqlsession5.update("schedule_ody.editCalendar",paraMap);
 		return n;
 	}
 
-	 
+	// 홈페이지에서 내 캘린더 보이기
+	@Override
+	public List<ScheduleOdyVO> getMyCalendarList(String employeeid) {
+		List<ScheduleOdyVO> myCalendarList = sqlsession5.selectList("schedule_ody.getMyCalendarList",employeeid);
+		return myCalendarList;
+	}
 
+	// 홈페이지에서 해당 날짜를 클릭했을 때 내 일정 가져오기
+	@Override
+	public List<ScheduleOdyVO> myCalendarInfo(Map<String, String> paraMap) {
+		List<ScheduleOdyVO> mycalInfoList =  sqlsession5.selectList("schedule_ody.myCalendarInfo",paraMap);
+		return mycalInfoList;
+	}
 	
+	// 오늘 날짜 내 캘린더 보여주기
+	@Override
+	public List<ScheduleOdyVO> todayMyCal(String employeeid) {
+		List<ScheduleOdyVO> todayMyCalList =  sqlsession5.selectList("schedule_ody.todayMyCal",employeeid);
+		return todayMyCalList;
+	}
+
+
 }

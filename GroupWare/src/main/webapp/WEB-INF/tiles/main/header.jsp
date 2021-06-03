@@ -11,21 +11,22 @@
 		border: solid 0px red;
 		padding-top: 10px;
 		text-align: center;
-		margin-bottom: 50px;
+		margin-bottom: 15px;
+		padding-top: 30px;
 	}
 	
 	div#mainHomeTitle span{
-		font-style: italic; 
+		font-style:italic;
 		font-weight: bold;
 		cursor: pointer;
-		font-size: 30pt;
+		font-size: 40pt;
 		margin-left: 200px;
 	}
 	
 	div#mainHomebt {
 		float: right;
 		width: 18%;
-		padding-top: 10px;
+		padding-top: 30px;
 	}
 	
 	div#mainHomebt span{
@@ -60,7 +61,7 @@
 	
 <div id="mainHomeTitle">
 	<img src="<%=ctxPath%>/resources/images/login/t1works_icon.png"  width="70px" height="70px" onclick="javascript:goTravelHome();"/>
-	<span onclick="javascript:goTravelHome();">T1Works 여행사</span>
+	<span onclick="javascript:goTravelHome();">티&nbsp;원&nbsp;투&nbsp;어</span>
 </div>
 
 <div id="mainHomebt">

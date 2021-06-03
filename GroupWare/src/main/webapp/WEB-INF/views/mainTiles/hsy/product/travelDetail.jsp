@@ -107,6 +107,13 @@
 		
 		// 예약하기 버튼 클릭시 예약정보 입력창 보이기
 		$("span#reserveBt").click(function(){
+			
+			// 현재예약인원이 최대 예약인원과 같은 경우 alert 띄워주고 이벤트 종료
+			if(Number("${pvo.maxNo}") <= Number("${pvo.nowNo}")){
+				alert("예약이 마감된 상품입니다.");
+				return false;
+			}
+			
 			$("div#reserveInfo").slideDown(1000);
 			$("input[name=clientname]").focus();
 			
@@ -308,26 +315,9 @@
 			dataType:"JSON",
 			success:function(json){
 				if(json.result==1){ // 트랜잭션처리 성공한 경우		
-				
-					// 예약고객에게 문자보내기
-					$.ajax({
-						url:"<%=ctxPath%>/t1/sendSms.tw",
-						type:"POST",   // 받는사람의 번호와 문자 내용물
-						data:{"mobile":clientmobile,"smsContent":"[연습용] 고객님의 여행 예약이 완료되었습니다 - T1Works"},
-						dataType:"json",
-						success:function(json){
-							
-							if(json.success_count==1){
-								alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
-								      "예약내역이 문자로 전송되었습니다. 또한 "+
-									  "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
-								$frm.submit();
-							}
-						},
-						error: function(request, status, error){
-				               alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-				        }
-					}); // end of $.ajax({-----------------------
+						alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
+						     "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
+						$frm.submit();
 				}
 				else{ // 트랜잭션처리 실패한 경우
 					alert("시스템 오류로 예약에 실패했습니다. 관리자에게 문의바랍니다.");
@@ -415,5 +405,5 @@
 		</form>
 	</div>
 	
-	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span onclick="javascript:goProductList();">목록으로</span></div>
+	<div id="goList" style="margin: 50px 0px 40px 0px;" align="center"><span style="font-size:15pt;" onclick="javascript:goProductList();">목록으로</span></div>
 </div>

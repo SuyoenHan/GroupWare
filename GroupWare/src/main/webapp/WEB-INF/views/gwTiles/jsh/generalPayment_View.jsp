@@ -107,8 +107,20 @@ th{
 			</tr>
 			</c:if>
 			<tr>
-				<th>문서상태</th>
-				<td>${apaper}</td>
+				<th>결재상태</th>
+				<c:if test="${epvo.astatus==0}">
+					<td>제출</td>
+				</c:if>
+				<c:if test="${epvo.astatus==1}">
+					<td>결재진행중</td>
+				</c:if>
+				<c:if test="${epvo.astatus==2}">
+					<td>반려</td>
+				</c:if>
+				<c:if test="${epvo.astatus==3}">
+					<td>승인완료</td>
+				</c:if>
+				
 			</tr>
 			
 			<tr>
@@ -123,7 +135,15 @@ th{
 			
 			<tr>
 				<th>첨부파일</th>
-				<td>${epvo.afile}</td>
+				<td>
+					<c:if test="${not empty epvo.afile}">
+					   ${epvo.afile}
+					</c:if>
+					
+					<c:if test="${empty epvo.afile}">
+					   <div align="center">첨부파일이 존재하지 않습니다.</div>
+					</c:if>
+				</td>
 			</tr>
 		
 		
@@ -132,24 +152,34 @@ th{
 		<table class="log">
 			<tr>
 				<th style="width:20%;">결재로그</th>
-				<td></td>
+				<td>
+				
+				
+				</td>
 			</tr>
 		</table>
 		<table class="log">
 			<tr>
 				<th style="width:20%;">결재의견</th>
-				<td ></td>
-			</tr>
-		</table>
-		<table class="log">
-			<tr>
-				<th style="width:20%;">의견작성</th>
-				<td> <textarea type="text" id="ocontent" name ="ocontent" style="width:90%; margin-left:50px;"></textarea></td>
+				<td>
+					<c:if test="${not empty requestScope.opinionList}">
+						<c:forEach var="ovo" items="${requestScope.opinionList}">
+						  <div>${ovo.dname}&nbsp;${ovo.name}&nbsp;${ovo.pname}<span>[</span>${ovo.odate}<span>]</span></div>
+						  <div>${ovo.ocontent}</div>
+						</c:forEach>
+					</c:if>
+					
+					<c:if test="${empty requestScope.opinionList}">
+					  <div> 의견이 존재하지 않습니다. </div>
+					</c:if>
+				</td>
 			</tr>
 		</table>
 		
 	</div>
 
-
+<input type="button"  style="margin-top:10px; "onclick="location.href='<%= ctxPath%>/t1/generalPayment_List.tw'"  value="전체목록"/>    
+	<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/generalPayment_List.tw'" >전체목록보기</button>
+     <button type="button" onclick="javascript:location.href='<%=ctxPath %>/${requestScope.gobackURL}'" >검색결과목록보기</button>
 
 </div>

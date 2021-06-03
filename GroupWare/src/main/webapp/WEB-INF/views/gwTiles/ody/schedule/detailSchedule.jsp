@@ -61,7 +61,7 @@ $(document).ready(function(){
 	var ehour = str_e.substring(target-2,target);
 	console.log(ehour);
 	
-	if(shour=='00' && smin=='00' && ehour=='23' && emin=='55' ){
+	if(shour=='00' && smin=='00' && ehour=='23' && emin=='59' ){
 		$("input#allday").prop("checked",true);
 	}
 	else{
@@ -128,7 +128,7 @@ function editSchedule(sdno){
 				<th style="vertical-align: middle;">캘린더선택</th>
 				<td>
 				<c:if test="${svo.fk_bcno eq '2'}">
-					전체 캘린더
+					전체 캘린더 - ${svo.scname}
 				</c:if>
 				<c:if test="${svo.fk_bcno eq '1'}">
 					내 캘린더 - ${svo.scname}

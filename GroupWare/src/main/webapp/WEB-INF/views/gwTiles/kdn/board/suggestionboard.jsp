@@ -37,6 +37,8 @@ $(document).ready(function(){
 	function goView(seq){
 		var frm = document.goViewFrm;
 		frm.seq.value = seq;
+		frm.searchType.value = "${requestScope.paraMap.searchType}";
+	    frm.searchWord.value = "${requestScope.paraMap.searchWord}";
 		
 		frm.method="get";
 		frm.action="<%=ctxPath%>/t1/viewSuggPost.tw";
@@ -45,7 +47,7 @@ $(document).ready(function(){
 	}//end of function goView('${boardvo.seq}') ---------------
 
 	function goPwConfirm(seq){
-		location.href="<%=ctxPath%>/t1/viewPrivatePost.tw?seq="+seq;
+		location.href="<%=ctxPath%>/t1/viewPrivatePost.tw?seq="+seq+"&searchType=${requestScope.paraMap.searchType}&searhWord=${requestScope.paraMap.searchWord}&gobackURL=${requestScope.gobackURL}";
 	}
 	
 	function goSearch(){
@@ -98,23 +100,39 @@ $(document).ready(function(){
 					<input type="hidden" name="postIndex" />
 					</td>
 					<td>
-      				<c:choose>
-      					<c:when test="${boardvo.privatePost eq '1'}">
-      						<c:choose>
-      							<c:when test="${loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')}">
-									<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/>${boardvo.subject}</a>
+						<c:if test="${boardvo.depthno == 0 && boardvo.privatePost ne '1'}"><!-- 원글이면서 일반글인 경우 -->
+      						<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" >${boardvo.subject}</a>
+						</c:if>
+												
+						<c:if test="${boardvo.depthno == 0 && boardvo.privatePost eq '1'}"><!-- 원글이면서 비밀글인 경우 -->
+							<c:choose>
+      							<c:when test="${loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')}"><!-- 인사팀 대리,부장 로그인 시 비번입력 없이 바로 열람가능 -->
+      								<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/>${boardvo.subject}</a>
 				      				<i class="fas fa-lock"></i>
       							</c:when>
-      							<c:otherwise>
-									<a class="anchor-style" href="javascript:goPwConfirm('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/>${boardvo.subject}</a>
-				      				<i class="fas fa-lock"></i>
+      							<c:otherwise><!-- 인사팀 대리,부장 제외 다른 유저가 로그인한 경우 -->
+      								<a class="anchor-style" href="javascript:goPwConfirm('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/>${boardvo.subject}</a>
+						      		<i class="fas fa-lock"></i>
       							</c:otherwise>
       						</c:choose>
-      					</c:when>
-      					<c:otherwise>
-							<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" >${boardvo.subject}</a>
-      					</c:otherwise>
-      				</c:choose>
+						</c:if>	      				
+	      				
+						<c:if test="${boardvo.depthno > 0 && boardvo.privatePost ne '1'}"><!-- 답글이면서 일반글인 경우 -->
+	      					<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" ><span style="font-weight: bold; padding-left: ${boardvo.depthno *20 }px">${boardvo.subject}</span></a>
+	      				</c:if>
+	      				
+						<c:if test="${boardvo.depthno > 0 && boardvo.privatePost eq '1'}"><!-- 답글이면서 비밀글인 경우 -->
+	      					<c:choose>
+      							<c:when test="${loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2' || loginuser.fk_pcode eq '3')}"><!-- 인사팀 대리,부장 로그인 시 비번입력 없이 바로 열람가능 -->
+      								<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/><span style="font-weight: bold; padding-left: ${boardvo.depthno *20 }px">${boardvo.subject}</span></a>
+				      				<i class="fas fa-lock"></i>
+      							</c:when>
+      							<c:otherwise><!-- 인사팀 대리,부장 제외 다른 유저가 로그인한 경우 -->
+      								<a class="anchor-style" href="javascript:goPwConfirm('${boardvo.seq}')" ><input type="hidden" name="privatePost" class="privatePost" value="${boardvo.privatePost}"/><span style="font-weight: bold; padding-left: ${boardvo.depthno *20 }px">${boardvo.subject}</span></a>
+						      		<i class="fas fa-lock"></i>
+      							</c:otherwise>
+      						</c:choose>
+	      				</c:if>
 					</td>
 					<td>${boardvo.name}</td>
 					<td>${boardvo.regDate}</td>
@@ -137,6 +155,8 @@ $(document).ready(function(){
     <form name="goViewFrm">
     	<input type="hidden" name="seq"/>
     	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+    	<input type="hidden" name="searchType" />
+      	<input type="hidden" name="searchWord" />
     </form>
 </div>
 
