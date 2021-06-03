@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.board.common.FileManager;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
@@ -28,6 +29,11 @@ public class PaymentJshController {
 
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterPaymentJshService service;
+	
+	
+	 //  파일업로드 및 다운로드를 해주는 FileManager 클래스 의존객체 주입하기(DI : Dependency Injection) ===  
+	   @Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	   private FileManager fileManager;
 
 	// 글목록 보여주기
 	@RequestMapping(value = "/t1/generalPayment_List.tw")

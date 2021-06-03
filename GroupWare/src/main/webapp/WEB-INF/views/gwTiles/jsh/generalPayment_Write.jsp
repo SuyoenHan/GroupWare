@@ -112,8 +112,18 @@ hr.hr{
 			
 			
 			
-		});
+<%-- 
+	         // 폼(form) 을 전송(submit)
+	         var frm = document.addFrm;
+	         frm.method = "POST";
+	         frm.action = "<%= ctxPath%>/addEnd.action";
+	         frm.submit();   
+			 --%>
+			
+		}); //end of 
 </script>
+
+<form name="writeGFrm"  enctype="multipart/form-data">
 
 <div id="containerall">
 	<div id=radio>
@@ -191,7 +201,7 @@ hr.hr{
 			<tr>
 				<th>첨부파일</th>
 				<td>
-					<input type="file"/>
+					<input type="file" name="attach"/>
 				</td>
 			</tr>
 			
@@ -204,4 +214,5 @@ hr.hr{
 	</div>
 </div>
 </div>
+</form>
 		

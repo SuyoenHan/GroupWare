@@ -1,5 +1,7 @@
 package com.t1works.groupware.jsh.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class ElectronPayJshVO {
 
 	private String  ano; 						  // 문서번호
@@ -12,6 +14,19 @@ public class ElectronPayJshVO {
 	private String  asdate;                // 기안일
 	private String  afile;                    //  첨부파일
 	private String  apaper;       	 	 //  문서상태 (0:수신, 1:발신, 2:임시보관)
+	
+	
+	 private MultipartFile   attach;
+	   /* form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 
+		     진짜파일 ==> WAS(톰캣) 디스크에 저장됨.
+		      조심할것은 MultipartFile attach 는 오라클 데이터베이스 tbl_board 테이블의 컬럼이 아니다.   
+		  /Board/src/main/webapp/WEB-INF/views/tiles1/board/add.jsp 파일에서 input type="file" 인 name 의 이름(attach)과 
+		      동일해야만 파일첨부가 가능해진다.!!!!
+	*/	      
+		      
+	
+	
+	
 	
     //////일반결재문서 //////
 	private String ncat;     //일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
@@ -138,9 +153,16 @@ public class ElectronPayJshVO {
 	}
 	
 	
+	public MultipartFile getAttach() {
+		return attach;
+	}
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}
 	
 	
 	////// MEMBER
+	
 	
 	public String getEmployeeid() {
 		return employeeid;
