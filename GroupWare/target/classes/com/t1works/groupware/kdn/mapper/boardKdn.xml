@@ -6,7 +6,7 @@
 <!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
 <mapper namespace="board">
 	<!-- 파일 첨부가 없는 글쓰기 하기 -->
-	<insert id="noticePostUpload" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<insert id="noticePostUpload" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status)
 		values(seq_noticeboard.nextval, #{fk_categnum}, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default)
 	</insert>
@@ -25,7 +25,7 @@
 	</select>
 
 	<!-- 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
-	<select id="noticeBoardListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="noticeBoardListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select rno, seq, fk_categnum, fk_employeeid, name, subject, readCount, regDate
 		from
 		(
@@ -51,7 +51,7 @@
 	</update>
 	
 	<!--  (댓글쓰기가 없는 게시판에서) 공지사항 글 1개 보여주기  ==  -->
-	<select id="getView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="getView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_categnum, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
 		from
 		(
@@ -65,12 +65,15 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_noticeboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>
 	
 	<!-- === 공지사항 1개글 수정하기 === -->
-	<update id="noticeEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<update id="noticeEdit" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		 update tbl_noticeboard set fk_categnum =#{fk_categnum}, subject=#{subject}, content=#{content}
 		 where seq=#{seq} and pw = #{pw}
 	</update>
@@ -94,7 +97,7 @@
 	
 	
 	<!-- (건의사항)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
-	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select rno, seq, fk_employeeid, name, subject, readCount, regDate, privatePost
 		from
 		(
@@ -111,13 +114,13 @@
 	</select>
 	
 	<!-- (건의사항) 파일 첨부가 없는 글쓰기 하기 -->
-	<insert id="suggPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<insert id="suggPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status)
 		values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default)
 	</insert>
 	
 	<!--  (댓글쓰기가 없는 게시판에서) 건의사항 글 1개 보여주기  ==  -->
-	<select id="getSuggPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="getSuggPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
 		from
 		(
@@ -131,6 +134,9 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_suggestionboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>
@@ -142,7 +148,7 @@
 	</update>
 	
 	<!-- === 건의사항 1개글 수정하기 === -->
-	<update id="suggEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<update id="suggEdit" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		 update tbl_suggestionboard set subject=#{subject}, content=#{content}
 		 where seq=#{seq} and pw = #{pw}
 	</update>
@@ -153,10 +159,42 @@
 		where seq = #{seq} and pw = #{pw}
 	</delete>
 	
+	<!--  === 건의사항 댓글쓰기(tbl_generalboardcomment 테이블에 insert) === -->
+	<insert id="addSuggComment" parameterType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		insert into tbl_suggestionboardcomment(seq, fk_employeeid, name, content, regDate, fk_seq)
+		values(seq_generalboardcomment.nextval, #{fk_employeeid}, #{name}, #{content}, default, #{fk_seq})
+	</insert>
+	
+	<!--  ===  건의사항 tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) === -->
+	<update id="updateSuggCmntCount" parameterType="String">
+		update tbl_suggestionboard set commentCount = commentCount + 1
+		where seq = #{fk_seq} 
+	</update>
+	
+	<!-- === 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
+	<select id="getSuggCmntListPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		select name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
+		from
+		(
+			select row_number() over(order by seq desc) as rno, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			,fk_employeeid
+			from tbl_suggestionboardcomment
+			where fk_seq = #{fk_seq}
+		) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- === 건의사항 원글 글번호(fk_seq)에 해당하는 댓글의 총 페이지수를 알아오기 === -->
+	<select id="getSuggCmntTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*)/#{sizePerPage})
+		from tbl_suggestionboardcomment
+		where fk_seq = #{fk_seq}
+	</select>
+	
 	
 	
 	<!-- (자유게시판) 파일 첨부가 없는 글쓰기 하기 -->
-	<insert id="genPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<insert id="genPostUpload" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		insert into tbl_generalboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate,  status)
 		values(seq_generalboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default)
 	</insert>
@@ -172,7 +210,7 @@
 	</select>
 	
 	<!-- (자유게시판)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
-	<select id="genListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="genListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select rno, seq, fk_employeeid, name, subject, readCount, regDate
 		from
 		(
@@ -189,7 +227,7 @@
 	</select>
 
 	<!--  (댓글쓰기가 없는 게시판에서) 자유게시판 글 1개 보여주기  ==  -->
-	<select id="getGenPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<select id="getGenPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
 		from
 		(
@@ -203,6 +241,9 @@
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			from tbl_generalboard
 			where status = 1
+			<if test='searchType != "" and searchWord != ""'>
+             and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
+          	</if>
 		) V
 		where V.seq = #{seq}
 	</select>
@@ -214,15 +255,48 @@
 	</update>
 	
 	<!-- === 자유게시판 1개글 수정하기 === -->
-	<update id="generalEdit" parameterType="com.t1works.groupware.kdn.model.BoardVOKdn">
+	<update id="generalEdit" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		 update tbl_generalboard set subject=#{subject}, content=#{content}
 		 where seq=#{seq} and pw = #{pw}
 	</update>
 	
-	<!-- == 건의사항 글1개 삭제하기 == -->
+	<!-- == 자유게시판 글1개 삭제하기 == -->
 	<delete id="generalDel" parameterType="HashMap">
 		delete from tbl_generalboard
 		where seq = #{seq} and pw = #{pw}
 	</delete>
+		
+	<!--  === 자유게시판 댓글쓰기(tbl_generalboardcomment 테이블에 insert) === -->
+	<insert id="addComment" parameterType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		insert into tbl_generalboardcomment(seq, fk_employeeid, name, content, regDate, fk_seq)
+		values(seq_generalboardcomment.nextval, #{fk_employeeid}, #{name}, #{content}, default, #{fk_seq})
+	</insert>
+	
+	<!--  ===  자유게시판 tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) === -->
+	<update id="updateCommentCount" parameterType="String">
+		update tbl_generalboard set commentCount = commentCount + 1
+		where seq = #{fk_seq} 
+	</update>
+	
+	<!-- === 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
+	<select id="getCommentListPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.CommentKdnVO">
+		select name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
+		from
+		(
+			select row_number() over(order by seq desc) as rno, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			,fk_employeeid
+			from tbl_generalboardcomment
+			where fk_seq = #{fk_seq}
+		) V
+		where rno between #{startRno} and #{endRno}
+	</select>
+
+	<!-- === 자유게시판 원글 글번호(fk_seq)에 해당하는 댓글의 총 페이지수를 알아오기 === -->
+	<select id="getCommentTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*)/#{sizePerPage})
+		from tbl_generalboardcomment
+		where fk_seq = #{fk_seq}
+	</select>
+	
 
 </mapper>

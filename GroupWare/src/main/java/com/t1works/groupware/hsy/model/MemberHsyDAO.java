@@ -61,6 +61,43 @@ public class MemberHsyDAO implements InterMemberHsyDAO {
 		return mvo;
 	}
 
+	
+	// 특정직원의 근태결재 승인처리 완료된 문서번호
+	@Override
+	public List<String> getAttendanceAno(String employeeid) {
+		
+		List<String> anoList= sqlsession2.selectList("memberHsy.getAttendanceAno",employeeid);
+		return anoList;
+	} // end of public List<String> getAttendanceAno(String employeeid) {---
+
+	
+	// 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기
+	@Override
+	public Map<String, Integer> getAttendanceForSalary(Map<String, String> paraMap) {
+		
+		Map<String,Integer> attendanceMap= sqlsession2.selectOne("memberHsy.getAttendanceForSalary", paraMap);
+		return attendanceMap;
+	} // end of public Map<String, String> getAttendanceForSalary(Map<String, String> paraMap) {-----
+
+	// 해당 직원의 특정 년도, 월의  총 야근 시간 가져오기
+	@Override
+	public int getTotalLateWorkTime(Map<String, String> paraMap) {
+		
+		int totalLateWorkTime= sqlsession2.selectOne("memberHsy.getTotalLateWorkTime",paraMap);
+		return totalLateWorkTime;
+	} // end of public int getTotalLateWorkTime(Map<String, String> paraMap) {----
+
+	
+	// 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기
+	@Override
+	public Map<String, String> getDoneCnt(Map<String, String> paraMap) {
+		
+		Map<String,String> doneCntMap= sqlsession2.selectOne("memberHsy.getDoneCnt",paraMap);
+		return doneCntMap;
+		
+	} // end of public Map<String, String> getDoneCnt(Map<String, String> paraMap) {-----
+
+	
 
 
 }

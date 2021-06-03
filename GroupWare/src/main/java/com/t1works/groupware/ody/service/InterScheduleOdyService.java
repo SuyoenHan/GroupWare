@@ -43,16 +43,28 @@ public interface InterScheduleOdyService {
 	List<ScalCategoryOdyVO> getFullSList();
 
 	// 내 캘린더 추가
-	int addMyCalendar(Map<String, String> paraMap);
+	int addMyCalendar(Map<String, String> paraMap) throws Throwable;
 
 	// 소분류 캘린더 삭제
 	int deleteCalendar(String scno);
 
 	// 사내 캘린더 추가 기능
-	int addComCalendar(Map<String, String> paraMap);
+	int addComCalendar(Map<String, String> paraMap) throws Throwable;
 
-	// 캘린더 수정
-	int editCalendar(Map<String, String> paraMap);
+	// 내 캘린더 수정
+	int editMyCalendar(Map<String, String> paraMap) throws Throwable;
+
+	// 사내 캘린더 수정
+	int editComCalendar(Map<String, String> paraMap) throws Throwable;
+
+	// 홈페이지에서 내 캘린더 보이기
+	List<ScheduleOdyVO> getMyCalendarList(String employeeid);
+
+	// 홈페이지에서 해당 날짜를 클릭했을 때 내 일정 가져오기
+	List<ScheduleOdyVO> myCalendarInfo(Map<String, String> paraMap);
+
+	// 오늘 날짜 내 캘린더 보여주기
+	List<ScheduleOdyVO> todayMyCal(String employeeid);
 
 
 }

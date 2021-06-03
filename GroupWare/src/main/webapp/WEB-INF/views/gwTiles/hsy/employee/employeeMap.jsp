@@ -14,13 +14,13 @@
 		width:70%;
 		margin: 0 auto;
 		position: relative;
-		left: -250px;
+		left: -150px;
 		padding-bottom: 100px;
 	}
 	
 	div#employeeMapTitle{
 		border: solid 0px red;
-		margin: 70px 0px 30px 50px;
+		margin: 70px 0px 30px 80px;
 		font-size: 22pt;
 		font-weight: bold;
 	}
@@ -156,10 +156,13 @@
 
 	$(document).ready(function(){
 		
-		$("ul.hideInfo").hide();
-		$("div.hideDeptInfo").hide();
-		$("span.minus").hide();
 		
+		// 부서명과 사장이름은 처음부터 show 되도록 설정 
+		$("ul.hideInfo").hide();
+		$("span.minus").hide();
+		$("ul.companyHideInfo").show();
+		$("div.companyName").find("span.minus").show();
+		$("div.companyName").find("span.plus").hide();
 		
 		// searchType과 searchWord가 존재하는 경우
 		if("${searchType}"!=""){
@@ -349,7 +352,7 @@
 				T1Works
 			</div>
 			<c:forEach var="memberVO" items="${employeeList}">
-				<ul class="hideInfo">
+				<ul class="hideInfo companyHideInfo">
 				<c:if test="${memberVO.fk_pcode eq '4'}">
 					<li id="${memberVO.employeeid}">${memberVO.name} 사장</li>
 				</c:if>

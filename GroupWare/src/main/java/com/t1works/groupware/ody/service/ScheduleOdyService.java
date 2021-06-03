@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.t1works.groupware.ody.model.InterScheduleOdyDAO;
 import com.t1works.groupware.ody.model.MemberOdyVO;
@@ -99,8 +101,16 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 
 	// 내 캘린더 추가
 	@Override
-	public int addMyCalendar(Map<String, String> paraMap) {
-		int n = sdao.addMyCalendar(paraMap);
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addMyCalendar(Map<String, String> paraMap) throws Throwable{
+
+		int n=0;
+		
+		int m = sdao.existMyCalendar(paraMap);
+		
+		if(m==0) {
+			n = sdao.addMyCalendar(paraMap);
+		}
 		return n;
 	}
 
@@ -113,16 +123,70 @@ public class ScheduleOdyService implements InterScheduleOdyService{
 
 	// 사내 캘린더 추가 기능
 	@Override
-	public int addComCalendar(Map<String, String> paraMap) {
-		int n = sdao.addComCalendar(paraMap);
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addComCalendar(Map<String, String> paraMap) throws Throwable{
+		
+		int n=0;
+		String scname = paraMap.get("scname");
+		int m = sdao.existComCalendar(scname);
+		
+		if(m==0) {
+			n = sdao.addComCalendar(paraMap);
+		}
 		return n;
 	}
 
-	// 캘린더 수정
+	// 내 캘린더 수정
 	@Override
-	public int editCalendar(Map<String, String> paraMap) {
-		int n = sdao.editCalendar(paraMap);
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int editMyCalendar(Map<String, String> paraMap) throws Throwable{
+		
+		int n=0;
+		
+		int m = sdao.existMyCalendar(paraMap);
+		
+		if(m==0) {
+			n = sdao.editCalendar(paraMap);
+		}
 		return n;
+
+	}
+
+	// 사내 캘린더 수정
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int editComCalendar(Map<String, String> paraMap) throws Throwable{
+		
+		int n=0;
+		String scname = paraMap.get("scname");
+		System.out.println(scname);
+		int m = sdao.existComCalendar(scname);
+		System.out.println("사내수정:"+m);
+		if(m==0) {
+			n = sdao.editCalendar(paraMap);
+		}
+		return n;
+	}
+
+	// 홈페이지에서 내 캘린더 보이기
+	@Override
+	public List<ScheduleOdyVO> getMyCalendarList(String employeeid) {
+		List<ScheduleOdyVO> myCalendarList = sdao.getMyCalendarList(employeeid);
+		return myCalendarList;
+	}
+
+	// 홈페이지에서 해당 날짜를 클릭했을 때 내 일정 가져오기
+	@Override
+	public List<ScheduleOdyVO> myCalendarInfo(Map<String, String> paraMap) {
+		List<ScheduleOdyVO>  mycalInfoList = sdao.myCalendarInfo(paraMap);
+		return mycalInfoList;
+	}
+
+	// 오늘 날짜 내 캘린더 보여주기
+	@Override
+	public List<ScheduleOdyVO> todayMyCal(String employeeid) {
+		List<ScheduleOdyVO> todayMyCalList= sdao.todayMyCal(employeeid);
+		return todayMyCalList;
 	}
 
 

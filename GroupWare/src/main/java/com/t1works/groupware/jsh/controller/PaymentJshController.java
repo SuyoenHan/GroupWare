@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,9 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.annotation.RequestScope;
+
 import org.springframework.web.servlet.ModelAndView;
 
+import com.spring.board.common.FileManager;
+import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
 import com.t1works.groupware.jsh.service.InterPaymentJshService;
 
@@ -24,6 +29,11 @@ public class PaymentJshController {
 
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterPaymentJshService service;
+	
+	
+	 //  파일업로드 및 다운로드를 해주는 FileManager 클래스 의존객체 주입하기(DI : Dependency Injection) ===  
+	   @Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	   private FileManager fileManager;
 
 	// 글목록 보여주기
 	@RequestMapping(value = "/t1/generalPayment_List.tw")
@@ -189,6 +199,18 @@ public class PaymentJshController {
 		  mav.addObject("pageBar",pageBar);
 		 
 
+			// === #123. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+	        //           사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+	        //           현재 페이지 주소를 뷰단으로 넘겨준다.
+	    	String gobackURL = MyUtil.getCurrentURL(request);
+	    	//System.out.println("~~~확인용 gobackURL =>"+gobackURL);
+	    	//~~~확인용 gobackURL =>t1/generalPayment_List.tw?searchCategory=&searchType=&searchWord=&currentShowPageNo=3	    	
+	    	mav.addObject("gobackURL",gobackURL);
+	      // == #114. 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기  끝== //
+	      //////////////////////////////////////////////////////////////////////////////////////////////////////////
+		  
+		  
+		  
 		// === 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -237,16 +259,38 @@ public class PaymentJshController {
 		String ano = request.getParameter("ano");
 		String ncatname= request.getParameter("ncatname");
 		
+
+      // === #125. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+      //           사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
+      //           현재 페이지 주소를 뷰단으로 넘겨준다.
+      String gobackURL =request.getParameter("gobackURL");
+       System.out.println("~~확인용 gobackURL=>" +gobackURL);
+     // 
+      if(gobackURL != null) {
+    	  gobackURL =  gobackURL.replaceAll(" ", "&"); //  gobackURL 속에 " "(공백)이 있으면 "&" 로 바꾸어준다
+    	 // 이전글제목, 다음글제목을 클릭했을때 돌아갈 페이지 주소를 올바르게 만들어주기 위해서 한 것임.
+    	  
+    	 // System.out.println("~~확인용 gobackURL=>" +gobackURL);
+      }
+      
+      mav.addObject("gobackURL",gobackURL);
+		
+		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
 		paraMap.put("ncatname", ncatname);
+		
+		
 		
 		try {   
 		
 		 ElectronPayJshVO epvo = service.generalOneView(paraMap);
 		 //System.out.println("확인용~~ => "+epvo.getName());
 		 
+		 List<ElectronPayJshVO> opinionList = service.oneOpinionList(paraMap);
+		 
 		//System.out.println(ncatname);
+		 mav.addObject("opinionList",opinionList);
 		 mav.addObject("epvo", epvo);
 		 mav.addObject("ncatname",ncatname);
 		 
@@ -262,7 +306,39 @@ public class PaymentJshController {
 	}
 	
 	
+	//  일반결재문서 작성페이지
+	@RequestMapping(value = "/t1/generalPayment_Write.tw")
+	public ModelAndView requiredLogin_Write(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 	
+		String userid="";
+		String dname="";
+		String dcode="";
+		
+		try {	
+			HttpSession session = request.getSession(); 
+			
+			MemberBwbVO loginuser= (MemberBwbVO)session.getAttribute("loginuser");
+			 //System.out.println("loginuser=>"+loginuser);
+			if(loginuser != null) {
+			 userid= loginuser.getEmployeeid(); 
+			
+			 HashMap<String, String> paraMap = new HashMap<String, String>();
+			 paraMap.put("userid", userid);
+			 		
+			 ElectronPayJshVO write_view = service.login_Write(paraMap);
+			 
+			 mav.addObject("write_view", write_view);
+			 
+			}
+			
+		}catch(NumberFormatException e) {
+			
+		}
+		
+		
+		mav.setViewName("jsh/generalPayment_Write.gwTiles");
+		return mav;
+	}
 	
 	
 	

@@ -63,6 +63,20 @@ public class PaymentJshService implements InterPaymentJshService {
 		return epvo;
 	}
 
+	//하나의 일반결재내역에서 결재의견목록 보여주기
+	@Override
+	public List<ElectronPayJshVO> oneOpinionList(Map<String, String> paraMap) {
+		List<ElectronPayJshVO> opinionList = dao.oneOpinionList(paraMap);
+		return opinionList;
+	}
+
+	//일반결재 글쓰기
+	@Override
+	public ElectronPayJshVO login_Write(Map<String, String> paraMap) {
+		ElectronPayJshVO write_view = dao.login_Write(paraMap);
+		return write_view;
+	}
+
 	
 	
 }

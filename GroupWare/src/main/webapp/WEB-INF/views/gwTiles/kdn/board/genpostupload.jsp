@@ -7,15 +7,6 @@
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$("input[name=privatePost]").val("0");
-	$("input#checkPrivate").change(function(){
-		 if($(this).is(":checked") == true){
-			 $("input[name=privatePost]").val("1");
-		 } else {
-			 $("input[name=privatePost]").val("0");
-		 }
-	})
-	
 	
       // === #167. 스마트 에디터 구현 시작 ===
        
@@ -68,7 +59,7 @@ $(document).ready(function(){
          // 폼(form) 을 전송(submit)
          var frm = document.postFrm;
          frm.method = "POST";
-         frm.action = "suggUploadComplete.tw";
+         frm.action = "genUploadComplete.tw";
          frm.submit();   
       });
       
@@ -81,10 +72,10 @@ $(document).ready(function(){
 
 
 <div id="board-container">
-	 <a href="javascript:location.href='suggestionBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-exclamation fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">건의사항</span></a>
+	 <a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">자유게시판</span></a>
 	
 	 <form name="postFrm"> 
-	    <table id="table">
+	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
 	          <td>
@@ -113,8 +104,6 @@ $(document).ready(function(){
 	          <th>비밀번호</th>
 	          <td>
 	             <input type="password" name="pw" id="pw" class="short" />
-		             <input type="hidden" name="privatePost"/>
-		             <input type="checkbox" id="checkPrivate" />&nbsp;비밀글
 	          </td>
 	       </tr>
 	    </table>

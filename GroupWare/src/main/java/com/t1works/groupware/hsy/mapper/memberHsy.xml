@@ -70,10 +70,71 @@
 	<!-- 사번에 해당하는 직원정보 가져오기  -->
 	<select id="employeeInfoAjaxHsy" parameterType="String" resultType="com.t1works.groupware.hsy.model.MemberHsyVO">
 		select employeeid, email, name, nvl2(mobile,(substr(mobile,1,3)||'-'||substr(mobile,4,4)||'-'||substr(mobile,8)),'-') as mobile,
-	      	   substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, nvl(dname,'-') as dname, pname, nvl(duty,'-') as duty
+	      	   substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, nvl(dname,'-') as dname,
+	      	   pname, salary, nvl(duty,'-') as duty, commissionpercase
 		from tbl_employee left join tbl_department on fk_dcode=dcode
 		left join tbl_position on fk_pcode=pcode
 		where employeeid= #{employeeid}
+	</select>
+	
+	
+	<!-- 특정직원의 근태결재 승인처리 완료된 문서번호   -->
+	<select id="getAttendanceAno" parameterType="String" resultType="String">
+		select to_char(ano) from tbl_approval
+		where anocode='3' and astatus='3' and fk_employeeid=#{employeeid}
+	</select>
+	
+	
+	<!-- 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기  Map 정의 -->
+	<resultMap type="HashMap" id="attendanceCntMap">
+		<result property="afdates" column="afdates" javaType="Integer"/>
+		<result property="sldates" column="sldates" javaType="Integer"/>
+		<result property="daydates" column="daydates" javaType="Integer"/>
+		<result property="congdates" column="congdates" javaType="Integer"/>
+		<result property="lateday" column="lateday" javaType="Integer"/>
+	</resultMap>
+	
+	<!-- 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기 -->
+	<select id="getAttendanceForSalary" parameterType="HashMap" resultMap="attendanceCntMap">
+		select (select count(*) as afdates from tbl_approval join tbl_afternoonoff on ano=fk_ano 
+				where ano in (${anoForIn}) and to_char(afdate,'yyyy-mm')=#{date}) as afdates,  
+			   
+			   (select nvl(sum(sldates),0) as sldates from tbl_approval join tbl_sickleave on ano=fk_ano 
+				where ano in (${anoForIn}) and to_char(slstart,'yyyy-mm')=#{date}) as sldates,
+			   
+			   (select nvl(sum(daydates),0) as daydates from tbl_approval join tbl_dayoff on ano=fk_ano 
+				where ano in (${anoForIn}) and to_char(daystart,'yyyy-mm')=#{date}) as daydates,
+			   
+			   (select nvl(sum(congdates),0) as congdates from tbl_approval join tbl_congoff on ano=fk_ano 
+				where ano in (${anoForIn}) and to_char(congstart,'yyyy-mm')=#{date}) as congdates,
+			   
+			   (select count(*) as lateday from tbl_inout where fk_employeeid=#{employeeid} 
+				and to_char(gooutdate,'yyyy-mm')=#{date} and lateno='1') as lateday
+	    from dual
+	</select>
+	
+	<!-- 해당 직원의 특정 년도, 월의  총 야근 시간 가져오기 -->
+	<select id="getTotalLateWorkTime" parameterType="HashMap" resultType="Integer">
+		select nvl(sum(dolatetime),0) as totalLateWorkTime 
+		from tbl_doLate 
+		where fk_employeeid=#{employeeid} 
+		and to_char(doLateSysdate,'yyyy-mm')= #{date}
+	</select>
+	
+	
+	<!-- 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기 Map 정의 -->
+	<resultMap type="HashMap" id="getDoneCntMap">
+		<result property="specificDoneCnt" column="specificDoneCnt" javaType="String"/>
+		<result property="prevDoneCnt" column="prevDoneCnt" javaType="String"/>
+	</resultMap>
+	
+	<!-- 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기 -->
+	<select id="getDoneCnt" parameterType="HashMap" resultMap="getDoneCntMap">
+		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
+		        and to_char(endDate,'yyyy-mm')= #{date}) as specificDoneCnt
+		      ,(select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
+				and to_char(endDate,'yyyy-mm')=#{prevDate}) as prevDoneCnt
+		from dual
 	</select>
 	
 	
