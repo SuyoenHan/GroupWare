@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-
+import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.ody.model.*;
 import com.t1works.groupware.ody.service.InterReservationOdyService;
 
@@ -360,29 +361,549 @@ public class ReservationOdyController {
 		return jsonObj.toString();
 	}
 		
-	// 사무용품 반납하기
-	@ResponseBody
-	@RequestMapping(value="/t1/rsGoods/returnReserveGoods.tw",method= {RequestMethod.POST})
-	public String returnReserveGoods(HttpServletRequest request) {
-		String rsgno = request.getParameter("rsgno");
+	
+	// 나의 회의실 예약 내역 리스트 
+	@RequestMapping(value="/t1/myReservedRoom.tw")
+	public ModelAndView requiredLogin_myReservedRoom(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
-		int n =service.returnReserveGoods(rsgno);
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("n", n);
-		return jsonObj.toString();
+		HttpSession session = request.getSession();
+		// 메모리에 생성되어져 있는 session을 불러오는 것이다.
+		session.setAttribute("readCountPermission", "yes");
+		
+		MemberBwbVO loginuser =(MemberBwbVO)session.getAttribute("loginuser");
+		
+		// 회의실 리스트
+		List<RoomOdyVO> roomList= service.getRoomList();
+		
+		String employeeid = loginuser.getEmployeeid();
+		
+		List<RsRoomOdyVO> myRoomList = null;
+		// 나의 대여 현황
+		
+		
+	
+		
+		String startdate = request.getParameter("startdate");
+		String enddate = request.getParameter("enddate");
+		String str_roomno = request.getParameter("roomno");
+		String searchWord = request.getParameter("searchWord");
+		String str_rstatus = request.getParameter("rstatus");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		
+		int roomno=0;
+
+		if(str_roomno==null || "".equals(str_roomno)) {
+			roomno=0;
+		}
+		else {
+			try {
+				roomno= Integer.parseInt(str_roomno);
+			}catch (NumberFormatException e) {
+				roomno=0;
+			}
+		}
+		
+		if(searchWord== null || "".equals(searchWord) || searchWord.trim().isEmpty()) {// 
+			searchWord="";
+		}
+		
+		if(startdate == null || "".equals(startdate)) {
+			startdate="";
+		}
+		
+		if(enddate==null || "".equals(enddate)) {
+			enddate="";
+		}
+
+		int rstatus=-1;
+		if(str_rstatus==null || "".equals(str_rstatus)) {
+			rstatus=-1;
+		}
+		else {
+			try {
+				rstatus= Integer.parseInt(str_rstatus);
+			}catch (NumberFormatException e) {
+				rstatus=-1;
+			}
+		}
+		
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("roomno", String.valueOf(roomno));
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("rstatus",String.valueOf(rstatus));
+
+		
+		int totalCount =0;     	
+		int currentShowPageNo =0;
+		int totalPage = 0;        
+		int sizePerPage= 10;
+		int startRno = 0;           
+	    int endRno = 0;            
+	    
+	    
+	    // 나의 예약된 회의실 총 건수(totalCount)
+	    totalCount = service.getTotalCountMyRoom(paraMap);
+      
+	    totalPage = (int)Math.ceil((double)totalCount/sizePerPage); 
+
+		if(str_currentShowPageNo == null) {
+			currentShowPageNo=1;
+		}
+		else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				if(currentShowPageNo<1 || currentShowPageNo>totalPage) {
+					currentShowPageNo=1;
+				}
+			
+			}catch (NumberFormatException e) {
+				currentShowPageNo=1;
+			}
+		}
+		
+		
+		startRno = ((currentShowPageNo - 1 ) * sizePerPage) + 1;
+	    endRno = startRno + sizePerPage - 1;
+	      
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    
+	    
+	    myRoomList = service.showMyRoomListSearchWithPaging(paraMap);
+	
+	    // 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
+	
+		mav.addObject("paraMap", paraMap);
+	
+		
+		// === #121. 페이지바 만들기 === //
+		
+		
+		int blockSize= 5;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+	   
+		String pageBar = "<ul style='list-style:none;'>";
+		
+		String url = "myReservedRoom.tw";
+		
+		// === [맨처음][이전] 만들기 ===
+		if(pageNo!=1) {
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+		}
+		while(!(loop>blockSize || pageNo>totalPage)) {
+			
+			if(pageNo==currentShowPageNo) {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while--------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+		}
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar",pageBar);
+		
+		mav.addObject("roomList", roomList);
+		mav.addObject("myRoomList",myRoomList);
+		mav.setViewName("ody/reservation/myReservedRoom.gwTiles");
+
+		return mav;
+			
 	}
 	
-	// 차량 반납하기
+	// 나의 회의실 예약현황에서 삭제한 경우
 	@ResponseBody
-	@RequestMapping(value="/t1/rsCar/returnReserveCar.tw",method= {RequestMethod.POST})
-	public String returnReserveCar(HttpServletRequest request) {
-		String rscno = request.getParameter("rscno");
+	@RequestMapping(value="/t1/delmyReservedRoom.tw", method = {RequestMethod.POST})
+	public String delMyReservedRoom(HttpServletRequest request) {
 		
-		int n =service.returnReserveCar(rscno);
+		String rsroomno = request.getParameter("rsroomno");
+		
+		int n=0;
+		
+		n=service.delReserveRoom(rsroomno);
+		
+		JSONObject jsObj = new JSONObject();
+		
+		jsObj.put("n", n);
+		return jsObj.toString();
+	}
+	
+	// 나의 사무용품 예약 현황 조회
+	@RequestMapping(value="/t1/myReservedGoods.tw")
+	public ModelAndView requiredLogin_myReservedGoods(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+	
+		HttpSession session = request.getSession();
+		// 메모리에 생성되어져 있는 session을 불러오는 것이다.
+		
+		MemberBwbVO loginuser =(MemberBwbVO)session.getAttribute("loginuser");
+		
+		// 회의실 리스트
+		String employeeid = loginuser.getEmployeeid();
+		
+		List<GoodsOdyVO> myGoodsList = null;
+		// 나의 대여 현황
+		List<GoodsOdyVO> goodsList= service.getGoodsList();
+		
+		session.setAttribute("readCountPermission", "yes");
+		
+		String startdate = request.getParameter("startdate");
+		String enddate = request.getParameter("enddate");
+		String str_gno = request.getParameter("gno");
+		String searchWord = request.getParameter("searchWord");
+		String str_rstatus = request.getParameter("rstatus");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		
+		int gno = 0;
+		
+		if(str_gno==null || "".equals(str_gno)) {
+			gno=0;
+		}
+		else {
+			try {
+				gno= Integer.parseInt(str_gno);
+			}catch (NumberFormatException e) {
+				gno=0;
+			}
+		}
+		
+		if(searchWord== null || "".equals(searchWord) || searchWord.trim().isEmpty()) {// 
+			searchWord="";
+		}
+		
+		if(startdate == null || "".equals(startdate)) {
+			startdate="";
+		}
+		
+		if(enddate==null || "".equals(enddate)) {
+			enddate="";
+		}
+
+		int rstatus=-1;
+		if(str_rstatus==null || "".equals(str_rstatus)) {
+			rstatus=-1;
+		}
+		else {
+			try {
+				rstatus= Integer.parseInt(str_rstatus);
+			}catch (NumberFormatException e) {
+				rstatus=-1;
+			}
+		}
+		
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("gno", String.valueOf(gno));
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("rstatus",String.valueOf(rstatus));
+
+		
+		int totalCount =0;        // 총 게시물 건수		
+		int currentShowPageNo =0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
+		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
+		int sizePerPage= 10;
+		int startRno = 0;           // 시작 행번호
+	    int endRno = 0;             // 끝 행번호 
+	    
+	    
+	    // 총 일정 건수(totalCount)
+	    totalCount = service.getTotalCountMyGoods(paraMap);
+      
+	    totalPage = (int)Math.ceil((double)totalCount/sizePerPage); 
+
+		if(str_currentShowPageNo == null) {
+			currentShowPageNo=1;
+		}
+		else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				if(currentShowPageNo<1 || currentShowPageNo>totalPage) {
+					currentShowPageNo=1;
+				}
+			
+			}catch (NumberFormatException e) {
+				currentShowPageNo=1;
+			}
+		}
+		
+		
+		startRno = ((currentShowPageNo - 1 ) * sizePerPage) + 1;
+	    endRno = startRno + sizePerPage - 1;
+	      
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    
+	    
+	    myGoodsList = service.showMyGoodsListSearchWithPaging(paraMap);
+	
+	    // 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
+	
+		mav.addObject("paraMap", paraMap);
+	
+		
+		// === #121. 페이지바 만들기 === //
+		
+		
+		int blockSize= 5;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+	   
+		String pageBar = "<ul style='list-style:none;'>";
+		
+		String url = "myReservedGoods.tw";
+		
+		// === [맨처음][이전] 만들기 ===
+		if(pageNo!=1) {
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rsgno="+gno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rsgno="+gno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+		}
+		while(!(loop>blockSize || pageNo>totalPage)) {
+			
+			if(pageNo==currentShowPageNo) {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rsgno="+gno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while--------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rsgno="+gno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rsgno="+gno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+		}
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar",pageBar);
+		
+		
+		
+		
+		mav.addObject("goodsList", goodsList);
+		mav.addObject("myGoodsList",myGoodsList);
+		mav.setViewName("ody/reservation/myReservedGoods.gwTiles");
+		
+		return mav;
+	}
+	
+	
+	// 사무용품 예약 삭제
+	@ResponseBody
+	@RequestMapping(value="/t1/delmyReservedGoods.tw", method= {RequestMethod.POST})
+	public String delMyReservedGoods(HttpServletRequest request) {
+		
+		String rsgno = request.getParameter("rsgno");
+		
+		int n =service.delReserveGoods(rsgno);
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("n", n);
 		return jsonObj.toString();
 	}
+		
+		
+	
+	// 나의 차량 예약 현황 보이기
+	@RequestMapping(value="/t1/myReservedCar.tw")
+	public ModelAndView requiredLogin_myReservedCar(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+	
+		HttpSession session = request.getSession();
+	
+		MemberBwbVO loginuser =(MemberBwbVO)session.getAttribute("loginuser");
+		
+		
+		String employeeid = loginuser.getEmployeeid();
+		// 나의 대여 현황
+		List<CarOdyVO> myCarList = null;
+
+		List<CarOdyVO> carList= service.getCarList();
+		
+		session.setAttribute("readCountPermission", "yes");
+		
+		String startdate = request.getParameter("startdate");
+		String enddate = request.getParameter("enddate");
+		String str_cno = request.getParameter("cno");
+		String searchWord = request.getParameter("searchWord");
+		String str_rstatus = request.getParameter("rstatus");
+		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		
+		int cno = 0;
+		
+		if(str_cno==null || "".equals(str_cno)) {
+			cno=0;
+		}
+		else {
+			try {
+				cno= Integer.parseInt(str_cno);
+			}catch (NumberFormatException e) {
+				cno=0;
+			}
+		}
+		
+		if(searchWord== null || "".equals(searchWord) || searchWord.trim().isEmpty()) {// 
+			searchWord="";
+		}
+		
+		if(startdate == null || "".equals(startdate)) {
+			startdate="";
+		}
+		
+		if(enddate==null || "".equals(enddate)) {
+			enddate="";
+		}
+
+		int rstatus=-1;
+		if(str_rstatus==null || "".equals(str_rstatus)) {
+			rstatus=-1;
+		}
+		else {
+			try {
+				rstatus= Integer.parseInt(str_rstatus);
+			}catch (NumberFormatException e) {
+				rstatus=-1;
+			}
+		}
+		
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("cno", String.valueOf(cno));
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("startdate", startdate);
+		paraMap.put("enddate", enddate);
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("rstatus",String.valueOf(rstatus));
+
+		
+		int totalCount =0;        // 총 게시물 건수		
+		int currentShowPageNo =0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
+		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
+		int sizePerPage= 10;
+		int startRno = 0;           // 시작 행번호
+	    int endRno = 0;             // 끝 행번호 
+	    
+	    
+	    // 나의 차량 예약 총 건수(totalCount)
+	    totalCount = service.getTotalCountMyCar(paraMap);
+      
+	    totalPage = (int)Math.ceil((double)totalCount/sizePerPage); 
+
+		if(str_currentShowPageNo == null) {
+			currentShowPageNo=1;
+		}
+		else {
+			try {
+				currentShowPageNo = Integer.parseInt(str_currentShowPageNo);
+				if(currentShowPageNo<1 || currentShowPageNo>totalPage) {
+					currentShowPageNo=1;
+				}
+			
+			}catch (NumberFormatException e) {
+				currentShowPageNo=1;
+			}
+		}
+		
+		
+		startRno = ((currentShowPageNo - 1 ) * sizePerPage) + 1;
+	    endRno = startRno + sizePerPage - 1;
+	      
+	    paraMap.put("startRno", String.valueOf(startRno));
+	    paraMap.put("endRno", String.valueOf(endRno));
+	    
+	    
+	    myCarList = service.showMyCarListSearchWithPaging(paraMap);
+	
+	    // 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
+	
+		mav.addObject("paraMap", paraMap);
+	
+		
+		// === #121. 페이지바 만들기 === //
+		
+		
+		int blockSize= 5;
+		
+		int loop = 1;
+		
+		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+	   
+		String pageBar = "<ul style='list-style:none;'>";
+		
+		String url = "myReservedCar.tw";
+		
+		// === [맨처음][이전] 만들기 ===
+		if(pageNo!=1) {
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rscno="+cno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rscno="+cno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+		}
+		while(!(loop>blockSize || pageNo>totalPage)) {
+			
+			if(pageNo==currentShowPageNo) {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
+			}
+			else {
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rscno="+cno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+			}
+			
+			loop++;
+			pageNo++;
+		}// end of while--------------------
+		
+		// === [다음][마지막] 만들기 === //
+		if(pageNo <= totalPage) {
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rscno="+cno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&rscno="+cno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+		}
+		pageBar += "</ul>";
+		
+		mav.addObject("pageBar",pageBar);
+		
+		
+		
+		
+		mav.addObject("carList", carList);
+		mav.addObject("myCarList",myCarList);
+		mav.setViewName("ody/reservation/myReservedCar.gwTiles");
+		
+		return mav;
+	}
+	
+
+	// 차량 예약 삭제
+	@ResponseBody
+	@RequestMapping(value="/t1/delmyReservedCar.tw", method= {RequestMethod.POST})
+	public String delMyReservedCar(HttpServletRequest request) {
+		
+		String rscno = request.getParameter("rscno");
+		
+		int n =service.delReserveCar(rscno);
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		return jsonObj.toString();
+	}
+		
 	
 	
 	

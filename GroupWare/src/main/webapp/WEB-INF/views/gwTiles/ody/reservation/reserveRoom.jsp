@@ -312,7 +312,7 @@ $(document).ready(function(){
 				html += "<td style='vertical-align: middle;'>"+rsubject[index]+"</td>";
 				
 					if(fk_employeeid[index] != employeeid) {
-						html += "<td></td><td></td></tr>";
+						html += "<td></td></tr>";
 					} 
 					else {
 					
@@ -330,7 +330,7 @@ $(document).ready(function(){
 				
 						}
 						else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
-							"<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>취소</button></td></tr>";
+							html +="<td><button id='btn_delete' class='btn_r' onclick='deleteReserve("+rsroomno[index]+")';>취소</button></td></tr>";
 						}
 						
 						

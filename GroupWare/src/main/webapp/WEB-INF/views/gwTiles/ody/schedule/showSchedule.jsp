@@ -44,8 +44,8 @@ a:hover {
 .fc-header-toolbar{
 	height: 30px;
 }
-.fc-day-number.fc-sat.fc-past { color:#0000FF; }     /* 토요일 */
-.fc-day-number.fc-sun.fc-past { color:#FF0000; }    /* 일요일 */
+.fc-day-number .fc-sat .fc-past { color:#0000FF; }     /* 토요일 */
+.fc-day-number .fc-sun .fc-past { color:#FF0000; }    /* 일요일 */
 
 /* full calendar css 끝*/
 ul{
@@ -66,7 +66,8 @@ button.btn_edit{
 	background-color: #fff;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <!-- full calendar에 관련된 script -->
@@ -231,6 +232,7 @@ $(document).ready(function(){
 		        dayMaxEventRows: 3 // adjust to 6 only for timeGridWeek/timeGridDay
 		      }
 		    },
+		  
 			// db와 연동하는 법
 		    events:function(info, successCallback, failureCallback){
 		
@@ -657,7 +659,6 @@ $(document).ready(function(){
 						<option value="joinemployee">공유자</option>
 					</select>&nbsp;&nbsp;	
 					<input type="text" id="searchWord" value="" style="height: 30px; width:120px; " name="searchWord"/>
-					<input type="hidden" name="fk_employeeid" value="${loginuser.employeeid}"/>
 					<button type="button" class="btn_normal" style="display: inline-block;"  onclick="goSearch()">검색</button>
 					</div>
 				</form>
@@ -669,8 +670,6 @@ $(document).ready(function(){
 		</div>
 
 	</div>
-
-<input type="text" class="chkscno" value="">
 
 <!-- 내 캘린더 추가 Modal -->
   <div class="modal fade" id="addMyCal" role="dialog">

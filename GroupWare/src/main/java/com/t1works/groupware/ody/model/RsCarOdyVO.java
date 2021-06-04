@@ -12,7 +12,7 @@ public class RsCarOdyVO {
 	private String rcdate;        // 예약날짜
 	private int rctime;           // 예약시간
 	private int cstatus;          // 예약 상태
-	
+	private String carname;       // 차량명
 	
 	public int getRscno() {
 		return rscno;
@@ -73,6 +73,12 @@ public class RsCarOdyVO {
 	}
 	public void setCstatus(int cstatus) {
 		this.cstatus = cstatus;
+	}
+	public String getCarname() {
+		return carname;
+	}
+	public void setCarname(String carname) {
+		this.carname = carname;
 	}
 	
 }

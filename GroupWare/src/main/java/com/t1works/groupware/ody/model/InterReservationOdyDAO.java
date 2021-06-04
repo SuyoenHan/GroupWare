@@ -44,11 +44,23 @@ public interface InterReservationOdyDAO {
 	// 차량 예약 삭제하기
 	int delReserveCar(String rscno);
 
-	// 사무용품 반납하기
-	int returnReserveGoods(String rsgno);
+	// 나의 회의실 대여 건수
+	int getTotalCountMyRoom(Map<String, String> paraMap);
 
-	// 차량 반납하기
-	int returnReserveCar(String rscno);
+	// 나의 회의실 대여 현황
+	List<RsRoomOdyVO> showMyRoomListSearchWithPaging(Map<String, String> paraMap);
+
+	// 나의 사무용품 대여 현황
+	int getTotalCountMyGoods(Map<String, String> paraMap);
+
+	// 나의 사무용품 대여 현황
+	List<GoodsOdyVO> showMyGoodsListSearchWithPaging(Map<String, String> paraMap);
+
+	// 나의 차량 예약 총 건수(totalCount)
+	int getTotalCountMyCar(Map<String, String> paraMap);
+
+	// 나의 차량 대여 현황
+	List<CarOdyVO> showMyCarListSearchWithPaging(Map<String, String> paraMap);
 
 	
 

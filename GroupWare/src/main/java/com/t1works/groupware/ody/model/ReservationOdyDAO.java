@@ -108,18 +108,48 @@ public class ReservationOdyDAO implements InterReservationOdyDAO {
 		return n;
 	}
 
-	// 사무용품 반납하기
+	// 나의 회의실 대여 건수
 	@Override
-	public int returnReserveGoods(String rsgno) {
-		int n = sqlsession5.update("reservation_ody.returnReserveGoods",rsgno);
+	public int getTotalCountMyRoom(Map<String, String> paraMap) {
+		int n = sqlsession5.selectOne("reservation_ody.getTotalCountMyRoom",paraMap);
 		return n;
 	}
 
-	// 차량 반납하기
+	// 나의 회의실 대여 현황
 	@Override
-	public int returnReserveCar(String rscno) {
-		int n = sqlsession5.update("reservation_ody.returnReserveCar",rscno);
+	public List<RsRoomOdyVO> showMyRoomListSearchWithPaging(Map<String, String> paraMap) {
+		List<RsRoomOdyVO> myRoomList  = sqlsession5.selectList("reservation_ody.showMyRoomListSearchWithPaging",paraMap);
+		return myRoomList;
+	}
+
+
+
+	// 나의 사무용품 대여 현황 건수
+	@Override
+	public int getTotalCountMyGoods(Map<String, String> paraMap) {
+		int n = sqlsession5.selectOne("reservation_ody.getTotalCountMyGoods",paraMap);
 		return n;
+	}
+
+	// 나의 사무용품 대여 현황
+	@Override
+	public List<GoodsOdyVO> showMyGoodsListSearchWithPaging(Map<String, String> paraMap) {
+		List<GoodsOdyVO> myGoodsList = sqlsession5.selectList("reservation_ody.showMyGoodsListSearchWithPaging",paraMap);
+		return myGoodsList;
+	}
+
+	// 나의 차량 대여 총 건수(totalCount)
+	@Override
+	public int getTotalCountMyCar(Map<String, String> paraMap) {
+		int n = sqlsession5.selectOne("reservation_ody.getTotalCountMyCar",paraMap);
+		return n;
+	}
+
+	// 나의 차량 대여 현황
+	@Override
+	public List<CarOdyVO> showMyCarListSearchWithPaging(Map<String, String> paraMap) {
+		List<CarOdyVO> myCarList = sqlsession5.selectList("reservation_ody.showMyCarListSearchWithPaging",paraMap);
+		return myCarList;
 	}
 
 

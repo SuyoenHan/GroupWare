@@ -319,7 +319,12 @@ $(document).ready(function(){
 				} 
 				else {
 					   if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
+						   if(gstatus[index]=='0'){
+								html += "<td style='vertical-align: middle;'>미승인</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+							}					   
+						   else if(gstatus[index]=='1'){
 								html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rsgno[index]+")';>삭제</button></td></tr>";
+						   }
 						}
 						else if(parseInt(curTime)==parseInt(chgdate)){
 							
