@@ -1092,7 +1092,69 @@ public class MemberBwbController {
 		
 		// System.out.println(jsonArr);
 		return jsonArr.toString();
+		
+	} // end of public String selectPerformance(HttpServletRequest request) {
+	
+	
+	
+	// 사장 로그인시 - 전체실적현황
+	@RequestMapping(value="/t1/companyPerformance.tw")
+	public ModelAndView requiredLogin_companyPerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String dcode = "";
+		
+		// 전체부서의 실적의 가장 예전 날짜, 최근 날짜 가지고 오기
+		Map<String,String> paraMap = service4.selectOldNewDate(dcode);
+		
+		mav.addObject("paraMap", paraMap);
+		
+		
+		
+		mav.setViewName("bwb/todo/companyPerformance.gwTiles");
+		
+		return mav;
 	}
 	
+	
+	// 선택한 년,월에 해당하는 부서 전체 실적 데이터 가지고 오기(ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectDepPerformance.tw",produces="text/plain;charset=UTF-8")
+	public String selectDepPerformance(HttpServletRequest request) {
+		
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+
+		// 넘어온 날짜 배열로 만들어주기.
+		String[] performanceWhenArr = performanceWhenArres.split(","); 
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("firstDate", performanceWhenArr[2]);
+
+		// 부서 전체 이름,코드 가져오기
+		List<MemberBwbVO> departmentList = service2.selectDepartmentList();
+
+		// [{"employeeid":tw0019, "2021-04": 0, "2021-03":1, "2021-02":0}, {} ,{}]
+		
+		JSONArray jsonArr = new JSONArray();
+		for(MemberBwbVO dvo : departmentList) {
+				JSONObject jsonObj = new JSONObject();
+				
+				String employeeid = dvo.getDname();
+				paraMap.put("employeeid", employeeid);
+				
+				// chart에 들어가기 위한 name값,3개월에 대한 각각 실적건수
+				Map<String,String> resultMap = service4.selectCntPerformance(paraMap);
+				jsonObj.put("ppreveCnt", resultMap.get("ppreveCnt"));
+				jsonObj.put("prevCnt", resultMap.get("prevCnt"));
+				jsonObj.put("selectCnt", resultMap.get("selectCnt"));
+				// jsonObj.put("name", mvo.getName());
+				jsonArr.put(jsonObj);
+			
+		} // end of for
+		
+		// System.out.println(jsonArr);
+		return jsonArr.toString();
+		
+	} // end of public String selectPerformance(HttpServletRequest request) {
+
 	
 }
