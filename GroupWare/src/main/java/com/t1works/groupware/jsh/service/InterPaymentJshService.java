@@ -1,8 +1,7 @@
 package com.t1works.groupware.jsh.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
 
@@ -31,6 +30,9 @@ public interface InterPaymentJshService {
 
 	//일반결재 글쓰기
 	ElectronPayJshVO login_Write(Map<String, String> paraMap);
+
+	//전자결재테이블 insert
+	int Electricadd(ElectronPayJshVO epvo);
 
 
 

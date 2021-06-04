@@ -139,7 +139,7 @@
 		<!-- // 하나의 일반결재내역 문서 보여주기 -->
 		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			  
-			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , afile ,astatus
+			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , orgFilename ,astatus
 			  <choose>
 				<when test="ncatname eq'회의록'">
 				 , mdate 
@@ -202,6 +202,14 @@
 			on d.dcode = e.fk_dcode
 			where employeeid = #{userid}
 		</select>
+		
+		
+		<insert id="Electricadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO" >
+		insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper) 
+		values (seq_tbl_approval.nextval, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0)
+ 
+		</insert>
+		
 		
 </mapper>
 

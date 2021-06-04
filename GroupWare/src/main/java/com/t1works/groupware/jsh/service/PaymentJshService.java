@@ -77,6 +77,13 @@ public class PaymentJshService implements InterPaymentJshService {
 		return write_view;
 	}
 
+	//전자결재테이블 insert
+	@Override
+	public int Electricadd(ElectronPayJshVO epvo) {
+		int n = dao.Electricadd(epvo);
+		return n;
+	}
+
 	
 	
 }
