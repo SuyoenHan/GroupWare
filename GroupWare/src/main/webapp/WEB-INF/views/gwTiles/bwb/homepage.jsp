@@ -6,13 +6,86 @@
 <%
    String ctxPath = request.getContextPath();
 %>
+
+<link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style>
  div#gwContent{left: 80px;}
+ 
+ div#calendarO{
+ 	border: solid 1px blue;
+ 	margin-top: 50px;
+ 	width: 500px;
+ 	height: 800px;
+ }
+ 
+ /* 달력 css */
+ div#calendarWrapper{
+	float: left;
+ }	
+
+ .fc-scroller {
+   	overflow-y: hidden !important;
+ }
+
+ a{
+    color: #000;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+ }
+
+ a:hover {
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+ }
+ 
+ .fc-daygrid{
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: transparent;
+ }
+
+ .fc-header-toolbar{
+	height: 30px;
+ } 
+ 
+ .fc-event-time{
+ 	color: #fff;
+ }
+ 
+ .fc-daygrid-event-dot{
+ 	margin-left: 25px;
+ }
+ 
+ .fc-daygrid{
+ 	border: solid 1px #fff;
+ }
+  
+  .fc-button-primary{
+  	background-color: #333333;
+  }
+  
+  
+ div.circle{   
+ 	width: 8px;
+ 	height: 8px;
+ 	border-radius: 50%;
+ 	display: inline-block;
+ 	margin-left: 5px;
+ 	margin-right: 10px;
+ }
 </style>
 
+<!-- full calendar에 관련된 script -->
+<script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
+<script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script type="text/javascript">
    $(document).ready(function(){
-      
       
       // div#sidemenu와 div#content길이 맞추기
       // func_height1();
@@ -165,6 +238,105 @@
       }); // end of $("span#outtime").click(function(){
       
       
+    	<%--  달력 생성(오다윤)  --%>   
+    	 var calendarEl = document.getElementById('calendar');
+         var calendar = new FullCalendar.Calendar(calendarEl, {
+           initialView: 'dayGridMonth',
+           locale: 'ko',
+           selectable: true,
+ 	       editable: false,
+ 	       headerToolbar: {
+ 	    	    left: 'prev',
+ 	    	    center: 'title',
+ 	    	    right: 'next' // today 추가?
+ 	       },
+ 	      dayMaxEventRows: true, // for all non-TimeGrid views
+ 	     	views: {
+ 	        	timeGrid: {
+ 	        		 dayMaxEventRows: 1// adjust to 6 only for timeGridWeek/timeGridDay
+ 	      		}
+ 	    	 },
+ 	       events:function(info, successCallback, failureCallback){
+ 	    	 
+ 	       
+ 			   $.ajax({
+ 			   		url: "<%= ctxPath%>/t1/showMyCalendarHome.tw",
+ 			   		data: {"employeeid":"${loginuser.employeeid}"},
+ 			   		type: "get",
+ 			   		dataType: "json",
+ 			   		success:function(json){
+			   			var events =[];
+			   			if(json!=null){
+			   				$.each(json, function(index, item) {
+			   				 var startdate=moment(item.startdate).format('YYYY-MM-DD HH:mm:ss');
+			                 var enddate=moment(item.enddate).format('YYYY-MM-DD HH:mm:ss');
+			   					
+			                 events.push({
+	 			   					id: item.sdno,
+	 			   					title: item.subject,
+	 			   					start: startdate,
+	 			   					end: enddate,
+	 			   					color: "#333333"
+	                      		}); // events.push
+	 			   		
+	 			   			
+			   				}); //each
+			   			}
+			   			console.log(events);     
+			   			successCallback(events); 
+ 			   		}
+ 			   }); // end of $.ajax
+ 			   
+ 		   }, //events:function end	       	  
+           dateClick: function(info) {
+         	//  alert('Date: ' + info.dateStr);
+         	    $(".fc-day").css('background','none'); // 현재 날짜 배경색 없애기
+         	    info.dayEl.style.backgroundColor = '#fff';
+         	    date=info.dateStr;
+         	    showMyList(date); // 해당 날짜에 대한 캘린더 정보를 불러오는 함수 
+           }
+         });
+
+         calendar.render();
+         calendar.setOption('height', 450);
+    	 
+         $("div#infoCalendar").hide();
+         
+    	 // 오늘 날짜와 관련된 일정 보여주기
+         $.ajax({
+ 			url: "<%= ctxPath%>/t1/todayMyCal.tw",
+ 			data: {"employeeid": "${loginuser.employeeid}"},
+ 			type: "post",
+ 			dataType: "json",
+ 			success:function(json){
+ 				
+ 				var html ="";
+ 				
+ 				if(json.length==0){
+ 					html+="<tr><td>등록된 일정이 없습니다</td></tr>";
+ 				}
+ 				if(json.length>0){
+ 					
+ 					html="<table class='table'>";
+ 	   				$.each(json, function(index, item) {
+ 	   					html+="<tr><td>"+item.startdate+" ~ "+item.enddate+"</td>";
+ 	   					html+="<tr><td style='padding-left: 10px; font-size: 10pt; border-top: solid 0px;'>"+item.stime+"~"+item.etime+"<div class='circle' style='background-color:"+item.color+"'></div><a href='<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno+"'>"+item.subject+"</a></td></tr>";
+ 	   				}); //each
+ 	   				hrml="</table>";
+ 				}
+ 				$("div#todayCal").html(html);
+ 				$("div#todayCal").show();
+ 				$("div#infoCalendar").hide();
+ 				
+ 			},
+ 			error: function(request, status, error){
+                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+ 		});  
+    	  
+    	  
+    	  
+    	  
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -259,6 +431,40 @@
       return todayDate;
    }
    
+	// 달력에서 클릭한 날짜에 대한 캘린더 정보를 불러오는 함수 
+   function showMyList(date){
+	   $.ajax({
+			url: "<%= ctxPath%>/t1/myCalendarInfo.tw",
+			data: {"employeeid": "${loginuser.employeeid}"
+				  ,"date":date},
+			type: "post",
+			dataType: "json",
+			success:function(json){
+				
+				var html ="";
+				
+				if(json.length==0){
+					html+="<tr><td>등록된 일정이 없습니다</td></tr>";
+				}
+				if(json.length>0){
+					
+					html="<table class='table'>";
+	   				$.each(json, function(index, item) {
+	   					html+="<tr><td>"+item.startdate+" ~ "+item.enddate+"</td>";
+	   					html+="<tr><td style='padding-left: 10px; font-size: 10pt; border-top: solid 0px;'>"+item.stime+"~"+item.etime+"<div class='circle' style='background-color:"+item.color+"'></div><a href='<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno+"'>"+item.subject+"</a></td></tr>";
+	   				}); //each
+	   				hrml="</table>";
+				}
+				$("div#todayCal").hide();	
+ 				$("div#infoCalendar").show();	
+				$("div#infoCalendar").html(html);
+				
+			},
+			error: function(request, status, error){
+               alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+           }
+		});
+   }
 </script>
 
 <style>
@@ -328,5 +534,19 @@
         <div id="leftOffcnt">남은 연차 일수 : XX일</div>
      </div>
      
+  </div><%-- end of div(myInfo) 백원빈 --%>
+  
+  
+  
+  <%-- start of div(calendar) 오다윤 --%>
+  <div id="calendarO">
+			<div id="calendar" style="width: 400px; " ></div>
+			<div id="todayCal" style="width: 400px; margin-top:10px; padding-left: 10px;"></div>
+			<div id="infoCalendar" style="width: 400px; margin-top:10px; padding-left: 10px;"></div>
   </div>
+
+  <%-- end of div(calendar) 오다윤 --%>
+  
+ 
+  
 </div>

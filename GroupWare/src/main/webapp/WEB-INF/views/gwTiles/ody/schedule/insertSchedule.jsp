@@ -61,10 +61,10 @@ button.btn_normal{
 		var html="";
 		for(var i=0;i<24;i++){
 			if(i<10){
-				html+="<option value='0"+i+"'>0"+i+"</option>"
+				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
 			else{
-				html+="<option value="+i+">"+i+"</option>"
+				html+="<option value="+i+">"+i+"</option>";
 			}
 			
 			$("select#startHour").html(html);
@@ -75,16 +75,15 @@ button.btn_normal{
 		html="";
 		for(var i=0;i<60;i=i+5){
 			if(i<10){
-				html+="<option value='0"+i+"'>0"+i+"</option>"
+				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
-			else{
-				html+="<option value="+i+">"+i+"</option>"
+			else {
+				html+="<option value="+i+">"+i+"</option>";
 			}
-			$("select#startMin").html(html);
-			$("select#endMin").html(html);
-			
 		}
-		
+			html+="<option value="+59+">"+59+"</option>"
+		$("select#startMin").html(html);
+		$("select#endMin").html(html);	
 		// '종일' 체크박스 클릭시
 		$("input#allDay").click(function() {
 			var checked = $('input#allDay:checked').val();
@@ -92,7 +91,7 @@ button.btn_normal{
 				$("select#startHour").val("00");
 				$("select#startMin").val("00");
 				$("select#endHour").val("23");
-				$("select#endMin").val("55");
+				$("select#endMin").val("59");
 				$("select#startHour").prop("disabled",true);
 				$("select#startMin").prop("disabled",true);
 				$("select#endHour").prop("disabled",true);

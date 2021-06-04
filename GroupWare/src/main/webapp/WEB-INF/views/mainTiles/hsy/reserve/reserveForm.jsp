@@ -6,14 +6,16 @@
 	
 	div#myReserve{
 		border: solid 0px red;
-		width: 50%;
+		width: 60%;
 		margin: 0 auto;
-		padding: 30px 0px;
+		margin-bottom:50px;
+		position:relative;
+		left: -40px;
 	}
 
 	div#myReserveTitle{
 		border: solid 0px red;
-		font-size: 18pt;
+		font-size: 25pt;
 		color: #0071bd;
 		text-align: center;
 		font-weight: bold;
@@ -26,6 +28,8 @@
 		margin: 0 auto;
 		text-align: center;
 		margin-bottom: 30px;
+		position:relative;
+		left:10px;
 	}
 	
 	div#reserveForm label{
@@ -107,9 +111,9 @@
 
 
 </script>
-<div id="content">
+<div id="content" style="clear: both;">
 	<div id="myReserve">
-		<div id="myReserveTitle">예약현황 확인하기</div>
+		<div id="myReserveTitle" style="padding-top:50px;">예약현황 확인하기</div>
 		<div id="reserveForm">
 			<form name="myReserveForm" action="<%=ctxPath%>/t1/myreserve.tw" method="POST">
 				<label>예약자명</label><input class="clientInfo" type="text" name="clientname" placeholder="예약자명을 입력하세요"/><br/>

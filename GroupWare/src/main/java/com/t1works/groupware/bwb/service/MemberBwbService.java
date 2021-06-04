@@ -118,6 +118,22 @@ public class MemberBwbService implements InterMemberBwbService {
 		
 		return n;
 	}
+
+	// 부장을 제외한 직원 ID를 가져오기
+	@Override
+	public List<MemberBwbVO> selectMemberList(String dcode) {
+		
+		List<MemberBwbVO> memberList = dao.selectMemberList(dcode);
+		return memberList;
+	}
+
+	// 부서 전체 이름,코드 가져오기
+	@Override
+	public List<MemberBwbVO> selectDepartmentList() {
+		
+		List<MemberBwbVO> departmentList = dao.selectDepartmentList();
+		return departmentList;
+	}
 		
 
 }

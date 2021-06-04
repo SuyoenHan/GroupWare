@@ -39,14 +39,14 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 	
 	// 공지사항 글 조회수 1 증가하기
 	@Override
-	public void setAddReadCount(String seq) {
-		sqlsession3.update("board.setAddReadCount", seq);
+	public void setAddReadCount(Map<String, String> paraMap) {
+		sqlsession3.update("board.setAddReadCount", paraMap);
 	}
 
 	// 공지사항 글1개 조회하기
 	@Override
-	public BoardKdnVO getView(String seq) {
-		BoardKdnVO boardvo = sqlsession3.selectOne("board.getView", seq);
+	public BoardKdnVO getView(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getView", paraMap);
 		return boardvo;
 	}
 	
@@ -90,15 +90,15 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 
 	// 건의사항 글1개 조회하기
 	@Override
-	public BoardKdnVO getSuggPostView(String seq) {
-		BoardKdnVO boardvo = sqlsession3.selectOne("board.getSuggPostView", seq);
+	public BoardKdnVO getSuggPostView(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getSuggPostView", paraMap);
 		return boardvo;
 	}
 
 	// 건의사항 글 조회수 1 증가하기
 	@Override
-	public void setAddSuggReadCount(String seq) {
-		sqlsession3.update("board.setAddSuggReadCount", seq);
+	public void setAddSuggReadCount(Map<String, String> paraMap) {
+		sqlsession3.update("board.setAddSuggReadCount", paraMap);
 	}
 
 	// 건의사항 글 수정하기
@@ -115,6 +115,55 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 건의사항 댓글쓰기(tbl_suggestionboardcomment 테이블에 insert)
+	@Override
+	public int addSuggComment(CommentKdnVO commentvo) {
+		int n = sqlsession3.insert("board.addSuggComment", commentvo);
+		return n;
+	}
+
+	// 건의사항 tbl_suggestionboard 테이블에 commentCount 컬럼의 값을 1증가(update) 
+	@Override
+	public int updateSuggCmntCount(String fk_seq) {
+		int n = sqlsession3.update("board.updateSuggCmntCount",fk_seq);
+		return n;
+	}
+	
+	// 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
+	@Override
+	public List<CommentKdnVO> getSuggCmntListPaging(Map<String, String> paraMap) {
+		List<CommentKdnVO> commentList = sqlsession3.selectList("board.getSuggCmntListPaging", paraMap);
+		return commentList;
+	}
+	
+	// 건의사항 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
+	@Override
+	public int getSuggCmntTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession3.selectOne("board.getSuggCmntTotalPage", paraMap);
+		return totalPage;
+	}
+	
+	// tbl_suggestionboard 테이블에서 groupno 컬럼의 최대값 구하기
+	@Override
+	public int getGroupnoMax() {
+		int max = sqlsession3.selectOne("board.getGroupnoMax");
+	    return max;
+	}
+	
+	// 건의사항 댓글 삭제
+	@Override
+	public int delSuggComment(String seq) {
+		int n = sqlsession3.delete("board.delSuggComment", seq);
+		return n;
+	}
+	
+	// 건의사항 댓글 수정
+	@Override
+	public int editSuggComment(String seq) {
+		int n = sqlsession3.update("board.editSuggComment", seq);
+		return n;
+	}
+
 	
 	// =========== 자유게시판  =============
 	
@@ -141,15 +190,15 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 
 	// 자유게시판 글1개 조회하기
 	@Override
-	public BoardKdnVO getGenPostView(String seq) {
-		BoardKdnVO boardvo = sqlsession3.selectOne("board.getGenPostView", seq);
+	public BoardKdnVO getGenPostView(Map<String, String> paraMap) {
+		BoardKdnVO boardvo = sqlsession3.selectOne("board.getGenPostView", paraMap);
 		return boardvo;
 	}
 
 	// 글 조회수 1 증가하기
 	@Override
-	public void setAddGenReadCount(String seq) {
-		sqlsession3.update("board.setAddGenReadCount", seq);
+	public void setAddGenReadCount(Map<String, String> paraMap) {
+		sqlsession3.update("board.setAddGenReadCount", paraMap);
 		
 	}
 
@@ -194,6 +243,24 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		int totalPage = sqlsession3.selectOne("board.getCommentTotalPage", paraMap);
 		return totalPage;
 	}
+
+	// 자유게시판 댓글 삭제하기
+	@Override
+	public int delGenComment(String seq) {
+		int n = sqlsession3.delete("board.delGenComment", seq);
+		return n;
+	}
+
+	
+	
+
+	
+
+	
+
+	
+
+	
 
 
 	

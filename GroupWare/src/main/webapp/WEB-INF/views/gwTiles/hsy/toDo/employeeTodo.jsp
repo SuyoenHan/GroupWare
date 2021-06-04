@@ -12,7 +12,7 @@
 		width:75%;
 		margin:0 auto;
 		position: relative;
-		left: -200px;
+		left: -110px;
 		padding-bottom: 100px;
 	}
 	
@@ -616,76 +616,76 @@
 							<div class="eachtoDoList ajaxEachList">
 						</c:otherwise>
 					</c:choose>
-							<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
-								<span style="margin-left:20px; width:50px;">${tvo.rno}</span>
-								
-								<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
-									<span class="hurry">&nbsp;긴급&nbsp;</span>
-									<span style="width:250px; color:red; text-align:left; margin-left:5px;" class="productName">${tvo.pName}</span>
-								</c:if>
-								<c:if test="${tvo.hurryno eq '0' and requiredState ne '2'}">
-									<span style="width:250px; margin-left:58px; text-align:left;" class="productName">${tvo.pName}</span>
-								</c:if>
-								<c:if test="${requiredState eq '2'}">
-									<span style="width:250px; margin-left:30px; text-align:left;" class="productName">${tvo.pName}</span>
-								</c:if>
-								
-								<span style="width:70px;">${tvo.name}</span>
-								<span style="width:110px;">${tvo.assignDate}</span>
-								<span style="width:110px;">${tvo.startDate}</span>
-								
-								<c:if test="${requiredState ne '2'}">
-									<span style="width:110px;">${tvo.dueDate}</span>  <%-- 신규등록업무와 진행중 업무에만 존재 --%>
-								</c:if>
-								
-								<c:if test="${requiredState eq '1'}">  <%-- 진행중 업무에만 존재 --%>
-									<c:if test="${tvo.fullState eq'0'}"> <%-- 예약인원 미충족 --%>
-										<span style="width:110px;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-									</c:if>
-									<c:if test="${tvo.fullState eq'1'}"> <%-- 최소예약인원 충족 --%>
-										<span style="width:110px; color:blue;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-									</c:if>
-									<c:if test="${tvo.fullState eq'2'}"> <%-- 최대예약인원 충족 --%>
-										<span style="width:110px; color:red;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
-									</c:if>
-								</c:if>
-								
-								<c:if test="${requiredState eq '2'}">  <%-- 진행완료 업무에만 존재 --%>
-									<span style="width:110px;">${tvo.endDate}</span> 
-								</c:if>
-							</div>
-							
-							<c:if test="${requiredState eq '0'}">
-								<button type="button" class="state goWork" onclick="goWorkStart('${tvo.fk_pNo}','${tvo.pName}')">진행시작하기</button> <%-- 신규등록 업무에만 존재 --%>
+					<div class="forModal" style="float:left;" id="${tvo.fk_pNo}">
+						<span style="margin-left:20px; width:50px;">${tvo.rno}</span>
+						
+						<c:if test="${tvo.hurryno eq '1' and requiredState ne '2'}">
+							<span class="hurry">&nbsp;긴급&nbsp;</span>
+							<span style="width:250px; color:red; text-align:left; margin-left:5px;" class="productName">${tvo.pName}</span>
+						</c:if>
+						<c:if test="${tvo.hurryno eq '0' and requiredState ne '2'}">
+							<span style="width:250px; margin-left:58px; text-align:left;" class="productName">${tvo.pName}</span>
+						</c:if>
+						<c:if test="${requiredState eq '2'}">
+							<span style="width:250px; margin-left:30px; text-align:left;" class="productName">${tvo.pName}</span>
+						</c:if>
+						
+						<span style="width:70px;">${tvo.name}</span>
+						<span style="width:110px;">${tvo.assignDate}</span>
+						<span style="width:110px;">${tvo.startDate}</span>
+						
+						<c:if test="${requiredState ne '2'}">
+							<span style="width:110px;">${tvo.dueDate}</span>  <%-- 신규등록업무와 진행중 업무에만 존재 --%>
+						</c:if>
+						
+						<c:if test="${requiredState eq '1'}">  <%-- 진행중 업무에만 존재 --%>
+							<c:if test="${tvo.fullState eq'0'}"> <%-- 예약인원 미충족 --%>
+								<span style="width:110px;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
 							</c:if>
-							<c:if test="${requiredState eq '1'}"> <%-- 진행중 업무에만 존재 --%>
-							  	<c:if test="${tvo.ingDetail eq '0' or tvo.ingDetail eq '-1' }"> <%-- 지연된 업무가 아닌 경우 --%>
-									<select class="ingDetail postpone" id="${tvo.fk_pNo}" name="${tvo.ingDetail}">
-										<option value="0">&nbsp;진행중</option> 
-										<option value="-1">&nbsp;보류</option>
-										<option value="2">&nbsp;진행완료</option>
-									</select>
-								</c:if>
-								<c:if test="${tvo.ingDetail ne '0' and tvo.ingDetail ne '-1' }"> <%-- 지연된 업무인 경우 --%>
-									<select class="ingDetail delay" id="${tvo.fk_pNo}">
-										<option value="1" style="background-color: #730099; color: #fff; font-weight: bold;">&nbsp;지연 &nbsp;(&nbsp;+${tvo.ingDetail}일&nbsp;)</option> 
-										<option value="2" style="background-color: #fff; color: black; font-weight: normal;">&nbsp;진행완료</option>
-									</select>
-								</c:if>
+							<c:if test="${tvo.fullState eq'1'}"> <%-- 최소예약인원 충족 --%>
+								<span style="width:110px; color:blue;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
 							</c:if>
-							
-							<c:if test="${requiredState eq '2'}">
-								<button type="button" class="state" style="cursor:context-menu;">진행완료</button> <%-- 진행완료 업무에만 존재 --%>
+							<c:if test="${tvo.fullState eq'2'}"> <%-- 최대예약인원 충족 --%>
+								<span style="width:110px; color:red;" class="fullState" id="${tvo.fullState}">${tvo.nowNo}명&nbsp;/&nbsp;${tvo.maxNo}명</span> 
 							</c:if>
-						</div>
-				</c:forEach>
-			</c:if>
+						</c:if>
+						
+						<c:if test="${requiredState eq '2'}">  <%-- 진행완료 업무에만 존재 --%>
+							<span style="width:110px;">${tvo.endDate}</span> 
+						</c:if>
+					</div>
+						
+					<c:if test="${requiredState eq '0'}">
+						<button type="button" class="state goWork" onclick="goWorkStart('${tvo.fk_pNo}','${tvo.pName}')">진행시작하기</button> <%-- 신규등록 업무에만 존재 --%>
+					</c:if>
+					<c:if test="${requiredState eq '1'}"> <%-- 진행중 업무에만 존재 --%>
+					  	<c:if test="${tvo.ingDetail eq '0' or tvo.ingDetail eq '-1' }"> <%-- 지연된 업무가 아닌 경우 --%>
+							<select class="ingDetail postpone" id="${tvo.fk_pNo}" name="${tvo.ingDetail}">
+								<option value="0">&nbsp;진행중</option> 
+								<option value="-1">&nbsp;보류</option>
+								<option value="2">&nbsp;진행완료</option>
+							</select>
+						</c:if>
+						<c:if test="${tvo.ingDetail ne '0' and tvo.ingDetail ne '-1' }"> <%-- 지연된 업무인 경우 --%>
+							<select class="ingDetail delay" id="${tvo.fk_pNo}">
+								<option value="1" style="background-color: #730099; color: #fff; font-weight: bold;">&nbsp;지연 &nbsp;(&nbsp;+${tvo.ingDetail}일&nbsp;)</option> 
+								<option value="2" style="background-color: #fff; color: black; font-weight: normal;">&nbsp;진행완료</option>
+							</select>
+						</c:if>
+					</c:if>
+					
+					<c:if test="${requiredState eq '2'}">
+						<button type="button" class="state" style="cursor:context-menu;">진행완료</button> <%-- 진행완료 업무에만 존재 --%>
+					</c:if>
+				</div>
+			</c:forEach>
+		</c:if>
 			
-			<c:if test="${empty tvoList}">
-				<div class="eachtoDoList ajaxEachList" align="center" style="font-weight: bold;">업무내역이 없습니다.</div>
-			</c:if>
-		</div>
-	</div>	
+		<c:if test="${empty tvoList}">
+			<div class="eachtoDoList ajaxEachList" align="center" style="font-weight: bold;">업무내역이 없습니다.</div>
+		</c:if>
+	</div>
+</div>	
 	
 	<div align="right" style="margin: 30px 0px; width:78%; font-size:14pt; clear:both;" id="pageBar">${pageBar}</div>
 	

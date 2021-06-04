@@ -90,21 +90,167 @@
 		where rsgno = #{rsgno}
 	</delete>
 	
+	
 	<!-- 차량 예약 삭제하기 -->
 	<delete id="delReserveCar" parameterType="String">
 		delete from tbl_rscar
 		where rscno = #{rscno}
 	</delete>
 	
-	<!-- 사무용품 반납하기 -->
-	<update id="returnReserveGoods" parameterType="String">
-		update tbl_rsgoods set gstatus = 0
-		where rsgno = #{rsgno}
-	</update>
 	
-	<!-- 차량 반납하기 -->
-	<update id="returnReserveCar" parameterType="String">
-		update tbl_rscar set cstatus = 0
-		where rscno = #{rscno}
-	</update>
+	<!-- 나의 회의실 대여 현황 -->
+	<select id="showMyRoomList" parameterType="String" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO">
+		select rdate, rtime, rstatus, roomname, rsubject
+		from tbl_rsroom join tbl_room
+		on fk_roomno = roomno
+		where fk_employeeid = #{employeeid}
+	</select>
+	
+	
+	
+	<!-- 나의 회의실 대여 건수 -->
+	<select id="getTotalCountMyRoom" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_rsroom S join tbl_room R
+        on S.fk_roomno = R.roomno
+		where S.fk_employeeid = #{employeeid}
+		<if test='startdate !="" and  enddate !=""'>
+			and S.rdate between #{startdate} and #{enddate}
+		</if>
+		<if test="searchWord !=''">
+			and S.rsubject like '%'||lower(#{searchWord})||'%'
+		</if>
+		<if test="roomno!=0 ">
+			and S.fk_roomno = #{roomno}
+		</if>
+		<if test="rstatus !=-1 ">
+			and S.rstatus = #{rstatus}
+		</if>
+	</select>
+	
+	
+	<!-- 나의 회의실 대여 현황에서 검색 -->
+	<select id="showMyRoomListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO">
+		select rno, rdate, rtime, rstatus, roomname, rsubject, rsroomno
+		from       
+		(        
+		select row_number() over(order by rdate desc, rtime desc) as rno,
+		       rdate, rtime, rstatus, roomname, rsubject, rsroomno
+				from tbl_rsroom S join tbl_room R
+				on S.fk_roomno = R.roomno
+				where S.fk_employeeid = #{employeeid}
+				<if test='startdate !="" and  enddate !=""'>
+				and rdate between #{startdate} and #{enddate}
+				</if>
+				<if test="searchWord !=''">
+					and S.rsubject like '%'||lower(#{searchWord})||'%'
+				</if>
+				<if test="roomno !=0 ">
+					and S.fk_roomno = #{roomno}
+				</if>
+				<if test="rstatus !=-1 ">
+					and S.rstatus = #{rstatus}
+				</if>
+		)V
+		 where rno between #{startRno} and #{endRno}
+	</select>
+
+	<!-- 나의 사무용품 대여 현황 건수 -->
+	<select id="getTotalCountMyGoods" parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_rsGoods S join tbl_Goods G
+        on S.fk_gno = G.gno
+		where S.fk_employeeid = #{employeeid}
+		<if test='startdate !="" and  enddate !=""'>
+			and S.rgdate between #{startdate} and #{enddate}
+		</if>
+		<if test="searchWord !=''">
+			and S.rgsubject like '%'||lower(#{searchWord})||'%'
+		</if>
+		<if test="gno !=0 ">
+			and S.fk_gno = #{gno}
+		</if>
+		<if test="rstatus != -1 ">
+			and S.gstatus = #{rstatus}
+		</if>
+	</select>
+	
+	
+	<select id="showMyGoodsListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO">
+		select rno, rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno
+		from       
+		(        
+		select row_number() over(order by rgdate desc, rgtime desc) as rno,
+		       rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno
+				from tbl_rsgoods S join tbl_goods G
+				on S.fk_gno = G.gno
+				where S.fk_employeeid = #{employeeid}
+				<if test='startdate !="" and  enddate !=""'>
+				and rgdate between #{startdate} and #{enddate}
+				</if>
+				<if test="searchWord !=''">
+					and S.rgsubject like '%'||lower(#{searchWord})||'%'
+				</if>
+				<if test="gno != 0 ">
+					and S.fk_gno =#{gno}
+				</if>
+				<if test="rstatus != -1 ">
+					and S.gstatus = #{rstatus}
+				</if>
+		)V
+		 where rno between #{startRno} and #{endRno}
+	
+	</select>
+	
+	<!-- 나의 차량 대여 총 건수 -->
+	<select id="getTotalCountMyCar"  parameterType="HashMap" resultType="int">
+		select count(*)
+		from tbl_rscar S join tbl_car C
+        on S.fk_cno = C.cno
+		where S.fk_employeeid = #{employeeid}
+		<if test='startdate !="" and  enddate !=""'>
+			and S.rcdate between #{startdate} and #{enddate}
+		</if>
+		<if test="searchWord !=''">
+			and S.rcsubject like '%'||lower(#{searchWord})||'%'
+		</if>
+		<if test="cno !=0 ">
+			and S.fk_cno = #{cno}
+		</if>
+		<if test="rstatus != -1 ">
+			and S.cstatus = #{rstatus}
+		</if>
+	</select>
+	
+	<!-- 나의 차량 대여 현황 -->
+	<select id="showMyCarListSearchWithPaging"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsCarOdyVO">
+		select rno, rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+		from       
+		(        
+		select row_number() over(order by rcdate desc, rctime desc) as rno,
+		       rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+				from tbl_rscar S join tbl_car C
+				on S.fk_cno = C.cno
+				where S.fk_employeeid = #{employeeid}
+				<if test='startdate !="" and  enddate !=""'>
+				and rcdate between #{startdate} and #{enddate}
+				</if>
+				<if test="searchWord !=''">
+					and S.rcsubject like '%'||lower(#{searchWord})||'%'
+				</if>
+				<if test="cno != 0 ">
+					and S.fk_cno =#{cno}
+				</if>
+				<if test="rstatus != -1 ">
+					and S.cstatus = #{rstatus}
+				</if>
+		)V
+		 where rno between #{startRno} and #{endRno}
+	
+	
+	</select>
+	
+	
+	
+	
 </mapper>

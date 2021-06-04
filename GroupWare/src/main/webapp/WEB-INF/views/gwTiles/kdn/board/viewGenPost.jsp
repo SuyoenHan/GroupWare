@@ -63,41 +63,42 @@ function goWriteComment() {
 function goViewComment(currentShowPageNo) {
 	
 	$.ajax({
-		url:"<%= ctxPath%>/t1/commentList.tw",
+		url:"<%=ctxPath%>/t1/commentList.tw",
 		data:{"fk_seq":"${requestScope.boardvo.seq}",
 			  "currentShowPageNo":currentShowPageNo},
 		dataType:"json",
 		success:function(json){ 
-			// []  또는 
-			// [{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열네번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열세번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열두번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열한번째 댓글입니다."},{"name":"이순신","regDate":"2021-05-28 10:41:52","content":"열번째 댓글입니다."}] 
 			
 			var html = "";
 			
 			if(json.length > 0) {
 				$.each(json, function(index, item){
-					html += "<tr>";
-					html += "<td class='comment'>"+(index+1)+"</td>";
-					html += "<td>"+ item.content +"</td>";
+					
+					html += "<strong style='font-size:13px;'>"+item.name+"</strong>&nbsp;&nbsp;";
+					html += "<span style='display:inline-block; margin-bottom:5px; font-size:13px;'>"+item.regDate+"</span>&nbsp;&nbsp;"
 					
 					if($("input[name=fk_employeeid]").val() == item.fk_employeeid){
-						html+="<td class='comment'><button type='button'>수정</button><br><button type='button'>삭제</button></td>"
+						html+="<a href='javascript:editGenComment("+item.seq+")' style='margin-right:5px; font-size:13px; text-decoration: none;'>수정</a><a href='javascript:delGenComment("+item.seq+")' style='border-left: solid 1px gray; padding-left: 5px; font-size:13px; text-decoration: none;'>삭제</a><br>";
+					} else {
+						html+="<br>";
 					}
 					
-					html += "<td class='comment'>"+ item.name +"</td>";
-					html += "<td class='comment'>"+ item.regDate +"</td>";
-					html += "</tr>";
+					html += "<span style='font-size:13px;'>"+item.content+"</span>";
+					
+					if(index < json.length-1){
+						html +="<hr style='margin: 10px 0;'>";
+					}
+					
 				});
 			}
 			else {
-				html += "<tr>";
-				html += "<td colspan='4' class='comment'>댓글이 업습니다</td>";
-				html += "</tr>";
+				html += "<span>댓글이 없습니다</span>";
 			}
 			
-			$("tbody#commentDisplay").html(html);
+			$("div#commentDisplay").html(html);
 			
 			// 페이지바 함수 호출
-			//makeCommentPageBar(currentShowPageNo);
+			makeCommentPageBar(currentShowPageNo);
 		},
 		error: function(request, status, error){
 			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -105,102 +106,223 @@ function goViewComment(currentShowPageNo) {
 	});
 	
 }// end of function goViewComment(currentShowPageNo) {}----------------------
-		
-		
+	
+//==== 댓글내용 페이지바  Ajax로 만들기 ==== // 
+function makeCommentPageBar(currentShowPageNo) {
+
+	$.ajax({
+		url:"<%= ctxPath%>/t1/getCommentTotalPage.tw",
+		data:{"fk_seq":"${requestScope.boardvo.seq}",
+			  "sizePerPage":"5"},
+		type:"get",
+		dataType:"json",
+		success:function(json) {
+			
+			if(json.totalPage > 0) {
+				// 댓글이 있는 경우 
+				var totalPage = json.totalPage;
+				
+				var pageBarHTML = "<ul style='list-style: none;'>";
+				
+				var blockSize = 3;
+				// blockSize 는 1개 블럭(토막)당 보여지는 페이지번호의 개수 이다.
+				
+				var loop = 1;
+			    
+			    if(typeof currentShowPageNo == "string") {
+			    	currentShowPageNo = Number(currentShowPageNo);
+			    }
+			    
+			    // *** !! 다음은 currentShowPageNo 를 얻어와서 pageNo 를 구하는 공식이다. !! *** //
+				var pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+				
+			
+			// === [맨처음][이전] 만들기 === 
+				if(pageNo != 1) {
+					pageBarHTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewComment(\"1\")'>[맨처음]</a></li>";
+					pageBarHTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewComment(\""+(pageNo-1)+"\")'>[이전]</a></li>";
+				}
+			
+				while( !(loop > blockSize || pageNo > totalPage) ) {
+				
+					if(pageNo == currentShowPageNo) {
+						pageBarHTML += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</li>";
+					}
+					else {
+						pageBarHTML += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>"+pageNo+"</a></li>";
+					}
+					
+					loop++;
+					pageNo++;
+				}// end of while------------------------
+			
+			
+			// === [다음][마지막] 만들기 === 
+				if(pageNo <= totalPage) {
+					pageBarHTML += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='javascript:goViewComment(\""+pageNo+"\")'>[다음]</a></li>";
+					pageBarHTML += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='javascript:goViewComment(\""+totalPage+"\")'>[마지막]</a></li>";
+				}
+				
+				pageBarHTML += "</ul>";
+			    
+				$("div#pageBar").html(pageBarHTML);
+			}
+		},
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	 	}
+	});
+	
+}// end of function makeCommentPageBar(currentShowPageNo) {}-----------------
+
+
+//댓글 수정하기
+function editGenComment(comment_seq){
+   
+   var bool = confirm("댓글을 수정하시겠습니까?");
+   console.log("bool => " + bool);
+   console.log("넘겨받은 댓글번호"+comment_seq);
+   
+   
+   
+   if(bool){
+	   alert("아직 구현중이에요.. ㅎㅎ");
+	   $("input.textbox").show();
+	   <%-- 
+	   
+	   $.ajax({
+		   url:"<%=request.getContextPath()%>/t1/editSuggComment.tw",
+		   data:{"seq":comment_seq,
+			   	 "content":content},
+		   dataType:"json",
+		   success:function(json){
+			   if(json.n == 1){
+				   alert('댓글 수정 성공');
+				   goViewComment();
+			   } else {
+				   alert('댓글 수정 실패');
+			   }
+			   
+		   },
+		   error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	       }
+		   
+		   
+	   });
+	   
+	    --%>
+   }
+   
+}  //end of function editGenComment(comment_seq) -------
+
+
+
+// 댓글 삭제하기
+function delGenComment(comment_seq){
+   
+   var bool = confirm("댓글을 삭제하시겠습니까?");
+   console.log("bool => " + bool);
+ console.log("넘겨받은 seq : "+comment_seq);
+   
+   
+   if(bool){
+	   $.ajax({
+		   url:"<%=request.getContextPath()%>/t1/delGenComment.tw",
+		   data:{"seq":comment_seq},
+		   dataType:"json",
+		   success:function(json){
+			   if(json.n == 1){
+				   console.log("댓글 삭제 성공");
+				   goViewComment();
+			   } else {
+				   alert('댓글 삭제가 실패했습니다.');
+			   }
+			   
+		   },
+		   error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	       }
+		   
+		   
+	   });
+	   
+	   
+   }
+}  //end of function delGenComment(comment_seq) -------
+
+
+
+
 </script>
 
 <div id="board-container">
 	<a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 40px;">자유게시판</span></a>
-
+	
 	<c:if test="${not empty requestScope.boardvo}">
-		<table id="post-table" class="table">
+		<table id="post-table" class="table table-bordered">
 			<tr class="thead">
-				<th>글번호</th>
-				<td>${requestScope.boardvo.seq}</td>
+				<th style="width: 100px;">작성자</th>
+				<td>${requestScope.boardvo.name}</td>
 			</tr>
 			<tr class="thead">
-				<th>성명</th>
-				<td>${requestScope.boardvo.name}</td>
+				<th>작성일시</th>
+				<td>${requestScope.boardvo.regDate}</td>
 			</tr>
 			<tr class="thead">
 				<th>제목</th>
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
 			<tr class="thead">
-				<th>내용</th>
-				<td>
+				<td colspan='2'>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
-					<%-- 
-					      style="word-break: break-all; 은 공백없는 긴영문일 경우 width 크기를 뚫고 나오는 것을 막는 것임. 
-					           그런데 style="word-break: break-all; 나 style="word-wrap: break-word; 은
-					           테이블태그의 <td>태그에는 안되고 <p> 나 <div> 태그안에서 적용되어지므로 <td>태그에서 적용하려면
-					      <table>태그속에 style="word-wrap: break-word; table-layout: fixed;" 을 주면 된다.
-					 --%>
 				</td>
 			</tr>
-			<tr class="thead">
-				<th>조회수</th>
-				<td>${requestScope.boardvo.readCount}</td>
-			</tr>
-			<tr class="thead">
-				<th>날짜</th>
-				<td>${requestScope.boardvo.regDate}</td>
-			</tr>
 		</table>
-		
-		<br>
-		<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
-		<div style="margin-bottom: 1%;">이전글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.previousseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.previoussubject}</span></div>
-		<div style="margin-bottom: 1%;">다음글제목&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span></div>
-
 	</c:if>
+	
 	
 	<c:if test="${empty requestScope.boardvo}">
 		<div style="padding: 50px 0; font-size: 16pt; color: red;">존재하지 않습니다</div>
 	</c:if>
 	
-	<button type="button" onclick="javascript:location.href='generalBoard.tw'">전체목록보기</button>
-	<button type="button" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">검색된결과목록보기</button>
-	<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
-		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
-		<button type="button" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
-	</c:if>
+	<div id="viewpost-btn-container">
+		<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
+		<c:if test="${requestScope.boardvo.previousseq ne null}">
+			<i class="fas fa-angle-double-right"></i>&nbsp;&nbsp;이전글&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.previousseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'">${requestScope.boardvo.previoussubject}</span><br>
+		</c:if>
+		<c:if test="${requestScope.boardvo.nextseq ne null}">
+			<i class="fas fa-angle-double-right"></i>&nbsp;&nbsp;다음글&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span>
+		</c:if>
+		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
+		<!-- <button type="button" class="float-right btn-style" onclick="javascript:location.href='generalBoard.tw'">전체목록보기</button> -->
+		<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>
+		</c:if>
+	</div>
+	
+	
 	<%-- 댓글쓰기 폼 추가 === --%>
     <c:if test="${not empty sessionScope.loginuser}">
-    	<h3 style="margin-top: 50px;">댓글쓰기 및 보기</h3>
 		<form name="writeCmntFrm" style="margin-top: 20px;">
 	        <input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />
 			<input type="hidden" name="name" value="${sessionScope.loginuser.name}" />  
-			댓글내용 : <input id="commentContent" type="text" name="content" class="long" /> 
-			
 			<%-- 댓글에 달리는 원게시물 글번호(즉, 댓글의 부모글 글번호) --%>
 			<input type="hidden" name="fk_seq" value="${requestScope.boardvo.seq}" /> 
-			
-			<button id="btnComment" type="button" onclick="goWriteComment()">확인</button> 
-			<button type="reset">취소</button> 
+			댓글쓰기(500자이내)<br>
+			<input id="commentContent" type="text" name="content" style="display: inline-block; width: 93%; height: 28px; margin: 5px 0;"/> 
+			<button class="cmnt-btn-style" id="btnComment" type="button" onclick="goWriteComment()">확인</button> 
+			<button class="cmnt-btn-style" type="reset">취소</button>
 		</form>
     </c:if>
-
-	<c:if test="${empty sessionScope.loginuser}">
-    	<h3 style="margin-top: 50px;">댓글보기</h3>
-    </c:if>	
     
+    <span style="display: inline-block; margin-top: 20px; margin-bottom: 10px;">댓글(개수표시하기)</span>
     <!-- ===== #94. 댓글 내용 보여주기 ===== -->
-	<table id="table2" class="table" style="margin-top: 2%; margin-bottom: 3%;">
-		<thead>
-		<tr>
-		    <th style="width: 10%; text-align: center;">번호</th>
-			<th style="width: 60%; text-align: center;">내용</th>
-			<th style="width: 10%; text-align: center;"></th>
-			<th style="width: 10%; text-align: center;">작성자</th>
-			<th style="text-align: center;">작성일자</th>
-		</tr>
-		</thead>
-		<tbody id="commentDisplay"></tbody>
-	</table>
+    <div id="commentDisplay" style="clear:both; border-top: solid 1px #eee; border-bottom: solid 1px #eee; padding: 10px 10px;"></div>
 
     <%-- ==== #136. 댓글 페이지바 ==== --%>
-    <div id="pageBar" style="border:solid 0px gray; width: 90%; margin: 10px auto; text-align: center;"></div> 
+    <div id="pageBar" style="width: 90%; margin: 10px auto; text-align: center;"></div> 
 
 
 </div>

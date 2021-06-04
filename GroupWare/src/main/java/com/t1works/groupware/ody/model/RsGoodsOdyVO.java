@@ -9,8 +9,10 @@ public class RsGoodsOdyVO {
 	private String rgsubject; // 목적
 	private String rgdate; // 예약날짜
 	private int rgtime; // 예약 시간
-	private int gstatus; // 반납 여부?
-	private String rdname;
+	private int gstatus; // 승인 여부
+	private String rdname; // 신청 부서
+	private String goodsname; // 사무용품명
+	
 	
 	public int getRsgno() {
 		return rsgno;
@@ -66,6 +68,12 @@ public class RsGoodsOdyVO {
 	}
 	public void setRdname(String rdname) {
 		this.rdname = rdname;
+	}
+	public String getGoodsname() {
+		return goodsname;
+	}
+	public void setGoodsname(String goodsname) {
+		this.goodsname = goodsname;
 	}
 	
 	

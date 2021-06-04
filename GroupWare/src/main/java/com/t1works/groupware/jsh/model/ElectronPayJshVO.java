@@ -1,5 +1,7 @@
 package com.t1works.groupware.jsh.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class ElectronPayJshVO {
 
 	private String  ano; 						  // 문서번호
@@ -10,8 +12,23 @@ public class ElectronPayJshVO {
 	private String  astatus;                 // default '0' not null     -- 결재상태 (0:제출, 1:결재진행중, 2:반려, 3:승인완료)
 	private String  acontent;      		  // 글내용
 	private String  asdate;                // 기안일
-	private String  afile;                    //  첨부파일
+	
 	private String  apaper;       	 	 //  문서상태 (0:수신, 1:발신, 2:임시보관)
+	
+	
+	 private MultipartFile   attach;
+	   /* form 태그에서 type="file" 인 파일을 받아서 저장되는 필드이다. 
+		     진짜파일 ==> WAS(톰캣) 디스크에 저장됨.
+		      조심할것은 MultipartFile attach 는 오라클 데이터베이스 tbl_board 테이블의 컬럼이 아니다.   
+		  /Board/src/main/webapp/WEB-INF/views/tiles1/board/add.jsp 파일에서 input type="file" 인 name 의 이름(attach)과 
+		      동일해야만 파일첨부가 가능해진다.!!!!
+	*/	      
+		      
+   private String fileName;    // WAS(톰캣)에 저장될 파일명(2020120809271535243254235235234.png) 
+   private String orgFilename; // 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명
+   private String fileSize;    // 파일크기    
+
+
 	
     //////일반결재문서 //////
 	private String ncat;     //일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
@@ -124,12 +141,7 @@ public class ElectronPayJshVO {
 	public void setAsdate(String asdate) {
 		this.asdate = asdate;
 	}
-	public String getAfile() {
-		return afile;
-	}
-	public void setAfile(String afile) {
-		this.afile = afile;
-	}
+	
 	public String getApaper() {
 		return apaper;
 	}
@@ -138,9 +150,36 @@ public class ElectronPayJshVO {
 	}
 	
 	
+	public MultipartFile getAttach() {
+		return attach;
+	}
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}
+	
+
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+	public String getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
 	
 	
 	////// MEMBER
+	
 	
 	public String getEmployeeid() {
 		return employeeid;

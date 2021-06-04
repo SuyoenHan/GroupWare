@@ -25,6 +25,13 @@ public class ProductBwbVO {
 	private String name;		  // 담당자명	
 	private String employeeName;  // 배정자명
 	
+	private String period;        // 여행기간
+	
+	private String clientmobile;  // 고객연락처
+	private String clientname;    // 고객명
+	private String cnumber;       // 예약인원수
+	private String cnt;           // 실적건수
+	
 	public String getpNo() {
 		return pNo;
 	}
@@ -176,5 +183,48 @@ public class ProductBwbVO {
 	public void setEmployeeName(String employeeName) {
 		this.employeeName = employeeName;
 	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+
+	public String getClientmobile() {
+		return clientmobile;
+	}
+
+	public void setClientmobile(String clientmobile) {
+		this.clientmobile = clientmobile;
+	}
+
+	public String getClientname() {
+		return clientname;
+	}
+
+	public void setClientname(String clientname) {
+		this.clientname = clientname;
+	}
+
+	public String getCnumber() {
+		return cnumber;
+	}
+
+	public void setCnumber(String cnumber) {
+		this.cnumber = cnumber;
+	}
+
+	public String getCnt() {
+		return cnt;
+	}
+
+	public void setCnt(String cnt) {
+		this.cnt = cnt;
+	}
+
+	
+	
 	
 }

@@ -44,8 +44,8 @@ a:hover {
 .fc-header-toolbar{
 	height: 30px;
 }
-.fc-day-number.fc-sat.fc-past { color:#0000FF; }     /* 토요일 */
-.fc-day-number.fc-sun.fc-past { color:#FF0000; }    /* 일요일 */
+.fc-day-number .fc-sat .fc-past { color:#0000FF; }     /* 토요일 */
+.fc-day-number .fc-sun .fc-past { color:#FF0000; }    /* 일요일 */
 
 /* full calendar css 끝*/
 ul{
@@ -66,12 +66,14 @@ button.btn_edit{
 	background-color: #fff;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/css/datepicker.css"/>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
+
+<!-- full calendar에 관련된 script -->
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<!-- db에 저장된 스케쥴 값 가져오는 script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script type="text/javascript">
 
@@ -82,6 +84,102 @@ $(document).ready(function(){
 	// 사내 캘린더 종류 보여주기
 	showCompanyCal();
 	
+	
+	$("input#allComCal").click(function(){
+		var allCheck = $(this).is(":checked");
+		
+		if (allCheck == false){
+			$("input:checkbox[name=comscno]").prop("checked",false);
+		}
+		else{
+			$("input:checkbox[name=comscno]").prop("checked",true);
+		}
+	});
+	
+	
+	// === 체크박스 전체 선택/전체 해제 === //
+	$("input#allMyCal").click(function(){		
+		var bool = $(this).prop("checked");
+		$("input:checkbox[name=myscno]").prop("checked", bool);
+	}); // end of $("input:checkbox[id=checkall]").click(function(){})-------
+	
+	
+
+		$(document).on("click","input:checkbox[name=myscno]",function(){	
+		var bool = $(this).prop("checked");
+		
+		if(bool){
+			
+			var flag=false;
+			
+			
+			$("input:checkbox[name=myscno]").each(function(index, item){
+				
+				var bChecked = $(item).prop("checked");
+				
+				if(!bChecked){
+					flag=true;
+					return false; 
+				}
+				
+			}); // end of $("input:checkbox[name=person]").each(function(index, item){})---------
+
+			if(!flag){		
+                $("input#allMyCal").prop("checked",true);
+			}
+			 var scno = document.querySelectorAll("input.myscno");
+		      scno.forEach(function (sel) {
+		        sel.addEventListener("change", function () {
+		        	 calendar.refetchEvents();
+		          console.log(sel);
+		        });
+		      });
+
+		}
+		else{
+			$("input#allMyCal").prop("checked",false);
+		}
+		
+	});// end of $("input:ch
+		
+			
+			
+	$(document).on("click","input:checkbox[name=comscno]",function(){	
+		var bool = $(this).prop("checked");
+		
+		if(bool){
+			
+			var flag=false;
+			
+			
+			$("input:checkbox[name=comscno]").each(function(index, item){
+				
+				var bChecked = $(item).prop("checked");
+				
+				if(!bChecked){
+					flag=true;
+					return false; 
+				}
+				
+			}); // end of $("input:checkbox[name=person]").each(function(index, item){})---------
+
+			if(!flag){		
+                $("input#allComCal").prop("checked",true);
+			}
+			 var ccno = document.querySelectorAll("input.comscno");
+		      ccno.forEach(function (csel) {
+		        csel.addEventListener("change", function () {
+		        	 calendar.refetchEvents();
+		          console.log(csel);
+		        });
+		      });
+
+		}
+		else{
+			$("input#allComCal").prop("checked",false);
+		}
+		
+	});// end of $("input:ch
 	  // 검색할 때 필요한 datepicker
 	  //모든 datepicker에 대한 공통 옵션 설정
 	    $.datepicker.setDefaults({
@@ -126,10 +224,15 @@ $(document).ready(function(){
 		    headerToolbar: {
 		    	  left: 'prev,next today',
 		          center: 'title',
-		          right: 'dayGridMonth'
+		          right: 'dayGridMonth dayGridWeek dayGridDay'
 		    },
-		    eventLimit:3,
-		    eventLimitText: "Something",
+		    dayMaxEventRows: true, // for all non-TimeGrid views
+		    views: {
+		      timeGrid: {
+		        dayMaxEventRows: 3 // adjust to 6 only for timeGridWeek/timeGridDay
+		      }
+		    },
+		  
 			// db와 연동하는 법
 		    events:function(info, successCallback, failureCallback){
 		
@@ -143,84 +246,65 @@ $(document).ready(function(){
 	                         
 	                             $.each(json, function(index, item) {
 	            						
-	                                    var startdate=moment(item.startdate).format('YYYY-MM-DD');
-	                                    var enddate=moment(item.enddate).format('YYYY-MM-DD');
-	                                    var penddate=moment(item.enddate).add(1, 'days').format('YYYY-MM-DD');
+	                                    var startdate=moment(item.startdate).format('YYYY-MM-DD HH:mm:ss');
+	                                    var enddate=moment(item.enddate).format('YYYY-MM-DD HH:mm:ss');
 	                                    var subject = item.subject;
-	                                   
-	                                    if(item.bcno=="1" && item.fk_employeeid ==  "${loginuser.employeeid}"){
-		                                    if(startdate==enddate){
-			                                   events.push({
-			                                	   			id: item.bcno,
-			                                               title: item.subject,
-			                                               start: startdate,
-			                                               end: enddate,
-			                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-			                                               color: item.color,
-			                                               cid:"1"
-			                                   }); // events.push
-		                                    }
-		                                    else{
-		                                    	events.push({
-		                                    		id: item.bcno,
-		                                            title: item.subject,
-		                                            start: startdate,
-		                                            end: penddate,
-		                                     		url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-		                                            color: item.color,
-		                                            cid:"1"
-		                                    	 });
-		                                    	}
-	                                    }
-	                                    else if (item.bcno == "2"){
-	                                    	if(startdate==enddate){
-	     	                                   events.push({
-	     	                                	   			id: item.bcno,
-	     	                                               title: item.subject,
-	     	                                               start: startdate,
-	     	                                               end: enddate,
-	     	                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-	     	                                               color: item.color,
-	     	                                              cid:"2"
-	     	                                   }); // events.push
-	     	                                 }
-	     	                                 else{
-	     	                                   events.push({
-	     	                                    		id: item.bcno,
-	     	                                            title: item.subject,
-	     	                                            start: startdate,
-	     	                                            end: penddate,
-	     	                                     		url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-	     	                                            color: item.color,
-	     	                                           cid:"2"
-	     	                                    });
-	     	                                  }
-	     	                           }
-	                                    else if (item.fk_employeeid != "${loginuser.employeeid}" && item.joinemployee.indexOf("${loginuser.employeeid}")){
-	                                    	if(startdate==enddate){
-	     	                                   events.push({
-	     	                                	   			id: item.bcno,
-	     	                                               title: item.subject,
-	     	                                               start: startdate,
-	     	                                               end: enddate,
-	     	                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-	     	                                               color: item.color,
-	     	                                              cid:"3"
-	     	                                   }); // events.push
-	     	                                 }
-	     	                                 else{
-	     	                                   events.push({
-	     	                                    		id: item.bcno,
-	     	                                            title: item.subject,
-	     	                                            start: startdate,
-	     	                                            end: penddate,
-	     	                                     		url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
-	     	                                            color: item.color,
-	     	                                           cid:"3"
-	     	                                    });
-	     	                                  }
-	     	                           }
-	                           
+	                      
+	                                   // 사내 캘린더 소분류 보이게
+	                                   if($("input:checkbox[name=comscno]:checked").length<=$("input:checkbox[name=comscno]").length){
+		                                   for(var i=0;i<$("input:checkbox[name=comscno]:checked").length;i++){
+		                                	  
+		                                		   if($("input:checkbox[name=comscno]:checked").eq(i).val() == item.scno){
+		   			                          //         alert($("input:checkbox[name=myscno]:checked").eq(i).val());
+		                                			   events.push({
+		   			                                	   			id: item.scno,
+		   			                                               title: item.subject,
+		   			                                               start: startdate,
+		   			                                               end: enddate,
+		   			                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
+		   			                                               color: item.color,
+		   			                                               cid:item.scno
+		   			                                   }); // events.push
+		   		                                    
+		   	                                    }
+		                                	   
+		                                   }
+		                                 
+	                                   }
+	                                    
+	                                   // 내캘린더 소분류 보이게
+	                                  if($("input:checkbox[name=myscno]:checked").length<=$("input:checkbox[name=myscno]").length){
+		                                   for(var i=0;i<$("input:checkbox[name=myscno]:checked").length;i++){
+		                                	  
+		                                		   if($("input:checkbox[name=myscno]:checked").eq(i).val() == item.scno && item.fk_employeeid ==  "${loginuser.employeeid}"){
+		   			                          //         alert($("input:checkbox[name=myscno]:checked").eq(i).val());
+		                                			   events.push({
+		   			                                	   			id: item.scno,
+		   			                                               title: item.subject,
+		   			                                               start: startdate,
+		   			                                               end: enddate,
+		   			                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
+		   			                                               color: item.color,
+		   			                                               cid:item.scno
+		   			                                   }); // events.push
+		   	                                    }
+		                                   }
+	                                   }
+
+	                                  // 공유받은 캘린더
+	                                  if (item.bcno==1 && item.fk_employeeid != "${loginuser.employeeid}" && "${loginuser.employeeid}".indexOf(item.joinemployee)){
+	                                        
+   	                                   events.push({
+   	                                	   			id: item.bcno,
+   	                                               title: item.subject,
+   	                                               start: startdate,
+   	                                               end: enddate,
+   	                                        	   url: "<%= ctxPath%>/t1/detailSchedule.tw?sdno="+item.sdno,
+   	                                               color: item.color,
+   	                                              cid:"3"
+   	                                   }); // events.push
+   	                           		}
+	                                
 	                             });  //.each()
 	                         }                             
 	                         console.log(events);                       
@@ -243,11 +327,13 @@ $(document).ready(function(){
 	      	    
 	      	  },
 	      	  // 사내캘린더와 내 캘린더를 나누어서 보여줄 수 있다.
-	      	 eventDidMount: function (arg) {
+	    	 eventDidMount: function (arg) {
 		            var bcno = document.querySelectorAll(".fk_bcno");
 		            bcno.forEach(function (v) {
 		              if (v.checked) {
 		                if (arg.event.extendedProps.cid === v.value) {
+		                	console.log("cid"+arg.event.extendedProps.cid);
+		                	console.log("v"+ v.value);
 		                  arg.el.style.display = "block";
 		                }
 		              } else {
@@ -256,10 +342,10 @@ $(document).ready(function(){
 		                }
 		              }
 		            });
-		          }
+		      }
 	  });
       calendar.render();
-      
+ 
       var bcno = document.querySelectorAll("input.fk_bcno");
       bcno.forEach(function (el) {
         el.addEventListener("change", function () {
@@ -268,6 +354,7 @@ $(document).ready(function(){
         });
       });
       
+     
    
       // 검색 할 때 엔터를 친 경우
       $("input#searchWord").keydown(function(event){
@@ -282,7 +369,7 @@ $(document).ready(function(){
     	    $(this).find('form')[0].reset();
     	});
       
-     
+    
 }); // end of $(document).ready(function()
 
 	// 내 캘린더 보여주기	
@@ -298,9 +385,9 @@ $(document).ready(function(){
 					 
 					 $.each(json, function(index, item){
 						 html+="<tr style='font-size: 11pt;'>";
-						 html+="<td style='width:60%; padding: 3px 0px;'>"+item.scname+"<input type='hidden' class='delscname' value='"+item.scname+"'/></td>";
-						 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit editCal' value='"+item.scname+"' data-target='editCal' onclick='editCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-edit'></i></button></td>";
-						 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit delCal' value='"+item.scname+"' onclick='delCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-trash'></i></button></td></tr>";
+						 html+="<td style='width:60%; padding: 3px 0px;'><input type='checkbox' name='myscno' class='fk_bcno myscno' style='margin-right: 3px;' value='"+item.scno+"' checked/>"+item.scname+"</td>";
+						 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit editCal' data-target='editCal' onclick='editMyCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-edit'></i></button></td>";
+						 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit delCal' onclick='delCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-trash'></i></button></td></tr>";
 					 });
 					 html+="</table>";
 				 }
@@ -321,15 +408,17 @@ $(document).ready(function(){
 			 success:function(json){
 					 var html="<table style='width:80%;'>";
 					 if(json.length>0){
-						 if("${loginuser.fk_pcode}" =='3' && "${loginuser.fk_dcode}" == '4' ){
+						 
 						 $.each(json, function(index, item){
 							 html+="<tr style='font-size: 11pt;'>";
-							 html+="<td style='width:60%; padding: 3px 0px;'>"+item.scname+"<input type='hidden' class='delscname' value='"+item.scname+"'/></td>";
-							 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit' data-target='editCal' onclick='editCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-edit'></i></button></td>";
-							 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit delCal' onclick='delCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-trash'></i></button></td></tr>";
+							 html+="<td style='width:60%; padding: 3px 0px;'><input type='checkbox' name='comscno' class='fk_bcno comscno' style='margin-right: 3px;' value='"+item.scno+"' checked/>"+item.scname+"</td>";
+							 if("${loginuser.fk_pcode}" =='3' && "${loginuser.fk_dcode}" == '4' ){
+							 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit' data-target='editCal' onclick='editComCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-edit'></i></button></td>";
+							 html+="<td style='width:20%; padding: 3px 0px;'><button class='btn_edit delCal' onclick='delCalendar("+item.scno+",\""+item.scname+"\")'><i class='fas fa-trash'></i></button></td>";
+							 }
 						});
-					 		html+="</table>";
-					 	}
+					 		html+="</tr></table>";
+					 	
 					 }
 				 $("div#companyCal").html(html);
 				 
@@ -360,7 +449,12 @@ $(document).ready(function(){
   			 data: {"scname": $("input.addscname").val(), "fk_employeeid": "${loginuser.employeeid}"},
   			 dataType: "json",
   			 success:function(json){
-  				 if(json.n==1){
+  				 
+  				 if(json.n!=1){
+  					alert("이미 존재하는 캘린더 명입니다.");
+  					return;
+  				 }
+  				 else if(json.n==1){
   					 $('#addMyCal').modal('hide'); 
   					 alert("내 캘린더에 "+$("input.addscname").val()+"명이 추가되었습니다.");
   					$("input.addscname").val("");
@@ -396,7 +490,11 @@ $(document).ready(function(){
   			 data: {"scname": $("input.addcomscname").val(), "fk_employeeid": "${loginuser.employeeid}"},
   			 dataType: "json",
   			 success:function(json){
-  				 if(json.n==1){
+  				 if(json.n!=1){
+   					alert("이미 존재하는 캘린더 명입니다.");
+   					return;
+   				 }
+  				 else if(json.n==1){
   					 $('#addComCal').modal('hide'); 				
   					 alert("사내 캘린더에 "+$("input.addcomscname").val()+"명이 추가되었습니다.");
   					 $("input.addcomscname").val("");
@@ -411,29 +509,34 @@ $(document).ready(function(){
   	  }
 	}
 	
-	// 캘린더 수정 모달창 나타나기
-	function editCalendar(scno,scname){
-		$('#editCal').modal('show');
-		$("input.editscno").val(scno);
-		$("input.editscname").val(scname);
+	// 내 캘린더 수정 모달창 나타나기
+	function editMyCalendar(scno,scname){
+		$('#editMyCal').modal('show');
+		$("input.editmyscno").val(scno);
+		$("input.editmyscname").val(scname);
 	}
 	
-	// 캘린더 수정 모달창에서 수정하기 클릭
-	function goEditCal(){
-		if($("input.editscname").val().trim() == ""){
+	// 내캘린더 수정 모달창에서 수정하기 클릭
+	function goEditMyCal(){
+		if($("input.editmyscname").val().trim() == ""){
 	  		  alert("캘린더명을 입력하세요");
 	  		  return;
 	  	  }
 	  	  else{
 			$.ajax({
-				url:"<%= ctxPath%>/t1/editCalendar.tw",
+				url:"<%= ctxPath%>/t1/editMyCalendar.tw",
 				type: "post",
-				data:{"scno":$("input.editscno").val(), "scname": $("input.editscname").val()},
+				data:{"scno":$("input.editmyscno").val(), "scname": $("input.editmyscname").val(), "employeeid":"${loginuser.employeeid}"},
 				dataType:"json",
 				success:function(json){
+					if(json.n!=1){
+	   					alert("이미 존재하는 캘린더 명입니다.");
+	   					return;
+	   				 }
 					if(json.n==1){
-						alert("해당 캘린더를 수정하였습니다.");
-						location.href="javascript:history.go(0);"; 
+						$('#editMyCal').modal('hide');
+						alert("캘린더를 수정하였습니다.");
+						showmyCal(); 
 					}
 				},
 				 error: function(request, status, error){
@@ -442,6 +545,45 @@ $(document).ready(function(){
 			});
 	  	  }
 	}
+	
+	
+	// 사내 캘린더 수정 모달창 나타나기
+	function editComCalendar(scno,scname){
+		$('#editComCal').modal('show');
+		$("input.editcomscno").val(scno);
+		$("input.editcomscname").val(scname);
+	}
+	
+	// 사내캘린더 수정 모달창에서 수정하기 클릭
+	function goEditComCal(){
+		if($("input.editcomscname").val().trim() == ""){
+	  		  alert("캘린더명을 입력하세요");
+	  		  return;
+	  	  }
+	  	  else{
+			$.ajax({
+				url:"<%= ctxPath%>/t1/editComCalendar.tw",
+				type: "post",
+				data:{"scno":$("input.editcomscno").val(), "scname": $("input.editcomscname").val(), "employeeid":"${loginuser.employeeid}"},
+				dataType:"json",
+				success:function(json){
+					if(json.n!=1){
+	   					alert("이미 존재하는 캘린더 명입니다.");
+	   					return;
+	   				 }
+					if(json.n==1){
+						$('#editComCal').modal('hide');
+						alert("캘린더를 수정하였습니다.");
+						showCompanyCal();
+					}
+				},
+				 error: function(request, status, error){
+			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			    }
+			});
+	  	  }
+	}
+	
 	
 	// 캘린더 소분류 카테고리 삭제하기
 	function delCalendar(scno,scname){
@@ -491,12 +633,12 @@ $(document).ready(function(){
 		<div id="wrapper1">
 			<input type="hidden" value="${sessionScope.loginuser.employeeid}" id="fk_employeeid"/>
 			
-			<input type="checkBox" value="2" class="fk_bcno" name="bcno" checked/>&nbsp;&nbsp;<span>사내 캘린더</span>
+			<input type="checkBox" value="2" id="allComCal" class="fk_bcno" name="bcno" checked/>&nbsp;&nbsp;<span>사내 캘린더</span>
 			<c:if test="${loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4' }">
 				<button class="btn_edit" style="float: right;" data-target="addComCal" onclick="addComCalendar()"><i class='fas'>&#xf055;</i></button>
 			</c:if>
 			<div id="companyCal" style="margin-left: 50px; margin-bottom: 10px;"></div>
-			<input type="checkBox" value="1" class="fk_bcno" name="bcno" checked/>&nbsp;&nbsp;<span>내 캘린더</span>
+			<input type="checkBox" value="1" id="allMyCal" class="fk_bcno" name="bcno" checked/>&nbsp;&nbsp;<span>내 캘린더</span>
 			<button class="btn_edit" style="float: right;" data-target="addMyCal" onclick="addMyCalendar()"><i class='fas'>&#xf055;</i></button>
 			<div id="myCal" style="margin-left: 50px; margin-bottom: 10px;"></div>
 			<input type="checkBox" value="3" class="fk_bcno" name="bcno" checked/>&nbsp;&nbsp;공유받은 캘린더
@@ -517,7 +659,6 @@ $(document).ready(function(){
 						<option value="joinemployee">공유자</option>
 					</select>&nbsp;&nbsp;	
 					<input type="text" id="searchWord" value="" style="height: 30px; width:120px; " name="searchWord"/>
-					<input type="hidden" name="fk_employeeid" value="${loginuser.employeeid}"/>
 					<button type="button" class="btn_normal" style="display: inline-block;"  onclick="goSearch()">검색</button>
 					</div>
 				</form>
@@ -594,19 +735,19 @@ $(document).ready(function(){
   </div>
   
 
-<!-- 캘린더 수정 Modal -->
-  <div class="modal fade" id="editCal" role="dialog">
+<!-- 내 캘린더 수정 Modal -->
+  <div class="modal fade" id="editMyCal" role="dialog">
     <div class="modal-dialog modal-sm">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">캘린더 수정</h4>
+          <h4 class="modal-title">내 캘린더 수정</h4>
         </div>
         <div class="modal-body">
          	<table style="width: 100%;" class="table table-bordered">
          			<tr>
          				<td style="text-align: left; ">종류</td>
-         				<td><input type="text" class="editscname"/><input type="hidden" value="" class="editscno"></td>
+         				<td><input type="text" class="editmyscname"/><input type="hidden" value="" class="editmyscno"></td>
          			</tr>
          			<tr>
          				<td style="text-align: left;">생성자</td>
@@ -617,14 +758,45 @@ $(document).ready(function(){
         
         <!-- Modal footer -->
         <div class="modal-footer">
-        	<button type="button" id="addCom" class="btn" onclick="goEditCal()" >수정</button>
+        	<button type="button" id="addCom" class="btn" onclick="goEditMyCal()" >수정</button>
             <button type="button" class="btn" data-dismiss="modal">취소</button>
         </div>
         
       </div>
     </div>
   </div>
-    
+
+<!-- 사내 캘린더 수정 Modal -->
+  <div class="modal fade" id="editComCal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">사내 캘린더 수정</h4>
+        </div>
+        <div class="modal-body">
+         	<table style="width: 100%;" class="table table-bordered">
+         			<tr>
+         				<td style="text-align: left; ">종류</td>
+         				<td><input type="text" class="editcomscname"/><input type="hidden" value="" class="editcomscno"></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left;">생성자</td>
+         				<td id="strtime" style="text-align: left; padding-left: 5px;">${loginuser.name}</td>
+         			</tr>
+         		</table>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        	<button type="button" id="addCom" class="btn" onclick="goEditComCal()" >수정</button>
+            <button type="button" class="btn" data-dismiss="modal">취소</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+     
 <form name="dateFrm">
 	<input type="hidden" name="chooseDate" value=""/>	
 </form>

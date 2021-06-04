@@ -70,7 +70,9 @@ button.btn_normal{
 $(document).ready(function(){
 	
 	// 캘린더 소분류 카테고리 숨기기
-	$("select.scategory").hide();
+	  $("select.scategory").hide();
+	
+	
 		// 시작시간
 		var str_s = $("span#startdate").text();
 		console.log(str_s);
@@ -79,17 +81,17 @@ $(document).ready(function(){
 		console.log(smin);
 		var shour = str_s.substring(target-2,target);
 		console.log(typeof(shour));
-		$("select#startHour").text(shour);
+		$("select#startHour").val(shour);
 		$("select#startMin").val(smin);
 		
 		// 종료시간
 		var str_e = $("span#enddate").text();
 		target = str_e.indexOf(":");
 		var emin= str_e.substring(target+1);
-		console.log(emin);
+		console.log("종료분:"+emin);
 		var ehour = str_e.substring(target-2,target);
-		console.log(ehour);
-		$("select#endHour").text(ehour);
+		console.log("종료시간"+ehour);
+		$("select#endHour").val(ehour);
 		$("select#endMin").val(emin);
 		
 		
@@ -253,7 +255,7 @@ $(document).ready(function(){
 			});
 		
 		// 
-		$("select[name=calType]").val("${svo.fk_bcno}");
+		$("select[name=calType]").val($("input.getfk_bcno").val());
 		
 		
 		// 수정 버튼 클릭
@@ -387,7 +389,7 @@ function addJoinEmp(value){
 			<tr>
 				<th>캘린더선택</th>
 				<td>
-					<select class="calType schedule" name="fk_bcno">
+					<select class="calType schedule" name="fk_bcno" >
 						<c:choose>
 						<c:when test="${loginuser.fk_pcode =='3' && loginuser.fk_dcode == '4'}">
 							<option value="">선택하세요</option>
@@ -438,3 +440,7 @@ function addJoinEmp(value){
 		<button type="button" class="btn_normal"  onclick="javascript:location.href='<%= ctxPath%>/${requestScope.gobackURL1}'">취소</button>
 	</div>
 </div>
+
+
+<input type="hidden" class="getfk_bcno" value="${svo.fk_bcno}"/>
+<input type="hidden" class="getfk_scno" value="${svo.fk_scno}"/>

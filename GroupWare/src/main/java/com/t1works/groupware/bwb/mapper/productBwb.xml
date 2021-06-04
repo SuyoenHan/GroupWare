@@ -119,15 +119,128 @@
    </select>
    
    
-   <resultMap type="HashMap" id="deptgetOneMap">
-   		
-   		
-   		
+   <!-- === #4. 특정 업무 클릭 시 modal창의 header정보 가져오기 -->
+   <select id="deptgetOneInfoheader" parameterType="String" resultType="com.t1works.groupware.bwb.model.ProductBwbVO">
+   		select ingdetail, pname, miniNo, maxNo,nowNo, to_char(P.startDate,'yyyy-mm-dd') as startDate,to_char(P.endDate,'yyyy-mm-dd') as endDate,
+   		P.endDate-P.startDate as period,pNo,to_char(T.endDate,'yyyy-mm-dd') as tendDate
+		from tbl_todo T
+		join tbl_product P
+		on T.fk_pNo = P.pno
+		where pno = #{pNo}
+   </select>
+   
+   <!-- 부서업무 중 특정업무에 대한 고객리스트 뽑아오기 -->
+   <select id="selectClient" parameterType="HashMap" resultType="com.t1works.groupware.bwb.model.ProductBwbVO">
+   		select clientname,cnumber,clientmobile
+		from
+		(
+		select row_number() over(order by cnumber desc) as rno,clientname,to_number(cnumber) as cnumber,
+			   (substr(clientmobile,0,3)||'-'||substr(clientmobile,3,4)||'-'||substr(clientmobile,7,4)) as clientmobile
+		from tbl_client C
+		join tbl_todo T
+		on C.fk_pNo = T.fk_pNo
+		where C.fk_pNo = #{pNo}
+		) V
+		where rno between #{startRno} and #{endRno}
+   </select>
+   
+   <!--  -->
+   <select id="selectTotalClient" parameterType="HashMap" resultType="int">
+   		select ceil(count(*)/#{sizePerPage})
+   		from tbl_client C
+		join tbl_todo T
+		on C.fk_pNo = T.fk_pNo
+		where C.fk_pNo = #{pNo}
+   </select>
+   
+   <!-- CS1,2,3팀의 실적 건수 가지고 오기 -->
+   <select id="selectDoneCount" resultType="int">
+   		select count(*)
+		from tbl_todo
+		where enddate is not null and fk_dcode =#{string}
+   </select>
+   
+   <!-- 해당부서의 실적의 가장 예전 날짜, 최근 날짜 가지고 오기 -->
+   
+   <resultMap type="HashMap" id="OldNewDateMap">
+   		<result property="minEndDate" column="minEndDate"   javaType="String" /> 
+		<result property="maxEndDate" column="maxEndDate"   javaType="String" />
    </resultMap>
    
-   <!-- === #4. 특정 업무 클릭 시 modal창의 header정보 가져오기 -->
-   <select id="deptgetOneInfoheader" parameterType="String" resultMap="deptgetOneMap">
-   		
+   <select id="selectOldNewDate" parameterType="String" resultMap="OldNewDateMap">
+   		select to_char(min(enddate),'yyyy-mm') as minEndDate,
+        to_char(max(enddate),'yyyy-mm') as maxEndDate  
+		from tbl_todo 
+		where fk_dcode like '%' || #{dcode} || '%' and enddate is not null
    </select>
+   
+   <!-- 선택한 년,월에 해당하는 실적 데이터 가지고 오기 -->
+   <select id="selectPerformance">
+   		select count(*) as cnt,fk_employeeid,name
+		from
+		(
+		select T.fk_employeeid as employeeid as fk_employeeid,name  
+		from tbl_todo T
+		join tbl_employee E
+		on T.fk_employeeid = E.employeeid
+		where T.fk_dcode=#{dcode} and enddate between to_date(#{lastDate},'yyyy-mm') and to_date(#{finalDate},'yyyy-mm')
+		) 
+		group by (employeeid,name)
+   </select>
+   
+   
+   <resultMap type="HashMap" id="CntMap">
+   		<result property="ppreveCnt" column="ppreveCnt"   javaType="String" /> 
+		<result property="prevCnt"   column="prevCnt"     javaType="String" />
+   		<result property="selectCnt" column="selectCnt"   javaType="String" />
+   </resultMap>
+   
+   <select id="selectCntPerformance" parameterType="HashMap" resultMap="CntMap">
+   		select
+			 (select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{firstDate} and fk_employeeid=#{employeeid}) as selectCnt
+			,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=
+			 to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-1),'yyyy-mm') and fk_employeeid=#{employeeid}) as prevCnt
+			,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')= 
+			to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-2),'yyyy-mm') and fk_employeeid=#{employeeid}) as ppreveCnt
+		from dual
+   </select>
+   
+   <!-- 선택날짜를 가지고 -1달,-2달 값 가지고 오기 -->
+   
+   <resultMap type="HashMap" id="changeDateMap">
+   		<result property="lastDate"     column="lastDate"    javaType="String" /> 
+		<result property="middleDate"   column="middleDate"  javaType="String" />
+   </resultMap>
+   
+   
+   <select id="changeDate" parameterType="String" resultMap="changeDateMap">
+   		select 
+			 (select to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-1),'yyyy-mm')from dual) as middleDate
+			,(select to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-2),'yyyy-mm')from dual) as lastDate
+		from dual
+   </select>
+   
+   
+   
+   <!-- chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수 -->
+   <resultMap type="HashMap" id="DepCntMap">
+   		<result property="DCnt"       column="DCnt"        javaType="String" />
+   		<result property="prevDCnt"   column="prevDCnt"    javaType="String" />
+   		<result property="totalCnt"   column="totalCnt"    javaType="String" />
+   		<result property="percentage" column="percentage"  javaType="String" /> 
+   </resultMap>
+   
+   <select id="selectDepCntPerformance" parameterType="HashMap" resultMap="DepCntMap">	
+		select DCnt,totalCnt,prevDCnt,trunc((DCnt/totalCnt)*100,1) as percentage
+		from 
+		(
+		select
+		     (select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{selectedDate} and fk_dcode=#{dcode}) as DCnt
+		    ,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm') = to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-1),'yyyy-mm') and fk_dcode=#{dcode}) as prevDCnt
+		    ,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{selectedDate}) as totalCnt
+		from dual
+		)
+   </select>
+   
    
 </mapper>

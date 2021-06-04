@@ -13,6 +13,24 @@ table#rscar th, td{
 	text-align: center;
 	vertical-align: middle;
 }
+
+button.btn_normal{
+	background-color: #0071bd;
+	border: none;
+	color: white;
+	width: 60px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+}
+
+button.btn_r{
+	border: solid 1px #ccc;
+	width:60px;
+	height: 30px;
+	font-size: 12pt;
+	padding: 3px 0px;
+}
 /* 달력 css */
 div#calendarWrapper {
 	float: left;
@@ -85,7 +103,7 @@ if(curMonth.toString().length < 2){
 	curMonth = "0"+curMonth;
 }
 
-if(curDay.length < 2){
+if(curDay.toString().length < 2){
 	curDay = "0"+curDay;
 }
 
@@ -258,8 +276,8 @@ $(document).ready(function(){
 			var clickEvent="";
 			var chkBox="";
 			var index=jQuery.inArray(i,rctime); // 시간배열에 i가 존재하는지 index값을 설정  i에 맞는 시간대가 있다면 index의 값은 무조건 0이상이된다. 
-		//	console.log(i+"인덱스값: "+index);
-			
+			console.log(i+"인덱스값: "+index);
+			console.log("사긴"+curHour);
 			// 선택한 날짜와 오늘날짜가 같을 때
 			if(parseInt(curTime)==parseInt(chgdate)){ 
 				if(i>=curHour){
@@ -319,40 +337,55 @@ $(document).ready(function(){
 				} 
 				else {
 					if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
-						html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-				}
-				else if(parseInt(curTime)==parseInt(chgdate)){
-					
-					if(i<curHour){
-						html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-					}
-					else if(i==curHour){
-						html += "<td style='vertical-align: middle;'>사용중</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
-					}
-					else{
 						if(cstatus[index]=='0'){
-							html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+							html += "<td style='vertical-align: middle;'>미승인</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 						}
 						else if(cstatus[index]=='1'){
-							html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+							html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 						}
 					}
-		
-				}
-				else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
-					if(cstatus[index]=='0'){
-						html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+					else if(parseInt(curTime)==parseInt(chgdate)){
+						
+						if(i<curHour){
+							if(cstatus[index]=='0'){
+								html += "<td style='vertical-align: middle;'>미승인</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+							}
+							else if(cstatus[index]=='1'){
+								html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+							}
+						}
+						else if(i==curHour){
+							if(cstatus[index]=='0'){
+								html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+							}
+							else if(cstatus[index]=='1'){
+								html += "<td style='vertical-align: middle;'>사용중</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+							}
+						}
+						else{
+							if(cstatus[index]=='0'){
+								html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+							}
+							else if(cstatus[index]=='1'){
+								html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+							}
+						}
+			
 					}
-					else if(cstatus[index]=='1'){
-						html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+					else{ // 현재 날짜가 클릭한 날짜보다 작은 경우
+						if(cstatus[index]=='0'){
+							html += "<td style='vertical-align: middle;'>승인요청</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+						}
+						else if(cstatus[index]=='1'){
+							html += "<td style='vertical-align: middle;'>승인완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>취소</button></td></tr>";
+						}
 					}
-				}
 					
 				}
 			} 
 			else {
 				html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
-				html += "<td></td><td></td><td></td><td></td><td></td><td></td><tr>";
+				html += "<td></td><td></td><td></td><td></td><td></td><td></td></tr>";
 			}
 			$("tbody#rstimeList").append(html);
 		}// end of for----
@@ -522,7 +555,7 @@ $(document).ready(function(){
 	        			 </c:forEach>
 	          		</c:if>
 	         </table>
-	         <button id="btn_show" class="btn btn-secondary" >예약현황보기</button>
+	         <button id="btn_show" class="btn_r" style="width: 120px;" >예약현황보기</button>
 		</div>
 </div>
 	
@@ -561,8 +594,8 @@ $(document).ready(function(){
 	</div>
 	
 	
-	<div style="margin-top: 20px; margin-left: 500px; margin-bottom: 20px;">
-		<button id="btn_Reserve" class="btn"  data-toggle="modal" data-target="" >등록</button>
+	<div align="center" style="margin-top: 20px; margin-bottom: 20px;">
+		<button id="btn_Reserve" class="btn_normal"  data-toggle="modal" data-target="" >등록</button>
 	</div>
 
 
@@ -592,7 +625,7 @@ $(document).ready(function(){
          				<td style="text-align: left;">도착지</td>
          				<td style="text-align: left; padding-left: 5px;">
          					  <input type="text" class="form-control" placeholder="Search" id="destination" name="rdestination" style="width:250px; display: inline-block;">
-						      <button class="btn btn-secondary" type="button" onclick="openMap()">검색</button>
+						      <button class="btn_normal" type="button" onclick="openMap()">검색</button>
          				</td>	
          			</tr>
          			
@@ -617,8 +650,8 @@ $(document).ready(function(){
         
         <!-- Modal footer -->
         <div class="modal-footer" align="center">
-        	<button type="button" id="realReserve" class="btn" data-dismiss="modal">예약</button>
-          <button type="button" class="btn" data-dismiss="modal">취소</button>
+        	<button type="button" id="realReserve" class="btn_normal" data-dismiss="modal">예약</button>
+          <button type="button" class="btn_r"  data-dismiss="modal">취소</button>
         </div>
         
       </div>

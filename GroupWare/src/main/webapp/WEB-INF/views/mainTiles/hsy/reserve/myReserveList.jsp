@@ -71,11 +71,19 @@
 		padding-top:5px;
 		position: relative;
 		top:-38px;
+		border: solid 1px #5d5f5d;
+	}
+	
+	div.funcBt span:hover{
+		background-color: #d8dad8;
+		color: #000;
+		border: solid 1px #000;
 	}
 	
 	span#goHome{
 		cursor: pointer;
 		color: #9e9e9e;
+		font-size:15pt;
 	}
 	
 	span#goHome:hover{
@@ -302,7 +310,7 @@
 					            		"<td class='price' id='"+item.price+"'>"+paidPriceComma+"</td>"+
 				            		"</tr>"+
 			            		"</table>"+
-	            				"<div class='funcBt'><span style='left:260px;' class='changeCount'>인원수 변경</span><span style='left:610px;' onclick='javascript:cancelReserve("+item.pNo+","+item.cnumber+")'>예약 취소</span></div>"+
+	            				"<div class='funcBt'><span style='left:280px;' class='changeCount'>인원수 변경</span><span style='left:690px;' onclick='javascript:cancelReserve("+item.pNo+","+item.cnumber+")'>예약 취소</span></div>"+
 	            			"</div>";
 	            		
 	            	}); // end of $.each(json,function(index,item){----
