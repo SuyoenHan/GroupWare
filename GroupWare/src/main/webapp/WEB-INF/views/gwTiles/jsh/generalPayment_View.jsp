@@ -136,11 +136,11 @@ th{
 			<tr>
 				<th>첨부파일</th>
 				<td>
-					<c:if test="${not empty epvo.afile}">
-					   ${epvo.afile}
+					<c:if test="${not empty epvo.orgFilename}">
+					   ${epvo.orgFilename}
 					</c:if>
 					
-					<c:if test="${empty epvo.afile}">
+					<c:if test="${empty epvo.orgFilename}">
 					   <div align="center">첨부파일이 존재하지 않습니다.</div>
 					</c:if>
 				</td>

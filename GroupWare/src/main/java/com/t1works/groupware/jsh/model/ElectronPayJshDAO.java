@@ -89,6 +89,15 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 		ElectronPayJshVO write_view =sqlsession6.selectOne("payment_Jsh.login_Write",paraMap);
 		return write_view;
 	}
+
+
+
+	//전자결재테이블 insert
+	@Override
+	public int Electricadd(ElectronPayJshVO epvo) {
+		int n = sqlsession6.insert("payment_Jsh.Electricadd",epvo);
+		return n;
+	}
 	
 	
 	
