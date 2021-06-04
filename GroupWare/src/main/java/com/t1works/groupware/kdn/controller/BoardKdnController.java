@@ -1,5 +1,6 @@
 package com.t1works.groupware.kdn.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.kdn.model.BoardKdnVO;
@@ -32,6 +36,9 @@ public class BoardKdnController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterBoardKdnService service;
 	
+	@Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	private FileManager fileManager;
+	
 	// === 게시판 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/noticePostUpload.tw")
 	public ModelAndView requiredLogin_noticePostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardKdnVO boardvo, ModelAndView mav) {
@@ -41,8 +48,55 @@ public class BoardKdnController {
 	
 	// === 게시판 글쓰기 완료 요청 ===
 	@RequestMapping(value="/t1/uploadComplete.tw", method= {RequestMethod.POST})
-	public ModelAndView noticeUploadComplete(ModelAndView mav, BoardKdnVO boardvo) {
-		int n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+	public ModelAndView noticeUploadComplete(ModelAndView mav, BoardKdnVO boardvo, MultipartHttpServletRequest mrequest) {
+		
+		// === 첨부파일 있는 경우 작업 시작 ===
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path =root+"resources"+File.separator+"files";
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+				System.out.println(">>> 확인용 newFileName : "+newFileName);
+				
+	        // 3. BoardVO boardvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// === 첨부파일 있는 경우 작업 끝 ===
+		
+		int n = 0;
+
+		// 첨부파일이 없는 경우
+		if(attach.isEmpty()) {
+			n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+		} else { //첨부파일이 있는 경우
+			n = service.noticeUploadwithFile(boardvo);
+		}
+		
 		
 		if(n==1) {	//글쓰기가 성공한 경우
 			mav.setViewName("redirect:/t1/employeeBoard.tw");
@@ -900,6 +954,7 @@ public class BoardKdnController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
 				jsonObj.put("regDate", cmtvo.getRegDate());
+				jsonObj.put("seq", cmtvo.getSeq());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -931,6 +986,22 @@ public class BoardKdnController {
 		
 		return jsonObj.toString();
 		// "{"totalPage":5}"
+	}
+	
+	// 건의사항 댓글 수정하기
+	@ResponseBody
+	@RequestMapping(value="/t1/editSuggComment.tw", method= {RequestMethod.GET})
+	public String editSuggComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		int n = service.editSuggComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
 	}
 	
 	// 건의사항 댓글 삭제하기
@@ -1364,6 +1435,7 @@ public class BoardKdnController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
 				jsonObj.put("regDate", cmtvo.getRegDate());
+				jsonObj.put("seq", cmtvo.getSeq());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1390,7 +1462,41 @@ public class BoardKdnController {
 		jsonObj.put("totalPage", totalPage); // {"totalPage"}
 		
 		return jsonObj.toString();
-		// "{"totalPage":5}"
+		// "{"totalPage":5}"0
 	}
+	
+	// 건의사항 댓글 수정하기
+/*	@ResponseBody
+	@RequestMapping(value="/t1/editGenComment.tw", method= {RequestMethod.GET})
+	public String editGenComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		//int n = service.editGenComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	} */
+	
+	// 건의사항 댓글 삭제하기
+	@ResponseBody
+	@RequestMapping(value="/t1/delGenComment.tw", method= {RequestMethod.GET})
+	public String delGenComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		int n = service.delGenComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}
+	
+	
 
 }

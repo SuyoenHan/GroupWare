@@ -21,6 +21,14 @@
 	color: black;
 }
 
+.no-display{
+	display: none;
+}
+
+.display-this{
+	display: inline-block;
+}
+
 /* board.jsp 공지사항 게시판 목록 css */
 
 #board-container{ padding: 20px; width: 100%; }

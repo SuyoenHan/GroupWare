@@ -64,6 +64,12 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 파일 첨부가 있는 글쓰기
+	@Override
+	public int noticeUploadwithFile(BoardKdnVO boardvo) {
+		int n = sqlsession3.insert("board.noticeUploadwithFile",boardvo);
+		return n;
+	}
 	
 	// =========== 건의사항 =============
 
@@ -157,6 +163,13 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 건의사항 댓글 수정
+	@Override
+	public int editSuggComment(String seq) {
+		int n = sqlsession3.update("board.editSuggComment", seq);
+		return n;
+	}
+
 	
 	// =========== 자유게시판  =============
 	
@@ -237,6 +250,16 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return totalPage;
 	}
 
+	// 자유게시판 댓글 삭제하기
+	@Override
+	public int delGenComment(String seq) {
+		int n = sqlsession3.delete("board.delGenComment", seq);
+		return n;
+	}
+
+	
+
+	
 	
 
 	

@@ -29,4 +29,7 @@ public interface InterElectronPayJshDAO {
 	//일반결재 글쓰기
 	ElectronPayJshVO login_Write(Map<String, String> paraMap);
 
+	//전자결재테이블 insert
+	int Electricadd(ElectronPayJshVO epvo);
+
 }

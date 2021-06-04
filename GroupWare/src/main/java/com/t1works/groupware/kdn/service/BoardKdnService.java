@@ -80,6 +80,15 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// 파일 첨부가 있는 글쓰기
+	@Override
+	public int noticeUploadwithFile(BoardKdnVO boardvo) {
+		int n = dao.noticeUploadwithFile(boardvo);	//첨부파일이 있는 경우
+		return n;
+	}
+
+
+	
 	
 	// ========== 건의사항 ===========
 	
@@ -184,6 +193,13 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// (건의사항) 댓글 수정하기
+	@Override
+	public int editSuggComment(String seq) {
+		int n = dao.editSuggComment(seq);
+		return n;
+	}
+	
 	// ========== 자유게시판 ===========
 	
 	// 자유게시판 글쓰기 완료 요청
@@ -271,6 +287,15 @@ public class BoardKdnService implements InterBoardKdnService {
 		int totalPage = dao.getCommentTotalPage(paraMap);
 		return totalPage;
 	}
+
+	// 자유게시판 댓글 삭제
+	@Override
+	public int delGenComment(String seq) {
+		int n = dao.delGenComment(seq);
+		return n;
+	}
+
+	
 
 	
 

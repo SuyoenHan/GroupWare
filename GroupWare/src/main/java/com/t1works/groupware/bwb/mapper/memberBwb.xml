@@ -126,4 +126,17 @@
    </update>
    
    
+   <!-- 부장을 제외한 사원ID와 비밀번호 가져오기 -->
+   <select id="selectMemberList" parameterType="String" resultType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		select employeeid,name
+		from tbl_employee
+		where fk_dcode = #{dcode} and fk_pcode != '3'
+   </select>
+   
+   <select id="selectDepartmentList" resultType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		select dname,dcode as fk_dcode
+		from tbl_department
+		where dcode in (1,2,3)
+   </select>
+   
 </mapper>
