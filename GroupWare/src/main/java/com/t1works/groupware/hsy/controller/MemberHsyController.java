@@ -36,7 +36,7 @@ public class MemberHsyController {
 	private InterHomepageBwbService service2;
 	
 	
-	// 주소록(조직도) 매핑 주소
+	// 주소록 매핑 주소
 	@RequestMapping(value="/t1/employeeMap.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
@@ -431,4 +431,17 @@ public class MemberHsyController {
 		return mav;
 		
 	} // end of public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {------
+	
+	
+	// 조직도 매핑 url
+	@RequestMapping(value="/t1/employeeChart.tw")        // 로그인이 필요한 url
+	public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		mav.setViewName("hsy/employee/employeeChart.gwTiles");
+		
+		return mav;
+		
+	} // end of public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {---
+	
+	
 }
