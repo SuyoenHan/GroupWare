@@ -170,7 +170,6 @@ button.btn_normal{
 						<option value="joinemployee">공유자</option>
 					</select>&nbsp;&nbsp;	
 					<input type="text" id="searchWord" value="${requestScope.searchWord}" style="height: 30px; width:120px; " name="searchWord"/>
-					<input type="hidden" name="fk_employeeid" value="${loginuser.employeeid}"/>
 					<button type="button" class="btn_normal" style="display: inline-block;"  onclick="goSearch()">검색</button>
 					<select id="sizePerPage" name="sizePerPage" style="height: 30px;">
 						<option value="10">10</option>

@@ -11,6 +11,8 @@ public class RsRoomOdyVO {
 	private int rstatus; // 상태
 	private String name; // 직원명
 	private String rdname;
+	private String roomname; //회의실 이름
+	
 	public int getRsroomno() {
 		return rsroomno;
 	}
@@ -65,6 +67,12 @@ public class RsRoomOdyVO {
 	}
 	public void setRdname(String rdname) {
 		this.rdname = rdname;
+	}
+	public String getRoomname() {
+		return roomname;
+	}
+	public void setRoomname(String roomname) {
+		this.roomname = roomname;
 	}
 	
 }

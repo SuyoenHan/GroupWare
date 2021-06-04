@@ -264,6 +264,7 @@ $(document).ready(function(){
 			rcsubject.push(item.rcsubject);
 			rdestination.push(item.rdestination);
 			rcpeople.push(item.rcpeople);
+			cstatus.push(item.cstatus);
 		});
 		
 	
@@ -336,7 +337,12 @@ $(document).ready(function(){
 				} 
 				else {
 					if(parseInt(curTime)>parseInt(chgdate)){ // 현재 날짜가 클릭한 날짜보다 큰 경우
-						html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						if(cstatus[index]=='0'){
+							html += "<td style='vertical-align: middle;'>미승인</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}
+						else if(cstatus[index]=='1'){
+							html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
+						}
 					}
 					else if(parseInt(curTime)==parseInt(chgdate)){
 						
@@ -344,7 +350,7 @@ $(document).ready(function(){
 							if(cstatus[index]=='0'){
 								html += "<td style='vertical-align: middle;'>미승인</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 							}
-							if(cstatus[index]=='1'){
+							else if(cstatus[index]=='1'){
 								html += "<td style='vertical-align: middle;'>사용완료</td><td><button id='btn_delete' class='btn_r'  onclick='deleteReserve("+rscno[index]+")';>삭제</button></td></tr>";
 							}
 						}
@@ -379,7 +385,7 @@ $(document).ready(function(){
 			} 
 			else {
 				html += "<tr><td style='vertical-align: middle;'>"+chkBox+"<label for='rsCheck"+i+"' id='id_time'><font color='"+fontType+"'>"+timeText(i)+"</font></label></td>";
-				html += "<td></td><td></td><td></td><td></td><td></td><td></td><tr>";
+				html += "<td></td><td></td><td></td><td></td><td></td><td></td></tr>";
 			}
 			$("tbody#rstimeList").append(html);
 		}// end of for----

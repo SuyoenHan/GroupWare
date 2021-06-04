@@ -76,20 +76,20 @@
 		<choose>
 				<when test='fk_bcno == "" '>
 				    where fk_employeeid = #{fk_employeeid}
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				or fk_bcno = 2
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				<if test='searchType eq "joinemployee" and searchWord !="" '>
 				 or fk_employeeid != #{fk_employeeid}
@@ -97,38 +97,38 @@
 					and joinemployee like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				</if>
 			</when>
 			<when test='fk_bcno == "1" '>
 			where  fk_employeeid = #{fk_employeeid}
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 			</when>
 			<when test='fk_bcno == "2" '>
 				where fk_bcno = 2
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				<if test='searchType eq "joinemployee" and searchWord !="" '>
 				 or fk_employeeid != #{fk_employeeid}
-				 <if test='searchWord !="" '>
+				 <if test='searchType!= "" and searchWord !="" '>
 					and joinemployee like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				</if>
 			</when>
@@ -154,20 +154,20 @@
 					<when test='fk_bcno == "" '>
 				    where S.fk_employeeid = #{fk_employeeid}
 				    
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				or S.fk_bcno = 2
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				<if test='searchType eq "joinemployee" and searchWord !="" '>
 				 or S.fk_employeeid != #{fk_employeeid}
@@ -175,29 +175,29 @@
 					and joinemployee like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				</if>
 			</when>
 			<when test='fk_bcno == "1" '>
 			where S.fk_employeeid = #{fk_employeeid}
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 			</when>
 			<when test='fk_bcno == "2" '>
 				where S.fk_bcno = 2
-				<if test='searchWord !="" '>
+				<if test='searchType!= "" and searchWord !="" '>
 					and lower(${searchType}) like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-				and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-				and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				<if test='searchType eq "joinemployee" and searchWord !="" '>
 				 or S.fk_employeeid != #{fk_employeeid}
@@ -205,8 +205,8 @@
 					and joinemployee like '%'||lower(#{searchWord})||'%'
 				</if> 
 				<if test='startdate !="" and  enddate !=""'>
-					and to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
-					and to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+					and (to_char(startdate,'YYYY-MM-DD') between #{startdate} and #{enddate}
+				or to_char(enddate,'YYYY-MM-DD') between #{startdate} and #{enddate})
 				</if>
 				</if>
 			</when>
@@ -283,7 +283,7 @@
 	<select id="myCalendarInfo" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
 		select sdno, to_char(startdate,'YYYY-MM-DD') as startdate, to_char(startdate,'hh24:mi') as stime,  to_char(enddate,'YYYY-MM-DD') as enddate,to_char(enddate,'hh24:mi') as etime,  subject, color
 		from tbl_schedule
-		where fk_employeeid = #{employeeid} and 
+		where fk_employeeid = #{employeeid} and fk_bcno=1 and
 			  #{date} between to_char(startdate,'YYYY-MM-DD') and to_char(enddate,'YYYY-MM-DD')
 	</select>
 	

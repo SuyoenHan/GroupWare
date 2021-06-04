@@ -116,18 +116,48 @@ public class ReservationOdyService implements InterReservationOdyService {
 		return n;
 	}
 
-	// 사무용품 반납하기
+	
+	// 나의 회의실 대여 건수
 	@Override
-	public int returnReserveGoods(String rsgno) {
-		int n =rdao.returnReserveGoods(rsgno);
+	public int getTotalCountMyRoom(Map<String, String> paraMap) {
+		int n = rdao.getTotalCountMyRoom(paraMap);
 		return n;
 	}
 
-	// 차량 반납하기
+	// 나의 회의실 대여 현황
 	@Override
-	public int returnReserveCar(String rscno) {
-		int n =rdao.returnReserveCar(rscno);
+	public List<RsRoomOdyVO> showMyRoomListSearchWithPaging(Map<String, String> paraMap) {
+		List<RsRoomOdyVO> myRoomList = rdao.showMyRoomListSearchWithPaging(paraMap);
+		return myRoomList;
+	}
+
+
+	// 나의 사무용품 대여 현황 건수
+	@Override
+	public int getTotalCountMyGoods(Map<String, String> paraMap) {
+		int n = rdao.getTotalCountMyGoods(paraMap);
 		return n;
+	}
+
+	// 나의 사무용품 대여 현황
+	@Override
+	public List<GoodsOdyVO> showMyGoodsListSearchWithPaging(Map<String, String> paraMap) {
+		List<GoodsOdyVO> myGoodsList = rdao.showMyGoodsListSearchWithPaging(paraMap);
+		return myGoodsList;
+	}
+
+	// 나의 차량 예약 총 건수(totalCount)
+	@Override
+	public int getTotalCountMyCar(Map<String, String> paraMap) {
+		int n = rdao.getTotalCountMyCar(paraMap);
+		return n;
+	}
+
+	// 나의 차량 대여 현황
+	@Override
+	public List<CarOdyVO> showMyCarListSearchWithPaging(Map<String, String> paraMap) {
+		List<CarOdyVO> myCarList = rdao.showMyCarListSearchWithPaging(paraMap);
+		return myCarList;
 	}
 
 
