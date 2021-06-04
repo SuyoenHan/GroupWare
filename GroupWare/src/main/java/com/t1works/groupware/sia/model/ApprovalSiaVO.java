@@ -14,9 +14,11 @@ public class ApprovalSiaVO {
 	private String approvaldate2;	// 수신자2 결재날짜
 	private String approvaldate3;	// 수신자3 결재날짜
 	private String acontent;		// 글내용
-	private String asdate;			// 기안일
-	private String afile;			// 첨부파일
+	private String asdate;			// 기안일	
 	private String apaper;			// 문서상태 (0:수신, 1:발신, 2:임시보관)
+	private String fileName;		// 첨부파일
+	private String orgFilename;		// 진짜 파일명
+	private String fileSize;		// 파일크기
 	
 	// 일반결재
 	private String ncat;		// 일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
@@ -209,12 +211,12 @@ public class ApprovalSiaVO {
 		this.asdate = asdate;
 	}
 
-	public String getAfile() {
-		return afile;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setAfile(String afile) {
-		this.afile = afile;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public String getApaper() {
@@ -223,6 +225,22 @@ public class ApprovalSiaVO {
 
 	public void setApaper(String apaper) {
 		this.apaper = apaper;
+	}
+
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
 	}
 
 	public String getNcat() {

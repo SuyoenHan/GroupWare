@@ -38,7 +38,11 @@ public interface InterMyDocumentSiaDAO {
 	// 내문서함 - 수신함 - 근태결재 결재의견 조회하기
 	List<ApprovalSiaVO> getOpinionList(String parentAno);
 
-	
+	// 내문서함 - 수신함 - 근태결재 결재버튼 클릭
+	int approval(Map<String, String> paraMap);
+
+	// 내문서함 - 수신함 - 근태결재 반려버튼 클릭
+	int reject(String ano);
 	
 
 }

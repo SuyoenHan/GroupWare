@@ -691,7 +691,7 @@ public class MyDocumentSiaController {
 		JSONObject jsonObj = new JSONObject();		
 		jsonObj.put("n", n);
 		jsonObj.put("employeeid", avo.getEmployeeid());
-		
+				
 		return jsonObj.toString();
 	}
 	
@@ -721,6 +721,68 @@ public class MyDocumentSiaController {
 		}
 		
 		return jsonArr.toString();		
+	}
+	
+	
+	// 내문서함 - 수신함 - 근태결재 결재버튼 클릭
+	@ResponseBody
+	@RequestMapping(value="/t1/approval.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String approval(HttpServletRequest request) { 
+		
+		String ano = request.getParameter("ano");
+		String astatus = request.getParameter("astatus");
+		String arecipient1 = request.getParameter("arecipient1");
+		String arecipient2 = request.getParameter("arecipient2");
+		String arecipient3 = request.getParameter("arecipient3");	
+		String employeeid = request.getParameter("employeeid");
+		String fk_pcode = request.getParameter("fk_pcode");
+				
+		if(arecipient2 == null) {
+			arecipient2 = "";
+		}
+		if(arecipient3 == null) {
+			arecipient3 = "";
+		}
+		
+		
+		Map<String, String> paraMap = new HashMap<>(); 
+		paraMap.put("ano", ano);  
+		paraMap.put("astatus", astatus);
+		paraMap.put("arecipient1", arecipient1);
+		paraMap.put("arecipient2", arecipient2);
+		paraMap.put("arecipient3", arecipient3);
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("fk_pcode", fk_pcode); 
+	 
+		int n = service.approval(paraMap); 
+		
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+		/*
+		 * jsonObj.put("employeeid", avo.getEmployeeid()); jsonObj.put("arecipient1",
+		 * avo.getArecipient1()); jsonObj.put("arecipient2", avo.getArecipient2());
+		 * jsonObj.put("arecipient3", avo.getArecipient3()); jsonObj.put("fk_pcode",
+		 * avo.getFk_pcode());
+		 */
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 내문서함 - 수신함 - 근태결재 반려버튼 클릭
+	@ResponseBody
+	@RequestMapping(value="/t1/reject.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String reject(HttpServletRequest request) { 
+		
+		String ano = request.getParameter("ano");	
+	 
+		int n = service.reject(ano); 	
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+				
+		return jsonObj.toString();
 	}
 	
 	

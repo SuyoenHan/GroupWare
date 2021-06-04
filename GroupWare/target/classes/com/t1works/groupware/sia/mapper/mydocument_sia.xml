@@ -54,7 +54,7 @@
 	
 	<!-- 내문서함 - 문서 한 개 상세보기 -->
 	<select id="myDocuNorm_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate 
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate 
 		<choose>
 			<when test="ncatname eq '회의록'">
 				, mdate
@@ -153,7 +153,7 @@
 	
 	<!-- 내문서함 - 문서 지출결재문서 한 개 상세보기 -->
 	<select id="myDocuSpend_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate 
+		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate 
 		<choose>
 			<when test="scatname eq '지출결의서'">
 				, to_char(exdate, 'yyyy-mm-dd') AS exdate, exprice
@@ -260,7 +260,7 @@
 	
 	<!-- 내문서함 - 문서 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVaction_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, afile, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
@@ -348,5 +348,43 @@
 		order by odate
 	</select>
 	
+
+	<!-- 내문서함 - 수신함 - 근태결재 결재버튼 클릭 -->
+	<update id="approval" parameterType="HashMap">
+		<if test='fk_pcode neq "4"'>
+			update tbl_approval set astatus = '1'		
+			<choose>
+				<when test="arecipient2 == ''">
+					, arecipient2 = (select managerid from tbl_employee where employeeid = #{employeeid}), approvaldate1 = sysdate
+				</when>
+				<when test="arecipient2 != '' and arecipient3 == ''">
+					, arecipient3 = (select managerid from tbl_employee where employeeid = #{employeeid}), approvaldate2 = sysdate
+				</when>
+			</choose>
+			where ano = #{ano} 
+		</if>
+
+		<if test='fk_pcode eq "4"'> 
+			update tbl_approval set astatus = '3'		
+			<choose>
+				<when test="arecipient2 == ''">
+					, approvaldate1 = sysdate
+				</when>
+				<when test="arecipient2 != '' and arecipient3 == ''">
+					, approvaldate2 = sysdate
+				</when>
+				<when test="arecipient2 != '' and arecipient3 != ''">
+					, approvaldate3 = sysdate
+				</when>
+			</choose>
+			where ano = #{ano}
+		</if>
+	</update>
+	
+	<!-- 내문서함 - 수신함 - 근태결재 반려버튼 클릭 -->
+	<update id="reject" parameterType="HashMap">
+		update tbl_approval set astatus = '2'
+		where ano = #{ano}
+	</update>
 	
 </mapper>

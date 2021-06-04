@@ -104,7 +104,19 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return avo;
 	}
 
-
 	
+	// 내문서함 - 수신함 - 근태결재 결재버튼 클릭
+	@Override
+	public int approval(Map<String, String> paraMap) {
+		int n = dao.approval(paraMap);
+		return n;
+	}
+
+	// 내문서함 - 수신함 - 근태결재 반려버튼 클릭
+	@Override
+	public int reject(String ano) {
+		int n = dao.reject(ano);
+		return n;
+	}
 
 }

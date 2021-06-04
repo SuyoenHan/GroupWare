@@ -70,24 +70,26 @@ td.opinion{
 <script type="text/javascript">
 	
 	$(document).ready(function(){
-		
+	/* 	
+		if(${requestScope.avo.astatus == 0}){
+			$("span.img").hide();
+		}
+		 
+		if(${requestScope.avo.astatus == 1 and sessionScope.loginuser.fk_pcode == 2}){
+			$("span.img").hide();
+			$("span#img_approval_1").show();
+		}
+	*/
 		goViewOpinion();
 		
 		$("input#reset").click(function(){			
 			$("textarea#ocontent").val("");
-		});
+		});		
+		
 	});
 	
 	
-	// Function Declaration
-	function goback(){
-		var $myFrm= document.myFrm;
-		$myFrm.method="POST";
-		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_rec.tw";
-		$myFrm.submit();
-	}
-	
-	
+	// Function Declaration	
 	function goAddWrite(){
 		var opinionVal = $("textarea#ocontent").val().trim();
 		if(opinionVal == ""){
@@ -103,7 +105,7 @@ td.opinion{
 			type:"post",
 			dataType:"json",
 			success:function(json){ 
-				goViewOpinion(1);
+				goViewOpinion();
 				
 				$("textarea#ocontent").val("");
 			},
@@ -143,9 +145,106 @@ td.opinion{
 		});
 	}// end of function goViewOpinion(){}--------------------
 	
+	
+	// 목록보기
+	function goback(){
+		var $myFrm= document.myFrm;
+		$myFrm.method="POST";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_rec.tw";
+		$myFrm.submit();
+	}
+	
+	
+	// 결재
+	function goApproval(){
+		var formData = $("form[name=approvalDocu]").serialize();
+		
+		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/approval.tw",
+			data:formData,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				var html1 = "";
+				
+				if(json.n == 1){					
+					alert("결재 승인 되었습니다");
+					
+					html1 += "";
+					
+					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
+					
+					$("td#img_approval_1").html(html);
+				}
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}			
+		});
+	}
+	
+	
+	function goReject(){
+		var formData = $("form[name=approvalDocu]").serialize();
+		
+		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/reject.tw",
+			data:formData,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				var html1 = "";
+				
+				if(json.n == 1){					
+					alert("반려 처리 되었습니다.");
+					
+					html1 += "";
+					
+					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
+					
+					$("td#img_approval_1").html(html);
+				}
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}			
+		});	
+	}
+	
+	
+	function goViewApproval(){
+		$.ajax({
+			url:"<%= ctxPath%>/t1/approvalList.tw",
+			data:{"parentAno":"${requestScope.avo.ano}"},
+			dataType:"json",
+			success:function(json){				
+								
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){						
+						html += "<div>["+item.odate+"]&nbsp;"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;<span style='color: red;'>"+item.astatus+"</span></div>";
+					});
+				}
+				
+				$("span#approvalDisplay").html(html);
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+	}// end of function goViewOpinion(){}--------------------
+	
 </script>
 
-<div id="containerview">	
+<div id="containerview">		
 	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.vcatname}계</h2>
 	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
@@ -157,9 +256,15 @@ td.opinion{
 				<th>사장</th>
 			</tr>			
 			<tr>
-				<td style="height:70px;"><img src="<%= ctxPath%>/resources/images/sia/approval_1.png" width="35px;"></td>
-				<td><img src="<%= ctxPath%>/resources/images/sia/approval_2.png" width="35px;"></td>
-				<td><img src="<%= ctxPath%>/resources/images/sia/approval_3.png" width="35px;"></td>
+				<td id="img_approval_1" style="height:70px;">
+				</td>
+				
+				<td id="img_approval_2" style="height:70px;">
+					
+				</td>
+				<td id="img_approval_3" style="height:70px;">
+					
+				</td>
 			</tr>
 		</table>
 		
@@ -232,7 +337,7 @@ td.opinion{
 				
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.afile}</td>
+				<td colspan="3">${requestScope.avo.fileName}</td>
 			</tr>
 		</table>
 			
@@ -244,7 +349,10 @@ td.opinion{
 		<table id="table3">
 			<tr>
 				<th>결재로그</th>
-				<td></td>
+				<td>
+					[${requestScope.avo.asdate}] ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname} <span style="color: red; font-weight: bold;">제출</span>
+					<span id="approvalDisplay"></span>
+				</td>
 			</tr>
 		</table>
 		<table id="table4">
@@ -275,15 +383,25 @@ td.opinion{
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 50%;">
-				<input type="button" class="btn btn-primary" value="결재"/>
-				<input type="button" class="btn btn-warning" value="보류"/>
-				<input type="button" class="btn btn-danger" value="반려"/>
+			<span style="margin-left: 55%;">
+				<input type="button" class="btn btn-primary" onclick="goApproval();" value="결재"/>				
+				<input type="button" class="btn btn-danger" onclick="goReject();" value="반려"/>
 			</span>
 		</div>
 		
 		<br><br>
 	</div>
+	
+	<form name="approvalDocu">
+		<input type="hidden" name="ano" value="${ano}"/>
+		<input type="hidden" name="astatus" value="${requestScope.avo.astatus}"/>
+		<input type="hidden" name="arecipient1" value="${requestScope.avo.arecipient1}"/>
+		<input type="hidden" name="arecipient2" value="${requestScope.avo.arecipient2}"/>
+		<input type="hidden" name="arecipient3" value="${requestScope.avo.arecipient3}"/>
+		<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
+		<input type=hidden name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />		
+	</form>
+	
 	
 	<form name="myFrm">
 		<input type="hidden" name="ano" value="${ano}" />
