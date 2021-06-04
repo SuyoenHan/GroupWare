@@ -218,7 +218,7 @@ public class ProductBwbService implements InterProductBwbService {
 		return performanceList;
 	}
 	
-	// chart에 들어가기 위한 name값,3개월에 대한 각각 실적건수
+	// chart에 들어가기 위한 1개 부서에 대한 name값,3개월에 대한 직원 각각 실적건수
 	@Override
 	public Map<String, String> selectCntPerformance(Map<String, String> paraMap) {
 		
@@ -232,6 +232,35 @@ public class ProductBwbService implements InterProductBwbService {
 		
 		Map<String, String> paraMap = dao.changeDate(firstDate);
 		return paraMap;
+	}
+	
+	// chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
+	@Override
+	public Map<String, String> selectDepCntPerformance(Map<String, String> paraMap) {
+		
+		Map<String, String> resultMap = dao.selectDepCntPerformance(paraMap);
+		
+		String sDCnt = resultMap.get("DCnt"); 
+		String sprevDCnt = resultMap.get("prevDCnt");
+		
+		int DCnt = Integer.parseInt(sDCnt);
+		int prevDCnt = Integer.parseInt(sprevDCnt);
+		
+		
+		String compareValue = "";
+		int icompareValue = 0; 
+		
+		if(prevDCnt==0) {
+			compareValue="전달 실적이 없습니다.";
+		}
+		else {
+			icompareValue = ((DCnt/prevDCnt)-1)*100;
+			compareValue = "약 "+String.valueOf(icompareValue)+"%";
+		}
+		
+		resultMap.put("compareValue", compareValue);
+		
+		return resultMap;
 	}
 	
 	

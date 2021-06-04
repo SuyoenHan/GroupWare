@@ -1121,34 +1121,34 @@ public class MemberBwbController {
 	@RequestMapping(value="/t1/selectDepPerformance.tw",produces="text/plain;charset=UTF-8")
 	public String selectDepPerformance(HttpServletRequest request) {
 		
-		String performanceWhenArres = request.getParameter("performanceWhenArres");
-
-		// 넘어온 날짜 배열로 만들어주기.
-		String[] performanceWhenArr = performanceWhenArres.split(","); 
+		String selectedDate = request.getParameter("selectedDate");
 		
 		Map<String,String> paraMap = new HashMap<>();
-		paraMap.put("firstDate", performanceWhenArr[2]);
-
+		paraMap.put("selectedDate", selectedDate);
+		
+		
 		// 부서 전체 이름,코드 가져오기
 		List<MemberBwbVO> departmentList = service2.selectDepartmentList();
 
-		// [{"employeeid":tw0019, "2021-04": 0, "2021-03":1, "2021-02":0}, {} ,{}]
+		// [{name:'부서1팀',y:비율,sliced:true}, {name:'부서2팀', y:비율} ]
 		
 		JSONArray jsonArr = new JSONArray();
 		for(MemberBwbVO dvo : departmentList) {
+			
 				JSONObject jsonObj = new JSONObject();
 				
-				String employeeid = dvo.getDname();
-				paraMap.put("employeeid", employeeid);
+				String dcode = dvo.getFk_dcode();
+				paraMap.put("dcode", dcode);
 				
-				// chart에 들어가기 위한 name값,3개월에 대한 각각 실적건수
-				Map<String,String> resultMap = service4.selectCntPerformance(paraMap);
-				jsonObj.put("ppreveCnt", resultMap.get("ppreveCnt"));
-				jsonObj.put("prevCnt", resultMap.get("prevCnt"));
-				jsonObj.put("selectCnt", resultMap.get("selectCnt"));
-				// jsonObj.put("name", mvo.getName());
+				// chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
+				Map<String,String> resultMap = service4.selectDepCntPerformance(paraMap);
+				jsonObj.put("DCnt", resultMap.get("DCnt"));
+				jsonObj.put("totalCnt", resultMap.get("totalCnt"));
+				jsonObj.put("percentage", resultMap.get("percentage"));
+				jsonObj.put("name", dvo.getDname());
+				jsonObj.put("compareValue", resultMap.get("compareValue"));
 				jsonArr.put(jsonObj);
-			
+				// [{cs1팀,16,26.xx}]
 		} // end of for
 		
 		// System.out.println(jsonArr);

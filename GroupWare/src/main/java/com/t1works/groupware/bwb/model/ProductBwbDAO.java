@@ -145,5 +145,13 @@ public class ProductBwbDAO implements InterProductBwbDAO {
 		Map<String, String> paraMap = sqlsession.selectOne("productBwb.changeDate", firstDate);
 		return paraMap;
 	}
+	
+	// chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
+	@Override
+	public Map<String, String> selectDepCntPerformance(Map<String, String> paraMap) {
+		
+		 Map<String, String> resultMap = sqlsession.selectOne("productBwb.selectDepCntPerformance", paraMap);
+		 return resultMap;
+	}
 
 }
