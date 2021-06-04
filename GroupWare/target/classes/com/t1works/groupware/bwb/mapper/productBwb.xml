@@ -171,7 +171,7 @@
    		select to_char(min(enddate),'yyyy-mm') as minEndDate,
         to_char(max(enddate),'yyyy-mm') as maxEndDate  
 		from tbl_todo 
-		where fk_dcode=#{dcode} and enddate is not null
+		where fk_dcode like '%' || #{dcode} || '%' and enddate is not null
    </select>
    
    <!-- 선택한 년,월에 해당하는 실적 데이터 가지고 오기 -->

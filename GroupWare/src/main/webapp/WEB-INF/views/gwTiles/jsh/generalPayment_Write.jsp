@@ -59,7 +59,7 @@ hr.hr{
 <script type="text/javascript">
 		$(document).ready(function(){
 			//사이드바 세부메뉴 나타내기 
-		//	$("div#submenu3").show();
+			$("div#submenu3").show();
 			
 			$("div#containerview").hide();
 			
@@ -112,15 +112,19 @@ hr.hr{
 			
 			
 			
-<%-- 
-	         // 폼(form) 을 전송(submit)
-	         var frm = document.addFrm;
-	         frm.method = "POST";
-	         frm.action = "<%= ctxPath%>/addEnd.action";
-	         frm.submit();   
-			 --%>
 			
-		}); //end of 
+			
+		}); //end of $(document).ready(function(){
+		
+		function insertWrite(){
+	         // 폼(form) 을 전송(submit)
+	         var frm = document.writeGFrm;
+	         frm.method = "POST";
+	         frm.action = "<%= ctxPath%>/t1/generalPayment_WriteEnd";
+	         frm.submit();   
+			}	
+		
+		
 </script>
 
 <form name="writeGFrm"  enctype="multipart/form-data">
@@ -166,13 +170,14 @@ hr.hr{
 			
 			<tr>
 				<th>제목</th>
-				<td><textarea rows="1" cols="150"></textarea></td>
+				<td ><input type=""text" width="80%"name="atitle"></td>
 			</tr>
 		
 			
 			<tr>
 				<th>작성자</th>
-				<td>${sessionScope.loginuser.name}</td>
+				<input type="hidden"name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+				<td name="name">${sessionScope.loginuser.name}</td>
 				
 			</tr>
 		
@@ -195,7 +200,7 @@ hr.hr{
 			
 			<tr>
 				<th style="height:350px;">글내용</th>
-				<td><textarea rows="30" cols="160"></textarea></td>
+				<td name="acontent"><textarea rows="30" cols="160"></textarea></td>
 			</tr>
 			
 			<tr>

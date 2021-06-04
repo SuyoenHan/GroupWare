@@ -188,6 +188,14 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		List<MemberBwbVO> memberList = sqlsession.selectList("memberBwb.selectMemberList", dcode);
 		return memberList;
 	}
+
+	// 부서 전체 이름,코드 가져오기
+	@Override
+	public List<MemberBwbVO> selectDepartmentList() {
+		
+		List<MemberBwbVO> departmentList = sqlsession.selectList("memberBwb.selectDepartmentList");
+		return departmentList;
+	}
 	
     
    

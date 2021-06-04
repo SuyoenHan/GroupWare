@@ -12,7 +12,7 @@ public class ElectronPayJshVO {
 	private String  astatus;                 // default '0' not null     -- 결재상태 (0:제출, 1:결재진행중, 2:반려, 3:승인완료)
 	private String  acontent;      		  // 글내용
 	private String  asdate;                // 기안일
-	private String  afile;                    //  첨부파일
+	
 	private String  apaper;       	 	 //  문서상태 (0:수신, 1:발신, 2:임시보관)
 	
 	
@@ -24,9 +24,11 @@ public class ElectronPayJshVO {
 		      동일해야만 파일첨부가 가능해진다.!!!!
 	*/	      
 		      
-	
-	
-	
+   private String fileName;    // WAS(톰캣)에 저장될 파일명(2020120809271535243254235235234.png) 
+   private String orgFilename; // 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명
+   private String fileSize;    // 파일크기    
+
+
 	
     //////일반결재문서 //////
 	private String ncat;     //일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
@@ -139,12 +141,7 @@ public class ElectronPayJshVO {
 	public void setAsdate(String asdate) {
 		this.asdate = asdate;
 	}
-	public String getAfile() {
-		return afile;
-	}
-	public void setAfile(String afile) {
-		this.afile = afile;
-	}
+	
 	public String getApaper() {
 		return apaper;
 	}
@@ -158,6 +155,26 @@ public class ElectronPayJshVO {
 	}
 	public void setAttach(MultipartFile attach) {
 		this.attach = attach;
+	}
+	
+
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+	public String getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
 	}
 	
 	
