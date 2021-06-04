@@ -58,6 +58,16 @@
 	table#siljukTable td{
 		border:solid 1px black;
 	}
+	
+	th.alignThClass {
+		text-align:center;
+	}
+	
+	td.alignTdClass {
+		text-align:center;
+		height: 40px;
+	}
+	
 </style>
 
 
@@ -67,40 +77,18 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <div id="companyPerfomanceBox" style="width: 1300px; margin:0 auto;">
-    <div id="container" style="float:left; margin-top:50px; border:solid 1px black;"></div>
+    <div id="container" style="float:left; margin-top:50px; border:solid 0px black;"></div>
     <div style='float:right;'>
-	    <div id="selectBox" style="border:solid 1px black; width:100px; display:inline-block;  margin-top:50px; margin-left:450px;">
-			<select id="siljukYear">
+	    <div id="selectBox" style="border:solid 0px black; width:100px; display:inline-block;  margin-top:50px; margin-left:450px; height:30px;">
+			<select id="siljukYear" style="height:30px;">
 				<c:forEach var="i" begin="${paraMap.minYear}" end="${paraMap.maxYear}">
 					<option value="${i}">${i}</option>
 				</c:forEach>
 			</select>
-			<select id="siljukMonth">
+			<select id="siljukMonth" style="height:30px;">
 			</select>
-			
 		</div>
-	    <div style="border:solid 1px red; margin-left:-50px;">
-			<table id="siljukTable" style="width:100%;">
-				<thead> 
-					<tr> 
-						<th></th>
-						<th>실적건수</th>
-						<th>비율</th>
-						<th>전달대비 실적률</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr> 
-						<td>xx부서</td>
-						<td>15건</td>
-						<td>20%</td>
-						<td>110%</td>
-					</tr>
-							
-				</tbody>
-				
-			</table>
-		</div>
+	    <div id="tableDiv" style="border:solid 0px red; margin-top: 10px; margin-left:-50px; height:400px;"></div>
 	</div>
 </div>
 
@@ -130,6 +118,8 @@
 		$("select#siljukMonth").html(html);
 		$("select#siljukMonth").val(maxMonth);
 		
+		
+		goChart(maxYear,maxMonth);
 		
 		
 		// 년도 선택시 실적이 존재하는 월만 보여주기 및 해당년도/월에 해당하는 데이터 가져오기
@@ -169,7 +159,7 @@
 			
 			var selectedMonth = $("select#siljukMonth").val();
 			
-			
+			goChart(selectedYear,selectedMonth);
 			
 		}); // end of $("select#siljukMonth").bind("change",function(){
 		
@@ -180,7 +170,7 @@
 			var selectedYear = $("select#siljukYear").val();	
 			var selectedMonth = $(this).val();
 
-	
+			goChart(selectedYear,selectedMonth);
 
 		}); // end of $("select#siljukMonth").bind("change",function(){	
 		
@@ -191,29 +181,95 @@
 	// function declaration	
 	function goChart(selectedYear,selectedMonth){
 		
-		$.ajax({ // 1st ajax:선택한 월부터 -2개월 전까지 년-월 뽑아오기
+		$.ajax({ // 1st ajax:선택한 월+년도 만들어주기
 			url:"<%= ctxPath%>/t1/selectPerformanceMonth.tw",
 			data:{"selectedYear":selectedYear,
 				  "selectedMonth":selectedMonth},
 			dataType:"json",
 			success:function(json){
 				
-				var performanceWhenArr = [];
-				performanceWhenArr.push(json.lastDate);
-				performanceWhenArr.push(json.middleDate);
-				performanceWhenArr.push(json.firstDate);
-				 
-				var performanceWhenArres = performanceWhenArr.join();
+				var selectedDate = json.firstDate;
 				
-				var performanceWhoArr = [];
-				var performanceDataArr = [];
-				$.ajax({ // 2st ajax: 선택한 월부터 -2개월전까지 데이터 뽑아오기
+				var performanceDepArr = [];
+
+				$.ajax({ // 2st ajax: 선택한 월부터 -2개월전까지 부서팀들의 데이터 뽑아오기
 					url:"<%= ctxPath%>/t1/selectDepPerformance.tw",
-					data:{"performanceWhenArres":performanceWhenArres},
+					data:{"selectedDate":selectedDate},
 					dataType:"json",
 					success:function(json){
 						
+						var html ="";
+						html += "<table id='siljukTable' style='width:100%; font-size:15pt;'>";
+						html += "<thead>"; 
+						html +=	"<tr>"; 
+						html += "<th></th>";		
+						html += "<th class='alignThClass'>실적건수</th>";
+						html +=	"<th class='alignThClass'>비율</th>";
+						html += "<th class='alignThClass'>전달대비 실적률</th>";
+						html += "</tr>";
+						html += "</thead>";
+						html += "<tbody>";
+						 
+						// [{name:'부서1팀',y:비율,sliced:true} ]
+						$.each(json,function(index,item){
+							
+							if(index==1){
+								performanceDepArr.push({name:item.name,y:Number(item.percentage),sliced: true,selected: true});
+							}
+							else{
+								performanceDepArr.push({name:item.name,y:Number(item.percentage)});
+							}
+							
+							html +=	"<tr>";
+							html += "<td class='alignTdClass'>"+item.name+"</td>";
+							html += "<td class='alignTdClass'>"+item.DCnt+"건</td>";
+							html += "<td class='alignTdClass'>"+item.percentage+"%</td>";
+							html += "<td class='alignTdClass'>"+item.compareValue+"</td>";
+							html += "</tr>";
+
+						}); // end of each
 						
+						html +="</tbody>";
+						html +="</table>";
+						
+						$("div#tableDiv").html(html);
+						
+						// 차트 구현 시작 ///	
+						Highcharts.chart('container', {
+						    chart: {
+						        plotBackgroundColor: null,
+						        plotBorderWidth: null,
+						        plotShadow: false,
+						        type: 'pie'
+						    },
+						    title: {
+						        text: 'T1WORKS의 부서별 실적현황 '+selectedYear+'년'+selectedMonth+'월'
+						    },
+						    tooltip: {
+						        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+						    },
+						    accessibility: {
+						        point: {
+						            valueSuffix: '%'
+						        }
+						    },
+						    plotOptions: {
+						        pie: {
+						            allowPointSelect: true,
+						            cursor: 'pointer',
+						            dataLabels: {
+						                enabled: true,
+						                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+						            }
+						        }
+						    },    
+						    series: [{
+						        name: 'Brands',
+						        colorByPoint: true,
+						        data: performanceDepArr
+						    }]
+						});	
+						// 차트 구현 끝 ///
 						
 					},
 			    	error: function(request, status, error){
@@ -231,48 +287,6 @@
 		
 	}// end of function goChart(){
 	
-		
-	Highcharts.chart('container', {
-	    chart: {
-	        plotBackgroundColor: null,
-	        plotBorderWidth: null,
-	        plotShadow: false,
-	        type: 'pie'
-	    },
-	    title: {
-	        text: 'Browser market shares in January, 2018'
-	    },
-	    tooltip: {
-	        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-	    },
-	    accessibility: {
-	        point: {
-	            valueSuffix: '%'
-	        }
-	    },
-	    plotOptions: {
-	        pie: {
-	            allowPointSelect: true,
-	            cursor: 'pointer',
-	            dataLabels: {
-	                enabled: true,
-	                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-	            }
-	        }
-	    },
-	    series: [{
-	        name: 'Brands',
-	        colorByPoint: true,
-	        data: [{
-	            name: 'Chrome',
-	            y: 61.41,
-	            sliced: true,
-	            selected: true
-	        }, {
-	            name: 'Internet Explorer',
-	            y: 11.84
-	        }]
-	    }]
-	});	
+
 		
 </script>
