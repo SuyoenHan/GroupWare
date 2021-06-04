@@ -52,6 +52,7 @@ public interface InterBoardKdnDAO {
 	
 	int delSuggComment(String seq); // 건의사항 댓글 삭제하기
 	
+	int editSuggComment(String seq); // 건의사항 댓글수정하기
 	
 	// === 자유게시판 ===
 	
@@ -76,6 +77,10 @@ public interface InterBoardKdnDAO {
 	int getCommentTotalPage(Map<String, String> paraMap); // 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
 
 	List<CommentKdnVO> getCommentListPaging(Map<String, String> paraMap); // 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
+
+	int delGenComment(String seq); // 자유게시판 댓글 삭제하기
+
+	
 
 	
 

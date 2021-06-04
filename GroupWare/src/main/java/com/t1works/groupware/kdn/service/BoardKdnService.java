@@ -184,6 +184,13 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// (건의사항) 댓글 수정하기
+	@Override
+	public int editSuggComment(String seq) {
+		int n = dao.editSuggComment(seq);
+		return n;
+	}
+	
 	// ========== 자유게시판 ===========
 	
 	// 자유게시판 글쓰기 완료 요청
@@ -271,6 +278,15 @@ public class BoardKdnService implements InterBoardKdnService {
 		int totalPage = dao.getCommentTotalPage(paraMap);
 		return totalPage;
 	}
+
+	// 자유게시판 댓글 삭제
+	@Override
+	public int delGenComment(String seq) {
+		int n = dao.delGenComment(seq);
+		return n;
+	}
+
+	
 
 	
 

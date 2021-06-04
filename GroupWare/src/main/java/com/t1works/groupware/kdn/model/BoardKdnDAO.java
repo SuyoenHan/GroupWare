@@ -157,6 +157,13 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 건의사항 댓글 수정
+	@Override
+	public int editSuggComment(String seq) {
+		int n = sqlsession3.update("board.editSuggComment", seq);
+		return n;
+	}
+
 	
 	// =========== 자유게시판  =============
 	
@@ -237,6 +244,14 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return totalPage;
 	}
 
+	// 자유게시판 댓글 삭제하기
+	@Override
+	public int delGenComment(String seq) {
+		int n = sqlsession3.delete("board.delGenComment", seq);
+		return n;
+	}
+
+	
 	
 
 	

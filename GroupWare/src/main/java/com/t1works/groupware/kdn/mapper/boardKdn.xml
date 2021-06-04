@@ -219,6 +219,12 @@
 		where seq = #{seq}
 	</delete>
 	
+	<!-- 건의사항 댓글 수정 -->
+	<update id="editSuggComment" parameterType="String">
+		update tbl_suggestionboardcomment set content=#{content}
+		where seq = #{seq}
+	</update>
+	
 	
 	
 	
@@ -310,10 +316,10 @@
 	
 	<!-- === 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) === -->
 	<select id="getCommentListPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.CommentKdnVO">
-		select name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
+		select seq, name, content, regDate, fk_employeeid <!-- 테이블 컬럼명과 VO명이 다른 경우에 alias를 사용하여 VO의 픨드명과 같에 해준다 -->
 		from
 		(
-			select row_number() over(order by seq desc) as rno, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
+			select row_number() over(order by seq desc) as rno, seq, name, content, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 			,fk_employeeid
 			from tbl_generalboardcomment
 			where fk_seq = #{fk_seq}
@@ -327,6 +333,13 @@
 		from tbl_generalboardcomment
 		where fk_seq = #{fk_seq}
 	</select>
+	
+	<!-- 자유게시판 댓글 삭제 -->
+	<delete id="delGenComment" parameterType="String">
+		delete from tbl_generalboardcomment
+		where seq = #{seq}
+	</delete>
+	
 	
 
 </mapper>

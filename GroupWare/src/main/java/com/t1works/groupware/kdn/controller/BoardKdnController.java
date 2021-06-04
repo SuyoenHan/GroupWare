@@ -900,6 +900,7 @@ public class BoardKdnController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
 				jsonObj.put("regDate", cmtvo.getRegDate());
+				jsonObj.put("seq", cmtvo.getSeq());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -931,6 +932,22 @@ public class BoardKdnController {
 		
 		return jsonObj.toString();
 		// "{"totalPage":5}"
+	}
+	
+	// 건의사항 댓글 수정하기
+	@ResponseBody
+	@RequestMapping(value="/t1/editSuggComment.tw", method= {RequestMethod.GET})
+	public String editSuggComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		int n = service.editSuggComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
 	}
 	
 	// 건의사항 댓글 삭제하기
@@ -1364,6 +1381,7 @@ public class BoardKdnController {
 				jsonObj.put("name", cmtvo.getName());
 				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
 				jsonObj.put("regDate", cmtvo.getRegDate());
+				jsonObj.put("seq", cmtvo.getSeq());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1392,5 +1410,39 @@ public class BoardKdnController {
 		return jsonObj.toString();
 		// "{"totalPage":5}"
 	}
+	
+	// 건의사항 댓글 수정하기
+/*	@ResponseBody
+	@RequestMapping(value="/t1/editGenComment.tw", method= {RequestMethod.GET})
+	public String editGenComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		//int n = service.editGenComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	} */
+	
+	// 건의사항 댓글 삭제하기
+	@ResponseBody
+	@RequestMapping(value="/t1/delGenComment.tw", method= {RequestMethod.GET})
+	public String delGenComment(HttpServletRequest request, CommentKdnVO commentvo) {
+		
+		String seq = request.getParameter("seq");
+		
+		int n = service.delGenComment(seq);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}
+	
+	
 
 }
