@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <% String ctxPath = request.getContextPath(); %>
 
@@ -68,14 +68,17 @@ td.opinion{
 </style>
 
 <script type="text/javascript">
+	
 	$(document).ready(function(){
-		
+	
 		goViewOpinion();
 		
 		$("input#reset").click(function(){			
 			$("textarea#ocontent").val("");
-		});	
+		});		
+		
 	});
+	
 	
 	// Function Declaration	
 	function goAddWrite(){
@@ -138,101 +141,13 @@ td.opinion{
 	function goback(){
 		var $myFrm= document.myFrm;
 		$myFrm.method="POST";
-		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_rec.tw";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_send.tw";
 		$myFrm.submit();
 	}
-	
-	
-	// 결재
-	function goApproval(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/approval.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("결재 승인 되었습니다");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});
-	}
-	
-	
-	function goReject(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/reject.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("반려 처리 되었습니다.");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});	
-	}
-	
-	
-	function goViewApproval(){
-		$.ajax({
-			url:"<%= ctxPath%>/t1/approvalList.tw",
-			data:{"parentAno":"${requestScope.avo.ano}"},
-			dataType:"json",
-			success:function(json){				
-								
-				var html = "";
-				
-				if(json.length > 0){
-					$.each(json, function(index, item){						
-						html += "<div>["+item.odate+"]&nbsp;"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;<span style='color: red;'>"+item.astatus+"</span></div>";
-					});
-				}
-				
-				$("span#approvalDisplay").html(html);
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}
-		});
-	}// end of function goViewOpinion(){}--------------------	
 </script>
 
-<div id="containerview">	
-	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.scatname}</h2>
+<div id="containerview">		
+	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.vcatname}계</h2>
 	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
 	<div id="astatus">
@@ -241,7 +156,7 @@ td.opinion{
 				<th style="width:100px; height:40px;">대리</th>
 				<th>부장</th>
 				<th>사장</th>
-			</tr>
+			</tr>			
 			<tr>
 				<td id="img_approval_1" style="height:70px;">
 				</td>
@@ -266,44 +181,56 @@ td.opinion{
 				</td>
 				<th>문서번호</th>
 				<td>${requestScope.avo.ano}</td>
-			</tr>			
+			</tr>
 			<tr>
 				<th>제목</th>
 				<td colspan="3">${requestScope.avo.atitle}</td>
 			</tr>
-			<c:if test="${requestScope.avo.scat eq '1'}">
+			
+			<c:if test="${requestScope.avo.vno eq '1'}"> 
 				<tr>
-					<th>지출일자</th>
-					<td colspan="3">${requestScope.avo.exdate}</td>
-				</tr>
-				<tr>
-					<th>지출금액</th>
-					<td colspan="3"><fmt:formatNumber value="${requestScope.avo.exprice}" pattern="#,###"></fmt:formatNumber>원</td>
-				</tr>
+					<th>요청기간</th>
+					<td colspan="3">${requestScope.avo.slstart} - ${requestScope.avo.slend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
+				</tr>				
 			</c:if>
-			<c:if test="${requestScope.avo.scat eq '2'}">
+			<c:if test="${requestScope.avo.vno eq '2'}">
 				<tr>
-					<th>사용예정일</th>
-					<td colspan="3">${requestScope.avo.codate}</td>
-				</tr>
-				<tr>
-					<th>카드번호</th>
-					<td colspan="3">${requestScope.avo.cocardnum}</td>
-				</tr>
-				<tr>
-					<th>예상금액</th>
-					<td><fmt:formatNumber value="${requestScope.avo.coprice}" pattern="#,###"></fmt:formatNumber>원</td>				
-					<th>지출목적</th>
-					<td>
-						<c:if test="${requestScope.avo.copurpose eq '1'}">교통비</c:if>
-						<c:if test="${requestScope.avo.copurpose eq '2'}">사무비품</c:if>
-						<c:if test="${requestScope.avo.copurpose eq '3'}">주유비</c:if>
-						<c:if test="${requestScope.avo.copurpose eq '4'}">출장비</c:if>	
-						<c:if test="${requestScope.avo.copurpose eq '5'}">식비</c:if>
-						<c:if test="${requestScope.avo.copurpose eq '6'}">기타</c:if>
+					<th>요청기간</th>
+					<td colspan="3">${requestScope.avo.afdate}&nbsp;&nbsp;
+					<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
 					</td>
 				</tr>
 			</c:if>
+			<c:if test="${requestScope.avo.vno eq '3'}">
+				<tr>
+					<th>요청기간</th>
+					<td colspan="3">${requestScope.avo.daystart} - ${requestScope.avo.dayend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
+				</tr>
+			</c:if>
+			<c:if test="${requestScope.avo.vno eq '4'}">
+				<tr>
+					<th>요청기간</th>
+					<td colspan="3">${requestScope.avo.congstart} - ${requestScope.avo.congend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
+				</tr>
+			</c:if>
+			<c:if test="${requestScope.avo.vno eq '5'}">
+				<tr>
+					<th>출장기간</th>
+					<td colspan="3">${requestScope.avo.bustart} - ${requestScope.avo.buend}</td>
+				</tr>
+				<tr>
+					<th>출장지</th>
+					<td>${requestScope.avo.buplace}</td>				
+					<th>출장인원</th>
+					<td>${requestScope.avo.bupeople}</td>
+				</tr>
+			</c:if>
+			<c:if test="${requestScope.avo.vno eq '6'}">
+				<tr>
+					<th>요청시간</th>
+					<td colspan="3">${requestScope.avo.ewdate}시간</td>
+				</tr>
+			</c:if>	
 			
 			<tr>
 				<th style="height:250px;">글내용</th>
@@ -315,10 +242,11 @@ td.opinion{
 				<td colspan="3">${requestScope.avo.fileName}</td>
 			</tr>
 		</table>
-		
-		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.scatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
+			
+		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.avo.asdate}</div>
-		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
+		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
+		
 		
 		<table id="table3">
 			<tr>
@@ -358,8 +286,8 @@ td.opinion{
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
 			<span style="margin-left: 55%;">
-				<input type="button" class="btn btn-primary" onclick="goApproval();" value="결재"/>				
-				<input type="button" class="btn btn-danger" onclick="goReject();" value="반려"/>
+				<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
+				<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
 			</span>
 		</div>
 		
@@ -379,11 +307,11 @@ td.opinion{
 	
 	<form name="myFrm">
 		<input type="hidden" name="ano" value="${ano}" />
-		<input type="hidden" name="scatname" value="${scatname}" />		
+		<input type="hidden" name="vcatname" value="${vcatname}" />		
 		<input type="hidden" name="astatus" value="${astatus}" />
 		<input type="hidden" name="fromDate" value="${fromDate}" />
 		<input type="hidden" name="toDate" value="${toDate}" />
-		<input type="hidden" name="scat" value="${scat}" />
+		<input type="hidden" name="vno" value="${vno}" />
 		<input type="hidden" name="sort" value="${sort}" />
 		<input type="hidden" name="searchWord" value="${searchWord}" />
 		<input type="hidden" name="currentShowPageNo" value="${currentShowPageNo}" />

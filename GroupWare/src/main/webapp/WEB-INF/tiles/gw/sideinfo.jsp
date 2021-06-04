@@ -43,8 +43,16 @@
         <div id="submenu2" class="myDocument">
         	<a href="javascript:void(0)"><span id="closebtn-style"><i class="fas fa-times fa-lg closebtn"></i></span></a><br>
 	        <ul class="submenu-style">
-	            <li class="clickable">
-	                <a href="<%=ctxPath%>/t1/myDocuNorm_rec.tw">수신함</a>
+	            <li class="active">
+	                <a href="javascript:void(0)">수신함</a>
+		            <ul>
+	                    <li>
+	                        <a href="<%=ctxPath%>/t1/myDocuNorm_rec.tw">미결재문서</a>
+	                    </li>
+	                    <li>
+	                        <a href="<%=ctxPath%>/t1/myDocuNorm_complete.tw">결재완료문서</a>
+	                    </li>
+	                </ul>
 	            </li>
 	            <li class="clickable">
 	                <a href="<%=ctxPath%>/t1/myDocuNorm_send.tw">발신함</a>
@@ -187,6 +195,9 @@
 	            <li class="clickable">
 	                <a href="<%= ctxPath%>/t1/rsGoods.tw">사무용품 대여신청</a>
 	            </li>
+	            <li class="clickable">
+					<a href="<%= ctxPath%>/t1/myReservedRoom.tw">나의 예약내역</a>
+				</li>
 	        </ul>
         </div>
     </div>
