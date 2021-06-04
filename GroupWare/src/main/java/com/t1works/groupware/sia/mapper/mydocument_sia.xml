@@ -47,6 +47,7 @@
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
 		where apaper = '0'
+		and arecipient1=#{userid} or arecipient2=#{userid} or arecipient3=#{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -161,12 +162,13 @@
 	</select>
 	
 	
-	<!-- 검색에 해당하는 수신함-지출결재 글의 총 페이지수를 알아오기 -->
+	<!-- 검색에 해당하는 수신함 - 지출결재 글의 총 페이지수를 알아오기 -->
 	<select id="getSpendTotalPage" parameterType="HashMap" resultType="int">
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_spenda B
 		on A.ano = B.fk_ano
 		where apaper = '0'
+		and arecipient1=#{userid} or arecipient2=#{userid} or arecipient3=#{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -270,12 +272,13 @@
 	</select>
 	
 	
-	<!-- 검색에 해당하는 수신함-근태결재 글의 총 페이지수를 알아오기 -->
+	<!-- 검색에 해당하는 수신함 - 근태결재 글의 총 페이지수를 알아오기 -->
 	<select id="getVacationTotalPage" parameterType="HashMap" resultType="int">
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
 		where apaper = '0'
+		and arecipient1=#{userid} or arecipient2=#{userid} or arecipient3=#{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -475,6 +478,7 @@
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
 		where apaper = '1'
+		and fk_employeeid = #{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -594,6 +598,7 @@
 		from tbl_approval A join tbl_spenda B
 		on A.ano = B.fk_ano
 		where apaper = '1'
+		and fk_employeeid = #{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -702,6 +707,7 @@
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
 		where apaper = '1'
+		and fk_employeeid = #{userid}
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>

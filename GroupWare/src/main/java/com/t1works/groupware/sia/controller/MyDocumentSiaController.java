@@ -369,6 +369,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -376,7 +380,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 수신함 - 일반결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getTotalPage(paraMap);
@@ -580,6 +585,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -587,7 +596,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 수신함 - 지출결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getSpendTotalPage(paraMap);
@@ -788,6 +798,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -795,7 +809,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 수신함 - 근태결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getVacationTotalPage(paraMap);
@@ -1107,6 +1122,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+				
 		Map<String, String> paraMap = new HashMap<>();		  
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -1114,7 +1133,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 발신함 - 일반결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getNormSendTotalPage(paraMap);
@@ -1318,6 +1338,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -1325,7 +1349,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 발신함 - 지출결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getSpendSendTotalPage(paraMap);
@@ -1526,6 +1551,10 @@ public class MyDocumentSiaController {
 			}
 		}
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
 		paraMap.put("fromDate", fromDate);
@@ -1533,7 +1562,8 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
 		// 검색에 해당하는 발신함 - 근태결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getVacationSendTotalPage(paraMap);
@@ -1587,7 +1617,7 @@ public class MyDocumentSiaController {
 		}
 		
 		
-		mav.setViewName("sia/myDocumentDetail/myDocuVacation_detail.gwTiles");
+		mav.setViewName("sia/myDocumentDetail/myDocuVacation_send_detail.gwTiles");
 		
 		return mav;
 	}
@@ -1769,6 +1799,7 @@ public class MyDocumentSiaController {
 				}				
 			}
 		}
+		
 		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
