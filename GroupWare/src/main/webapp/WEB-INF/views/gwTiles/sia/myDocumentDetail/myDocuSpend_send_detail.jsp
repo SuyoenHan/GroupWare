@@ -138,97 +138,9 @@ td.opinion{
 	function goback(){
 		var $myFrm= document.myFrm;
 		$myFrm.method="POST";
-		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_rec.tw";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_send.tw";
 		$myFrm.submit();
-	}
-	
-	
-	// 결재
-	function goApproval(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/approval.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("결재 승인 되었습니다");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});
-	}
-	
-	
-	function goReject(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/reject.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("반려 처리 되었습니다.");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});	
-	}
-	
-	
-	function goViewApproval(){
-		$.ajax({
-			url:"<%= ctxPath%>/t1/approvalList.tw",
-			data:{"parentAno":"${requestScope.avo.ano}"},
-			dataType:"json",
-			success:function(json){				
-								
-				var html = "";
-				
-				if(json.length > 0){
-					$.each(json, function(index, item){						
-						html += "<div>["+item.odate+"]&nbsp;"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;<span style='color: red;'>"+item.astatus+"</span></div>";
-					});
-				}
-				
-				$("span#approvalDisplay").html(html);
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}
-		});
-	}// end of function goViewOpinion(){}--------------------	
+	}	
 </script>
 
 <div id="containerview">	
@@ -358,8 +270,8 @@ td.opinion{
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
 			<span style="margin-left: 55%;">
-				<input type="button" class="btn btn-primary" onclick="goApproval();" value="결재"/>				
-				<input type="button" class="btn btn-danger" onclick="goReject();" value="반려"/>
+				<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
+				<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
 			</span>
 		</div>
 		

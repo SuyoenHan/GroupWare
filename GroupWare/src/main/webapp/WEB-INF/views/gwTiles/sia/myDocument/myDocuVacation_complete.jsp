@@ -212,7 +212,7 @@ $(document).ready(function(){
 	function goSearch2(currentShowPageNo){	
 		
 		$.ajax({
-			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
+			url:"<%= ctxPath%>/t1/vacation_completelist.tw",
 			data:{"astatus":"${astatus}"
 				, "fromDate":"${fromDate}"
 				, "toDate":"${toDate}"
@@ -260,17 +260,18 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#approvalDisplay").html(html);				
+				$("tbody#commentDisplay").html(html);
+				
 				
 				// 페이지바 함수 호출
-				makeApprovalPageBar(currentShowPageNo);				
+				makeCommentPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		});		
-	} // end of function goSearch2(){}--------------------
+	} // end of goSearch2----
 	
 	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
 	function goSearch(currentShowPageNo){			
@@ -289,7 +290,7 @@ $(document).ready(function(){
 		var searchWord= $("input#searchWord").val();
 		
 		$.ajax({
-			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
+			url:"<%= ctxPath%>/t1/vacation_completelist.tw",
 			data:{"astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
@@ -328,6 +329,8 @@ $(document).ready(function(){
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
 						html += "</tr>";
+						
+						
 					});
 				}
 				else{
@@ -336,11 +339,11 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#approvalDisplay").html(html);
+				$("tbody#commentDisplay").html(html);
 					
 				
 				// 페이지바 함수 호출
-				makeApprovalPageBar(currentShowPageNo);				
+				makeCommentPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
@@ -351,7 +354,7 @@ $(document).ready(function(){
 	
 	
 	// 페이지바 Ajax로 만들기
-	function makeApprovalPageBar(currentShowPageNo){
+	function makeCommentPageBar(currentShowPageNo){
 		
 		$("input[name=currentShowPageNo]").val(currentShowPageNo);
 		
@@ -365,8 +368,9 @@ $(document).ready(function(){
 		
 		// totalPage 수 알아오기
 		$.ajax({
-			url:"<%= ctxPath%>/t1/getVacationTotalPage.tw",
-			data:{"astatus":$("select#astatus").val()
+			url:"<%= ctxPath%>/t1/getVacationCompleteTotalPage.tw",
+			data:{"anocode":"${requestScope.approvalvo.anocode}"
+				, "astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
 				, "vno": checkArres
@@ -443,7 +447,7 @@ $(document).ready(function(){
 		frm.vno.value = vno;
 		
 		frm.method = "get";
-		frm.action = "<%= ctxPath%>/t1/myDocuVacation_detail.tw";
+		frm.action = "<%= ctxPath%>/t1/myDocuVacation_complete_detail.tw";
 		frm.submit();
 	} 
 	
@@ -451,11 +455,11 @@ $(document).ready(function(){
 
 <div class="section">
 <img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
-<span style="font-size: 14pt; font-weight: bold;">수신함 - 미결재문서</span>
+<span style="font-size: 14pt; font-weight: bold;">수신함 - 결재완료문서</span>
 	<div class="tab_select">
-		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area">일반 결재 문서</a> 
-		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
-		<a href="<%= ctxPath%>/t1/myDocuVacation_rec.tw" class="tab_area selected">근태/휴가 결재 문서</a>			
+		<a href="<%= ctxPath%>/t1/myDocuNorm_complete.tw" class="tab_area">일반 결재 문서</a> 
+		<a href="<%= ctxPath%>/t1/myDocuSpend_complete.tw" class="tab_area">지출 결재 문서</a>
+		<a href="<%= ctxPath%>/t1/myDocuVacation_complete.tw" class="tab_area selected">근태/휴가 결재 문서</a>			
 	</div>
 	
 	<form name="searchFrm">
@@ -539,7 +543,7 @@ $(document).ready(function(){
 				<th style="width: 120px; text-align: center;">기안일</th>
 			</tr>
 			</thead>		
-			<tbody id="approvalDisplay"></tbody>		
+			<tbody id="commentDisplay"></tbody>		
 		</table>
 		
 		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>

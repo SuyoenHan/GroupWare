@@ -82,40 +82,11 @@ td.opinion{
 	*/
 		goViewOpinion();
 		
-		$("input#reset").click(function(){			
-			$("textarea#ocontent").val("");
-		});		
-		
 	});
 	
 	
 	// Function Declaration	
-	function goAddWrite(){
-		var opinionVal = $("textarea#ocontent").val().trim();
-		if(opinionVal == ""){
-			alert("의견을 작성하세요!!");
-			return; // 종료
-		}
-		
-		var form_data = $("form[name=addWriteFrm]").serialize();
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/addOpinion.tw",
-			data:form_data,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				goViewOpinion();
-				
-				$("textarea#ocontent").val("");
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}
-		});		
-	}// end of function goAddWrite(){}--------------------
-	
-	
+	// 의견보기
 	function goViewOpinion(){
 		$.ajax({
 			url:"<%= ctxPath%>/t1/opinionList.tw",
@@ -150,74 +121,11 @@ td.opinion{
 	function goback(){
 		var $myFrm= document.myFrm;
 		$myFrm.method="POST";
-		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_rec.tw";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_complete.tw";
 		$myFrm.submit();
 	}
 	
-	
-	// 결재
-	function goApproval(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/approval.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("결재 승인 되었습니다");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});
-	}
-	
-	
-	function goReject(){
-		var formData = $("form[name=approvalDocu]").serialize();
-		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
-		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/reject.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("반려 처리 되었습니다.");
-					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});	
-	}
-	
-	
+	// 결재로그 보기
 	function goViewApproval(){
 		$.ajax({
 			url:"<%= ctxPath%>/t1/approvalList.tw",
@@ -351,7 +259,7 @@ td.opinion{
 				<th>결재로그</th>
 				<td>
 					[${requestScope.avo.asdate}] ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname} <span style="color: red; font-weight: bold;">제출</span>
-					<span id="logDisplay"></span>
+					<span id="approvalDisplay"></span>
 				</td>
 			</tr>
 		</table>
@@ -360,47 +268,17 @@ td.opinion{
 				<th>결재의견</th>
 				<td id="opinionDisplay"></td>
 			</tr>
-		</table>
-		
-		<form name="addWriteFrm">
-			<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
-			<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
-			<input type="hidden" name="parentAno" value="${requestScope.avo.ano}" />
-			
-			<table id="table5">
-				<tr>				
-					<th>의견작성</th>
-					<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
-					</td>
-					<td class="opinion" style="width:10%;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
-					<input type="button" id="reset" class="btn btn-default" value="취소"/></td>				
-				</tr>
-			</table>
-		</form>
+		</table>	
 		
 		
 		<div style="margin-top: 20px;">
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 55%;">
-				<input type="button" class="btn btn-primary" onclick="goApproval();" value="결재"/>				
-				<input type="button" class="btn btn-danger" onclick="goReject();" value="반려"/>
-			</span>
 		</div>
 		
 		<br><br>
 	</div>
-	
-	<form name="approvalDocu">
-		<input type="hidden" name="ano" value="${ano}"/>
-		<input type="hidden" name="astatus" value="${requestScope.avo.astatus}"/>
-		<input type="hidden" name="arecipient1" value="${requestScope.avo.arecipient1}"/>
-		<input type="hidden" name="arecipient2" value="${requestScope.avo.arecipient2}"/>
-		<input type="hidden" name="arecipient3" value="${requestScope.avo.arecipient3}"/>
-		<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
-		<input type=hidden name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />		
-	</form>
 	
 	
 	<form name="myFrm">

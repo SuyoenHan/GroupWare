@@ -27,7 +27,7 @@ table, th, td {border: solid 1px gray;}
 	background-color: #395673; 
 	color: #ffffff;
 }
-#table2 th {
+#table2 th, #table3 th, #table4 th, #table5 th {
 	width: 150px;
 }
 
@@ -43,19 +43,169 @@ td{
 	width: 70%;
 	margin: 50px auto;
 }
+#table3 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table4 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table5 {
+	width: 70%;
+	margin: 10px auto;
+}
 input.btn {
 	width: 70px;
 	border-radius: 0;
 	font-weight: bold;
 }
 
+td.opinion{
+	border: solid 1px white;
+}
 </style>
 
 <script type="text/javascript">
 	$(document).ready(function(){
 		
+	goViewOpinion();
 		
+		$("input#reset").click(function(){			
+			$("textarea#ocontent").val("");
+		});	
 	});
+	
+	
+	// Function Declaration	
+	function goAddWrite(){
+		var opinionVal = $("textarea#ocontent").val().trim();
+		if(opinionVal == ""){
+			alert("의견을 작성하세요!!");
+			return; // 종료
+		}
+		
+		var form_data = $("form[name=addWriteFrm]").serialize();
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/addOpinion.tw",
+			data:form_data,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				goViewOpinion();
+				
+				$("textarea#ocontent").val("");
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}// end of function goAddWrite(){}--------------------
+	
+	
+	function goViewOpinion(){
+		$.ajax({
+			url:"<%= ctxPath%>/t1/opinionList.tw",
+			data:{"parentAno":"${requestScope.avo.ano}"},
+			dataType:"json",
+			success:function(json){				
+								
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){						
+						html += "<div>▶"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;["+item.odate+"]</div>";
+						html += "<div>"+ item.ocontent +"</div>";
+						html += "<hr style='margin: 2px;'>";
+					});
+				}
+				else{
+					html += "<div>의견이 존재하지 않습니다.</div>";
+				}
+				
+				$("td#opinionDisplay").html(html);
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+	}// end of function goViewOpinion(){}--------------------
+	
+	
+	// 목록보기
+	function goback(){
+		var $myFrm= document.myFrm;
+		$myFrm.method="POST";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuNorm_rec.tw";
+		$myFrm.submit();
+	}
+	
+	
+	// 결재
+	function goApproval(){
+		var formData = $("form[name=approvalDocu]").serialize();
+		
+		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/approval.tw",
+			data:formData,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				var html1 = "";
+				
+				if(json.n == 1){					
+					alert("결재 승인 되었습니다");
+					
+					html1 += "";
+					
+					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
+					
+					$("td#img_approval_1").html(html);
+				}
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}			
+		});
+	}
+	
+	
+	// 반려
+	function goReject(){
+		var formData = $("form[name=approvalDocu]").serialize();
+		
+		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
+		
+		$.ajax({
+			url:"<%=ctxPath%>/t1/reject.tw",
+			data:formData,
+			type:"post",
+			dataType:"json",
+			success:function(json){ 
+				var html1 = "";
+				
+				if(json.n == 1){					
+					alert("반려 처리 되었습니다.");
+					
+					html1 += "";
+					
+					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
+					
+					$("td#img_approval_1").html(html);
+				}
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}			
+		});	
+	}
+	
 </script>
 
 <div id="containerview">	
@@ -94,7 +244,8 @@ input.btn {
 			<tr>
 				<th>제목</th>
 				<td colspan="3">${requestScope.avo.atitle}</td>
-			</tr>			
+			</tr>
+					
 			<c:if test="${requestScope.avo.ncat eq '1'}">
 				<tr>
 					<th>회의시간</th>
@@ -121,7 +272,7 @@ input.btn {
 			
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.afile}</td>
+				<td colspan="3">${requestScope.avo.fileName}</td>
 			</tr>
 		</table>
 		
@@ -129,15 +280,73 @@ input.btn {
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.avo.asdate}</div>
 		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
 		
+		<table id="table3">
+			<tr>
+				<th>결재로그</th>
+				<td>
+					[${requestScope.avo.asdate}] ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname} <span style="color: red; font-weight: bold;">제출</span>
+					<span id="logDisplay"></span>
+				</td>
+			</tr>
+		</table>
+		<table id="table4">
+			<tr>
+				<th>결재의견</th>
+				<td id="opinionDisplay"></td>
+			</tr>
+		</table>
+		
+		<form name="addWriteFrm">
+			<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
+			<input type="hidden" name="name" value="${sessionScope.loginuser.name}"/>
+			<input type="hidden" name="parentAno" value="${requestScope.avo.ano}" />
+			
+			<table id="table5">
+				<tr>				
+					<th>의견작성</th>
+					<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
+					</td>
+					<td class="opinion" style="width:10%;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
+					<input type="button" id="reset" class="btn btn-default" value="취소"/></td>				
+				</tr>
+			</table>
+		</form>
+		
+		
 		<div style="margin-top: 20px;">
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 50%">
-				<input type="button" class="btn btn-primary" value="결재"/>
-				<input type="button" class="btn btn-warning" value="보류"/>
-				<input type="button" class="btn btn-danger" value="반려"/>
+			<span style="margin-left: 55%;">
+				<input type="button" class="btn btn-primary" onclick="goApproval();" value="결재"/>				
+				<input type="button" class="btn btn-danger" onclick="goReject();" value="반려"/>
 			</span>
 		</div>
+		
+		<br><br>
 	</div>
+	
+	<form name="approvalDocu">
+		<input type="hidden" name="ano" value="${ano}"/>
+		<input type="hidden" name="astatus" value="${requestScope.avo.astatus}"/>
+		<input type="hidden" name="arecipient1" value="${requestScope.avo.arecipient1}"/>
+		<input type="hidden" name="arecipient2" value="${requestScope.avo.arecipient2}"/>
+		<input type="hidden" name="arecipient3" value="${requestScope.avo.arecipient3}"/>
+		<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
+		<input type=hidden name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />		
+	</form>
+	
+	
+	<form name="myFrm">
+		<input type="hidden" name="ano" value="${ano}" />
+		<input type="hidden" name="ncatname" value="${ncatname}" />		
+		<input type="hidden" name="astatus" value="${astatus}" />
+		<input type="hidden" name="fromDate" value="${fromDate}" />
+		<input type="hidden" name="toDate" value="${toDate}" />
+		<input type="hidden" name="ncat" value="${ncat}" />
+		<input type="hidden" name="sort" value="${sort}" />
+		<input type="hidden" name="searchWord" value="${searchWord}" />
+		<input type="hidden" name="currentShowPageNo" value="${currentShowPageNo}" />
+	</form>
+	
 </div>

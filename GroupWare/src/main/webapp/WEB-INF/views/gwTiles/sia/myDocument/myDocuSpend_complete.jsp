@@ -87,7 +87,7 @@ $(document).ready(function(){
 	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
 	$(document).on('click','tr.docuInfo',function(){
 		var checkArr = new Array();	
-		$("input[name=vno]:checked").each(function(index,item){			
+		$("input[name=scat]:checked").each(function(index,item){			
 			var no = $(item).val();
 			checkArr.push(no);			
 		});
@@ -95,18 +95,18 @@ $(document).ready(function(){
 		var checkArres = checkArr.join();	
 		
 		var ano = $(this).children(".ano").text();
-		var vcatname = $(this).children(".vcatname").text();		
+		var scatname = $(this).children(".scatname").text();		
 		var fromDate= $("input#fromDate").val();
 		var toDate= $("input#toDate").val();
 		var astatus = $("select#astatus").val();
-		var vno = checkArres;
+		var scat = checkArres;
 		var sort= $("select#sort").val();		
 		var searchWord= $("input#searchWord").val();
 		
-		goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord);
+		goView(ano, scatname, fromDate, toDate, astatus, scat, sort, searchWord);
 	});
 	
-	if("${sort}"=="" && "${searchWord}"=="" && "${fromDate}"=="" && "${toDate}"=="" && "${astatus}"=="" && "${vno}"==""){
+	if("${sort}"=="" && "${searchWord}"=="" && "${fromDate}"=="" && "${toDate}"=="" && "${astatus}"=="" && "${scat}"==""){
 		goSearch(1);
 	}
 	else {
@@ -118,7 +118,7 @@ $(document).ready(function(){
 		$("select#sort").val("${sort}");
 		$("input#searchWord").val("${searchWord}");
 		
-		var v = "${vno}".split(',');		
+		var v = "${scat}".split(',');		
 		
 		for(var i=0; i<v.length; i++){
 			$("input:checkbox[id='chx"+v[i]+"']").prop("checked", true);
@@ -212,11 +212,11 @@ $(document).ready(function(){
 	function goSearch2(currentShowPageNo){	
 		
 		$.ajax({
-			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
+			url:"<%= ctxPath%>/t1/spend_completelist.tw",
 			data:{"astatus":"${astatus}"
 				, "fromDate":"${fromDate}"
 				, "toDate":"${toDate}"
-				, "vno": "${vno}"
+				, "scat": "${scat}"
 				, "sort":"${sort}"
 				, "searchWord":"${searchWord}"
 				, "currentShowPageNo":currentShowPageNo},
@@ -246,7 +246,7 @@ $(document).ready(function(){
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
-						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
@@ -260,22 +260,23 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#approvalDisplay").html(html);				
+				$("tbody#commentDisplay").html(html);
+				
 				
 				// 페이지바 함수 호출
-				makeApprovalPageBar(currentShowPageNo);				
+				makeCommentPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		});		
-	} // end of function goSearch2(){}--------------------
+	} // end of goSearch2----
 	
 	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
 	function goSearch(currentShowPageNo){			
 		var checkArr = new Array();	
-		$("input[name=vno]:checked").each(function(index,item){			
+		$("input[name=scat]:checked").each(function(index,item){			
 			var no = $(item).val();
 			checkArr.push(no);			
 		});
@@ -284,16 +285,16 @@ $(document).ready(function(){
 		var checkArres = checkArr.join();
 		var fromDate= $("input#fromDate").val();
 		var toDate= $("input#toDate").val();
-		var vno= checkArres;
+		var scat= checkArres;
 		var sort= $("select#sort").val();
 		var searchWord= $("input#searchWord").val();
 		
 		$.ajax({
-			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
+			url:"<%= ctxPath%>/t1/spend_completelist.tw",
 			data:{"astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
-				, "vno": checkArres
+				, "scat": checkArres
 				, "sort":$("select#sort").val()
 				, "searchWord":$("input#searchWord").val()
 				, "currentShowPageNo":currentShowPageNo},
@@ -323,11 +324,13 @@ $(document).ready(function(){
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
-						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
 						html += "</tr>";
+						
+						
 					});
 				}
 				else{
@@ -336,11 +339,11 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#approvalDisplay").html(html);
+				$("tbody#commentDisplay").html(html);
 					
 				
 				// 페이지바 함수 호출
-				makeApprovalPageBar(currentShowPageNo);				
+				makeCommentPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
@@ -351,25 +354,26 @@ $(document).ready(function(){
 	
 	
 	// 페이지바 Ajax로 만들기
-	function makeApprovalPageBar(currentShowPageNo){
+	function makeCommentPageBar(currentShowPageNo){
 		
 		$("input[name=currentShowPageNo]").val(currentShowPageNo);
 		
 		var checkArr = new Array();	
-		$("input[name=vno]:checked").each(function(index,item){			
-			var vno = $(item).val();
-			checkArr.push(vno);			
+		$("input[name=scat]:checked").each(function(index,item){			
+			var scat = $(item).val();
+			checkArr.push(scat);			
 		});		
 		
 		var checkArres = checkArr.join();		
 		
 		// totalPage 수 알아오기
 		$.ajax({
-			url:"<%= ctxPath%>/t1/getVacationTotalPage.tw",
-			data:{"astatus":$("select#astatus").val()
+			url:"<%= ctxPath%>/t1/getSpendCompleteTotalPage.tw",
+			data:{"anocode":"${requestScope.approvalvo.anocode}"
+				, "astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
-				, "vno": checkArres
+				, "scat": checkArres
 				, "sort":$("select#sort").val()
 				, "searchWord":$("input#searchWord").val()
 				, "sizePerPage":"10"},
@@ -431,19 +435,19 @@ $(document).ready(function(){
 		});
 	}	
 	
-	function goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord){
+	function goView(ano, scatname, fromDate, toDate, astatus, scat, sort, searchWord){
 		var frm = document.goViewFrm;
 		frm.ano.value = ano;
 		frm.sort.value = sort;
-		frm.vcatname.value = vcatname;
+		frm.scatname.value = scatname;
 		frm.searchWord.value = searchWord;
 		frm.fromDate.value = fromDate;
 		frm.toDate.value = toDate;
 		frm.astatus.value = astatus;
-		frm.vno.value = vno;
+		frm.scat.value = scat;
 		
 		frm.method = "get";
-		frm.action = "<%= ctxPath%>/t1/myDocuVacation_detail.tw";
+		frm.action = "<%= ctxPath%>/t1/myDocuSpend_complete_detail.tw";
 		frm.submit();
 	} 
 	
@@ -451,11 +455,11 @@ $(document).ready(function(){
 
 <div class="section">
 <img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
-<span style="font-size: 14pt; font-weight: bold;">수신함 - 미결재문서</span>
+<span style="font-size: 14pt; font-weight: bold;">수신함 - 결재완료문서</span>
 	<div class="tab_select">
-		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area">일반 결재 문서</a> 
-		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
-		<a href="<%= ctxPath%>/t1/myDocuVacation_rec.tw" class="tab_area selected">근태/휴가 결재 문서</a>			
+		<a href="<%= ctxPath%>/t1/myDocuNorm_complete.tw" class="tab_area">일반 결재 문서</a> 
+		<a href="<%= ctxPath%>/t1/myDocuSpend_complete.tw" class="tab_area selected">지출 결재 문서</a>
+		<a href="<%= ctxPath%>/t1/myDocuVacation_complete.tw" class="tab_area">근태/휴가 결재 문서</a>			
 	</div>
 	
 	<form name="searchFrm">
@@ -503,14 +507,12 @@ $(document).ready(function(){
 				</td>
 			</tr>
 			<tr>
-				<td class="th">근태 휴가 결재 문서</td>
+				<td class="th">지출 결재 문서</td>
 				<td>&nbsp;&nbsp;
-					<label for="chx1"><input type="checkbox" name="vno" id="chx1" value="1"> 병가</label>&nbsp;&nbsp;
-					<label for="chx2"><input type="checkbox" name="vno" id="chx2" value="2"> 반차</label>&nbsp;&nbsp;
-					<label for="chx3"><input type="checkbox" name="vno" id="chx3" value="3"> 연차</label>&nbsp;&nbsp;
-					<label for="chx4"><input type="checkbox" name="vno" id="chx4" value="4"> 경조휴가</label>&nbsp;&nbsp;
-					<label for="chx5"><input type="checkbox" name="vno" id="chx5" value="5"> 출장</label>&nbsp;&nbsp;
-					<label for="chx6"><input type="checkbox" name="vno" id="chx6" value="6"> 추가근무</label>&nbsp;&nbsp;
+					<label for="chx1"><input type="checkbox" name="scat" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
+					<label for="chx2"><input type="checkbox" name="scat" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
+					<label for="chx3"><input type="checkbox" name="scat" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
+					<label for="chx4"><input type="checkbox" name="scat" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
 				</td>
 			</tr>			
 			<tr>
@@ -529,7 +531,7 @@ $(document).ready(function(){
 		<br>
 		
 		<table id="table">
-			<thead>
+			<thead>scat
 			<tr>
 				<th style="width: 70px; text-align: center;">번호</th>
 				<th style="width: 300px; text-align: center;">제목</th>
@@ -539,7 +541,7 @@ $(document).ready(function(){
 				<th style="width: 120px; text-align: center;">기안일</th>
 			</tr>
 			</thead>		
-			<tbody id="approvalDisplay"></tbody>		
+			<tbody id="commentDisplay"></tbody>		
 		</table>
 		
 		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
@@ -548,11 +550,11 @@ $(document).ready(function(){
 	
 	<form name="goViewFrm">
 		<input type="hidden" name="ano" value="" />
-		<input type="hidden" name="vcatname" value="" />		
+		<input type="hidden" name="scatname" value="" />		
 		<input type="hidden" name="astatus" value="" />
 		<input type="hidden" name="fromDate" value="" />
 		<input type="hidden" name="toDate" value="" />
-		<input type="hidden" name="vno" value="" />
+		<input type="hidden" name="scat" value="" />
 		<input type="hidden" name="sort" value="" />
 		<input type="hidden" name="searchWord" value="" />
 		<input type="hidden" name="currentShowPageNo" value="" />
