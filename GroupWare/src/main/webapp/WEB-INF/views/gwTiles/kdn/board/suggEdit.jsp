@@ -21,6 +21,20 @@
 <script type="text/javascript">
    $(document).ready(function(){
 	   
+	   var privatePost = ${requestScope.boardvo.privatePost};
+	   $("input[name=privatePost]").val(privatePost);
+	   
+	   if(privatePost == "1"){
+		   $("input#checkPrivate").prop("checked",true);
+	   }
+	   
+		$("input#checkPrivate").change(function(){
+			 if($(this).is(":checked") == true){
+				 $("input[name=privatePost]").val("1");
+			 } else {
+				 $("input[name=privatePost]").val("0");
+			 }
+		})
 	   
       <%-- === #167. 스마트 에디터 구현 시작 === --%>
        
@@ -85,7 +99,7 @@
 </script>
 
 <div style="padding-left: 10%;">
- <a href="javascript:location.href='suggestionBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span></a>
+ <a href="javascript:location.href='suggestionBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-exclamation fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">건의사항</span></a>
 
  <form name="editFrm"> 
  
@@ -116,7 +130,9 @@
          <tr>
             <th>비밀번호</th>
             <td>
-               <input type="password" name="pw" id="pw" class="short" />       
+               <input type="password" name="pw" id="pw" class="short" /> 
+               <input type="hidden" name="privatePost"/>
+		       <input type="checkbox" id="checkPrivate" />&nbsp;비밀글      
             </td>
          </tr>
       </table>

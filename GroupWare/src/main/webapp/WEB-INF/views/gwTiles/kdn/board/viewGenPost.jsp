@@ -78,7 +78,7 @@ function goViewComment(currentShowPageNo) {
 					html += "<span style='display:inline-block; margin-bottom:5px; font-size:13px;'>"+item.regDate+"</span>&nbsp;&nbsp;"
 					
 					if($("input[name=fk_employeeid]").val() == item.fk_employeeid){
-						html+="<a style='margin-right:5px; font-size:13px; text-decoration: none;'>수정</a><a style='border-left: solid 1px gray; padding-left: 5px; font-size:13px; text-decoration: none;'>삭제</a><br>";
+						html+="<a href='javascript:editGenComment("+item.seq+")' style='margin-right:5px; font-size:13px; text-decoration: none;'>수정</a><a href='javascript:delGenComment("+item.seq+")' style='border-left: solid 1px gray; padding-left: 5px; font-size:13px; text-decoration: none;'>삭제</a><br>";
 					} else {
 						html+="<br>";
 					}
@@ -174,7 +174,86 @@ function makeCommentPageBar(currentShowPageNo) {
 	});
 	
 }// end of function makeCommentPageBar(currentShowPageNo) {}-----------------
-		
+
+
+//댓글 수정하기
+function editGenComment(comment_seq){
+   
+   var bool = confirm("댓글을 수정하시겠습니까?");
+   console.log("bool => " + bool);
+   console.log("넘겨받은 댓글번호"+comment_seq);
+   
+   
+   
+   if(bool){
+	   alert("아직 구현중이에요.. ㅎㅎ");
+	   $("input.textbox").show();
+	   <%-- 
+	   
+	   $.ajax({
+		   url:"<%=request.getContextPath()%>/t1/editSuggComment.tw",
+		   data:{"seq":comment_seq,
+			   	 "content":content},
+		   dataType:"json",
+		   success:function(json){
+			   if(json.n == 1){
+				   alert('댓글 수정 성공');
+				   goViewComment();
+			   } else {
+				   alert('댓글 수정 실패');
+			   }
+			   
+		   },
+		   error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	       }
+		   
+		   
+	   });
+	   
+	    --%>
+   }
+   
+}  //end of function editGenComment(comment_seq) -------
+
+
+
+// 댓글 삭제하기
+function delGenComment(comment_seq){
+   
+   var bool = confirm("댓글을 삭제하시겠습니까?");
+   console.log("bool => " + bool);
+ console.log("넘겨받은 seq : "+comment_seq);
+   
+   
+   if(bool){
+	   $.ajax({
+		   url:"<%=request.getContextPath()%>/t1/delGenComment.tw",
+		   data:{"seq":comment_seq},
+		   dataType:"json",
+		   success:function(json){
+			   if(json.n == 1){
+				   console.log("댓글 삭제 성공");
+				   goViewComment();
+			   } else {
+				   alert('댓글 삭제가 실패했습니다.');
+			   }
+			   
+		   },
+		   error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	       }
+		   
+		   
+	   });
+	   
+	   
+   }
+}  //end of function delGenComment(comment_seq) -------
+
+
+
+
 </script>
 
 <div id="board-container">
