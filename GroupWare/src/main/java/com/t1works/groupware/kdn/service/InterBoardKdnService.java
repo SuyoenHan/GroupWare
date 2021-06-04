@@ -24,6 +24,8 @@ public interface InterBoardKdnService {
 	
 	int noticeDel(Map<String, String> paraMap); // 글 삭제하기
 	
+	int noticeUploadwithFile(BoardKdnVO boardvo); // 파일첨부가 있는 글쓰기
+	
 	// === 건의사항 ===
 
 	List<BoardKdnVO> listSearchWithPaging(Map<String, String> paraMap);	// (페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
@@ -73,6 +75,8 @@ public interface InterBoardKdnService {
 	int getCommentTotalPage(Map<String, String> paraMap); // 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
 
 	int delGenComment(String seq); //(자유게시판) 댓글 삭제하기
+
+	
 
 	
 

@@ -64,6 +64,12 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 파일 첨부가 있는 글쓰기
+	@Override
+	public int noticeUploadwithFile(BoardKdnVO boardvo) {
+		int n = sqlsession3.insert("board.noticeUploadwithFile",boardvo);
+		return n;
+	}
 	
 	// =========== 건의사항 =============
 
@@ -250,6 +256,8 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		int n = sqlsession3.delete("board.delGenComment", seq);
 		return n;
 	}
+
+	
 
 	
 	

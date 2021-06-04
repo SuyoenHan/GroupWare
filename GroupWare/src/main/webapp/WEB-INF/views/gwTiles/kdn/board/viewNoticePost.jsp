@@ -66,6 +66,10 @@ $(document).ready(function(){
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
 			<tr class="thead">
+				<th>첨부파일</th>
+				<td>${requestScope.boardvo.subject}</td>
+			</tr>
+			<tr class="thead">
 				<td colspan='2'>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
 				</td>

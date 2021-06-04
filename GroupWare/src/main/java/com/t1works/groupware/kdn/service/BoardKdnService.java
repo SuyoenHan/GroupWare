@@ -80,6 +80,15 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// 파일 첨부가 있는 글쓰기
+	@Override
+	public int noticeUploadwithFile(BoardKdnVO boardvo) {
+		int n = dao.noticeUploadwithFile(boardvo);	//첨부파일이 있는 경우
+		return n;
+	}
+
+
+	
 	
 	// ========== 건의사항 ===========
 	
