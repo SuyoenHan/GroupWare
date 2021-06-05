@@ -25,6 +25,8 @@ public interface InterBoardKdnDAO {
 	int noticeDel(Map<String, String> paraMap); // 글 삭제하기
 	
 	int noticeUploadwithFile(BoardKdnVO boardvo); // 파일 첨부가 있는 글쓰기
+	
+	int noticeEditNewAttach(BoardKdnVO boardvo); // 첨부파일 변경한 경우 글수정
 
 	// === 건의사항 ===
 	
@@ -56,6 +58,8 @@ public interface InterBoardKdnDAO {
 	
 	int editSuggComment(String seq); // 건의사항 댓글수정하기
 	
+	int suggUploadWithFile(BoardKdnVO boardvo);	//건의사항 첨부파일있는 글쓰기
+	
 	// === 자유게시판 ===
 	
 	int genPostUpload(BoardKdnVO boardvo); // 자유게시판 글쓰기 완료 요청
@@ -81,6 +85,14 @@ public interface InterBoardKdnDAO {
 	List<CommentKdnVO> getCommentListPaging(Map<String, String> paraMap); // 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리)
 
 	int delGenComment(String seq); // 자유게시판 댓글 삭제하기
+
+	int genUploadWithFile(BoardKdnVO boardvo); // (자유게시판) 파일첨부가 있는 글쓰기
+
+	int generalEditNewAttach(BoardKdnVO boardvo); // 첨부파일 변경한 경우 글수정
+
+	
+
+	
 
 	
 

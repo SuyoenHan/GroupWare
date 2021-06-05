@@ -274,6 +274,19 @@ function makeCommentPageBar(currentShowPageNo) {
 				<th>제목</th>
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
+			<c:if test="${not empty requestScope.boardvo.fileName}">
+				<tr class="thead">
+					<th>첨부파일</th>
+					<td>
+						<c:if test="${sessionScope.loginuser != null}">
+							<a href="<%=ctxPath%>/t1/downloadSuggFile.tw?seq=${requestScope.boardvo.seq}">${requestScope.boardvo.orgFilename}</a>
+						</c:if>
+						<c:if test="${sessionScope.loginuser == null}">
+							${requestScope.boardvo.orgFilename}
+						</c:if>
+					</td>
+				</tr>
+			</c:if>
 			<tr class="thead">
 				<td colspan='2'>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
@@ -294,8 +307,12 @@ function makeCommentPageBar(currentShowPageNo) {
 		<c:if test="${requestScope.boardvo.nextseq ne null}">
 			<i class="fas fa-angle-double-right"></i>&nbsp;&nbsp;다음글&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewSuggPost.tw?seq=${requestScope.boardvo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span>
 		</c:if>
-		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
-		<!-- <button type="button" class="float-right btn-style" onclick="javascript:location.href='suggestionBoard.tw'">전체목록보기</button> -->
+		<c:if test="${not empty requestScope.gobackURL}">
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
+		</c:if>
+		<c:if test="${empty requestScope.gobackURL}">
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='suggestionBoard.tw'">목록</button>
+		</c:if>
 		<!-- 인사팀 대리만 답변글쓰기 가능 -->
 		<c:if test="${loginuser.fk_dcode eq '4' && loginuser.fk_pcode eq'2'}">
 		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/suggPostUpload.tw?parentSeq=${requestScope.boardvo.seq}&groupno=${requestScope.boardvo.groupno}&depthno=${requestScope.boardvo.depthno}&subject=${requestScope.boardvo.subject}&privatePost=${requestScope.boardvo.privatePost}'">답글쓰기</button>

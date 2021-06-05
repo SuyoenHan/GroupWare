@@ -110,7 +110,6 @@ $(document).ready(function(){
          		<input type="file" name="attach" />
          	</td>
            </tr>
-	       
 	       <tr>
 	          <th>내용</th>
 	          <td>

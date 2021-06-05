@@ -136,8 +136,22 @@ $(document).ready(function(){
 					</td>
 					<td>${boardvo.name}</td>
 					<td>${boardvo.regDate}</td>
-					<td>${boardvo.readCount}</td>
-					<td></td>
+					<td align="center">${boardvo.readCount}</td>
+					<td align="center">
+						<c:if test="${not empty boardvo.fileName}">
+							<c:if test="${boardvo.privatePost eq '1'}">
+								<c:choose>
+									<c:when test="${loginuser.employeeid == boardvo.fk_employeeid || (loginuser.fk_dcode eq '4' && (loginuser.fk_pcode eq '2'|| loginuser.fk_pcode eq '3'))}">
+										<a href="<%=ctxPath%>/t1/downloadNoticeFile.tw?seq=${boardvo.seq}" class="anchor-style"><i class="fas fa-paperclip"></i></a>
+									</c:when>
+									<c:otherwise><i class="fas fa-paperclip"></i></c:otherwise>
+								</c:choose>
+							</c:if>
+							<c:if test="${boardvo.privatePost eq '0'}">
+								<a href="<%=ctxPath%>/t1/downloadNoticeFile.tw?seq=${boardvo.seq}" class="anchor-style"><i class="fas fa-paperclip"></i></a>
+							</c:if>
+						</c:if>
+					</td>
 				</tr>
 			</c:forEach>
 			</tbody>

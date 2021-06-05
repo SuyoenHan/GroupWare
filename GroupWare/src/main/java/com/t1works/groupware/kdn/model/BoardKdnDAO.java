@@ -71,6 +71,14 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 	
+	// 첨부파일 변경한 경우 글수정
+	@Override
+	public int noticeEditNewAttach(BoardKdnVO boardvo) {
+		int n = sqlsession3.update("board.noticeEditNewAttach", boardvo);
+		return n;
+	}
+
+	
 	// =========== 건의사항 =============
 
 	// (건의사항) 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
@@ -170,6 +178,13 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 
+	// 건의사항 파일첨부가 있는 글쓰기
+	@Override
+	public int suggUploadWithFile(BoardKdnVO boardvo) {
+		int n = sqlsession3.insert("board.suggUploadWithFile",boardvo);
+		return n;
+	}
+
 	
 	// =========== 자유게시판  =============
 	
@@ -257,6 +272,22 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 		return n;
 	}
 
+	// (자유게시판) 파일첨부가 있는 글쓰기
+	@Override
+	public int genUploadWithFile(BoardKdnVO boardvo) {
+		int n = sqlsession3.insert("board.genUploadWithFile",boardvo);
+		return n;
+	}
+
+	// 첨부파일 변경한 경우 글수정
+	@Override
+	public int generalEditNewAttach(BoardKdnVO boardvo) {
+		int n = sqlsession3.update("board.generalEditNewAttach", boardvo);
+		return n;
+	}
+
+	
+	
 	
 
 	

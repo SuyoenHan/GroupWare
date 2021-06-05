@@ -14,7 +14,7 @@
 	<!-- === 파일첨부가 있는 글쓰기 === --> 
 	<insert id="noticeUploadwithFile" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status, fileName, orgFilename, fileSize)
-		values(seq_noticeboard.nextval, #{fk_userid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+		values(seq_noticeboard.nextval, #{fk_categnum}, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
 	</insert>
 	
 	
@@ -87,6 +87,12 @@
 		 where seq=#{seq} and pw = #{pw}
 	</update>
 	
+	<!-- === 공지사항 첨부파일 변경한 경우 1개글 수정하기 === -->
+	<update id="noticeEditNewAttach" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
+		 update tbl_noticeboard set fk_categnum =#{fk_categnum}, subject=#{subject}, content=#{content} ,fileName=#{fileName}, orgFilename=#{orgFilename}, fileSize=#{fileSize}
+		 where seq=#{seq} and pw = #{pw}
+	</update>
+	
 	<!-- == 공지사항 글1개 삭제하기 == -->
 	<delete id="noticeDel" parameterType="HashMap">
 		delete from tbl_noticeboard
@@ -105,7 +111,7 @@
 	</select>
 	
 	
-	<!-- (건의사항-답글기능있음)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
+	<!-- (건의사항-답글기능있음)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) 
 	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select seq, fk_employeeid, name, subject, readCount, regDate, privatePost, commentCount, groupno, parentSeq, depthno
 		from
@@ -116,6 +122,32 @@
 		        select seq, fk_employeeid, name, subject, readCount, privatePost,
 		               to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate,
 		               commentCount, groupno, parentSeq, depthno
+		        from tbl_suggestionboard
+		        where status = 1
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>
+		        start with parentSeq = 0
+		        connect by prior seq = parentSeq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T
+		where rno between #{startRno} and #{endRno}
+	</select> -->
+	
+	
+	<!-- === 건의사항(파일첨부가 있는 답변형 게시판)의 페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한것) ===
+     -->
+	<select id="listSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
+		select seq, fk_employeeid, name, subject, readCount, regDate, privatePost, commentCount, groupno, parentSeq, depthno, fileName
+		from
+		(
+		    select rownum as rno, seq, fk_employeeid, name, subject, readCount, regDate, privatePost, commentCount, groupno, parentSeq, depthno, fileName
+		    from
+		    (
+		        select seq, fk_employeeid, name, subject, readCount,
+		               to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate,privatePost,
+		               commentCount, groupno, parentSeq, depthno, fileName
 		        from tbl_suggestionboard
 		        where status = 1
 		        <if test='searchWord != ""'>
@@ -139,12 +171,24 @@
 			insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, privatePost, status, groupno, parentSeq, depthno)
 			values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, #{privatePost}, default, #{groupno}, #{parentSeq}, #{depthno}+1)
 		</if>
+	</insert> 
+	
+	<!-- === (건의사항) 파일첨부가 있는 글쓰기 === --> 
+	<insert id="suggUploadWithFile" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
+		<if test='parentSeq.equals("")'>
+			insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, status, privatePost, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{privatePost}, #{groupno}, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+		</if>
+		<if test='!parentSeq.equals("")'>
+			insert into tbl_suggestionboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, status, privatePost, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_suggestionboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{privatePost}, #{groupno}, #{parentSeq}, #{depthno}+1, #{fileName}, #{orgFilename}, #{fileSize})
+		</if>
 	</insert>
 	
-	<!--  건의사항(댓글쓰기&답변글 기능 있음) 글 1개 보여주기  ==  -->
+	<!--  건의사항(댓글쓰기&답변글 기능&파일첨부 기능 있음) 글 1개 보여주기  ==  -->
 	<select id="getSuggPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate,privatePost, nextseq,nextsubject,
-				groupno, parentSeq, depthno
+				groupno, parentSeq, depthno, fileName, orgFilename, fileSize
 		from
 		(
 			select lag(seq,1) over(order by seq desc) as previousseq
@@ -156,7 +200,7 @@
 			     ,lead(seq,1) over(order by seq desc) as nextseq
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
 			     
-			     ,groupno, parentSeq, depthno
+			     ,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
 			from tbl_suggestionboard
 			where status = 1
 			<if test='searchType != "" and searchWord != ""'>
@@ -244,6 +288,12 @@
 		values(seq_generalboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default)
 	</insert>
 	
+	<!-- === (자유게시판) 파일첨부가 있는 글쓰기 === --> 
+	<insert id="genUploadWithFile" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
+		insert into tbl_generalboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, status, fileName, orgFilename, fileSize)
+		values(seq_generalboardcomment.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+	</insert>
+	
 	<!-- (자유게시판) 총 게시물 건수(totalCount) 구하기 -->
 	<select id="getGenTotalCount" parameterType="HashMap" resultType="int">
 	 	select count(*)
@@ -256,11 +306,11 @@
 	
 	<!-- (자유게시판)페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것) -->
 	<select id="genListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		select rno, seq, fk_employeeid, name, subject, readCount, regDate
+		select rno, seq, fk_employeeid, name, subject, readCount, regDate, fileName
 		from
 		(
 		select row_number() over(order by seq desc) as rno,
-		       seq, fk_employeeid, name, subject, readCount, 
+		       seq, fk_employeeid, name, subject, readCount, fileName,
 		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 		from tbl_generalboard
 		where status = 1
@@ -274,12 +324,13 @@
 	<!--  (댓글쓰기가 없는 게시판에서) 자유게시판 글 1개 보여주기  ==  -->
 	<select id="getGenPostView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject
+			 , fileName, orgFilename, fileSize
 		from
 		(
 			select lag(seq,1) over(order by seq desc) as previousseq
 			     , lag(subject,1) over(order by seq desc) as previoussubject
 			     
-			     , seq, fk_employeeid, name, subject, content  
+			     , seq, fk_employeeid, name, subject, content, fileName, orgFilename, fileSize  
 			     , readcount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate
 			     
 			     ,lead(seq,1) over(order by seq desc) as nextseq
@@ -302,6 +353,12 @@
 	<!-- === 자유게시판 1개글 수정하기 === -->
 	<update id="generalEdit" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		 update tbl_generalboard set subject=#{subject}, content=#{content}
+		 where seq=#{seq} and pw = #{pw}
+	</update>
+	
+	<!-- === 자유게시판 첨부파일 변경한 경우 1개글 수정하기 === -->
+	<update id="generalEditNewAttach" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
+		 update tbl_generalboard set subject=#{subject}, content=#{content} ,fileName=#{fileName}, orgFilename=#{orgFilename}, fileSize=#{fileSize}
 		 where seq=#{seq} and pw = #{pw}
 	</update>
 	
@@ -348,6 +405,8 @@
 		delete from tbl_generalboardcomment
 		where seq = #{seq}
 	</delete>
+	
+	
 	
 	
 
