@@ -92,8 +92,8 @@ $(document).ready(function(){
 					<th width=50% align="center" id="subject">제목</th>
 					<th width=5% align="center" id="writer">작성자</th>
 					<th width=8% align="center" id="regDate">작성일</th>
-					<th width=3% align="center" id="readCount">조회수</th>
-					<th width=3% align="center" id="uploadFile">파일</th>
+					<th width=3% id="readCount" style="text-align:center;">조회수</th>
+					<th width=3% id="uploadFile" style="text-align:center;">파일</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -110,8 +110,12 @@ $(document).ready(function(){
 					</td>
 					<td>${boardvo.name}</td>
 					<td>${boardvo.regDate}</td>
-					<td>${boardvo.readCount}</td>
-					<td></td>
+					<td align="center">${boardvo.readCount}</td>
+					<td align="center">
+						<c:if test="${not empty boardvo.fileName}">
+							<a href="<%=ctxPath%>/t1/downloadGenFile.tw?seq=${boardvo.seq}" class="anchor-style"><i class="fas fa-paperclip"></i></a>
+						</c:if>
+					</td>
 				</tr>
 			</c:forEach>
 			</tbody>
