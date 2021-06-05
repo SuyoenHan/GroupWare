@@ -29,10 +29,24 @@ public interface InterPaymentJshService {
 	List<ElectronPayJshVO> oneOpinionList(Map<String, String> paraMap);
 
 	//일반결재 글쓰기
-	ElectronPayJshVO login_Write(Map<String, String> paraMap);
+	ElectronPayJshVO WriteJsh(Map<String, String> paraMap);
+	// 수신자 정보 select해오기
+	ElectronPayJshVO mWriteJsh(HashMap<String, String> paraMap);
+	
+	
+	// 일반결재 문서insert
+	int addPayment(ElectronPayJshVO epvo) throws Throwable;
+	// 첨부파일 있는 경우 글쓰기
+	int addPayment_withFile(ElectronPayJshVO epvo) throws Throwable;
 
-	//전자결재테이블 insert
-	int Electricadd(ElectronPayJshVO epvo);
+	//임시저장함 insert-첨부파일X
+	int savePayment(ElectronPayJshVO epvo) throws Throwable;
+	//임시저장함 insert-첨부파일O
+	int savePayment_withFile(ElectronPayJshVO epvo) throws Throwable;
+	
+	
+
+	
 
 
 

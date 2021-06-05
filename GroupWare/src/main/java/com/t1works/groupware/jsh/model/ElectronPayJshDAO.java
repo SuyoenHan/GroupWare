@@ -1,5 +1,6 @@
 package com.t1works.groupware.jsh.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -85,20 +86,80 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 
 	//일반결재 글쓰기
 	@Override
-	public ElectronPayJshVO login_Write(Map<String, String> paraMap) {
-		ElectronPayJshVO write_view =sqlsession6.selectOne("payment_Jsh.login_Write",paraMap);
+	public ElectronPayJshVO WriteJsh(Map<String, String> paraMap) {
+		ElectronPayJshVO write_view =sqlsession6.selectOne("payment_Jsh.WriteJsh",paraMap);
 		return write_view;
 	}
 
-
+	// 수신자 정보 select해오기
+	@Override
+	public ElectronPayJshVO mWriteJsh(HashMap<String, String> paraMap) {
+		ElectronPayJshVO write_mview =sqlsession6.selectOne("payment_Jsh.mWriteJsh",paraMap);
+		return write_mview;
+	}
+	
+	
+	// 1) insert될 문서번호를 알아온다
+	@Override
+	public String insertno() {
+		String ano = sqlsession6.selectOne("payment_Jsh.insertno");
+		return ano;
+	}
 
 	//전자결재테이블 insert
 	@Override
 	public int Electricadd(ElectronPayJshVO epvo) {
-		int n = sqlsession6.insert("payment_Jsh.Electricadd",epvo);
-		return n;
+		int n1 = sqlsession6.insert("payment_Jsh.Electricadd",epvo);
+		return n1;
 	}
+
+
+	// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+	@Override
+	public int Generaladd(ElectronPayJshVO epvo) {
+		int n2 = sqlsession6.insert("payment_Jsh.Generaladd",epvo);
+		return n2;
+	}
+
+
+	// 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+	@Override
+	public int selectadd(ElectronPayJshVO epvo) {
+		int n3 = sqlsession6.insert("payment_Jsh.selectadd",epvo);
+		return n3;
+	}
+
+
+   //글쓰기 ( 첨부파일이 있는 경우 ) ===
+	@Override
+	public int Electricadd_withFile(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.Electricadd_withFile",epvo);
+		return n1;
+	}
+
+
+	//임시저장함 insert-첨부파일X
+	@Override
+	public int ElectricSave(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.ElectricSave",epvo);
+		return n1;
+	}
+
+
+	//임시저장함 insert-첨부파일X
+	@Override
+	public int ElectricSave_withFile(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.ElectricSave_withFile",epvo);
+		return n1;
+		
+	}
+
 	
+
+
+
+
+
 	
 	
 	
