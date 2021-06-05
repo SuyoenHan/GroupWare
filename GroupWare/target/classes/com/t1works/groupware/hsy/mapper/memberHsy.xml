@@ -133,7 +133,7 @@
 		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
 		        and to_char(endDate,'yyyy-mm')= #{date}) as specificDoneCnt
 		      ,(select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
-				and to_char(endDate,'yyyy-mm')=#{prevDate}) as prevDoneCnt
+				and to_char(endDate,'yyyy-mm')= to_char(add_months(to_date(#{date},'yyyy-mm'),-1),'yyyy-mm')) as prevDoneCnt
 		from dual
 	</select>
 	

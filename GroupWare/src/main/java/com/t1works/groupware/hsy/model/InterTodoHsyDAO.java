@@ -29,6 +29,15 @@ public interface InterTodoHsyDAO {
 	// 기간별로 완료한 업무 총건수 나눠서 표시
 	Map<String, String> selectCntTodoByPeriod(String employeeid);
 
+	// 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기
+	Map<String, String> getDateBeforeSix(String selectedDate);
+
+	// 해당년월의 처리업무에 해당하는 fk_pno 가져오기
+	List<String> getFk_pnoListByDate(Map<String, String> paraMap);
+
+	// 해당년월의 처리 업무 건 수 와 고객 수 가져오기 
+	Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2);
+
 
 
 }

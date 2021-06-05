@@ -296,7 +296,6 @@ public class MemberHsyController {
 		Map<String,String> paraMap= new HashMap<>();
 		paraMap.put("employeeid", employeeid);
 		paraMap.put("date",year+"-"+month);
-		paraMap.put("prevDate", year+"-"+(Integer.parseInt(month)-1));
 		paraMap.put("anoForIn", anoForIn);
 		
 		// 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기
