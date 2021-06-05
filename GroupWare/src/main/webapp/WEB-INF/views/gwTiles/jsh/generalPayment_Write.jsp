@@ -77,16 +77,21 @@ hr.hr{
 				
 				});
 				
+				//var mdate = "<input type='date'/>"+"&nbsp;<input type='time' name='mdate'/>"+"&nbsp;~&nbsp;"+"<input type='time' name='mdate' />";
 				
 				if(ncat =="회의록"){
 					$("tr#changeNcat").show();
 					html+="<th>회의시간</th>"+
-						  "<td><input type='text' name='mdate'/></td>"
+					       "<td><input type='date' name='mdate1'/>"+"&nbsp;<input type='time' name='mdate2'/>"+"&nbsp;~&nbsp;"+"<input type='time' name='mdate3' /></td>"
+					//"<td><input type='datetime' name='mdate' value='"+mdate+"</td>"
+						  
+						  
+						  
 				}
 				else if(ncat =="위임장"){
 					$("tr#changeNcat").show();
 					html+="<th>위임기간</th>"+
-						  "<td><input type='text' name='fk_wiimdate'/></td>"
+						  "<td ><input type='date' name='fk_wiimdate1'/>&nbsp;~&nbsp;<input type='date' name='fk_wiimdate2'/></td>"
 				}
 				
 				else if(ncat =="협조공문"){
@@ -116,14 +121,42 @@ hr.hr{
 			
 		}); //end of $(document).ready(function(){
 		
+	 // 문서 제출하기
 		function insertWrite(){
 	         // 폼(form) 을 전송(submit)
 	         var frm = document.writeGFrm;
 	         frm.method = "POST";
-	         frm.action = "<%= ctxPath%>/t1/generalPayment_WriteEnd";
+	         frm.action = "<%= ctxPath%>/t1/generalPayment_WriteEnd.tw";
 	         frm.submit();   
 			}	
 		
+	  //문서 임시저장하기
+		function saveWrite(){
+		  
+		  var ncatname ;
+			$("input[name=ncatname]:checked").each(function(index,item){			
+			      ncatname = $(this).val();
+			     
+				 //alert(ncat);
+				
+			});
+	  
+		  var bool = confirm(ncatname+"을 임시저장함에 저장하시겠습니까? ");
+		  if(bool){
+		  
+			 // 폼(form) 을 전송(submit)
+	         var frm = document.writeGFrm;
+	         frm.method = "POST";
+	         frm.action = "<%= ctxPath%>/t1/generalPayment_saveWrite.tw";
+	         frm.submit(); 
+		  }
+		  else{
+			  alert(" 저장을 취소하셨습니다.");
+			  location.href="javascript:history.back()";
+		  }
+	         
+	          
+			}	
 		
 </script>
 
@@ -165,19 +198,20 @@ hr.hr{
 		<table id="table2">
 			<tr>
 				<th style="width:200px;">수신참조</th>
-				<td><button type="button" >수신자찾기</button><span id="arecipient1" name="arecipient1"></span></td>
+				<td><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
+				<%-- <td><button type="button" >수신자찾기</button><span id="arecipient1" name="arecipient1"></span></td>--%>
 			</tr>
 			
 			<tr>
 				<th>제목</th>
-				<td ><input type=""text" width="80%"name="atitle"></td>
+				<td ><input type="text" width="80%"name="atitle"></td>
 			</tr>
 		
 			
 			<tr>
 				<th>작성자</th>
-				<input type="hidden"name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
-				<td name="name">${sessionScope.loginuser.name}</td>
+				<td><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
+				
 				
 			</tr>
 		
@@ -193,14 +227,14 @@ hr.hr{
 			
 			<tr>
 				<th>문서상태</th>
-				<td>작성중..</td>
+				<td><input type="hidden" name="astatus" value="0"/>작성중..</td>
 			</tr>
 			
 			
 			
 			<tr>
 				<th style="height:350px;">글내용</th>
-				<td name="acontent"><textarea rows="30" cols="160"></textarea></td>
+				<td><textarea rows="30" cols="160" name="acontent"></textarea></td>
 			</tr>
 			
 			<tr>
@@ -210,12 +244,12 @@ hr.hr{
 				</td>
 			</tr>
 			
-		
+	
 		</table>
 		
 		<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/generalPayment_Write.tw'" >취소</button>
     	<button type="button" onclick="insertWrite();" >제출하기</button>
-    	<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/generalPayment_Write.tw'" >저장하기</button>
+    	<button type="button" onclick="saveWrite();" >저장하기</button>
 	</div>
 </div>
 </div>

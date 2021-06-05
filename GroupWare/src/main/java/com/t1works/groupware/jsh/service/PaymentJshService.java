@@ -2,13 +2,16 @@ package com.t1works.groupware.jsh.service;
 
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
 import com.t1works.groupware.jsh.model.InterElectronPayJshDAO;
@@ -72,17 +75,118 @@ public class PaymentJshService implements InterPaymentJshService {
 
 	//일반결재 글쓰기
 	@Override
-	public ElectronPayJshVO login_Write(Map<String, String> paraMap) {
-		ElectronPayJshVO write_view = dao.login_Write(paraMap);
+	public ElectronPayJshVO WriteJsh(Map<String, String> paraMap) {
+		ElectronPayJshVO write_view = dao.WriteJsh(paraMap);
 		return write_view;
 	}
+	// 수신자 정보 select해오기
+		@Override
+		public ElectronPayJshVO mWriteJsh(HashMap<String, String> paraMap) {
+			ElectronPayJshVO write_mview = dao.mWriteJsh(paraMap);
+			return write_mview;
+		}
 
-	//전자결재테이블 insert
+	
+
+	// 일반결재 문서insert
 	@Override
-	public int Electricadd(ElectronPayJshVO epvo) {
-		int n = dao.Electricadd(epvo);
-		return n;
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addPayment(ElectronPayJshVO epvo) throws Throwable {
+		
+		
+		// 1) insert될 문서번호를 알아온다
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+		
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.Electricadd(epvo);
+		 
+		if(n1==1) {
+			// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+			 n2 = dao.Generaladd(epvo);
+			
+		  }
+		if(n2==1) {
+		 // 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+			 n3 =dao.selectadd(epvo);
+		}
+		return n3;
 	}
+
+	// 글쓰기( 파일첨부가 있는 글쓰기  ) 
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addPayment_withFile(ElectronPayJshVO epvo) throws Throwable {
+	// 1) insert될 문서번호를 알아온다
+			String ano = dao.insertno();
+			epvo.setAno(ano);
+			
+			int n1=0, n2=0, n3=0; 
+			// 2) 전자결재 테이블에 insert
+			 n1 = dao.Electricadd_withFile(epvo);
+			 
+			if(n1==1) {
+				// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+			 n2 = dao.Generaladd(epvo);
+				
+			  }
+			if(n2==1) {
+			// 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+				 n3 =dao.selectadd(epvo);
+			}
+			return n3;
+	}
+
+	//임시저장함 insert-첨부파일X
+	@Override
+	public int savePayment(ElectronPayJshVO epvo) throws Throwable {
+		
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+		
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.ElectricSave(epvo);
+		 
+		if(n1==1) {
+			// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+		 n2 = dao.Generaladd(epvo);
+			
+		  }
+		if(n2==1) {
+		// 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+			 n3 =dao.selectadd(epvo);
+		}
+		return n3;
+	}
+	
+	//임시저장함 insert-첨부파일O
+	@Override
+	public int savePayment_withFile(ElectronPayJshVO epvo) throws Throwable {
+		
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+		
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.ElectricSave_withFile(epvo);
+		 
+		if(n1==1) {
+			// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+		 n2 = dao.Generaladd(epvo);
+			
+		  }
+		if(n2==1) {
+		// 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+			 n3 =dao.selectadd(epvo);
+		}
+		return n3;
+	}
+
+	
+
+	
 
 	
 	

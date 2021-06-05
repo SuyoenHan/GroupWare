@@ -1,5 +1,6 @@
 package com.t1works.groupware.jsh.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +28,29 @@ public interface InterElectronPayJshDAO {
 	List<ElectronPayJshVO> oneOpinionList(Map<String, String> paraMap);
 
 	//일반결재 글쓰기
-	ElectronPayJshVO login_Write(Map<String, String> paraMap);
+	ElectronPayJshVO WriteJsh(Map<String, String> paraMap);
+	// 수신자 정보 select해오기
+	ElectronPayJshVO mWriteJsh(HashMap<String, String> paraMap);
 
-	//전자결재테이블 insert
+
+	// 1) insert될 문서번호를 알아온다
+	String insertno();
+	
+	// 2) 전자결재테이블 insert
 	int Electricadd(ElectronPayJshVO epvo);
+	// 3) ncatname 조건에 따라 insert 시켜줌 일반결재테이블에 insert  
+	int Generaladd(ElectronPayJshVO epvo);
+	// 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌 
+	int selectadd(ElectronPayJshVO epvo);
+
+	// 글쓰기( 파일첨부가 있는 글쓰기  ) 
+	int Electricadd_withFile(ElectronPayJshVO epvo);
+
+	//임시저장함 insert-첨부파일X
+	int ElectricSave(ElectronPayJshVO epvo);
+	//임시저장함 insert-첨부파일O
+	int ElectricSave_withFile(ElectronPayJshVO epvo);
+	
+	
 
 }
