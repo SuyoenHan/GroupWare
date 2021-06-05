@@ -437,11 +437,13 @@ public class MemberHsyController {
 	@RequestMapping(value="/t1/employeeChart.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
+		// 계층형 조직도를 가져오기
+		List<MemberHsyVO> mvoList= service.hierarchicalEmployeeList();
+		mav.addObject("mvoList",mvoList);
 		mav.setViewName("hsy/employee/employeeChart.gwTiles");
-		
 		return mav;
 		
 	} // end of public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {---
 	
-	
+
 }

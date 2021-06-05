@@ -98,6 +98,16 @@ public class MemberHsyDAO implements InterMemberHsyDAO {
 	} // end of public Map<String, String> getDoneCnt(Map<String, String> paraMap) {-----
 
 	
+	// 계층형 조직도를 가져오기
+	@Override
+	public List<MemberHsyVO> hierarchicalEmployeeList() {
+
+		List<MemberHsyVO> mvoList= sqlsession2.selectList("memberHsy.hierarchicalEmployeeList");
+		return mvoList;
+	
+	} // end of public List<MemberHsyVO> hierarchicalEmployeeList() {-----
+
+	
 
 
 }
