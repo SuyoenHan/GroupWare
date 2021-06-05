@@ -103,11 +103,13 @@
 
 		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
 		<select id="electronListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select ano ,ncatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate   
+			select ano ,ncatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate
+				  , fileName, orgFilename, fileSize   
 			from
 			(
 			select row_number() over(order by a.ano desc) AS rno  
 			      ,a.ano ,ncatname, atitle, name ,dname,asdate    
+			       , fileName, orgFilename, fileSize 
 			from tbl_approval a left join tbl_norapproval n
 			on a.ano = n.fk_ano
 			left join 
@@ -139,7 +141,7 @@
 		<!-- // 하나의 일반결재내역 문서 보여주기 -->
 		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			  
-			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent , orgFilename ,astatus
+			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, fileName ,orgFilename, fileSize 
 			  <choose>
 				<when test="ncatname eq'회의록'">
 				 , mdate 
@@ -182,6 +184,8 @@
 		</select>
 		
 		
+		
+		
 		<!-- //하나의 일반결재내역에서 결재의견 목록 보여주기 -->
 		<select id="oneOpinionList" parameterType="HashMap"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			select dname ,name, pname,odate,ocontent
@@ -195,21 +199,90 @@
 		
 		</select>
 		
+		
+	    
+		
 		<!-- //일반결재 글쓰기 -->
-		<select id="login_Write" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select dname ,d.dcode , e.managerid
+		<select id="WriteJsh" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select dname ,d.dcode , e.managerid as managerid
 			from tbl_employee e left join tbl_department d
 			on d.dcode = e.fk_dcode
 			where employeeid = #{userid}
 		</select>
 		
+		<!-- 수신자 정보 select해오기 -->
+		<select id="mWriteJsh" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			 select name, employeeid  ,pname
+			 from tbl_employee e left join tbl_position p
+			 on e.fk_pcode = p. pcode
+			 where employeeid=(select managerid from tbl_employee where employeeid= #{userid}) 
+		</select>
 		
-		<insert id="Electricadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO" >
-		insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper) 
-		values (seq_tbl_approval.nextval, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0)
- 
+		
+		
+		 <!--  1) insert될 문서번호를 알아온다 -->
+		<select id="insertno" resultType="String">
+			select seq_tbl_approval.nextval from dual
+		</select>
+		
+		<!-- 2)전자결재테이블 insert -->
+		<insert id="Electricadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper) 
+			values (#{ano}, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0)
 		</insert>
 		
+		<!--  3) 일반결재테이블에 isnert -->
+		<insert id="Generaladd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			
+				insert  into tbl_norapproval (ncat,fk_ano,ncatname)  
+				<if test="ncatname eq'회의록'">
+					values('1',#{ano},'회의록')
+				</if>
+				<if test="ncatname eq'위임장'">
+					 values('2',#{ano},'위임장')
+				</if>
+				<if test="ncatname eq'외부공문'">
+					values('3',#{ano},'외부공문')
+				</if>
+				<if test="ncatname eq'협조공문'">
+					values('4',#{ano},'협조공문')
+				</if>
+		</insert>
+		
+		<!-- 4) ncatname 조건에 따라 (회의록,위임장,외부공문,협조공문) 테이블에 insert 시켜줌  -->
+		<insert id="selectadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			<if test="ncatname eq'회의록'">
+				insert into tbl_minutes (mno , fk_ncat, fk_ano, mdate)         values(seq_tbl_minutes.nextval,'1',#{ano},#{mdate})
+			</if>
+			<if test="ncatname eq'위임장'">
+				insert into tbl_wiimjang(wno , fk_ncat, fk_ano, fk_wiimdate)   values(seq_tbl_wiimjang.nextval,'2',#{ano},#{fk_wiimdate})
+			</if>
+			<if test="ncatname eq'외부공문'">
+				into tbl_exofficial(eno, fk_ncat ,fk_ano)                      values(seq_tbl_exofficial.nextval,'3',#{ano})
+			</if>
+			<if test="ncatname eq'협조공문'">
+				insert into tbl_coofficial(cno, fk_ncat ,fk_ano, comname)       values(seq_tbl_coofficial.nextval,'4',#{ano},#{comname})
+			</if>
+		</insert>
+		
+		
+		<!--글쓰기 ( 첨부파일이 있는 경우 ) = 전자결재테이블 insert -->
+		<insert id="Electricadd_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate, apaper, fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
+		
+		<!--글쓰기 저장( 첨부파일이 없는 경우 ) = 전자결재테이블 insert -->
+		<insert id="ElectricSave" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate, apaper) 
+			values (#{ano}, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate, 2 )
+		</insert>
+		
+		<!--글쓰기 저장( 첨부파일이 있는 경우 ) = 전자결재테이블 insert -->
+		<insert id="ElectricSave_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate, apaper, fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '1' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate, 2 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
 		
 </mapper>
 

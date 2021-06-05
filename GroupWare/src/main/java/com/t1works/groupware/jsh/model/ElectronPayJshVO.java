@@ -5,9 +5,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class ElectronPayJshVO {
 
 	private String  ano; 						  // 문서번호
-	private String  fk_employeeid;    // 사번
-	private String  anocode;      		  //결재구분 (1:일반결재, 2:지출결재, 3:근태결재)
-	private String  arecipient1;           // 수신자    
+	private String  fk_employeeid;              // 사번
+	private String  anocode;      		         //결재구분 (1:일반결재, 2:지출결재, 3:근태결재)
+	private String  arecipient1;                 // 수신자    
 	private String  atitle;      			  //제목
 	private String  astatus;                 // default '0' not null     -- 결재상태 (0:제출, 1:결재진행중, 2:반려, 3:승인완료)
 	private String  acontent;      		  // 글내용

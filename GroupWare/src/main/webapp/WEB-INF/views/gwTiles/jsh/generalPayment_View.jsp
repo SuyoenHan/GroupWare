@@ -137,7 +137,8 @@ th{
 				<th>첨부파일</th>
 				<td>
 					<c:if test="${not empty epvo.orgFilename}">
-					   ${epvo.orgFilename}
+					   <a href ="<%= ctxPath%>/download.tw?ano=${requestScope.epvo.ano}">${requestScope.epvo.orgFilename}</a>
+					   
 					</c:if>
 					
 					<c:if test="${empty epvo.orgFilename}">

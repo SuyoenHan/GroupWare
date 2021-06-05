@@ -165,7 +165,7 @@
       <input type="submit"  value="검색"/>
    </form>
    
-   <%-- === #106. 검색어 입력시 자동글 완성하기 1 === --%>
+   <%-- === # 검색어 입력시 자동글 완성하기 1 === --%>
    <div id="displayList" style="border: solid 1px gray; border-top: 0px; width: 331px; height: 100px; margin-left: 70px; padding-top: 5px; overflow: auto;">
       
    </div>
@@ -182,9 +182,30 @@
         <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status">
          <tr>
 	         <td align="center">${evo.ano}</td>
-	         <td align="left"> ${evo.ncatname} </td>
+	         
+	         
+	         <td align="left"> ${evo.ncatname} 
+	         
+	         
+	          <%-- 첨부파일이 있는 경우 시작 --%>
+            
+             <%-- 첨부파일이 있는 경우 끝 --%>
+	         
+	         
+	         
+	         
+	         </td>
+	         
+	         
 	         <td align="center">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}')">${evo.atitle}</span>
+	          <%-- 첨부파일이 있는 경우 시작 --%>
+             	<c:if test="${not empty evo.fileName}">
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+        		</c:if>
+        		<c:if test="${empty evo.fileName}">
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}')">${evo.atitle}</span>&nbsp;
+        		</c:if>
+        	   <%-- 첨부파일이 있는 경우 끝 --%>
      	     </td>
 	         <td align="center"><span >${evo.name}</span>(<span>${evo.dname}</span>)</td>
 	         <td align="center">${evo.asdate}</td>   
