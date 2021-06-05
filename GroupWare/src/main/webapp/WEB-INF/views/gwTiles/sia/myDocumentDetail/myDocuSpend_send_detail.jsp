@@ -11,7 +11,10 @@ div#containerview{
 	margin: 30px 0px 30px 50px;
 	width: 80%;
 }
-table, th, td {border: solid 1px gray;}
+div.section table, div.section th, div.section td{
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
 
 #table1 {
 	float: right; 
@@ -147,7 +150,7 @@ td.opinion{
 	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.scatname}</h2>
 	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
-	<div id="astatus">
+	<div class="section">
 		<table id="table1">		
 			<tr>
 				<th style="width:100px; height:40px;">대리</th>
@@ -256,9 +259,9 @@ td.opinion{
 			<table id="table5">
 				<tr>				
 					<th>의견작성</th>
-					<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
+					<td style="border: solid 1px white;" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
 					</td>
-					<td class="opinion" style="width:10%;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
+					<td style="width:10%; border: solid 1px white;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
 					<input type="button" id="reset" class="btn btn-default" value="취소"/></td>				
 				</tr>
 			</table>
@@ -269,10 +272,12 @@ td.opinion{
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 55%;">
-				<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
-				<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
-			</span>
+			<c:if test="${requestScope.avo.astatus == '0'}">
+				<span style="margin-left: 55%;">
+					<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
+					<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
+				</span>
+			</c:if>
 		</div>
 		
 		<br><br>

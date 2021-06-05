@@ -58,8 +58,9 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
 	td.th{		
 		background-color: #ccd9e6;
@@ -70,7 +71,9 @@
 		background-color: #395673; 
 		color: #ffffff;
 		padding: 5px;
-		border: solid 1px #ccc;}
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
 	tr.tr_hover:hover{
 		cursor: pointer;
 		background-color: #eef2f7;
@@ -209,7 +212,8 @@ $(document).ready(function(){
 	
 	
 	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
-	function goSearch(currentShowPageNo){			
+	function goSearch(currentShowPageNo){		
+		
 		var checkArr = new Array();	
 		$("input[name=scat]:checked").each(function(index,item){			
 			var scat = $(item).val();
@@ -272,8 +276,7 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#approvalDisplay").html(html);
-				
+				$("tbody#approvalDisplay").html(html);				
 				
 				// 페이지바 함수 호출
 				makeApprovalPageBar(currentShowPageNo);
@@ -327,7 +330,6 @@ $(document).ready(function(){
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
 						html += "</tr>";						
-						
 					});
 				}
 				else{
@@ -339,8 +341,7 @@ $(document).ready(function(){
 				$("tbody#approvalDisplay").html(html);				
 				
 				// 페이지바 함수 호출
-				makeApprovalPageBar(currentShowPageNo);				
-				
+				makeApprovalPageBar(currentShowPageNo);
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -433,6 +434,7 @@ $(document).ready(function(){
 		
 	function goView(ano, scatname, fromDate, toDate, astatus, scat, sort, searchWord){
 		var frm = document.goViewFrm;
+		
 		frm.ano.value = ano;
 		frm.sort.value = sort;
 		frm.scatname.value = scatname;

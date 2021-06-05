@@ -11,7 +11,10 @@ div#containerview{
 	margin: 30px 0px 30px 50px;
 	width: 80%;
 }
-table, th, td {border: solid 1px gray;}
+div.section table, div.section th, div.section td{
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
 
 #table1 {
 	float: right; 
@@ -156,7 +159,7 @@ td.opinion{
 	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.vcatname}계</h2>
 	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
-	<div id="astatus">
+	<div class="section">
 		<table id="table1">		
 			<tr>
 				<th style="width:100px; height:40px;">대리</th>

@@ -58,8 +58,9 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
 	td.th{		
 		background-color: #ccd9e6;
@@ -70,7 +71,9 @@
 		background-color: #395673; 
 		color: #ffffff;
 		padding: 5px;
-		border: solid 1px #ccc;}
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
 	tr.tr_hover:hover{
 		cursor: pointer;
 		background-color: #eef2f7;
@@ -260,11 +263,11 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#commentDisplay").html(html);
+				$("tbody#approvalDisplay").html(html);
 				
 				
 				// 페이지바 함수 호출
-				makeCommentPageBar(currentShowPageNo);				
+				makeApprovalPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
@@ -339,11 +342,11 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#commentDisplay").html(html);
+				$("tbody#approvalDisplay").html(html);
 					
 				
 				// 페이지바 함수 호출
-				makeCommentPageBar(currentShowPageNo);				
+				makeApprovalPageBar(currentShowPageNo);				
 				
 			},
 			error: function(request, status, error){
@@ -354,7 +357,7 @@ $(document).ready(function(){
 	
 	
 	// 페이지바 Ajax로 만들기
-	function makeCommentPageBar(currentShowPageNo){
+	function makeApprovalPageBar(currentShowPageNo){
 		
 		$("input[name=currentShowPageNo]").val(currentShowPageNo);
 		
@@ -531,7 +534,7 @@ $(document).ready(function(){
 		<br>
 		
 		<table id="table">
-			<thead>scat
+			<thead>
 			<tr>
 				<th style="width: 70px; text-align: center;">번호</th>
 				<th style="width: 300px; text-align: center;">제목</th>
@@ -541,7 +544,7 @@ $(document).ready(function(){
 				<th style="width: 120px; text-align: center;">기안일</th>
 			</tr>
 			</thead>		
-			<tbody id="commentDisplay"></tbody>		
+			<tbody id="approvalDisplay"></tbody>		
 		</table>
 		
 		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>

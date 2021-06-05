@@ -60,8 +60,9 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
 	td.th{		
 		background-color: #ccd9e6;
@@ -72,7 +73,9 @@
 		background-color: #395673; 
 		color: #ffffff;
 		padding: 5px;
-		border: solid 1px #ccc;}
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
 	tr.tr_hover:hover{
 		cursor: pointer;
 		background-color: #eef2f7;
@@ -216,7 +219,7 @@ $(document).ready(function(){
 		var checkArr = new Array();	
 		$("input[name=ncat]:checked").each(function(index,item){			
 			var ncat = $(item).val();
-			checkArr.push(ncat);			
+			checkArr.push(ncat);
 		});
 		// console.log(checkArr);
 		
@@ -434,6 +437,7 @@ $(document).ready(function(){
 	
 	function goView(ano, ncatname, fromDate, toDate, astatus, ncat, sort, searchWord){
 		var frm = document.goViewFrm;
+		
 		frm.ano.value = ano;
 		frm.sort.value = sort;
 		frm.ncatname.value = ncatname;
