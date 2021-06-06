@@ -9,7 +9,7 @@
 	
 	div#employeeTodoBox{
 		border: solid 0px red;
-		width:75%;
+		width:1400px;
 		margin:0 auto;
 		position: relative;
 		left: -110px;
@@ -212,38 +212,6 @@
 			}
 		}
 
-		// 세부메뉴 열기 클릭시 너비 조절해주기
-		$("p.menu-btn").click(function(){
-			if("${requiredState}"=="0"){
-				$("div#toDoBox").css("width","85%");
-				$("div#pageBar").css("width","88%");
-			}
-			if("${requiredState}"=="1"){
-				$("div#toDoBox").css("width","95%");
-				$("div#pageBar").css("width","98%");
-			}
-			if("${requiredState}"=="2"){
-				$("div#toDoBox").css("width","83%");
-				$("div#pageBar").css("width","86%");
-			}
-		}); // end of $("p.menu-btn").click(function(){-------
-		
-		// 세부메뉴 닫기 클릭시 너비 조절해주기
-		$("i.closebtn").click(function(){
-			if("${requiredState}"=="0"){
-				$("div#toDoBox").css("width","75%");
-				$("div#pageBar").css("width","78%");
-			}
-			if("${requiredState}"=="1"){
-				$("div#toDoBox").css("width","85%");
-				$("div#pageBar").css("width","88%");
-			}
-			if("${requiredState}"=="2"){
-				$("div#toDoBox").css("width","73%");
-				$("div#pageBar").css("width","76%");
-			}
-		}); // end of $("i.closebtn").click(function(){-----------------
-		
 		// 페이지가 로드될때 진행중업무 상태에 맞는 상태값 유지시켜주기
 		$("select.postpone").each(function(index,item){
 			var state= $(this).prop("name");

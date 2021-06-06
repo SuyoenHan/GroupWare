@@ -129,6 +129,26 @@ public class MemberHsyService implements InterMemberHsyService {
 		return doneCntMap;
 	
 	} // end of public Map<String, String> getDoneCnt(Map<String, String> paraMap) {
+
+	// 계층형 조직도를 가져오기
+	@Override
+	public List<MemberHsyVO> hierarchicalEmployeeList() {
+		
+		List<MemberHsyVO> mvoList= mdao.hierarchicalEmployeeList();
+		
+		for(MemberHsyVO mvo: mvoList) {
+			
+			// fk_pcode로 margin을 주기 위해서 기존[사장:4, 부장:3, 대리:2, 사원:1] 값을  [사장:1, 부장:2, 대리:3, 사원:4]로 수정
+			if("4".equals(mvo.getFk_pcode()))      mvo.setFk_pcode("1");
+			else if("3".equals(mvo.getFk_pcode())) mvo.setFk_pcode("2");
+			else if("2".equals(mvo.getFk_pcode())) mvo.setFk_pcode("3");
+			else mvo.setFk_pcode("4");
+			
+		}// end of for------------------
+		
+		return mvoList;
+		
+	}// end of public List<MemberHsyVO> hierarchicalEmployeeList() {--------
 	 
 
 	

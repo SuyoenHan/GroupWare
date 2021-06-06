@@ -1,8 +1,7 @@
 package com.t1works.groupware.hsy.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Calendar;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.ProductHsyVO;
@@ -319,6 +321,169 @@ public class TodoHsyController {
 		return jsonObj.toString();
 		
 	} // end of public String getclientLisTotalPage(HttpServletRequest request) {-------
+	
+	
+	// 대리, 사원 나의실적현황 매핑 url
+	@RequestMapping(value="/t1/employeePerformance.tw")    // 로그인 필요 url
+	public ModelAndView requiredLogin_employeePerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser= (MemberBwbVO) session.getAttribute("loginuser");
+		
+		// 1) 특정 직원의 입사일 가져오기 => 입사일을 년도, 월, 일 단위로 나눠서 뷰단으로 넘기기
+		String hiredate= loginuser.getHiredate();
+		
+		// System.out.println(loginuser.getHiredate());
+		// 2010-07-10 00:00:00.0
+		
+		mav.addObject("hireYear", hiredate.substring(0,4));
+		mav.addObject("hireMonth", hiredate.substring(5,7));
+		mav.addObject("hireDay", hiredate.substring(8,10));
+		
+		// 2) 현재날짜 가져오기 => 년도, 월, 일 단위로 나눠서 뷰단으로 넘기기
+		Calendar currentDate = Calendar.getInstance();
+		int currentYear = currentDate.get(Calendar.YEAR);
+		int currentMonth = currentDate.get(Calendar.MONTH)+1;
+		
+		mav.addObject("currentYear", currentYear);
+		mav.addObject("currentMonth", currentMonth);
+		
+		mav.setViewName("hsy/toDo/employeePerformance.gwTiles");
+		return mav;
+	} // end of public ModelAndView employeePerformance(ModelAndView mav) {--------
+	
+	
+	// 특정직원이 선택한 년월로부터 6개월 이전의 처리 업무 건 수, 담당 고객 수  가져오기 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/getEmployeePerformance.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
+	public String getEmployeePerformance(HttpServletRequest request) {
+		
+		// 특정 직원의 정보 가져오기
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser= (MemberBwbVO) session.getAttribute("loginuser");
+		String employeeid= loginuser.getEmployeeid();
+		
+		String year= request.getParameter("year");
+		String month= request.getParameter("month");
+		
+		// 월이 한자리인 경우 앞에 0 붙여서 map에 담기
+		if(month.length()==1) month="0"+month;
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("date",year+"-"+month);
+		
+		// 특정 직원의 입사일 가져오기 => paraMap2에서 사용하기 위함
+		String hiredate= loginuser.getHiredate();
+		hiredate= hiredate.substring(0,4)+"-"+hiredate.substring(5,7);
+		
+		// 1) 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기 => sql 이용
+		Map<String,String> dateMap= service.getDateBeforeSix(paraMap.get("date"));
+		
+		// 확장for문을 돌리기 위해 날짜 오름차순으로 리스트에 넣어주기
+		List<String> dateList= new ArrayList<>();
+		
+		dateList.add(dateMap.get("prev5"));
+		dateList.add(dateMap.get("prev4"));
+		dateList.add(dateMap.get("prev3"));
+		dateList.add(dateMap.get("prev2"));
+		dateList.add(dateMap.get("prev1"));
+		dateList.add(paraMap.get("date"));
+		
+		JsonArray jsonArr= new JsonArray();
+		
+		for(String specificDate: dateList) {
+			
+			// 2) 해당년월의 처리업무에 해당하는 fk_pno 가져오기=> 고객테이블과 연관시키기 위함
+			paraMap.put("specificDate", specificDate);
+			List<String> fk_pnoList= service.getFk_pnoListByDate(paraMap);
+			
+			// list에 담긴 fk_pno 가공하기 =>  in절에 사용될 수 있도록 데이터 가공
+			String fk_pnoForIn="";
+			if(fk_pnoList.size()==0) fk_pnoForIn="-1"; // 해당 6개월 이내에 처리업무건수가 한 건도 없는 경우 (-1은 존재하지 않는 상품번호이다)
+			else { // 해당 6개월 이내에 처리업무건수가 한 건 이상 있는 경우
+				
+				for(int i=0; i<fk_pnoList.size();i++) {   
+					String str= (i < fk_pnoList.size()-1) ? "," : "";
+					fk_pnoForIn+= fk_pnoList.get(i)+str;
+				} // end of for------------------------
+			}
+			
+			// 3) 해당년월의 처리 업무 건 수 와 고객 수 가져오기 
+			Map<String,String> paraMap2= new HashMap<>();
+			paraMap2.put("employeeid", employeeid);
+			paraMap2.put("specificDate", specificDate);
+			paraMap2.put("fk_pnoForIn", fk_pnoForIn);
+			paraMap2.put("hiredate", hiredate);
+			
+			// System.out.println(employeeid);
+			// System.out.println(specificDate);
+			// System.out.println(fk_pnoForIn);
+			// System.out.println(hiredate);
+			
+			// 입사년도 전의 날짜값인 경우 '-' => sql로 처리
+			Map<String,String> EachPerfAndClientCnt= service.getPerfAndClientCnt(paraMap2);
+			
+			JsonObject jsonObj= new JsonObject();
+			jsonObj.addProperty("specificDate", EachPerfAndClientCnt.get("specificDate"));
+			
+			// 입사년도 전의 날짜인 경우 처리 업무 건 수와 담당 고객 수 '-'로 처리
+			if("-".equals(EachPerfAndClientCnt.get("specificDate"))) {
+				jsonObj.addProperty("perfNumber", "-");
+				jsonObj.addProperty("clienNumber", "-");
+			}
+			else {
+				jsonObj.addProperty("perfNumber", EachPerfAndClientCnt.get("perfNumber"));
+				jsonObj.addProperty("clienNumber", EachPerfAndClientCnt.get("clienNumber"));
+			}
+			
+			jsonArr.add(jsonObj);
+			
+		} // end of for(String specificDate: dateList) {---------
+		
+		return new Gson().toJson(jsonArr);
+		
+	} // end of public String getEmployeePerformance(HttpServletRequest request) {-------
+	
+	
+	// 자세히 보기 클릭 시 해당년월에 대한 처리업무와 담당고객 정보를 모달에 넣어주기 위한 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/getPerfClientInfoForModal.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
+	public String getPerfClientInfoForModal(HttpServletRequest request) {
+		
+		String certainDate= request.getParameter("certainDate");
+		String employeeid= request.getParameter("employeeid");
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("certainDate", certainDate);
+		paraMap.put("employeeid", employeeid);
+		
+		// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+		List<TodoHsyVO> modalList= service.getPerfClientInfoForModal(paraMap);
+		
+		JSONArray jsonArr= new JSONArray();
+		
+		if(modalList.size()!=0) {
+			for(TodoHsyVO tvo:modalList) {
+				
+				JSONObject jsonObj= new JSONObject();
+				jsonObj.put("rno", tvo.getRno());
+				jsonObj.put("nowNo", tvo.getNowNo());
+				jsonObj.put("pName", tvo.getpName());
+				jsonObj.put("startDate", tvo.getStartDate());
+				jsonObj.put("endDate", tvo.getEndDate());
+				jsonObj.put("dueDate", tvo.getDueDate());
+				
+				jsonArr.put(jsonObj);
+				
+			} // end of for(TodoHsyVO tvo:modalList) {-----
+		} 
+		
+		return jsonArr.toString();
+		// 특정 년월에 끝난 업무가 한 건도 없으면 jsonArr.length==0
+		
+	} // end of public String getPerfClientInfoForModal(HttpServletRequest request) {----
+	
 	
 	
 }

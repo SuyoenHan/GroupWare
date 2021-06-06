@@ -11,7 +11,7 @@
 	div#employeeMapContainer{ 
 		border: solid 0px red;
 		overflow: hidden;
-		width:70%;
+		width:1300px;
 		margin: 0 auto;
 		position: relative;
 		left: -150px;
@@ -20,17 +20,16 @@
 	
 	div#employeeMapTitle{
 		border: solid 0px red;
-		margin: 70px 0px 30px 80px;
+		margin: 70px 0px 30px 70px;
 		font-size: 22pt;
 		font-weight: bold;
 	}
 	
 	div#employeeBox{
-		border: solid 0px red;
 		border: solid 2px #003d66;
-		margin: 0px 0px 30px 50px;
+		margin: 0px 0px 30px 70px;
 		float: left;
-		width: 26%;
+		width: 340px;
 		padding: 0px 20px;
 	}
 	
@@ -53,14 +52,14 @@
 		float: left;
 		margin-bottom: 20px;
 		border: solid 0px red;
-		margin: 20px 0px 20px 50px;
+		margin: 20px 0px 20px 70px;
 		border: solid 0px red;
-		width: 26%;
+		width: 350px;
 	}
 	
 	div#allBt button{
-		width: 47.5%;
-		height: 30px;
+		width: 162px;
+		height: 40px;
 		margin-left: 11px;
 		background-color: #003d66;
 		color:#fff;

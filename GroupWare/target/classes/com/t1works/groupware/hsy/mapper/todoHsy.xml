@@ -129,4 +129,58 @@
 	    from dual
 	</select>
 	
+	
+	<!-- 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기 위한 resultMap 정의 -->
+	<resultMap type="HashMap" id="sixDateMap">
+		<result property="prev1" column="prev1" javaType="String"/>
+		<result property="prev2" column="prev2" javaType="String"/>
+		<result property="prev3" column="prev3" javaType="String"/>
+		<result property="prev4" column="prev4" javaType="String"/>
+		<result property="prev5" column="prev5" javaType="String"/>
+	</resultMap>
+	
+	<!-- 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기 -->
+	<select id="getDateBeforeSix" parameterType="String" resultMap="sixDateMap">
+		select (select to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-1),'yyyy-mm') from dual) as prev1
+			 , (select to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-2),'yyyy-mm') from dual) as prev2
+			 , (select to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-3),'yyyy-mm') from dual) as prev3
+			 , (select to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-4),'yyyy-mm') from dual) as prev4
+			 , (select to_char(add_months(to_date(#{selectedDate},'yyyy-mm'),-5),'yyyy-mm') from dual) as prev5
+		from dual
+	</select>
+	
+	<!-- 해당년월의 처리업무에 해당하는 fk_pno 가져오기 -->
+	<select id="getFk_pnoListByDate" parameterType="HashMap" resultType="String">
+		select fk_pno from tbl_todo 
+		where fk_employeeid=#{employeeid} and to_char(enddate,'yyyy-mm')=#{specificDate}
+	</select>
+	
+	
+	<!-- 해당년월의 처리 업무 건 수 와 고객 수 가져오기 위한 resultMap 정의 -->
+	<resultMap type="HashMap" id="PerfAndClientCntMap">
+		<result property="perfNumber" column="perfNumber" javaType="String"/>
+		<result property="clienNumber" column="clienNumber" javaType="String"/>
+		<result property="specificDate" column="specificDate" javaType="String"/>
+	</resultMap>
+
+	<!-- 해당년월의 처리 업무 건 수 와 고객 수 가져오기  -->
+	<select id="getPerfAndClientCnt" parameterType="HashMap" resultMap="PerfAndClientCntMap">
+		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid} and to_char(enddate,'yyyy-mm')= #{specificDate}) as perfNumber
+			 , (select to_char(nvl(sum(cnumber),0)) from tbl_client where fk_pno in (${fk_pnoForIn})) as clienNumber
+			 , (select case when to_date(#{hiredate},'yyyy-mm') > to_date(#{specificDate},'yyyy-mm') then '-' else #{specificDate} end from dual) as specificDate
+		from dual
+	</select>
+	
+	
+	<!-- 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순) -->
+	<select id="getPerfClientInfoForModal" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.TodoHsyVO">
+		select row_number() over(order by T.enddate asc) as rno, nowNo, pName, 
+			   to_char(dueDate,'yyyy-mm-dd') as dueDate,
+			   to_char(T.startdate,'yyyy-mm-dd') as startDate, to_char(T.enddate,'yyyy-mm-dd') as EndDate
+		from tbl_todo T
+		join tbl_product on fk_pno= pno
+		where fk_employeeid=#{employeeid} and to_char(T.enddate,'yyyy-mm')=#{certainDate}
+	</select>
+	
+	
 </mapper>
