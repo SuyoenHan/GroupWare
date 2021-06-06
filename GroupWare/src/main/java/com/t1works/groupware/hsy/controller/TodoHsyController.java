@@ -446,5 +446,44 @@ public class TodoHsyController {
 	} // end of public String getEmployeePerformance(HttpServletRequest request) {-------
 	
 	
+	// 자세히 보기 클릭 시 해당년월에 대한 처리업무와 담당고객 정보를 모달에 넣어주기 위한 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/getPerfClientInfoForModal.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
+	public String getPerfClientInfoForModal(HttpServletRequest request) {
+		
+		String certainDate= request.getParameter("certainDate");
+		String employeeid= request.getParameter("employeeid");
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("certainDate", certainDate);
+		paraMap.put("employeeid", employeeid);
+		
+		// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+		List<TodoHsyVO> modalList= service.getPerfClientInfoForModal(paraMap);
+		
+		JSONArray jsonArr= new JSONArray();
+		
+		if(modalList.size()!=0) {
+			for(TodoHsyVO tvo:modalList) {
+				
+				JSONObject jsonObj= new JSONObject();
+				jsonObj.put("rno", tvo.getRno());
+				jsonObj.put("nowNo", tvo.getNowNo());
+				jsonObj.put("pName", tvo.getpName());
+				jsonObj.put("startDate", tvo.getStartDate());
+				jsonObj.put("endDate", tvo.getEndDate());
+				jsonObj.put("dueDate", tvo.getDueDate());
+				
+				jsonArr.put(jsonObj);
+				
+			} // end of for(TodoHsyVO tvo:modalList) {-----
+		} 
+		
+		return jsonArr.toString();
+		// 특정 년월에 끝난 업무가 한 건도 없으면 jsonArr.length==0
+		
+	} // end of public String getPerfClientInfoForModal(HttpServletRequest request) {----
+	
+	
 	
 }

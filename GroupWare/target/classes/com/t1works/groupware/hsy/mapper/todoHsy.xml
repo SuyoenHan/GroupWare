@@ -172,4 +172,15 @@
 	</select>
 	
 	
+	<!-- 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순) -->
+	<select id="getPerfClientInfoForModal" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.TodoHsyVO">
+		select row_number() over(order by T.enddate asc) as rno, nowNo, pName, 
+			   to_char(dueDate,'yyyy-mm-dd') as dueDate,
+			   to_char(T.startdate,'yyyy-mm-dd') as startDate, to_char(T.enddate,'yyyy-mm-dd') as EndDate
+		from tbl_todo T
+		join tbl_product on fk_pno= pno
+		where fk_employeeid=#{employeeid} and to_char(T.enddate,'yyyy-mm')=#{certainDate}
+	</select>
+	
+	
 </mapper>

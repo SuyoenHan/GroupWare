@@ -163,6 +163,14 @@ public class TodoHsyService implements InterTodoHsyService {
 		Map<String,String> EachPerfAndClientCnt= tdao.getPerfAndClientCnt(paraMap2);
 		return EachPerfAndClientCnt;
 	} // end of public Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2) {---
+
+
+	// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+	@Override
+	public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {
+		List<TodoHsyVO> modalList= tdao.getPerfClientInfoForModal(paraMap);
+		return modalList;
+	} // end of public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {---
  
 
 

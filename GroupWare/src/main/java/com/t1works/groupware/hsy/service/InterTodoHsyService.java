@@ -44,5 +44,8 @@ public interface InterTodoHsyService {
 	// 해당년월의 처리 업무 건 수 와 고객 수 가져오기 
 	Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2);
 
+	// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+	List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap);
+
 	
 }

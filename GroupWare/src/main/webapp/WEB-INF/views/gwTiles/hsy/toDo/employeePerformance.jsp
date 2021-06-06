@@ -3,6 +3,8 @@
 <% String ctxPath= request.getContextPath(); %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <style>
 
 	.highcharts-figure, .highcharts-data-table table {
@@ -73,7 +75,47 @@
 		height: 40px;
 	}
 	
-	table#employeePerfTable th.tableTop {border-bottom: solid 2px #c2c2c7;}
+	table#employeePerfTable tr.tableTop {border-bottom: solid 2px #c2c2c7;}
+	table#employeePerfTable tr.tablebottom {border-top: solid 2px #c2c2c7;}
+	
+	table#employeePerfTable tr.selectedTr{
+		background-color: #ffff99;
+		font-weight: bold;
+	}
+	
+	span.showPerfDetail{cursor: pointer;}
+	span.showPerfDetail:hover {
+		color: #009999;
+		font-weight: bold;
+	}
+	
+	div.modalLocation {margin-top:70px;}
+	
+	Table.modalTable{
+		border: solid 1px #96979c;
+		border-collapse: collapse;
+		width: 90%;
+		margin: 0 auto;
+		margin-bottom: 15px;
+	}
+	
+	Table.modalTable th, Table.modalTable td {
+		border: solid 1px #96979c;
+		text-align: center;
+		font-size: 10pt;
+		padding: 4px 0px;
+		vertical-align: middle;
+	}
+	
+	Table.modalTable th{
+		background-color: #002266;
+		color:#fff;
+		font-weight: bold;
+		border: solid 1px #002266;
+		text-align: center;
+		border-right: solid 1px #96979c;
+	}
+	
 	
 </style>
 
@@ -82,6 +124,7 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 	
@@ -127,6 +170,14 @@
 			EmployeePerformanceInfo(year,month);
 			
 		}); // end of $("select#searchMonth").bind('change',function(){---------
+		
+		
+		// 자세히 보기 클릭 이벤트 구현 
+		$(document).on('click','span.showPerfDetail',function(){
+			var certainDate= $(this).prop('id');
+			getPerfClientInfoForModal(certainDate);
+			$("div.modal").modal();
+		});	
 			
 			
 	}); // end of $(document).ready(function(){-------------------
@@ -167,10 +218,69 @@
 	   	$("select#searchMonth").html(html);
 	   	
 	} // end of function monthOptionByYear(year){---------
+
 		
+	// 자세히 보기 클릭 시 해당년월에 대한 처리업무와 담당고객 정보를 모달에 넣어주기 위한 함수
+	function getPerfClientInfoForModal(certainDate){
+			
+		$.ajax({
+			url:"<%=ctxPath%>/t1/getPerfClientInfoForModal.tw", 
+			type:"POST",
+			data:{"certainDate":certainDate,"employeeid":"${loginuser.employeeid}"},
+			dataType: "JSON",
+			success: function(json){
+				
+				var html="";
+				
+				if(json.length==0){ // 특정 년월에 끝난 업무가 한 건도 없는 경우
+					html="<div align='center' style='padding: 30px 0px; font-size: 13pt; color: red;'>실적이 존재하지 않습니다.</div>";
+				}
+				else{
+					
+					
+					$.each(json,function(index,item){
+						
+						html+="<div style='border: solid 2px #bfbfc0; padding-top: 20px; width: 90%; margin: 0 auto; margin-bottom: 50px;'>"+
+								"<table class='modalTable'>"+
+									"<tr>"+
+									   "<th style='width:15%;'>순번</th>"+
+									   "<td style='width:15%;'>"+item.rno+"&nbsp;번</td>"+
+									   "<th style='width:15%;'>상품명</th>"+
+									   "<td style='width:55%;'>"+item.pName+"</td>"+
+						   			"</tr>"
+						   	 	"</table>";
+						
+						html+=	"<table class='modalTable'>"+
+						   			"<tr>"+
+									   "<th>업무배정일</th>"+
+									   "<th>업무시작일</th>"+
+									   "<th>업무종료일</th>"+
+									   "<th style='border-right: solid 1px #002266;'>담당 고객 수</th>"+
+						   			"</tr>"+
+						   			"<tr>"+
+									   "<td>"+item.dueDate+"</td>"+
+									   "<td>"+item.startDate+"</td>"+
+									   "<td>"+item.endDate+"</td>"+
+									   "<td>"+item.nowNo+"&nbsp;명</td>"+
+						   			"</tr>"+
+								  "</table>"+
+							  "</div>";
+					}); // end of $.each(json,function(){--------
+					
+						
+				} // end of else-----------------------------
+				
+				$("h4.modal-title").text("  "+certainDate+" 실적 상세내용");
+				$("div.modal-body").html(html);
+			},
+			error: function(request, status, error){
+		        alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		    }
+		}); // end of $.ajax({-------- 
 		
+	} // end of function getPerfClientInfoForModal(-------
 		
-		
+	
 </script>
 
 
@@ -186,13 +296,29 @@
 		</div>
 		
 		<table id="employeePerfTable"></table>
-		
-		<label style="width: 200px; border-right:solid 1px red;">처리 업무 건 수가 가장 많은달</label>
-		<input type="text" value="2021년 10월" readOnly />		
-		<label style="width: 200px; border-right:solid 1px red;">담당 고객 수가 가장 많은달</label>
-		<input type="text" value="2021년 10월" readOnly />
-	
 	</div>
+	
+	<!-- 해당년월 상세정보 modal로 보여주기 -->
+	<div class="modal fade modalLocation" id="layerpop" >
+  		<div class="modal-dialog modal-lg">
+	    	<div class="modal-content">
+		      	<!-- header -->
+		      	<div class="modal-header">
+		        	<!-- 닫기(x) 버튼 -->
+		        	<button type="button" class="close" data-dismiss="modal">×</button>
+		        	<!-- header title -->
+		        	<h4 class="modal-title"></h4>
+		      	</div>
+		      	<!-- body (ajax로 값이 들어온다) -->
+		      	<div class="modal-body" style='margin-top: 30px;'></div>
+		      	<!-- Footer -->
+		      	<div class="modal-footer">
+		        	<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+		      	</div>
+	    	</div>
+  		</div>
+	</div>
+	
 </div>
 
  
@@ -217,12 +343,17 @@
 				var clientCntArr= [];
 				
 				// 테이블에 들어 갈 데이터
-				var html= "<tr>"+
-							  "<th class='tableTop'></th>"+
-							  "<th style='height: 30px;' class='tableTop'>처리 업무 건 수</th>"+
-							  "<th class='tableTop'>담당 고객 수</th>"+
-							  "<th class='tableTop'></th>"+
+				var html= "<tr class='tableTop'>"+
+							  "<th></th>"+
+							  "<th style='height: 30px;'>처리 업무 건 수</th>"+
+							  "<th>담당 고객 수</th>"+
+							  "<th>상세 정보</th>"+
 						  "</tr>";
+				
+				// 3) 6개월 동안 총 처리 업무 건수 추출 변수
+				var totalPerfCnt=0;
+				// 4) 6개월 동안 총 담당 고객 수 추출 변수
+				var totalClientCnt=0;	
 				
 				$.each(json,function(index, item){
 					
@@ -231,28 +362,42 @@
 					perfCntArr.push(Number(item.perfNumber));
 					clientCntArr.push(Number(item.clienNumber));
 					
-					// 테이블에 필요한 값 넣기
-					html+= "<tr>"+
-							   "<th>"+item.specificDate+"</th>";
+					if(item.perfNumber!='-') totalPerfCnt+=Number(item.perfNumber);
+					if(item.clienNumber!='-') totalClientCnt+=Number(item.clienNumber);
+					
+					// 2) 테이블에 필요한 값 넣기
+					
+					// 검색조건에서 선택한 날짜에 배경색 추가
+					if(index==5) html+= "<tr class='selectedTr'>";
+					else html+= "<tr>";
+							   
+					html+= "<th>"+item.specificDate+"</th>";
 							   
 					if(item.perfNumber=='-' || item.clienNumber=='-'){
 						html+="<td>"+item.perfNumber+"&nbsp;</td>"+
-						   	  "<td>"+item.clienNumber+"&nbsp;</td>";
+						   	  "<td>"+item.clienNumber+"&nbsp;</td>"+
+						   	  "<td>-</td>";
 					}
 					else{
-						html+="<td>"+item.perfNumber+"&nbsp;건</td>"+
-					   	  	  "<td>"+item.clienNumber+"&nbsp;명</td>";
+						html+=	"<td>"+item.perfNumber+"&nbsp;건</td>"+
+					   	  	  	"<td>"+item.clienNumber+"&nbsp;명</td>"+
+					   	  	  	"<td><span class='showPerfDetail' id='"+item.specificDate+"'>자세히 보기&nbsp;&nbsp;<span class='glyphicon glyphicon-search' ></span></span></td>"+
+				          	"</tr>";	
 					}
 					
-					html+= 	  "<td><span class='showPerfDetail'>자세히 보기&nbsp;&nbsp;</span><span class='glyphicon glyphicon-search' ></span></td>"+
-					       "</tr>";				
-					
-							   
 						 	  
 				}); // end of $.each(json,function(index, item){----
 		
 				
+				html+= "<tr class='tablebottom'>"+
+						   "<th style='color: #0000e6;'>합계</th>"+
+						   "<td style='color: #0000e6; font-weight:bold;'>"+totalPerfCnt+"&nbsp;건</td>"+
+						   "<td style='color: #0000e6; font-weight:bold;'>"+totalClientCnt+"&nbsp;명</td>"+
+						   "<td></td>"+
+					   "</tr>";
+					
 				$("table#employeePerfTable").html(html);
+				
 					
 				// 차트 코드 수정 (하이차트) 
 				Highcharts.chart('employeePerfChartContainer', {
