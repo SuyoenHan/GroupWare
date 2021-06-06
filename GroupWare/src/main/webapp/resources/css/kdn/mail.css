@@ -1,13 +1,27 @@
 @charset "UTF-8";
 
-/* mail_inbox.jsp 받은메일함 페이지 css */
+.float-right{float:right;}
 
-@font-face {
-    font-family: 'NEXON Lv2 Gothic';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv2 Gothic.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+.btn-style {
+	padding: 5px 7px;
+	border: none;
+	font-size: 13px;
+	border-radius: 2px;
+	margin: 0 5px;
+	display: inlnie-block;
+	color: white;
 }
+
+.btn-style{ background-color: #0071bd; }	
+
+#btn-container{margin-top: 20px; margin-right: 20px;}
+
+.anchor-style{
+	text-decoration: none;
+	color: black;
+}
+
+/* mail_inbox.jsp 받은메일함 페이지 css */
 
 table {
 	font-size: 10pt;
@@ -30,9 +44,7 @@ body > table > thead > tr > th{
 
 input, textarea {border: solid #ccc 1px;}
 
-#table {border-collapse: collapse;
-        width: 1024px;
-       }
+#table {border-collapse: collapse; width: 99%;}
 #table th, #table td{padding: 5px;}
-#table th{width: 120px;}
-#table td{width: 90%;}
+#table th{width: 45em;}
+#table td{width: 500em;}
