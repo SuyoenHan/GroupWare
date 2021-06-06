@@ -6,6 +6,7 @@ public class ClientHsyVO {
 	private String clientmobile;  // 고객연락처
 	private String clientname;    // 고객명
 	private String cnumber;       // 예약인원수
+	private String clientemail;   // 고객이메일
 	
 	// select용 
 	private String pNo;        // 상품번호
@@ -85,5 +86,13 @@ public class ClientHsyVO {
 	public void setPeriod(String period) {
 		this.period = period;
 	}
+	
+	public String getClientemail() {
+		return clientemail;
+	}
+	public void setClientemail(String clientemail) {
+		this.clientemail = clientemail;
+	}
+	
 	
 }

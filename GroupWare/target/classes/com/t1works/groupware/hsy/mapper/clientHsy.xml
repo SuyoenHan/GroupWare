@@ -5,8 +5,8 @@
 
 	<!-- 특정 상품에 예약정보 insert 하기 -->
 	<insert id="insertClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO">
-		insert into tbl_client (fk_pNo, clientmobile, clientname, cnumber)
-		values (#{fk_pNo}, #{clientmobile}, #{clientname}, #{cnumber})
+		insert into tbl_client (fk_pNo, clientmobile, clientname, cnumber, clientemail)
+		values (#{fk_pNo}, #{clientmobile}, #{clientname}, #{cnumber}, #{clientemail})
 	</insert>
 	
 	<!-- 해당제품에 특정고객의 예약이 존재하는지 확인 -->

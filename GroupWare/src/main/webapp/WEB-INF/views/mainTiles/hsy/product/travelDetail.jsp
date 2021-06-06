@@ -217,6 +217,7 @@
 		
 		var clientname= $("input[name=clientname]").val().trim();
 		var clientmobile= $("input[name=clientmobile]").val().trim();
+		var clientemail= $("input[name=clientemail]").val().trim();
 		var fk_pNo= $("input[name=fk_pNo]").val();
 		
 		// 1) 입력값 검사 => cnumber은 입력하지 않아도 1로 잡힌다
@@ -245,6 +246,24 @@
 	        return; 
    		}
 		
+   		if(clientemail==""){
+			alert("이메일을 입력해주세요.");
+			$("input[name=clientemail]").focus();
+			$("input[name=clientemail]").val("");
+			return;
+		}
+   		
+   		// 이메일 유효성 검사
+   		var regExp = new RegExp(/^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i);
+        var bool = regExp.test($("input[name=clientemail]").val());
+     
+     	if(!bool) { // 이메일이 정규표현식에 위배된 경우
+     		alert("올바른 형식의 이메일을 입력해주세요.");
+     		$("input[name=clientemail]").val("");
+	        $("input[name=clientemail]").focus();
+     		return;
+     	}
+    
 		// 2) 예약이 가능한 인원수 인지 검사하고 예약가능한 인원수라면 결제창으로 이동
 		var formData= $("form[name=reserveInfo]").serialize();
 		
@@ -305,6 +324,7 @@
 		var cnumber= $("input[name=cnumber]").val().trim();
 		var pName= '${pvo.pName}';
 		var clientmobile= $("input[name=clientmobile]").val().trim();
+		var clientemail= $("input[name=clientemail]").val().trim();
 		
 		var $frm= document.reserveInfo
 		
@@ -315,9 +335,33 @@
 			dataType:"JSON",
 			success:function(json){
 				if(json.result==1){ // 트랜잭션처리 성공한 경우		
-						alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
-						     "상세내역은 나의예약현황 보기에서 확인 가능합니다.");
-						$frm.submit();
+				
+						// 예약결제 성공한 고객 이메일로 메일 보내기
+						$.ajax({
+							url:"<%=ctxPath%>/t1/sendEmailtoClient.tw",
+							data:{"clientemail":clientemail, "pName":pName,"clientname":clientname},
+							type:"POST",
+							dataType:"JSON",
+							success:function(json){
+						
+								if(json.n==0){
+									alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
+								     	"메일이 전송되었으며 상세내역은 나의예약현황 보기에서 확인 가능합니다.");
+									$frm.submit();
+									return;
+								}
+								else{
+									alert(clientname+"님의 "+ pName+" 예약이 완료되었습니다.\n"+
+							     	"상세내역은 나의예약현황 보기에서 확인 가능합니다.");	
+									$frm.submit();
+									return;
+								}
+							},
+							error: function(request, status, error){
+					        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					        }
+						}); // end of $.ajax({------
+						
 				}
 				else{ // 트랜잭션처리 실패한 경우
 					alert("시스템 오류로 예약에 실패했습니다. 관리자에게 문의바랍니다.");
@@ -390,6 +434,10 @@
 				<li>
 					<label>연락처</label>
 					<input type="text" class="reserve" name="clientmobile" placeholder="  연락처를 입력해주세요" />
+				</li>
+				<li>
+					<label>이메일</label>
+					<input type="text" class="reserve" name="clientemail" placeholder="  이메일을 입력해주세요" />
 				</li>
 				<li>
 					<label>인원수</label>
