@@ -56,7 +56,13 @@ public interface InterProductBwbService {
 	// 선택날짜를 가지고 -1달,-2달 값 가지고 오기
 	Map<String, String> changeDate(String firstDate);
 	
-	// chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
+	// 기본 chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
 	Map<String, String> selectDepCntPerformance(Map<String, String> paraMap);
+	
+	// 복합 chart에 들어가기 위한 모든 부서 name값,3개월 각각 건수,합구하기
+	Map<String, String> selectAllDepCntPerformance(Map<String, String> paraMap);
+	
+	// 해당 월의 부서 3개 평균건수 구해오기
+	String selectAvgCnt(String selectedMonth);
 
 }
