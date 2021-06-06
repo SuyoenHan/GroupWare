@@ -44,7 +44,7 @@
 		         }
 		         else{
 		        	 $.ajax({
-			               url:"<%= ctxPath%>/t1/wordSearchShow.tw",
+			               url:"<%= ctxPath%>/t1/expWordSearchShow.tw",
 			               type:"get",
 			               data:{"searchType":$("select#searchType").val()
 			            	 //  ,"searchType":$("select#searchCategory").val()
@@ -109,7 +109,7 @@
 				   var frm = document.searchFrm;
 				   //console.log(frm);
 		      		frm.method = "get";
-		      		frm.action = "<%= ctxPath%>/t1/generalPayment_List.tw";
+		      		frm.action = "<%= ctxPath%>/t1/expApproval_List.tw";
 		      		frm.submit();
 			}); 
 		
@@ -119,7 +119,7 @@
 		}); //end of  $(document).ready(function(){})--------------------------------------------
 		
 		 
-		  function goView(ano,ncatname){
+		  function goView(ano,scatname){
 		      
 			  <%-- location.href="<%= ctxPath%>/t1/view.tw?ano="+ano+"&ncatname="+ncatname; --%>
 			// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
@@ -127,10 +127,10 @@
 			    //           현재 페이지 주소를 뷰단으로 넘겨준다.
 			    	var frm =document.goViewFrm;
 			    	frm.ano.value = ano;
-			    	frm.ncatname.value = ncatname;
+			    	frm.ncatname.value = scatname;
 			    	
 			    	frm.method = "get";
-			    	frm.action = "<%= ctxPath%>/t1/view.tw";
+			    	frm.action = "<%= ctxPath%>/t1/expView.tw";
 			        frm.submit();
 			  
 		      
@@ -144,18 +144,18 @@
 
 <div style="padding-left: 3%;">
 
-   <h2 style="margin-bottom: 30px;">일반결재내역</h2>
+   <h2 style="margin-bottom: 30px;">지출결재내역</h2>
    
    
    
    <%-- === #101. 글검색 폼 추가하기 : 카테고리로 검색을 하도록 한다. === --%>
-   <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/generalPayment_List.tw">
+   <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/expApproval_List.tw">
       <select name="searchCategory" id="searchCategory" style="height: 26px;">
-         <option value="">::일반결재문서종류::</option>
-         <option value="1">회의록</option>
-         <option value="2">위임장</option>
-         <option value="3">외부공문</option>
-         <option value="4">협조공문</option>
+         <option value="">::지출결재문서종류::</option>
+         <option value="1">지출결의서</option>
+         <option value="2">법인카드사용신청서</option>
+         <option value="3">출장명세서(EX)</option>
+         <option value="4">퇴직금정산신청서(EX)</option>
       </select>
        <select name="searchType" id="searchType" style="height: 26px;">
          <option value="atitle">글제목</option>
@@ -173,18 +173,18 @@
    <table id="table">
       <tr>
          <th style="width: 60px;  text-align: center;">NO.</th>
-         <th style="width: 80px; text-align: center;">일반결재문서</th>
-         <th style="width: 360px;  text-align: center;">제목</th>
+         <th style="width: 110px; text-align: center;">전자결재문서</th>
+         <th style="width: 330px;  text-align: center;">제목</th>
          <th style="width: 150px; text-align: center;">작성자</th>
          <th style="width: 70px;  text-align: center;">날짜</th>
       </tr>
       
-        <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status">
+        <c:forEach var="evo" items="${requestScope.expList}" varStatus="status">
          <tr>
 	         <td align="center">${evo.rno}</td>
 	         
 	         
-	         <td align="left"> ${evo.ncatname} 
+	         <td align="left"> ${evo.scatname} 
 	         
 	         
 	          <%-- 첨부파일이 있는 경우 시작 --%>
@@ -200,10 +200,10 @@
 	         <td align="center">
 	          <%-- 첨부파일이 있는 경우 시작 --%>
              	<c:if test="${not empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.scatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
         		</c:if>
         		<c:if test="${empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}')">${evo.atitle}</span>&nbsp;
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.scatname}')">${evo.atitle}</span>&nbsp;
         		</c:if>
         	   <%-- 첨부파일이 있는 경우 끝 --%>
      	     </td>
@@ -226,7 +226,7 @@
 	        현재 페이지 주소를 뷰단으로 넘겨준다. --%>
    <form name="goViewFrm">
    	<input type="hidden" name="ano"/>
-   	<input type="hidden" name="ncatname"/>
+   	<input type="hidden" name="scatname"/>
 	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
    </form>
    

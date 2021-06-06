@@ -155,6 +155,45 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 	}
 
 	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//지출결재
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+	@Override
+	public List<ElectronPayJshVO> expListSearchWithPaging(Map<String, String> paraMap) {
+		List<ElectronPayJshVO> expList = sqlsession6.selectList("payment_Jsh.expListSearchWithPaging",paraMap);
+		return expList;
+	}
+
+
+	// 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다.
+	@Override
+	public int expGetTotalCount(Map<String, String> paraMap) {
+		int n =sqlsession6.selectOne("payment_Jsh.expGetTotalCount", paraMap);
+		return n;
+	}
+
+
+	//검색어 입력시 자동글 완성하기
+	@Override
+	public List<String> expWordSearchShow(Map<String, String> paraMap) {
+		List<String> wordList = sqlsession6.selectList("payment_Jsh.expWordSearchShow", paraMap);
+		return wordList;
+	}
+
+
+
+	// 하나의 전자결재내역 문서 보여주기
+	@Override
+	public ElectronPayJshVO expOneView(Map<String, String> paraMap) {
+		ElectronPayJshVO epvo =sqlsession6.selectOne("payment_Jsh.expOneView",paraMap);
+		return epvo;
+	}
+
+	
 
 
 

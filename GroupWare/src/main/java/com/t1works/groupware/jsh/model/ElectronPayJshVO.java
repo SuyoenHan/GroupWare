@@ -52,6 +52,29 @@ public class ElectronPayJshVO {
 	 private String comname; // 타회사명
 	 
 	 
+	 //지출결재 테이블
+	 private String scat;    //지출결재카테고리 (1:지출결의서, 2:법인카드사용신청서)
+	 private String scatname; // 지출결재카테고리명 (1:지출결의서, 2:법인카드사용신청서)
+	 
+	 //지출결의서
+	 private String exno;      //지출 순번
+	 private String fk_scat;   // 지출결재카테고리
+	 
+	 private String exdate;    // 지출일자
+	 private int exprice;      // 지출금액
+	 
+	 //법인카드
+	 private String cono;      // 순번
+	 private String codate;    // 사용예정일
+	 private String cocardnum; //카드번호
+	 private String copurpose; // 지출목적 (1:교통비, 2:사무비품, 3:주유비, 4:출장비, 5:식비, 6:기타)
+	 private int coprice;   //예상금액
+
+	 
+	 
+	 
+	 
+	 
 	
 	//Member
 	private String employeeid;     // 사번
@@ -385,5 +408,98 @@ public class ElectronPayJshVO {
 	public void setOdate(String odate) {
 		this.odate = odate;
 	}
+	
+	
+	
+	
+	
+	// 지출결재 //
+	public String getScat() {
+		return scat;
+	}
+	public void setScat(String scat) {
+		this.scat = scat;
+	}
+	public String getScatname() {
+		return scatname;
+	}
+	public void setScatname(String scatname) {
+		this.scatname = scatname;
+	}
+	public String getExno() {
+		return exno;
+	}
+	public void setExno(String exno) {
+		this.exno = exno;
+	}
+	public String getFk_scat() {
+		return fk_scat;
+	}
+	public void setFk_scat(String fk_scat) {
+		this.fk_scat = fk_scat;
+	}
+	public String getExdate() {
+		return exdate;
+	}
+	public void setExdate(String exdate) {
+		this.exdate = exdate;
+	}
+	public int getExprice() {
+		return exprice;
+	}
+	public void setExprice(int exprice) {
+		this.exprice = exprice;
+	}
+	public String getCono() {
+		return cono;
+	}
+	public void setCono(String cono) {
+		this.cono = cono;
+	}
+	public String getCodate() {
+		return codate;
+	}
+	public void setCodate(String codate) {
+		this.codate = codate;
+	}
+	public String getCocardnum() {
+		return cocardnum;
+	}
+	public void setCocardnum(String cocardnum) {
+		this.cocardnum = cocardnum;
+	}
+	public String getCopurpose() {
+		return copurpose;
+	}
+	public void setCopurpose(String copurpose) {
+		this.copurpose = copurpose;
+	}
+	public int getCoprice() {
+		return coprice;
+	}
+	public void setCoprice(int coprice) {
+		this.coprice = coprice;
+	}
+	
+	
+	
+	private String rno;
+
+
+
+	public String getRno() {
+		return rno;
+	}
+	public void setRno(String rno) {
+		this.rno = rno;
+	} 
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

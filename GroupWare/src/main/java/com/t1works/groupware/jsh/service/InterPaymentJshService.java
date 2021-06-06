@@ -43,6 +43,25 @@ public interface InterPaymentJshService {
 	int savePayment(ElectronPayJshVO epvo) throws Throwable;
 	//임시저장함 insert-첨부파일O
 	int savePayment_withFile(ElectronPayJshVO epvo) throws Throwable;
+
+	
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////
+	////지출결재
+	
+	//페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+	List<ElectronPayJshVO> expListSearchWithPaging(Map<String, String> paraMap);
+
+	// 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다.
+	int expGetTotalCount(Map<String, String> paraMap);
+	
+	//검색어 입력시 자동글 완성하기
+	List<String> expWordSearchShow(Map<String, String> paraMap);
+
+	// 하나의 전자결재내역 문서 보여주기
+	ElectronPayJshVO expOneView(Map<String, String> paraMap);
 	
 	
 
