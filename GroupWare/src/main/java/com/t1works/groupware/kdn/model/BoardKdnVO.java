@@ -35,7 +35,8 @@ public class BoardKdnVO {
 	   public BoardKdnVO() {}
 	   
 	   public BoardKdnVO(String seq, String fk_employeeid, String name, String subject, String content, String pw, String readCount,
-			String regDate, String status, String fk_categnum) {
+			String regDate, String status, String fk_categnum,String groupno, String depthno,
+	        String fileName, String orgFilename, String fileSize) {
 		super();
 		this.seq = seq;
 		this.fk_employeeid = fk_employeeid;
@@ -47,6 +48,12 @@ public class BoardKdnVO {
 		this.regDate = regDate;
 		this.status = status;
 		this.fk_categnum = fk_categnum;
+		this.groupno = groupno;
+	    this.depthno = depthno;
+	    this.fileName = fileName;
+	    this.orgFilename = orgFilename;
+	    this.fileSize = fileSize;
+		
 	}
 
 	public String getSeq() {
@@ -233,6 +240,15 @@ public class BoardKdnVO {
 		this.fileSize = fileSize;
 	}
 
+	public MultipartFile getAttach() {
+		return attach;
+	}
+
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}
+
+	
 	
 	
 }

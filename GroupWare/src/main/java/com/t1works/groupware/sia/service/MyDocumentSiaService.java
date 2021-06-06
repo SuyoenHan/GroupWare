@@ -110,8 +110,8 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 
 	// 내문서함 - 수신함 반려버튼 클릭
 	@Override
-	public int reject(String ano) {
-		int n = dao.reject(ano);
+	public int reject(Map<String, String> paraMap) {
+		int n = dao.reject(paraMap);
 		return n;
 	}
 
@@ -147,7 +147,6 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		List<ApprovalSiaVO> spend_sendlist = dao.getSpend_sendlist(paraMap);
 		return spend_sendlist;
 	}
-
 
 	// 검색에 해당하는 발신함 - 지출결재 글의 총 페이지수를 알아오기
 	@Override
@@ -189,33 +188,122 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	
+	// 내문서함 - 임시저장함 - 일반결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getnorm_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> norm_templist = dao.getnorm_templist(paraMap);
+		return norm_templist;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// 검색에 해당하는 임시저장함 - 일반결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getNormTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getNormTempTotalPage(paraMap);
+		return totalPage;
+	}
 
+	// 내문서함 - 임시저장함 - 일반결재문서 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuNorm_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuNorm_temp_detail(paraMap);
+		return avo;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+
+	// 내문서함 - 임시저장함 - 지출결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getSpend_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> spend_templist = dao.getSpend_templist(paraMap);
+		return spend_templist;
+	}
+
+	// 검색에 해당하는 임시저장함 - 지출결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getSpendTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getSpendTempTotalPage(paraMap);
+		return totalPage;
+	}
+		
+	// 내문서함 - 임시저장함 - 지출 결재 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuSpend_temp_detail(paraMap);
+		return avo;		
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 근태결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getVacation_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> vacation_templist = dao.getVacation_templist(paraMap);
+		return vacation_templist;
+	}
+
+	// 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getVacationTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getVacationTempTotalPage(paraMap);
+		return totalPage;
+	}
+
+	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVacation_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuVacation_temp_detail(paraMap);
+		return avo;
+	}
+	
+	////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 수신함 - 결재완료 - 일반결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getnorm_completelist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> norm_completelist = dao.getnorm_completelist(paraMap);
+		return norm_completelist;
+	}
+	
+	// 검색에 해당하는 수신함 - 결재완료 - 일반결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getNormCompleteTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getNormCompleteTotalPage(paraMap);
+		return totalPage;
+	}
+
+	// 내문서함 - 수신함 - 결재완료 - 일반결재문서 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuNorm_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuNorm_complete_detail(paraMap);
+		return avo;
+	}
+
+	//////////////////////////////////////////////////////////////////////
+
+	// 내문서함 - 수신함 - 결재완료 - 지출결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getSpend_completelist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> spend_completelist = dao.getSpend_completelist(paraMap);
+		return spend_completelist;
+	}
+
+	// 검색에 해당하는 수신함 - 결재완료 - 지출결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getSpendCompleteTotalPage(Map<String, String> paraMap) {
+		int totalPage = dao.getSpendCompleteTotalPage(paraMap);
+		return totalPage;
+	}
+		
+	// 내문서함 - 수신함 - 결재완료 - 지출 결재 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuSpend_complete_detail(paraMap);
+		return avo;		
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	
 	// 내문서함 - 결재완료 - 근태결재문서에 해당하는 문서 조회하기
 	@Override
 	public List<ApprovalSiaVO> getVacation_completelist(Map<String, String> paraMap) {
@@ -228,6 +316,13 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	public int getVacationCompleteTotalPage(Map<String, String> paraMap) {
 		int totalPage = dao.getVacationCompleteTotalPage(paraMap);
 		return totalPage;
+	}
+	
+	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.myDocuVacation_complete_detail(paraMap);
+		return avo;
 	}
 
 }

@@ -11,7 +11,10 @@ div#containerview{
 	margin: 30px 0px 30px 50px;
 	width: 80%;
 }
-table, th, td {border: solid 1px gray;}
+div.section table, div.section th, div.section td{
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
 
 #table1 {
 	float: right; 
@@ -70,16 +73,7 @@ td.opinion{
 <script type="text/javascript">
 	
 	$(document).ready(function(){
-	/* 	
-		if(${requestScope.avo.astatus == 0}){
-			$("span.img").hide();
-		}
-		 
-		if(${requestScope.avo.astatus == 1 and sessionScope.loginuser.fk_pcode == 2}){
-			$("span.img").hide();
-			$("span#img_approval_1").show();
-		}
-	*/
+	
 		goViewOpinion();
 		
 		$("input#reset").click(function(){			
@@ -89,7 +83,9 @@ td.opinion{
 	});
 	
 	
-	// Function Declaration	
+	// Function Declaration
+	
+	// 의견 작성
 	function goAddWrite(){
 		var opinionVal = $("textarea#ocontent").val().trim();
 		if(opinionVal == ""){
@@ -115,7 +111,7 @@ td.opinion{
 		});		
 	}// end of function goAddWrite(){}--------------------
 	
-	
+	// 의견 작성 리스트 보기
 	function goViewOpinion(){
 		$.ajax({
 			url:"<%= ctxPath%>/t1/opinionList.tw",
@@ -157,90 +153,64 @@ td.opinion{
 	
 	// 결재
 	function goApproval(){
-		var formData = $("form[name=approvalDocu]").serialize();
 		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/approval_1.png";
+		var bool = confirm("결재 승인 하시겠습니까?");
 		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/approval.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("결재 승인 되었습니다");
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
 					
-					html1 += "";
+			$.ajax({
+				url:"<%=ctxPath%>/t1/approval.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){ 
 					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
+					if(json.n == 1){					
+						alert("결재 승인 되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuVacation_complete.tw";						
+					}
+					else{
+						alert("결재 승인 실패했습니다");
+					}
 					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});			
+		}
 	}
 	
-	
+	// 반려
 	function goReject(){
-		var formData = $("form[name=approvalDocu]").serialize();
 		
-		var imgsrc = "<%= ctxPath%>/resources/images/sia/rejected_1.png";
+		var bool = confirm("반려 처리 하시겠습니까?");
 		
-		$.ajax({
-			url:"<%=ctxPath%>/t1/reject.tw",
-			data:formData,
-			type:"post",
-			dataType:"json",
-			success:function(json){ 
-				var html1 = "";
-				
-				if(json.n == 1){					
-					alert("반려 처리 되었습니다.");
+		if(bool){		
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/reject.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){ 
 					
-					html1 += "";
-					
-					html += "<span class='img'><img src='"+imgsrc+"' width='35px;'></span>";
-					
-					$("td#img_approval_1").html(html);
-				}
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}			
-		});	
+					if(json.n == 1){					
+						alert("반려 처리 되었습니다.");
+						location.href = "<%=ctxPath%>/t1/myDocuVacation_complete.tw";
+					}
+					else{
+						alert("반려 처리 실패했습니다.");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
 	}
-	
-	
-	function goViewApproval(){
-		$.ajax({
-			url:"<%= ctxPath%>/t1/approvalList.tw",
-			data:{"parentAno":"${requestScope.avo.ano}"},
-			dataType:"json",
-			success:function(json){				
-								
-				var html = "";
-				
-				if(json.length > 0){
-					$.each(json, function(index, item){						
-						html += "<div>["+item.odate+"]&nbsp;"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;<span style='color: red;'>"+item.astatus+"</span></div>";
-					});
-				}
-				
-				$("span#approvalDisplay").html(html);
-				
-			},
-			error: function(request, status, error){
-				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-			}
-		});
-	}// end of function goViewOpinion(){}--------------------
 	
 </script>
 
@@ -248,7 +218,7 @@ td.opinion{
 	<h2 style="font-size: 20pt; font-weight: bold;" align="center">${requestScope.avo.vcatname}계</h2>
 	<hr style="background-color: #395673; height: 1.5px; width: 80%;">
 	<br>
-	<div id="astatus">
+	<div class="section">
 		<table id="table1">		
 			<tr>
 				<th style="width:100px; height:40px;">대리</th>
@@ -370,9 +340,9 @@ td.opinion{
 			<table id="table5">
 				<tr>				
 					<th>의견작성</th>
-					<td class="opinion" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
+					<td style="border: solid 1px white;" align="center"> <textarea id="ocontent" name ="ocontent" style="width:100%; height: 70px; margin-left: 15px;"></textarea>					
 					</td>
-					<td class="opinion" style="width:10%;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
+					<td style="width:10%; border: solid 1px white;" align="right"><input type="button" onclick="goAddWrite()" class="btn btn-info" style="margin-bottom: 5px;" value="작성"/><br>
 					<input type="button" id="reset" class="btn btn-default" value="취소"/></td>				
 				</tr>
 			</table>

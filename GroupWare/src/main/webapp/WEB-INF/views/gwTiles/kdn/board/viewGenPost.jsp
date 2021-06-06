@@ -273,6 +273,19 @@ function delGenComment(comment_seq){
 				<th>제목</th>
 				<td>${requestScope.boardvo.subject}</td>
 			</tr>
+			<c:if test="${not empty requestScope.boardvo.fileName}">
+				<tr class="thead">
+					<th>첨부파일</th>
+					<td>
+						<c:if test="${sessionScope.loginuser != null}">
+							<a href="<%=ctxPath%>/t1/downloadGenFile.tw?seq=${requestScope.boardvo.seq}">${requestScope.boardvo.orgFilename}</a>
+						</c:if>
+						<c:if test="${sessionScope.loginuser == null}">
+							${requestScope.boardvo.orgFilename}
+						</c:if>
+					</td>
+				</tr>
+			</c:if>
 			<tr class="thead">
 				<td colspan='2'>
 				    <p style="word-break: break-all;">${requestScope.boardvo.content}</p>
@@ -294,8 +307,12 @@ function delGenComment(comment_seq){
 		<c:if test="${requestScope.boardvo.nextseq ne null}">
 			<i class="fas fa-angle-double-right"></i>&nbsp;&nbsp;다음글&nbsp;&nbsp;<span class="move" onclick="javascript:location.href='viewGenPost.tw?seq=${requestScope.boardvo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'">${requestScope.boardvo.nextsubject}</span>
 		</c:if>
-		<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
-		<!-- <button type="button" class="float-right btn-style" onclick="javascript:location.href='generalBoard.tw'">전체목록보기</button> -->
+		<c:if test="${not empty requestScope.gobackURL}">
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%=ctxPath%>/${requestScope.gobackURL}'">목록</button><!-- 기존 검색된결과목록 -->
+		</c:if>
+		<c:if test="${empty requestScope.gobackURL}">
+			<button type="button" class="float-right btn-style" onclick="javascript:location.href='generalBoard.tw'">목록</button>
+		</c:if>
 		<c:if test="${requestScope.boardvo.fk_employeeid eq loginuser.employeeid}">
 			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/generalDel.tw?seq=${requestScope.boardvo.seq}'">삭제</button>
 			<button type="button" class="float-right btn-style" onclick="javascript:location.href='<%= ctxPath%>/t1/generalEdit.tw?seq=${requestScope.boardvo.seq}'">수정</button>

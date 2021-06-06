@@ -1,5 +1,6 @@
 package com.t1works.groupware.kdn.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.kdn.model.BoardKdnVO;
@@ -32,6 +36,9 @@ public class BoardKdnController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterBoardKdnService service;
 	
+	@Autowired     // Type에 따라 알아서 Bean 을 주입해준다.
+	private FileManager fileManager;
+	
 	// === 게시판 글쓰기 폼 페이지 요청 하기 ===
 	@RequestMapping(value="/t1/noticePostUpload.tw")
 	public ModelAndView requiredLogin_noticePostUpload(HttpServletRequest request, HttpServletResponse response, Map<String,String> paraMap, BoardKdnVO boardvo, ModelAndView mav) {
@@ -41,8 +48,55 @@ public class BoardKdnController {
 	
 	// === 게시판 글쓰기 완료 요청 ===
 	@RequestMapping(value="/t1/uploadComplete.tw", method= {RequestMethod.POST})
-	public ModelAndView noticeUploadComplete(ModelAndView mav, BoardKdnVO boardvo) {
-		int n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+	public ModelAndView noticeUploadComplete(ModelAndView mav, BoardKdnVO boardvo, MultipartHttpServletRequest mrequest) {
+		
+		// === 첨부파일 있는 경우 작업 시작 ===
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path =root+"resources"+File.separator+"files";
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+				System.out.println(">>> 확인용 newFileName : "+newFileName);
+				
+	        // 3. BoardVO boardvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// === 첨부파일 있는 경우 작업 끝 ===
+		
+		int n = 0;
+
+		// 첨부파일이 없는 경우
+		if(attach.isEmpty()) {
+			n = service.noticePostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+		} else { //첨부파일이 있는 경우
+			n = service.noticeUploadwithFile(boardvo);
+		}
+		
 		
 		if(n==1) {	//글쓰기가 성공한 경우
 			mav.setViewName("redirect:/t1/employeeBoard.tw");
@@ -52,6 +106,76 @@ public class BoardKdnController {
 		
 		return mav;
 	} 
+	
+	// === 공지사항 첨부파일 다운로드 받기 ===
+	@RequestMapping(value="/t1/downloadNoticeFile.tw")
+	public void requiredLogin_download(HttpServletRequest request, HttpServletResponse response) {
+		
+		String seq = request.getParameter("seq");
+		// 첨부파일이 있는 글번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		
+		// 첨부파일이 있는 글번호에서 fileName값(ex. 20210604100859609711349587800.png)과 orgFilename(ex. cloth_buckaroo_3.png)을 DB에서 가져와야한다
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = null;
+		
+		try {
+			Integer.parseInt(seq);
+			BoardKdnVO boardvo = service.getViewWithNoAddCount(paraMap);
+			
+			if(boardvo == null || (boardvo != null && boardvo.getFileName() == null)) {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('존재하지 않는 글번호이거나 첨부파일이 없으므로 파일 다운로드가 불가합니다!!'); history.back();</script>");
+				return;
+			} else {
+				String fileName = boardvo.getFileName();
+				// WAS(톰캣) 디스크에 저장된 파일명
+				
+				String orgFilename = boardvo.getOrgFilename();
+				// 다운로드시 보여줄 파일명
+				
+				HttpSession session = request.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				System.out.println(" ~~~ webapp의 절대경로 root => "+root);
+				//~~~ webapp의 절대경로 => C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\
+				
+				String path =root+"resources"+File.separator+"files";
+				
+				//path가 첨부파일이 저장될 톰캣의 폴더가 된다
+				System.out.println(" ~~~ webapp의 절대경로 path => "+path);
+				// ~~~ webapp의 절대경로 => C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
+				
+				// **** file 다운로드 하기 **** //
+				boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도 
+				flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+				
+				if(!flag) { // 다운로드가 실패할 경우 메시지를 띄워준다.
+	               out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성.
+	               out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다!!'); history.back();</script>"); 
+				}
+				
+			}
+			
+		} catch(NumberFormatException e) {
+			try {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('파일 다운로드가 불가합니다!!'); history.back();</script>");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+		} catch(IOException e2) {
+			
+		}
+		
+	}
 	
 	
 	String boardTypeNo = "";
@@ -195,6 +319,10 @@ public class BoardKdnController {
 	      String searchType = request.getParameter("searchType");
 	      String searchWord = request.getParameter("searchWord");
 	      
+	      if(searchWord == null) {
+	    	  searchWord = ""; 
+	      }
+	      
 	      Map<String,String> paraMap = new HashMap<>();
 	      paraMap.put("seq", seq);
 	      paraMap.put("searchType", searchType);
@@ -296,7 +424,7 @@ public class BoardKdnController {
 	      Map<String,String> paraMap = new HashMap<>();
 	      paraMap.put("seq", seq);
 	      paraMap.put("searchType", searchType);
-	      paraMap.put("searchWord", searchWord);
+	      paraMap.put("searchWord", "");
 	      
 	      mav.addObject("searchType", searchType);
 	      mav.addObject("searchWord", searchWord);
@@ -322,19 +450,70 @@ public class BoardKdnController {
 	    	 mav.setViewName("kdn/board/noticeEdit.gwTiles");
 	     }
 		
+	    String gobackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("gobackURL", gobackURL);
+	    
 		return mav;
 	}
 	
 	// === 공지사항 글수정 페이지 완료하기 === //
 	@RequestMapping(value="/t1/noticeEditEnd.tw", method= {RequestMethod.POST})
-	public ModelAndView noticeEditEnd(ModelAndView mav, BoardKdnVO boardvo, HttpServletRequest request) {
+	public ModelAndView noticeEditEnd(ModelAndView mav, BoardKdnVO boardvo, HttpServletRequest request, MultipartHttpServletRequest mrequest) {
+		
+		String gobackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("gobackURL", gobackURL);
 		
 		//  원본글의 글암호와 수정시 입력해준 암호가 일치할때만 글 수정이 가능하도록 해야한다.
 		
-		int n = service.noticeEdit(boardvo);
+		// === 첨부파일 있는 경우 작업 시작 ===
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path =root+"resources"+File.separator+"files";
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+				System.out.println(">>> 확인용 newFileName : "+newFileName);
+				
+	        // 3. BoardVO boardvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// === 첨부파일 있는 경우 작업 끝 ===
+		
+		int n = 0;
+
+		// 첨부파일 변경안한 경우
+		if(attach.isEmpty()) {
+			n = service.noticeEdit(boardvo);	// 파일첨부가 없는 글수정
+		} else { //첨부파일이 있는 경우
+			n = service.noticeEditNewAttach(boardvo); //새 파일첨부가 있는 글수정
+		}
+
 		// n 이 1 이라면 정상적으로 변경됨.
 	    // n 이 0 이라면 글수정에 필요한 글암호가 틀린경우 
-		
 		if(n == 0) {
 	         mav.addObject("message", "암호가 일치하지 않아 글 수정이 불가합니다.");
 	      }
@@ -564,11 +743,14 @@ public class BoardKdnController {
 		String subject = request.getParameter("subject");
 		String privatePost = request.getParameter("privatePost");
 		
+		
 		mav.addObject("parentSeq", parentSeq);
 		mav.addObject("groupno", groupno);
 		mav.addObject("depthno", depthno);
 		mav.addObject("subject", subject);
 		mav.addObject("privatePost", privatePost);
+		
+		//System.out.println("글쓰기 페이지 비밀글 여부 : "+privatePost);
 		
 		mav.setViewName("kdn/board/suggpostupload.gwTiles");
 		return mav;
@@ -576,8 +758,51 @@ public class BoardKdnController {
 	
 	// === 건의사항 게시판 글쓰기 완료 요청 ===
 	@RequestMapping(value="/t1/suggUploadComplete.tw", method= {RequestMethod.POST})
-	public ModelAndView suggUploadComplete(ModelAndView mav, BoardKdnVO boardvo) {
-		int n = service.suggPostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+	public ModelAndView suggUploadComplete(ModelAndView mav, BoardKdnVO boardvo, MultipartHttpServletRequest mrequest) {
+		// === 첨부파일 있는 경우 작업 시작 ===
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path =root+"resources"+File.separator+"files";
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+	        // 3. BoardVO boardvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// === 첨부파일 있는 경우 작업 끝 ===
+		
+		int n = 0;
+
+		// 첨부파일이 없는 경우
+		if(attach.isEmpty()) {
+			n = service.suggPostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+		} else { //첨부파일이 있는 경우
+			n = service.suggUploadWithFile(boardvo);
+		}
 		
 		if(n==1) {	//글쓰기가 성공한 경우
 			mav.setViewName("redirect:/t1/suggestionBoard.tw");
@@ -587,6 +812,70 @@ public class BoardKdnController {
 		
 		return mav;
 	} 
+	
+	// === 건의사항 첨부파일 다운로드 받기 ===
+	@RequestMapping(value="/t1/downloadSuggFile.tw")
+	public void requiredLogin_downloadSuggFile(HttpServletRequest request, HttpServletResponse response) {
+		
+		String seq = request.getParameter("seq");
+		// 첨부파일이 있는 글번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = null;
+		
+		try {
+			Integer.parseInt(seq);
+			BoardKdnVO boardvo = service.getSuggViewWithNoAddCount(paraMap);
+			
+			if(boardvo == null || (boardvo != null && boardvo.getFileName() == null)) {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('존재하지 않는 글번호이거나 첨부파일이 없으므로 파일 다운로드가 불가합니다!!'); history.back();</script>");
+				return;
+			} else {
+				String fileName = boardvo.getFileName();
+				String orgFilename = boardvo.getOrgFilename();
+				
+				HttpSession session = request.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				//System.out.println(" ~~~ webapp의 절대경로 root => "+root);
+				
+				String path =root+"resources"+File.separator+"files";
+				
+				//path가 첨부파일이 저장될 톰캣의 폴더가 된다
+				//System.out.println(" ~~~ webapp의 절대경로 path => "+path);
+				// ~~~ webapp의 절대경로 => C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
+				
+				// **** file 다운로드 하기 **** //
+				boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도 
+				flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+				
+				if(!flag) { // 다운로드가 실패할 경우 메시지를 띄워준다.
+	               out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성.
+	               out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다!!'); history.back();</script>"); 
+				}
+				
+			}
+			
+		} catch(NumberFormatException e) {
+			try {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('파일 다운로드가 불가합니다!!'); history.back();</script>");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+		} catch(IOException e2) {
+			
+		}
+		
+	}
 	
 	
 	// === 건의사항 글1개를 보여주는 페이지 요청 ===
@@ -598,6 +887,10 @@ public class BoardKdnController {
 		
 		String searchType = request.getParameter("searchType");
 	      String searchWord = request.getParameter("searchWord");
+	      
+	      if(searchWord == null) {
+	    	  searchWord = "";
+	      }
 	      
 	      Map<String,String> paraMap = new HashMap<>();
 	      paraMap.put("seq", seq);
@@ -723,6 +1016,10 @@ public class BoardKdnController {
 		
 		String searchType = request.getParameter("searchType");
 	      String searchWord = request.getParameter("searchWord");
+	      
+	      if(searchWord == null) {
+	    	  searchWord = "";
+	      }
 	      
 	      Map<String,String> paraMap = new HashMap<>();
 	      paraMap.put("seq", seq);
@@ -1108,8 +1405,52 @@ public class BoardKdnController {
 	
 	// === 자유게시판 게시판 글쓰기 완료 요청 ===
 	@RequestMapping(value="/t1/genUploadComplete.tw", method= {RequestMethod.POST})
-	public ModelAndView genUploadComplete(ModelAndView mav, BoardKdnVO boardvo) {
-		int n = service.genPostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+	public ModelAndView genUploadComplete(ModelAndView mav, BoardKdnVO boardvo, MultipartHttpServletRequest mrequest) {
+		
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			//System.out.println(" ~~~ webapp의 절대경로 => "+root);
+			
+			String path =root+"resources"+File.separator+"files";
+			//path가 첨부파일이 저장될 톰캣의 폴더가 된다
+			//System.out.println(" ~~~ webapp의 절대경로 => "+path);
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;	//첨부파일의 크기
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				// originalFilnename ==> "강아지.png"
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+				//System.out.println(">>> 확인용 newFileName : "+newFileName);
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		
+		// 첨부파일이 없는 경우
+		if(attach.isEmpty()) {
+			n = service.genPostUpload(boardvo);	// 파일첨부가 없는 글쓰기
+		} else { //첨부파일이 있는 경우
+			n = service.genUploadWithFile(boardvo);
+		}
 		
 		if(n==1) {	//글쓰기가 성공한 경우
 			mav.setViewName("redirect:/t1/generalBoard.tw");
@@ -1120,6 +1461,73 @@ public class BoardKdnController {
 		return mav;
 	} 
 		
+	// === 자유게시판 첨부파일 다운로드 받기 ===
+	@RequestMapping(value="/t1/downloadGenFile.tw")
+	public void requiredLogin_downloadGenFile(HttpServletRequest request, HttpServletResponse response) {
+		
+		String seq = request.getParameter("seq");
+		// 첨부파일이 있는 글번호
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("seq", seq);
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		
+		response.setContentType("text/html; charset=UTF-8");
+		PrintWriter out = null;
+		
+		try {
+			Integer.parseInt(seq);
+			BoardKdnVO boardvo = service.getGenViewWithNoAddCount(paraMap);
+			
+			if(boardvo == null || (boardvo != null && boardvo.getFileName() == null)) {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('존재하지 않는 글번호이거나 첨부파일이 없으므로 파일 다운로드가 불가합니다!!'); history.back();</script>");
+				return;
+			} else {
+				String fileName = boardvo.getFileName();
+				// WAS(톰캣) 디스크에 저장된 파일명
+				
+				String orgFilename = boardvo.getOrgFilename();
+				// 다운로드시 보여줄 파일명
+				
+				HttpSession session = request.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				//System.out.println(" ~~~ webapp의 절대경로 root => "+root);
+				
+				String path =root+"resources"+File.separator+"files";
+				
+				//path가 첨부파일이 저장될 톰캣의 폴더가 된다
+				//System.out.println(" ~~~ webapp의 절대경로 path => "+path);
+				
+				// **** file 다운로드 하기 **** //
+				boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도 
+				flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+				
+				if(!flag) { // 다운로드가 실패할 경우 메시지를 띄워준다.
+	               out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성.
+	               out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다!!'); history.back();</script>"); 
+				}
+				
+			}
+			
+		} catch(NumberFormatException e) {
+			try {
+				out = response.getWriter(); // 웹브라우저상에 메시지를 쓰기 위한 객체생성
+				
+				out.println("<script type='text/javascript'>alert('파일 다운로드가 불가합니다!!'); history.back();</script>");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+		} catch(IOException e2) {
+			
+		}
+		
+	}
+	
+	
 		
 	// === 자유게시판 글1개를 보여주는 페이지 요청 ===
 	@RequestMapping(value="/t1/viewGenPost.tw")
@@ -1130,11 +1538,16 @@ public class BoardKdnController {
 		String searchType = request.getParameter("searchType");
 	    String searchWord = request.getParameter("searchWord");
 	      
+	    if(searchWord == null) {
+	    	searchWord = "";
+	    }
+	    
 	    Map<String,String> paraMap = new HashMap<>();
 	    paraMap.put("seq", seq);
 	    paraMap.put("searchType", searchType);
 	    paraMap.put("searchWord", searchWord);
 	      
+	    
 	      mav.addObject("searchType", searchType);
 	      mav.addObject("searchWord", searchWord);
 	      
@@ -1203,7 +1616,7 @@ public class BoardKdnController {
 	    Map<String,String> paraMap = new HashMap<>();
 	    paraMap.put("seq", seq);
 	    paraMap.put("searchType", searchType);
-	    paraMap.put("searchWord", searchWord);
+	    paraMap.put("searchWord", "");
 	      
 	    mav.addObject("searchType", searchType);
 	    mav.addObject("searchWord", searchWord);
@@ -1212,7 +1625,7 @@ public class BoardKdnController {
 		
 		// 글조회수(readCount) 증가 없이 단순히 글1개만 조회 해주는 것이다.
 		BoardKdnVO boardvo = service.getGenViewWithNoAddCount(paraMap);
-				
+		
 		HttpSession session = request.getSession();
 	    MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
 	      
@@ -1235,11 +1648,62 @@ public class BoardKdnController {
 	
 	// === 자유게시판 글수정 페이지 완료하기 ===
 	@RequestMapping(value="/t1/generalEditEnd.tw", method= {RequestMethod.POST})
-	public ModelAndView generalEditEnd(ModelAndView mav, BoardKdnVO boardvo, HttpServletRequest request) {
+	public ModelAndView generalEditEnd(ModelAndView mav, BoardKdnVO boardvo, HttpServletRequest request, MultipartHttpServletRequest mrequest) {
 		
 		//  원본글의 글암호와 수정시 입력해준 암호가 일치할때만 글 수정이 가능하도록 해야한다.
 		
-		int n = service.generalEdit(boardvo);
+		String gobackURL = MyUtil.getCurrentURL(request);
+		mav.addObject("gobackURL", gobackURL);
+		
+		//  원본글의 글암호와 수정시 입력해준 암호가 일치할때만 글 수정이 가능하도록 해야한다.
+		
+		// === 첨부파일 있는 경우 작업 시작 ===
+		MultipartFile attach = boardvo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path =root+"resources"+File.separator+"files";
+			
+			String newFileName = "";// WAS(톰캣)의 디스크에 저장될 파일명 
+			byte[] bytes = null; //첨부파일의 내용을 담는 것
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				//첨부파일의 내용물을 읽어오는것
+				String originalFilnename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilnename, path);
+				
+				System.out.println(">>> 확인용 newFileName : "+newFileName);
+				
+	        // 3. BoardVO boardvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기
+				
+				boardvo.setFileName(newFileName); // WAS(톰캣)에 저장될 파일명
+				boardvo.setOrgFilename(originalFilnename); // 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+	            										   // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+				boardvo.setFileSize(String.valueOf(fileSize)); 
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		// === 첨부파일 있는 경우 작업 끝 ===
+		
+		int n = 0;
+
+		// 첨부파일 변경안한 경우
+		if(attach.isEmpty()) {
+			n = service.generalEdit(boardvo);	// 파일첨부가 없는 글수정
+		} else { //첨부파일이 있는 경우
+			n = service.generalEditNewAttach(boardvo); //새 파일첨부가 있는 글수정
+		}
+		
 		// n 이 1 이라면 정상적으로 변경됨.
 	    // n 이 0 이라면 글수정에 필요한 글암호가 틀린경우 
 		
@@ -1408,7 +1872,7 @@ public class BoardKdnController {
 		jsonObj.put("totalPage", totalPage); // {"totalPage"}
 		
 		return jsonObj.toString();
-		// "{"totalPage":5}"
+		// "{"totalPage":5}"0
 	}
 	
 	// 건의사항 댓글 수정하기

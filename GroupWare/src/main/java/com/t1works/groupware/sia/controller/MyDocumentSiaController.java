@@ -132,9 +132,6 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuNorm_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
-		request.setAttribute("astatus", request.getParameter("astatus"));
-		request.setAttribute("fromDate", request.getParameter("fromDate"));
-		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("ncat", request.getParameter("ncat"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -148,9 +145,6 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuSpend_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
-		request.setAttribute("astatus", request.getParameter("astatus"));
-		request.setAttribute("fromDate", request.getParameter("fromDate"));
-		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("scat", request.getParameter("scat"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -164,9 +158,6 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuVacation_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
-		request.setAttribute("astatus", request.getParameter("astatus"));
-		request.setAttribute("fromDate", request.getParameter("fromDate"));
-		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("vno", request.getParameter("vno"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -965,9 +956,18 @@ public class MyDocumentSiaController {
 	@RequestMapping(value="/t1/reject.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
 	public String reject(HttpServletRequest request) { 
 		
-		String ano = request.getParameter("ano");	
+		String ano = request.getParameter("ano");
+		String arecipient1 = request.getParameter("arecipient1");
+		String arecipient2 = request.getParameter("arecipient2");
+		String arecipient3 = request.getParameter("arecipient3");	
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);  
+		paraMap.put("arecipient1", arecipient1);
+		paraMap.put("arecipient2", arecipient2);
+		paraMap.put("arecipient3", arecipient3);		
 	 
-		int n = service.reject(ano); 	
+		int n = service.reject(paraMap); 	
 		
 		JSONObject jsonObj = new JSONObject();		
 		jsonObj.put("n", n);
@@ -1623,45 +1623,986 @@ public class MyDocumentSiaController {
 	}
 	
 	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////	
+	
+	// 내문서함 - 임시저장함 - 일반결재문서에 해당하는 문서 조회하기
+	@ResponseBody
+	@RequestMapping(value="/t1/norm_templist.tw", produces="text/plain;charset=UTF-8")
+	public String norm_templist(HttpServletRequest request) {
+				
+		String ncat = request.getParameter("ncat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+				
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}
+			}
+		}
+		
+		if(currentShowPageNo == null || currentShowPageNo == "") {
+			currentShowPageNo = "1";
+		}
+		
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();		
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
+		
+		List<ApprovalSiaVO> approvalvo = service.getnorm_templist(paraMap);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("ncatname", appvo.getNcatname());				
+				jsonObj.put("rno", appvo.getRno());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+		return jsonArr.toString();
+	}
 	
 	
+	// 검색에 해당하는 임시저장함 - 일반결재 글의 총 페이지수를 알아오기
+	@ResponseBody
+	@RequestMapping(value="/t1/getNormTempTotalPage.tw", method= {RequestMethod.GET})
+	public String getNormTempTotalPage(HttpServletRequest request) {
+		
+		String ncat = request.getParameter("ncat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}				
+			}
+		}
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
+		
+		// 검색에 해당하는 임시저장함 - 일반결재 글의 총 페이지수를 알아오기
+		int totalPage = service.getNormTempTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); 
+		
+		return jsonObj.toString();		
+	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	// 내문서함 - 임시저장함 - 일반결재 문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuNorm_temp_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuNorm_temp_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String ncatname = request.getParameter("ncatname");
+				
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("ncatname", request.getParameter("ncatname"));		
+		mav.addObject("ncat", request.getParameter("ncat"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+		
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("ncatname", ncatname);
+		paraMap.put("employeeid", employeeid);
+		
+		try {
+			ApprovalSiaVO avo = service.myDocuNorm_temp_detail(paraMap);			
+			
+			mav.addObject("avo", avo);
+			
+		} catch (NumberFormatException e) {
+			
+		}
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuNorm_temp_detail.gwTiles");
+		
+		return mav;
+	}
+		
 	
 	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 지출결재문서에 해당하는 문서 조회하기 (Ajax 처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/spend_templist.tw", produces="text/plain;charset=UTF-8")
+	public String spend_templist(HttpServletRequest request) {
+		
+		String scat = request.getParameter("scat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+				
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(scat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] scatArr = scat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<scatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < scatArr.length) {
+					a += "'"+scatArr[i]+"',";
+				}
+				else {
+					a += "'"+scatArr[i]+"'";
+				}
+			}
+		}
+		
+		if(currentShowPageNo == null || currentShowPageNo == "") {
+			currentShowPageNo = "1";
+		}
+		
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
+		
+		List<ApprovalSiaVO> approvalvo = service.getSpend_templist(paraMap);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("scatname", appvo.getScatname());
+				jsonObj.put("rno", appvo.getRno());
+				
+				jsonArr.put(jsonObj);
+			}
+		}		
+		
+		return jsonArr.toString();
+	}
+	
+	
+	// 검색에 해당하는 임시저장함 - 지출결재 글의 총 페이지수를 알아오기
+	@ResponseBody
+	@RequestMapping(value="/t1/getSpendTempTotalPage.tw", method= {RequestMethod.GET})
+	public String getSpendTempTotalPage(HttpServletRequest request) {
+		
+		String scat = request.getParameter("scat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(scat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] scatArr = scat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<scatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < scatArr.length) {
+					a += "'"+scatArr[i]+"',";
+				}
+				else {
+					a += "'"+scatArr[i]+"'";
+				}				
+			}
+		}
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
+		
+		// 검색에 해당하는 임시저장함 - 지출결재 글의 총 페이지수를 알아오기
+		int totalPage = service.getSpendTempTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); 
+				
+		return jsonObj.toString();		
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 지출 결재 문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuSpend_temp_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuSpend_temp_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String scatname = request.getParameter("scatname");
+		
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("scatname", request.getParameter("scatname"));		
+		mav.addObject("scat", request.getParameter("scat"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+		
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("scatname", scatname);
+		paraMap.put("employeeid", employeeid);
+		
+		try {
+			ApprovalSiaVO avo = service.myDocuSpend_temp_detail(paraMap);			
+			mav.addObject("avo", avo);			
+		} catch (NumberFormatException e) {
+			
+		}
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuSpend_temp_detail.gwTiles");
+		
+		return mav;
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+
+	
+	// 내문서함 - 임시저장함 - 근태결재문서에 해당하는 문서 조회하기
+	@ResponseBody
+	@RequestMapping(value="/t1/vacation_templist.tw", produces="text/plain;charset=UTF-8")
+	public String vacation_templist(HttpServletRequest request) {
+					
+		String vno = request.getParameter("vno");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");		
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(vno.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] vnoArr = vno.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<vnoArr.length; i++) {
+				cnt++;
+				
+				if(cnt < vnoArr.length) {
+					a += "'"+vnoArr[i]+"',";
+				}
+				else {
+					a += "'"+vnoArr[i]+"'";
+				}
+			}
+		}
+		
+		if(currentShowPageNo == null || currentShowPageNo == "") {
+			currentShowPageNo = "1";
+		}
+		
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
+		
+		List<ApprovalSiaVO> approvalvo = service.getVacation_templist(paraMap);		
+		
+		JSONArray jsonArr = new JSONArray();		
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("vcatname", appvo.getVcatname());
+				jsonObj.put("rno", appvo.getRno());
+				
+				jsonArr.put(jsonObj);
+			}
+		}		
+		
+		return jsonArr.toString();
+	}
+	
+	
+	// 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기
+	@ResponseBody
+	@RequestMapping(value="/t1/getVacationTempTotalPage.tw", method= {RequestMethod.GET})
+	public String getVacationTempTotalPage(HttpServletRequest request) {
+		
+		String vno = request.getParameter("vno");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(vno.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] vnoArr = vno.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<vnoArr.length; i++) {
+				cnt++;
+				
+				if(cnt < vnoArr.length) {
+					a += "'"+vnoArr[i]+"',";
+				}
+				else {
+					a += "'"+vnoArr[i]+"'";
+				}				
+			}
+		}
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
+		
+		// 검색에 해당하는 수신함 - 근태결재 글의 총 페이지수를 알아오기
+		int totalPage = service.getVacationTempTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage);		
+		
+		return jsonObj.toString();
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuVacation_temp_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuVacation_temp_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String vcatname = request.getParameter("vcatname");
+		
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("vcatname", request.getParameter("vcatname"));		
+		mav.addObject("vno", request.getParameter("vno"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+				
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("vcatname", vcatname);
+		paraMap.put("employeeid", employeeid);
+		
+		try {
+			// 근태결재문서 한 개 상세보기
+			ApprovalSiaVO avo = service.myDocuVacation_temp_detail(paraMap);						
+			
+			mav.addObject("avo", avo);		
+			
+		} catch (NumberFormatException e) {
+			
+		}		
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuVacation_temp_detail.gwTiles");
+		
+		return mav;
+	}
+		
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+			
+	// 내문서함 - 수신함 - 결재완료 - 일반결재문서에 해당하는 문서 조회하기
+	@ResponseBody
+	@RequestMapping(value="/t1/norm_completelist.tw", produces="text/plain;charset=UTF-8")
+	public String norm_completelist(HttpServletRequest request) {
+		
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String ncat = request.getParameter("ncat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+				
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}
+			}
+		}
+		
+		if(currentShowPageNo == null || currentShowPageNo == "") {
+			currentShowPageNo = "1";
+		}
+		
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();		
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
+		
+		List<ApprovalSiaVO> approvalvo = service.getnorm_completelist(paraMap);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("ncatname", appvo.getNcatname());
+				jsonObj.put("astatus", appvo.getAstatus());
+				jsonObj.put("asdate", appvo.getAsdate());
+				jsonObj.put("rno", appvo.getRno());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+		return jsonArr.toString();
+	}
+	
+	
+	// 검색에 해당하는 수신함 - 결재완료 - 일반결재 글의 총 페이지수를 알아오기
+	@ResponseBody
+	@RequestMapping(value="/t1/getNormCompleteTotalPage.tw", method= {RequestMethod.GET})
+	public String getNormCompleteTotalPage(HttpServletRequest request) {
+		
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String ncat = request.getParameter("ncat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(ncat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] ncatArr = ncat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<ncatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < ncatArr.length) {
+					a += "'"+ncatArr[i]+"',";
+				}
+				else {
+					a += "'"+ncatArr[i]+"'";
+				}				
+			}
+		}
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
+		
+		// 검색에 해당하는 수신함 - 결재완료 - 일반결재 글의 총 페이지수를 알아오기
+		int totalPage = service.getNormCompleteTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); 
+		
+		return jsonObj.toString();		
+	}
+	
+	
+	// 내문서함 - 수신함 - 결재완료 - 일반결재 문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuNorm_complete_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuNorm_complete_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String ncatname = request.getParameter("ncatname");
+				
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("ncatname", request.getParameter("ncatname"));		
+		mav.addObject("astatus", request.getParameter("astatus"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
+		mav.addObject("ncat", request.getParameter("ncat"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+		
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("ncatname", ncatname);
+		paraMap.put("employeeid", employeeid);
+		
+		try {
+			ApprovalSiaVO avo = service.myDocuNorm_detail(paraMap);			
+			
+			mav.addObject("avo", avo);
+			
+		} catch (NumberFormatException e) {
+			
+		}
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuNorm_complete_detail.gwTiles");
+		
+		return mav;
+	}
+		
+	
+	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 수신함 - 결재완료 - 지출결재문서에 해당하는 문서 조회하기 (Ajax 처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/spend_completelist.tw", produces="text/plain;charset=UTF-8")
+	public String spend_completelist(HttpServletRequest request) {
+		
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String scat = request.getParameter("scat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String currentShowPageNo = request.getParameter("currentShowPageNo");
+				
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(scat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] scatArr = scat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<scatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < scatArr.length) {
+					a += "'"+scatArr[i]+"',";
+				}
+				else {
+					a += "'"+scatArr[i]+"'";
+				}
+			}
+		}
+		
+		if(currentShowPageNo == null || currentShowPageNo == "") {
+			currentShowPageNo = "1";
+		}
+		
+		try {
+			Integer.parseInt(currentShowPageNo); 
+		} catch (Exception e) {
+			currentShowPageNo = "1";
+		}
+		
+		int sizePerPage = 10;
+		
+		int startRno = ((Integer.parseInt(currentShowPageNo) - 1) * sizePerPage) + 1;
+		int endRno = startRno + sizePerPage - 1;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("startRno", String.valueOf(startRno));
+		paraMap.put("endRno", String.valueOf(endRno));
+		paraMap.put("userid", userid);
+		
+		List<ApprovalSiaVO> approvalvo = service.getSpend_completelist(paraMap);
+		
+		JSONArray jsonArr = new JSONArray();		
+		
+		if(approvalvo != null) {
+			for(ApprovalSiaVO appvo : approvalvo) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("atitle", appvo.getAtitle());
+				jsonObj.put("ano", appvo.getAno());
+				jsonObj.put("scatname", appvo.getScatname());
+				jsonObj.put("astatus", appvo.getAstatus());
+				jsonObj.put("asdate", appvo.getAsdate());
+				jsonObj.put("rno", appvo.getRno());
+				
+				jsonArr.put(jsonObj);
+			}
+		}		
+		
+		return jsonArr.toString();
+	}
+	
+	
+	// 검색에 해당하는 수신함 - 결재완료 - 지출결재 글의 총 페이지수를 알아오기
+	@ResponseBody
+	@RequestMapping(value="/t1/getSpendCompleteTotalPage.tw", method= {RequestMethod.GET})
+	public String getSpendCompleteTotalPage(HttpServletRequest request) {
+		
+		String astatus = request.getParameter("astatus");
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
+		String scat = request.getParameter("scat");
+		String sort = request.getParameter("sort");
+		String searchWord = request.getParameter("searchWord");
+		String sizePerPage = request.getParameter("sizePerPage");
+		
+		if(astatus == null || (!"0".equals(astatus) && !"1".equals(astatus) && !"2".equals(astatus) && !"3".equals(astatus))) {
+			astatus = "";
+		}
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
+		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
+			sort = "";
+		}
+		if(searchWord == null || "".equals(searchWord) || searchWord.trim().isEmpty()) {
+			searchWord = "";
+		}
+		
+		String a = "";
+		if(scat.length() == 0) {
+			a = "";
+		}
+		else {
+			String[] scatArr = scat.split(","); // [2,3]
+			int cnt = 0;
+			for(int i=0; i<scatArr.length; i++) {
+				cnt++;
+				
+				if(cnt < scatArr.length) {
+					a += "'"+scatArr[i]+"',";
+				}
+				else {
+					a += "'"+scatArr[i]+"'";
+				}				
+			}
+		}
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("astatus", astatus);
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
+		paraMap.put("sort", sort);
+		paraMap.put("searchWord", searchWord);
+		paraMap.put("a", a);
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
+		
+		// 검색에 해당하는 수신함 - 결재완료 - 지출결재 글의 총 페이지수를 알아오기
+		int totalPage = service.getSpendCompleteTotalPage(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("totalPage", totalPage); 
+				
+		return jsonObj.toString();		
+	}
+	
+	
+	// 내문서함 - 수신함 - 결재완료 - 지출 결재 문서 한 개 상세보기
+	@RequestMapping(value="/t1/myDocuSpend_complete_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuSpend_complete_detail(HttpServletRequest request, ModelAndView mav) {
+		String ano = request.getParameter("ano");		
+		String scatname = request.getParameter("scatname");
+		
+		mav.addObject("ano", request.getParameter("ano"));
+		mav.addObject("scatname", request.getParameter("scatname"));		
+		mav.addObject("astatus", request.getParameter("astatus"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
+		mav.addObject("scat", request.getParameter("scat"));
+		mav.addObject("sort", request.getParameter("sort"));		
+		mav.addObject("searchWord", request.getParameter("searchWord"));
+		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
+		
+		String employeeid = null;
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		if(loginuser != null) {
+			employeeid = loginuser.getEmployeeid(); 
+		}
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		paraMap.put("scatname", scatname);
+		paraMap.put("employeeid", employeeid);
+		
+		try {
+			ApprovalSiaVO avo = service.myDocuSpend_detail(paraMap);			
+			mav.addObject("avo", avo);			
+		} catch (NumberFormatException e) {
+			
+		}
+		
+		mav.setViewName("sia/myDocumentDetail/myDocuSpend_complete_detail.gwTiles");
+		
+		return mav;
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////
+	
 	// 내문서함 - 결재완료문서 - 근태결재문서에 해당하는 문서 조회하기
 	@ResponseBody
 	@RequestMapping(value="/t1/vacation_completelist.tw", produces="text/plain;charset=UTF-8")
@@ -1754,7 +2695,7 @@ public class MyDocumentSiaController {
 	}
 	
 	
-	// totalPage 알아오기 (Ajax 로 처리)
+	// 수신함 - 결재완료 - 근태결재 totalPage 알아오기 (Ajax 로 처리)
 	@ResponseBody
 	@RequestMapping(value="/t1/getVacationCompleteTotalPage.tw", method= {RequestMethod.GET})
 	public String getVacationCompleteTotalPage(HttpServletRequest request) {
@@ -1798,8 +2739,11 @@ public class MyDocumentSiaController {
 					a += "'"+vnoArr[i]+"'";
 				}				
 			}
-		}
+		}		
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();		
 		paraMap.put("astatus", astatus);
@@ -1808,9 +2752,10 @@ public class MyDocumentSiaController {
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
-		paraMap.put("sizePerPage", sizePerPage);		
+		paraMap.put("sizePerPage", sizePerPage);
+		paraMap.put("userid", userid);
 		
-		// 검색에 해당하는 결재완료-근태결재 글의 총 페이지수를 알아오기
+		// 검색에 해당하는 결재완료 - 근태결재 글의 총 페이지수를 알아오기
 		int totalPage = service.getVacationCompleteTotalPage(paraMap);
 		
 		JSONObject jsonObj = new JSONObject();
@@ -1819,10 +2764,10 @@ public class MyDocumentSiaController {
 		return jsonObj.toString();
 	}
 	
-/*	
+
 	// 내문서함 - 결재완료 - 근태결재문서 한 개 상세보기
-	@RequestMapping(value="/t1/myDocuVacationComplete_detail.tw", produces="text/plain;charset=UTF-8")
-	public ModelAndView myDocuVacationComplete_detail(HttpServletRequest request, ModelAndView mav) {
+	@RequestMapping(value="/t1/myDocuVacation_complete_detail.tw", produces="text/plain;charset=UTF-8")
+	public ModelAndView myDocuVacation_complete_detail(HttpServletRequest request, ModelAndView mav) {
 		String ano = request.getParameter("ano");		
 		String vcatname = request.getParameter("vcatname");
 		
@@ -1853,7 +2798,7 @@ public class MyDocumentSiaController {
 		
 		try {
 			// 근태결재문서 한 개 상세보기
-			ApprovalSiaVO avo = service.myDocuVacation_detail(paraMap);						
+			ApprovalSiaVO avo = service.myDocuVacation_complete_detail(paraMap);						
 			
 			mav.addObject("avo", avo);		
 			
@@ -1871,11 +2816,54 @@ public class MyDocumentSiaController {
 	
 	
 	
-	//////////////////////////////////////////////////////////////////////
-
 	
 	
-*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 

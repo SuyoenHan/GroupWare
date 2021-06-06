@@ -108,8 +108,8 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 
 	// 내문서함 - 수신함 - 반려버튼 클릭
 	@Override
-	public int reject(String ano) {
-		int n = sqlsession4.update("mydocument_sia.reject", ano);
+	public int reject(Map<String, String> paraMap) {
+		int n = sqlsession4.update("mydocument_sia.reject", paraMap);
 		return n;
 	}
 	
@@ -186,40 +186,141 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
 	
+	// 내문서함 - 임시저장함 - 일반결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getnorm_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> norm_templist = sqlsession4.selectList("mydocument_sia.getnorm_templist", paraMap);
+		return norm_templist;
+	}
 	
+	// 검색에 해당하는 임시저장함 - 일반결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getNormTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getNormTempTotalPage", paraMap);
+		return totalPage;
+	}
 	
+	// 내문서함 - 임시저장함 - 일반결재문서 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuNorm_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuNorm_temp_detail", paraMap);
+		return avo;
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	//////////////////////////////////////////////////////////////////////
 
-	// 내문서함 - 결재완료 - 근태결재문서에 해당하는 문서 조회하기
+	// 내문서함 - 임시저장함 - 지출결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getSpend_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> spend_templist = sqlsession4.selectList("mydocument_sia.getSpend_templist", paraMap);
+		return spend_templist;
+	}
+
+	// 검색에 해당하는 임시저장함 - 지출결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getSpendTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getSpendTempTotalPage", paraMap);
+		return totalPage;
+	}	
+	
+	// 내문서함 - 임시저장함 - 지출 결재 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuSpend_temp_detail", paraMap);
+		return avo;
+	}
+	
+	/////////////////////////////////////////////////////////////////////
+
+	// 내문서함 - 임시저장함 - 근태결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getVacation_templist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> vacation_templist = sqlsession4.selectList("mydocument_sia.getVacation_templist", paraMap);
+		return vacation_templist;
+	}
+
+	// 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getVacationTempTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getVacationTempTotalPage", paraMap);
+		return totalPage;
+	}
+
+	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVacation_temp_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuVacation_temp_detail", paraMap);
+		return avo;
+	}
+	
+	/////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 수신함 - 결재완료 - 일반결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getnorm_completelist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> norm_completelist = sqlsession4.selectList("mydocument_sia.getnorm_completelist", paraMap);
+		return norm_completelist;
+	}
+	
+	// 검색에 해당하는 수신함 - 결재완료 - 일반결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getNormCompleteTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getNormCompleteTotalPage", paraMap);
+		return totalPage;
+	}
+	
+	// 내문서함 - 수신함 - 결재완료 - 일반결재문서 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuNorm_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuNorm_complete_detail", paraMap);
+		return avo;
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+
+	// 내문서함 - 수신함 - 결재완료 - 지출결재문서에 해당하는 문서 조회하기
+	@Override
+	public List<ApprovalSiaVO> getSpend_completelist(Map<String, String> paraMap) {
+		List<ApprovalSiaVO> spend_completelist = sqlsession4.selectList("mydocument_sia.getSpend_completelist", paraMap);
+		return spend_completelist;
+	}
+
+	// 검색에 해당하는 수신함 - 결재완료 - 지출결재 글의 총 페이지수를 알아오기
+	@Override
+	public int getSpendCompleteTotalPage(Map<String, String> paraMap) {
+		int totalPage = sqlsession4.selectOne("mydocument_sia.getSpendCompleteTotalPage", paraMap);
+		return totalPage;
+	}	
+	
+	// 내문서함 - 수신함 - 결재완료 - 지출 결재 문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuSpend_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuSpend_complete_detail", paraMap);
+		return avo;
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+
+	// 내문서함 - 수신함 - 결재완료 - 근태결재문서에 해당하는 문서 조회하기
 	@Override
 	public List<ApprovalSiaVO> getVacation_completelist(Map<String, String> paraMap) {
 		List<ApprovalSiaVO> vacation_completelist = sqlsession4.selectList("mydocument_sia.getVacation_completelist", paraMap);
 		return vacation_completelist;
 	}
 
-	// 검색에 해당하는 결재완료 - 근태결재 글의 총 페이지수를 알아오기
+	// 검색에 해당하는 수신함 - 결재완료 - 근태결재 글의 총 페이지수를 알아오기
 	@Override
 	public int getVacationCompleteTotalPage(Map<String, String> paraMap) {
 		int totalPage = sqlsession4.selectOne("mydocument_sia.getVacationCompleteTotalPage", paraMap);
 		return totalPage;
 	}
 	
+	// 내문서함 - 수신함 - 결재완료 - 근태결재문서 한 개 상세보기
+	@Override
+	public ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuVacation_complete_detail", paraMap);
+		return avo;
+	}
 
 }

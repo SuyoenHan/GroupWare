@@ -77,7 +77,7 @@ $(document).ready(function(){
 <div id="board-container">
 	 <i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">공지사항</span>
 	
-	 <form name="postFrm"> 
+	 <form name="postFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 -->
 	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
@@ -103,6 +103,13 @@ $(document).ready(function(){
 	             <input type="text" name="subject" id="subject" style="width: 100%;" />       
 	          </td>
 	       </tr>
+	       <%-- === #150. 파일첨부 타입 추가하기 === --%>
+	       <tr>
+         	<th>파일첨부</th>
+         	<td>
+         		<input type="file" name="attach" />
+         	</td>
+           </tr>
 	       <tr>
 	          <th>내용</th>
 	          <td>
@@ -110,7 +117,6 @@ $(document).ready(function(){
 	          </td>
 	       </tr>
 	       
-	       <%-- === #150. 파일첨부 타입 추가하기 === --%>
 	       
 	       
 	       <tr>

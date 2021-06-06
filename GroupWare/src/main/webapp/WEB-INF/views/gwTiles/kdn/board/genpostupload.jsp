@@ -74,7 +74,7 @@ $(document).ready(function(){
 <div id="board-container">
 	 <a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">자유게시판</span></a>
 	
-	 <form name="postFrm"> 
+	 <form name="postFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 -->  
 	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
@@ -91,15 +91,17 @@ $(document).ready(function(){
 	          </td>
 	       </tr>
 	       <tr>
+         	<th>파일첨부</th>
+         	<td>
+         		<input type="file" name="attach" />
+         	</td>
+         </tr>
+	       <tr>
 	          <th>내용</th>
 	          <td>
 	             <textarea rows="10" cols="100" style="width: 100%; height: 100%;" name="content" id="content"></textarea>       
 	          </td>
 	       </tr>
-	       
-	       <%-- === #150. 파일첨부 타입 추가하기 === --%>
-	       
-	       
 	       <tr>
 	          <th>비밀번호</th>
 	          <td>

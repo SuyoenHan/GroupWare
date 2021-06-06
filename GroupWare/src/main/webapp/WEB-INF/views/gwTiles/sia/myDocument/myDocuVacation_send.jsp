@@ -58,8 +58,9 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
 	td.th{		
 		background-color: #ccd9e6;
@@ -70,7 +71,9 @@
 		background-color: #395673; 
 		color: #ffffff;
 		padding: 5px;
-		border: solid 1px #ccc;}
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
 	tr.tr_hover:hover{
 		cursor: pointer;
 		background-color: #eef2f7;
@@ -175,8 +178,7 @@ $(document).ready(function(){
 		$("input#fromDate").datepicker();                    
 		$("input#toDate").datepicker();		
 				
-	});
-	
+	});	
 });
 	
 	// Function Declaration
