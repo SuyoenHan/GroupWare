@@ -587,7 +587,6 @@ $(document).ready(function(){
          				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="rgsubject"/></td>
          			</tr>
          		</table>
-         		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
          		<div>
 					<input type="hidden" id="gno" value="" name="gno"/>
 					<input type="hidden" id="goodsname" value="" name="goodsname"/>

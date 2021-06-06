@@ -19,6 +19,16 @@ tr.infoSchedule{
 	background-color: white;
 }
 
+.table th {
+	color: #fff;
+	background-color: #395673;
+	text-align: center;
+}
+
+.table td{
+	text-align: center;
+	vertical-align: middle;
+}
 
 a{
     color: #395673;

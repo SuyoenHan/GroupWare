@@ -142,7 +142,7 @@
 		select rno,sdno,fk_employeeid, subject, startdate, enddate, name, scname, bcname, content, fk_bcno
 		from
 		(
-		    select row_number() over(order by sdno desc) as rno, sdno, subject, S.fk_employeeid as fk_employeeid ,B.bcname as bcname,content, S.fk_bcno as fk_bcno,
+		    select row_number() over(order by startdate desc) as rno, sdno, subject, S.fk_employeeid as fk_employeeid ,B.bcname as bcname,content, S.fk_bcno as fk_bcno,
 				    to_char(startdate, 'yyyy-mm-dd hh24:mi:ss') as startdate , to_char(enddate, 'yyyy-mm-dd hh24:mi:ss') as enddate, E.name as name, G.scname as scname
 				    from tbl_schedule S join tbl_employee E
 		            on S.fk_employeeid = E.employeeid
@@ -291,7 +291,7 @@
 	<select id="todayMyCal" parameterType="String" resultType="com.t1works.groupware.ody.model.ScheduleOdyVO">
 		select sdno, to_char(startdate,'YYYY-MM-DD') as startdate, to_char(startdate,'hh24:mi') as stime,  to_char(enddate,'YYYY-MM-DD') as enddate,to_char(enddate,'hh24:mi') as etime,  subject, color
 		from tbl_schedule
-		where fk_employeeid = #{employeeid} and 
+		where fk_employeeid = #{employeeid} and  fk_bcno=1 and
 			  to_char(sysdate,'YYYY-MM-DD') between to_char(startdate,'YYYY-MM-DD') and to_char(enddate,'YYYY-MM-DD')
 	</select>
 </mapper>
