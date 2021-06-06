@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.common.GoogleMail;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.hsy.model.*;
 import com.t1works.groupware.hsy.service.InterProductHsyService;
@@ -24,6 +25,7 @@ public class ProductHsyController {
 	
 	@Autowired 
 	private InterProductHsyService service;
+	
 	
 	// 여행사 홈페이지 매핑 url
 	@RequestMapping(value="/t1/travelAgency.tw") 
@@ -443,6 +445,33 @@ public class ProductHsyController {
 		
 		return jsonObj.toString();
 	}// end of public String changeCountAjax(ClientHsyVO cvo) {-----------
+	
+	
+	
+	// 예약결제 성공한 고객 이메일로 메일 보내기 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/sendEmailtoClient.tw",method= {RequestMethod.POST})
+	public String sendEmailtoClient(ClientHsyVO cvo) {
 		
+		GoogleMail mail = new GoogleMail();
+		
+		int n=0;
+		try {
+			mail.sendmail(cvo.getClientemail(), cvo.getClientname(), cvo.getpName());
+			
+		} catch(Exception e) { // 메일 전송이 실패한 경우
+			n=1;
+		}
+		
+		JSONObject jsonObj= new JSONObject();
+		jsonObj.put("n", n);  
+		
+		  /*
+		 	 n==1 메일 전송 실패
+		 	 n==0 메일 전송 성공
+		 */
+		
+		return jsonObj.toString();
+	} // end of public String sendEmailtoClient(ClientHsyVO cvo) {-----
 	
 }
