@@ -64,12 +64,13 @@ button.btn_normal{
 				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
 			else{
-				html+="<option value="+i+">"+i+"</option>";
+				html+="<option value='"+i+"'>"+i+"</option>";
 			}
 			
-			$("select#startHour").html(html);
-			$("select#endHour").html(html);
 		}
+
+		$("select#startHour").html(html);
+		$("select#endHour").html(html);
 		
 		// 시작 종료 분 
 		html="";
@@ -78,12 +79,14 @@ button.btn_normal{
 				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
 			else {
-				html+="<option value="+i+">"+i+"</option>";
+				html+="<option value='"+i+"'>"+i+"</option>";
 			}
 		}
-			html+="<option value="+59+">"+59+"</option>"
+			html+="<option value='"+59+"'>"+59+"</option>"
 		$("select#startMin").html(html);
 		$("select#endMin").html(html);	
+		
+		
 		// '종일' 체크박스 클릭시
 		$("input#allDay").click(function() {
 			var checked = $('input#allDay:checked').val();

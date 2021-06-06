@@ -385,7 +385,6 @@ public class ReservationOdyController {
 		String enddate = request.getParameter("enddate");
 		String str_roomno = request.getParameter("roomno");
 		String searchWord = request.getParameter("searchWord");
-		String str_rstatus = request.getParameter("rstatus");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
 		
 		int roomno=0;
@@ -413,17 +412,7 @@ public class ReservationOdyController {
 			enddate="";
 		}
 
-		int rstatus=-1;
-		if(str_rstatus==null || "".equals(str_rstatus)) {
-			rstatus=-1;
-		}
-		else {
-			try {
-				rstatus= Integer.parseInt(str_rstatus);
-			}catch (NumberFormatException e) {
-				rstatus=-1;
-			}
-		}
+		
 		
 		Map<String, String> paraMap = new HashMap<String, String>();
 		paraMap.put("roomno", String.valueOf(roomno));
@@ -431,7 +420,7 @@ public class ReservationOdyController {
 		paraMap.put("startdate", startdate);
 		paraMap.put("enddate", enddate);
 		paraMap.put("employeeid", employeeid);
-		paraMap.put("rstatus",String.valueOf(rstatus));
+
 
 		
 		int totalCount =0;     	
@@ -493,8 +482,8 @@ public class ReservationOdyController {
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo!=1) {
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
 		}
 		while(!(loop>blockSize || pageNo>totalPage)) {
 			
@@ -502,7 +491,7 @@ public class ReservationOdyController {
 				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
 			}
 			else {
-				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
 			
 			loop++;
@@ -511,8 +500,8 @@ public class ReservationOdyController {
 		
 		// === [다음][마지막] 만들기 === //
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
 		}
 		pageBar += "</ul>";
 		
@@ -1007,49 +996,49 @@ public class ReservationOdyController {
 	
 	
 	
-	// 회의실 예약 변경하기
-		@RequestMapping(value="/t1/editReserveGoods.tw", method= {RequestMethod.POST})
-		public ModelAndView editReserveGoods(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
-			
-			String rgtimeArr = request.getParameter("rgtime");
-			
-			String[] rgArr = rgtimeArr.split(",");
-			
-			String gno = request.getParameter("fk_gno");
-			String rgdate= request.getParameter("rgdate");
-			String fk_employeeid= request.getParameter("fk_employeeid");
-			String rgsubject= request.getParameter("rgsubject");
-			String rsgno= request.getParameter("rsgno");
-			
-			int n=0;
-			int m = service.delReserveGoods(rsgno);
-			
-			if(m>0) {
-				for(int i=0;i<rgArr.length;i++) {
-					String rgtime= rgArr[i];
-					Map<String,String> paraMap = new HashMap<>();
-					paraMap.put("gno", gno);
-					paraMap.put("rgdate", rgdate);
-					paraMap.put("fk_employeeid", fk_employeeid);
-					paraMap.put("rgsubject", rgsubject);
-					paraMap.put("rgtime", rgtime);
-					n = service.insert_rsGoods(paraMap);
-				}
+	// 사무용품 예약 변경하기
+	@RequestMapping(value="/t1/editReserveGoods.tw", method= {RequestMethod.POST})
+	public ModelAndView editReserveGoods(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String rgtimeArr = request.getParameter("rgtime");
+		
+		String[] rgArr = rgtimeArr.split(",");
+		
+		String gno = request.getParameter("fk_gno");
+		String rgdate= request.getParameter("rgdate");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		String rgsubject= request.getParameter("rgsubject");
+		String rsgno= request.getParameter("rsgno");
+		
+		int n=0;
+		int m = service.delReserveGoods(rsgno);
+		
+		if(m>0) {
+			for(int i=0;i<rgArr.length;i++) {
+				String rgtime= rgArr[i];
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("gno", gno);
+				paraMap.put("rgdate", rgdate);
+				paraMap.put("fk_employeeid", fk_employeeid);
+				paraMap.put("rgsubject", rgsubject);
+				paraMap.put("rgtime", rgtime);
+				n = service.insert_rsGoods(paraMap);
 			}
-			
-			if(n>0) {
-				mav.addObject("message","사무용품 예약 변경이 되었습니다.");
-				mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
-			}
-			else {
-				mav.addObject("message","사무용품 예약을 변경이 실패하였습니다.");
-				mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
-			}
-			
-			mav.setViewName("msg");
-			return mav;
 		}
-	
+		
+		if(n>0) {
+			mav.addObject("message","사무용품 예약 변경이 되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
+		}
+		else {
+			mav.addObject("message","사무용품 예약을 변경이 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
+		}
+		
+		mav.setViewName("msg");
+		return mav;
+	}
+
 	
 	
 	

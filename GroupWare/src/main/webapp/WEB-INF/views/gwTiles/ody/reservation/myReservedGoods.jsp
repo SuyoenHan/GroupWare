@@ -210,11 +210,11 @@ button.btn_r{
 
 		 // 시간 비교
 		 if(parseInt(chgdate)<parseInt(curTime)){
-				 alert("수정할 수 없는 시간입니다.");
+				 alert("변경할 수 없습니다.");
 				 return false;
 		}
 		 else if(parseInt(chgdate)==parseInt(curTime) && parseInt(curHour)>parseInt(rgtime)){
-				 alert("수정할 수 없는 시간입니다.");
+				 alert("변경할 수 없습니다.");
 				 return false;
 		 }
 			 

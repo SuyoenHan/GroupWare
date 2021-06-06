@@ -70,7 +70,7 @@ button.btn_normal{
 $(document).ready(function(){
 	
 	// 캘린더 소분류 카테고리 숨기기
-	  $("select.scategory").hide();
+//    $("select.scategory").hide();
 	
 	
 		// 시작시간
@@ -80,22 +80,23 @@ $(document).ready(function(){
 		var smin= str_s.substring(target+1);
 		console.log(smin);
 		var shour = str_s.substring(target-2,target);
-		console.log(typeof(shour));
+		console.log(shour);
+		
 		$("select#startHour").val(shour);
 		$("select#startMin").val(smin);
-		
+
 		// 종료시간
 		var str_e = $("span#enddate").text();
 		target = str_e.indexOf(":");
 		var emin= str_e.substring(target+1);
 		console.log("종료분:"+emin);
 		var ehour = str_e.substring(target-2,target);
-		console.log("종료시간"+ehour);
+
 		$("select#endHour").val(ehour);
 		$("select#endMin").val(emin);
 		
 		
-		if(shour=='00' && smin=='00' && ehour=='23' && emin=='55' ){
+		if(shour=='00' && smin=='00' && ehour=='23' && emin=='59' ){
 			$("input#allday").prop("checked",true);
 		}
 		else{
@@ -111,35 +112,35 @@ $(document).ready(function(){
 		var end = str_e.substring(0,target);
 		$("input#endDate").val(end);
 		
-		
 		// 시작시간, 종료시간		
 		var html="";
 		for(var i=0;i<24;i++){
 			if(i<10){
-				html+="<option value='0"+i+"'>0"+i+"</option>"
+				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
 			else{
-				html+="<option value="+i+">"+i+"</option>"
+				html+="<option value='"+i+"'>"+i+"</option>";
 			}
 			
-			$("select#startHour").html(html);
-			$("select#endHour").html(html);
 		}
+
+		$("select#startHour").html(html);
+		$("select#endHour").html(html);
 		
 		// 시작 종료 분 
 		html="";
 		for(var i=0;i<60;i=i+5){
 			if(i<10){
-				html+="<option value='0"+i+"'>0"+i+"</option>"
+				html+="<option value='0"+i+"'>0"+i+"</option>";
 			}
-			else{
-				html+="<option value="+i+">"+i+"</option>"
+			else {
+				html+="<option value='"+i+"'>"+i+"</option>";
 			}
-			$("select#startMin").html(html);
-			$("select#endMin").html(html);
-			
 		}
-		
+			html+="<option value='"+59+"'>"+59+"</option>"
+		$("select#startMin").html(html);
+		$("select#endMin").html(html);	
+
 		// '종일' 체크박스 클릭시
 		$("input#allDay").click(function() {
 			var checked = $('input#allDay:checked').val();
@@ -147,7 +148,7 @@ $(document).ready(function(){
 				$("select#startHour").val("00");
 				$("select#startMin").val("00");
 				$("select#endHour").val("23");
-				$("select#endMin").val("55");
+				$("select#endMin").val("59");
 				$("select#startHour").prop("disabled",true);
 				$("select#startMin").prop("disabled",true);
 				$("select#endHour").prop("disabled",true);
@@ -160,7 +161,36 @@ $(document).ready(function(){
 			}
 		});
 		
+
+		$("select[name=fk_bcno]").val(${svo.fk_bcno});
 		
+		
+		var fk_bcno =$("select.calType").val();
+		var fk_employeeid = $("input[name=fk_employeeid]").val();
+		if(fk_bcno!=""){
+			$.ajax({
+				url: "<%= ctxPath%>/t1/selectCategory.tw",
+				data: {"fk_bcno":fk_bcno, "fk_employeeid":fk_employeeid},
+				dataType: "json",
+				success:function(json){
+					var html ="";
+					if(json.length>0){
+						
+						$.each(json, function(index, item){
+							html+="<option value='"+item.scno+"'>"+item.scname+"</option>"
+						});
+						$("select.scategory").html(html);
+						$("select.scategory").val(${svo.fk_scno});
+						$("select.scategory").show();
+					}
+				},
+				error: function(request, status, error){
+		            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					
+				}
+				
+			});
+		}	
 		// 캘린더 종류 선택
 		$("select.calType").change(function(){
 			var fk_bcno =$("select.calType").val();
@@ -255,7 +285,7 @@ $(document).ready(function(){
 			});
 		
 		// 
-		$("select[name=calType]").val($("input.getfk_bcno").val());
+	
 		
 		
 		// 수정 버튼 클릭
@@ -373,7 +403,7 @@ function addJoinEmp(value){
 					<select id="startHour" class="schedule"></select> 시
 					<select id="startMin" class="schedule"></select> 분
 					- <input type="date" id="endDate" value="" style="height: 30px;"/>&nbsp;
-					<select id="endHour" class="schedule"></select> 시
+					<select id="endHour" class="schedule" ></select> 시
 					<select id="endMin" class="schedule"></select> 분&nbsp;
 					<label for="allDay"><input type="checkbox" id="allDay" name="allDay" value="1" />&nbsp;<span>종일</span></label>
 					<input type="hidden" name="startdate"/>
@@ -441,6 +471,3 @@ function addJoinEmp(value){
 	</div>
 </div>
 
-
-<input type="hidden" class="getfk_bcno" value="${svo.fk_bcno}"/>
-<input type="hidden" class="getfk_scno" value="${svo.fk_scno}"/>

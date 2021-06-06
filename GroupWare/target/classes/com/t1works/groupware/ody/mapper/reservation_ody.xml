@@ -123,19 +123,16 @@
 		<if test="roomno!=0 ">
 			and S.fk_roomno = #{roomno}
 		</if>
-		<if test="rstatus !=-1 ">
-			and S.rstatus = #{rstatus}
-		</if>
 	</select>
 	
 	
 	<!-- 나의 회의실 대여 현황에서 검색 -->
 	<select id="showMyRoomListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO">
-		select rno, rdate, rtime, rstatus, roomname, rsubject, rsroomno, fk_roomno
+		select rno, rdate, rtime, roomname, rsubject, rsroomno, fk_roomno
 		from       
 		(        
 		select row_number() over(order by rdate desc, rtime desc) as rno,
-		       rdate, rtime, rstatus, roomname, rsubject, rsroomno,fk_roomno
+		       rdate, rtime,  roomname, rsubject, rsroomno,fk_roomno
 				from tbl_rsroom S join tbl_room R
 				on S.fk_roomno = R.roomno
 				where S.fk_employeeid = #{employeeid}
@@ -147,9 +144,6 @@
 				</if>
 				<if test="roomno !=0 ">
 					and S.fk_roomno = #{roomno}
-				</if>
-				<if test="rstatus !=-1 ">
-					and S.rstatus = #{rstatus}
 				</if>
 		)V
 		 where rno between #{startRno} and #{endRno}
