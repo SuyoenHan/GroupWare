@@ -1,13 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
-<%
+<% 
 	String ctxPath = request.getContextPath();
 %>
-
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <style>
-
 	.highcharts-figure, .highcharts-data-table table {
 	    min-width: 310px; 
 	    max-width: 800px;
@@ -45,36 +42,29 @@
 	.highcharts-data-table tr:hover {
 	    background: #f1f7ff;
 	}
-	
-	
-</style>
 
+</style>
 <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<script type="text/javascript">
-	
-
-
-</script>
-
-
-
-
-<figure class="highcharts-figure">
-	<div id="siljuk">
-		<select id="siljukMonth" style="float:right;">
-		</select>
-		<select id="siljukYear" style="float:right;">
+<div id="contentBox" style="width:1300px; margin:0 auto;" >
+	<div id="selectDiv" style="margin-bottom:50px; margin-top:50px; margin-left:900px;">
+		<select id="siljukYear">
 			<c:forEach var="i" begin="${paraMap.minYear}" end="${paraMap.maxYear}">
 				<option value="${i}">${i}</option>
 			</c:forEach>
 		</select>
+		<select id="siljukMonth">
+		</select>
 	</div>
-    <div id="container"></div>
-</figure>
+    <div id="container" style="margin-left:-50px; width:85%;"></div>
+</div>
+
+
+
 
 <script type="text/javascript">
 	
@@ -83,12 +73,14 @@
 		
 		var now = new Date();
 		var year = now.getFullYear();
-		var month = now.getMonth()+1;        // 자바스크립에서 월은 0부터 시작
+		var month = now.getMonth()+1;
+		
 		var minMonth = Number("${paraMap.minMonth}");
 		var minYear = "${paraMap.minYear}";
 		var maxMonth = Number("${paraMap.maxMonth}");
 		var maxYear = "${paraMap.maxYear}";
-	
+		
+		
 		// 문서 초기 로딩 시 select태그에 최근 년에 해당하는 월 선택값 넣어주기
 		$("select#siljukYear").val(maxYear);
 		
@@ -103,10 +95,10 @@
 		
 		var selectedYear = $("select#siljukYear").val();	
 		var selectedMonth = $("select#siljukMonth").val();
-		var dcode = "${paraMap.dcode}";
 		
-		// 문서 로딩 시 select태그 값에 따른 차트구현
-		goChart(selectedYear,selectedMonth,dcode);
+		// 차트구현
+		goChart(selectedYear,selectedMonth);
+		
 		
 		// 년도 선택시 실적이 존재하는 월만 보여주기 및 해당년도/월에 해당하는 데이터 가져오기
 		$("select#siljukYear").bind("change",function(){
@@ -144,36 +136,36 @@
 			}
 			
 			var selectedMonth = $("select#siljukMonth").val();
-			var dcode = "${paraMap.dcode}";
+			
 			
 			// select태그 값 변동시, 차트구현
-			goChart(selectedYear,selectedMonth,dcode);
+			goChart(selectedYear,selectedMonth);
 			
 			
 		}); // end of $("select#siljukMonth").bind("change",function(){
 		
+		
+			
 		// 월 선택시 실적이 존재하는 월만 보여주기 및 해당년도/월에 해당하는 데이터 가져오기
 		$("select#siljukMonth").bind("change",function(){
 			
 			var selectedYear = $("select#siljukYear").val();	
 			var selectedMonth = $(this).val();
-			var dcode = "${paraMap.dcode}"; 
+			
 			
 			// select태그 값 변동시, 차트구현
-			goChart(selectedYear,selectedMonth,dcode);
+			goChart(selectedYear,selectedMonth);
 			
 			
 
 		}); // end of $("select#siljukMonth").bind("change",function(){
-			
-			
 		
 	}); // end of $(document).ready(function(){
 	
-	// function declaration
-	
+		
+	// function()	
 	// select태그 값 변동시, 차트구현 
-	function goChart(selectedYear,selectedMonth,dcode){
+	function goChart(selectedYear,selectedMonth){
 		
 		$.ajax({ // 1st ajax:선택한 월부터 -2개월 전까지 년-월 뽑아오기
 			url:"<%= ctxPath%>/t1/selectPerformanceMonth.tw",
@@ -189,105 +181,123 @@
 				 
 				var performanceWhenArres = performanceWhenArr.join();
 				
-				var performanceWhoArr = [];
-				var performanceDataArr = [];
+				var performanceDeptCntArr = [];    // 부서 각각의 개월수 건수마다의 배열
+				var totalArr = []; // 부서별 3개월간의 총 합 건수 배열
+				
 				$.ajax({ // 2st ajax: 선택한 월부터 -2개월전까지 데이터 뽑아오기
-					url:"<%= ctxPath%>/t1/selectPerformance.tw",
-					data:{"dcode":dcode,
-						  "performanceWhenArres":performanceWhenArres},
+					url:"<%= ctxPath%>/t1/selectCoPerformance.tw",
+					data:{"performanceWhenArres":performanceWhenArres},
 					dataType:"json",
 					success:function(json){
-					// [{"ppreveCnt":"1","name":"육수연","selectCnt":"1","prevCnt":"0"},{"ppreveCnt":"0","name":"구수연","selectCnt":"0","prevCnt":"2"}
-					// ,{"ppreveCnt":"0","name":"십수연","selectCnt":"1","prevCnt":"0"},{"ppreveCnt":"1","name":"백수연","selectCnt":"0","prevCnt":"1"}]	
-						$.each(json,function(index,item){ // [{name값,[데이터값1,데이터값2,데이터값3]}, {},{}]
-										
-							performanceDataArr =[];
+						// [ {cs1팀, 1개월값,2개월값,3개월값 }, {동일},{동일}, {type: ~~, name:~~,[ {cs1팀, 3개월총합건수 } , {동일 } , { } ],~~~~~~ }  ] 
+						
+						$.each(json,function(index,item){ 
 							
-							performanceDataArr.push(Number(item.ppreveCnt));
-							performanceDataArr.push(Number(item.prevCnt));
-							performanceDataArr.push(Number(item.selectCnt));
+							var nowCnt = Number(item.nowCnt);
+							var prevCnt = Number(item.prevCnt);
+							var pprevCnt = Number(item.pprevCnt);
+							var totalCnt = Number(item.totalCnt);
 							
-							// var performanceDataArr = [item.ppreveCnt,item.preveCnt,item.selectCnt];
-							performanceWhoArr.push({name: item.name , data: performanceDataArr});
-							// performanceWhoArr.push(item.name); //
+							
+							if(index < json.length){
+								var subArr = []; // data:[완성시키기]
+								subArr.push(pprevCnt);
+								subArr.push(prevCnt);
+								subArr.push(nowCnt);
+								
+								performanceDeptCntArr.push({type:'column', name:item.dname,data:subArr});
+								totalArr.push({name:item.dname, y:totalCnt,color: Highcharts.getOptions().colors[index]});
+								
+							} // end of if(index < json.length()){
+
 						}); // end of each ------------------------------
 						
+				
+						// 평균 데이터 넣어주기 (index==json.length() 일때)		
+						$.ajax({
+							url:"<%= ctxPath%>/t1/selectAvgCnt.tw",
+							data:{"performanceWhenArres":performanceWhenArres},
+							dataType:"json",
+							success:function(json){
+								var avgArr = [];
+								
+								$.each(json,function(index,item){
+									
+									avgArr.push(Number(item.avgCnt)); // 평균 배열 만들어짐
+									
+								}); // end of each
+								
+								// 평균그래프 만들어주기
+								performanceDeptCntArr.push({type:'spline',name:'평균',data:avgArr,
+									marker: {
+						            lineWidth: 2,
+						            lineColor: Highcharts.getOptions().colors[3],
+						            fillColor: 'white'
+									}
+						        });
+								
+								// 파이형 차트 객체데이터 만들어주기
+								performanceDeptCntArr.push({type: 'pie',
+							        						name: 'Total consumption',
+							        						data: totalArr,
+							        				        center: [100, 20],
+							        				        size: 60,
+							        				        showInLegend: false,
+							        				        dataLabels: {enabled: false}});
+								
+								
+								// 차트구현하기 시작
+								Highcharts.chart('container', {
+								    title: {
+								        text: '부서 실적 현황'
+								    },
+								    xAxis: {
+								        categories: performanceWhenArr  // 배열가져오기
+								    }, 
+								    yAxis: {
 
-						////// 차트 구현 ///////
-						Highcharts.chart('container', {
-						    chart: {
-						        type: 'bar'
-						    },
-						    title: {
-						        text: '<span style="font-weight:bolder">${paraMap.dname}</span>부서의 실적현황'
-						    },
-						    subtitle: {
-						        // text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
-						    },
-						    xAxis: {
-						        categories: performanceWhenArr, // 3개월 이름
-						        title: {
-						            text: null
-						        }
-						    },
-						    yAxis: {
-						        min: 0,
-						        title: {
-						            text: '건수',
-						            align: 'high'
-						        },
-						        labels: {
-						            overflow: 'justify'
-						        }
-						    },
-						    tooltip: {
-						        valueSuffix: ' 건'
-						    },
-						    plotOptions: {
-						        bar: {
-						            dataLabels: {
-						                enabled: true
-						            }
-						        }
-						    },
-						    legend: {
-						        layout: 'vertical',
-						        align: 'right',
-						        verticalAlign: 'top',
-						        x: -40,
-						        y: 80,
-						        floating: true,
-						        borderWidth: 1,
-						        backgroundColor:
-						            Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF',
-						        shadow: true
-						    },
-						    credits: {
-						        enabled: false
-						    },
-						    yAxis: {
-
-						    	max: 10
-
-					    	},
-						       
-						    series: performanceWhoArr 
-						    // series: [{직원명1,[3개월 데이터값]}, {직원명2,[3개월 데이터값]}, {직원명3,[3개월 데이터값]}]
-						   
-						}); // end of Highcharts.chart
-						// 차트 구현하기 끝
+								    	max: 6,
+							    	},
+								    labels: {
+								        items: [{
+								            html: '최근 3개월간 부서 실적의 합계',
+								            style: {
+								                left: '50px',
+								                top: '-25px',
+								                color: ( // theme
+								                    Highcharts.defaultOptions.title.style &&
+								                    Highcharts.defaultOptions.title.style.color
+								                ) || 'black'
+								            }
+								        }]
+								    },
+								    series: performanceDeptCntArr
+								});
+								// 차트구현하기 끝
+								
+							},
+					    	error: function(request, status, error){
+					            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+					        }
+							
+						}); // end of 3st ajax(/t1/selectAvgCnt.tw)
 						
-					},
+						
+						
+						
+						
+					},// end of success  2st ajax
 			    	error: function(request, status, error){
 			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			        }
-				});// end of 2st $.ajax({
 					
-			},
+				});// end of 2st $.ajax({
+
+
+			}, // end of success 1st ajax
 	    	error: function(request, status, error){
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 	        }
-
 			
 		}); // end of 1st $.ajax({
 		
