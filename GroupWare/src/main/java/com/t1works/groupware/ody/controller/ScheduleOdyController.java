@@ -243,7 +243,7 @@ public class ScheduleOdyController {
 		
 		String gobackURL1 = request.getParameter("gobackURL1");
 		mav.addObject("gobackURL1", gobackURL1);
-		System.out.println("일정수정하기:"+gobackURL1);
+
 		try {
 			Integer.parseInt(sdno);
 			ScheduleOdyVO svo = service.getDetailSchedule(sdno);

@@ -209,11 +209,11 @@ button.btn_r{
 
 		 // 시간 비교
 		 if(parseInt(chgdate)<parseInt(curTime)){
-				 alert("수정할 수 없는 시간입니다.");
+				 alert("변경할 수 없습니다.");
 				 return false;
 		}
 		 else if(parseInt(chgdate)==parseInt(curTime) && parseInt(curHour)>parseInt(rtime)){
-				 alert("수정할 수 없는 시간입니다.");
+				 alert("변경할 수 없습니다.");
 				 return false;
 		 }
 			 
@@ -406,11 +406,6 @@ button.btn_r{
 		     		<option value="${room.roomno}">${room.roomname}</option>
 		     	</c:forEach>
 		     </select>
-		     <select name="rstatus">
-		     	<option value="-1">승인여부</option>
-		     	<option value="0">미승인</option>
-		     	<option value="1">승인완료</option>
-		     </select>
 			<input type="text" name="searchWord" id="searchWord" placeholder="목적을 입력하세요."/>		
 		<button type="button" class="btn_normal" onclick="goSearch()">검색</button>	
 		</form>
@@ -426,14 +421,13 @@ button.btn_r{
 					<th style="width: 12%">시간</th>
 					<th style="width: 12%">회의실명</th>
 					<th>목적</th>
-					<th style="width: 10%">승인여부</th>
 					<th>변경</th>
 					<th style="width: 10%">취소</th>
 				</tr>
 			</thead>		
 			
 			<c:if test="${empty myRoomList}">
-				<tr><td colspan="6">회의실 예약 내역이 없습니다.</td></tr>
+				<tr><td colspan="5">회의실 예약 내역이 없습니다.</td></tr>
 			</c:if>
 			
 			<c:if test="${not empty myRoomList}">
@@ -449,12 +443,6 @@ button.btn_r{
 						
 						<td style="vertical-align: middle;">${myRoom.roomname}</td>
 						<td style="vertical-align: middle;">${myRoom.rsubject}</td>
-						<c:if test="${myRoom.rstatus == 0}">
-							<td style="vertical-align: middle;">미승인</td>
-						</c:if>
-						<c:if test="${myRoom.rstatus == 1}">
-							<td style="vertical-align: middle;">승인 완료</td>
-						</c:if>
 						<td><button type="button" class='btn_r' onclick="editMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}','${myRoom.fk_roomno}')">변경</button></td>
 						<td><button type="button" class='btn_r' onclick="delMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}')">취소</button></td>
 					</tr>
