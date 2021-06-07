@@ -177,7 +177,7 @@ input.btn {
 			
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.orgFilename}</td>
+				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a></td>
 			</tr>
 		</table>
 		

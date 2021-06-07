@@ -148,8 +148,6 @@ td.opinion{
 		$myFrm.submit();
 	}
 	
-	// 수정
-	
 	
 	// 삭제
 	function goRemove(){
@@ -178,6 +176,7 @@ td.opinion{
 				}			
 			});
 		}
+		
 	}// end of function goRemove(){}--------------------
 	
 	
@@ -250,7 +249,7 @@ td.opinion{
 			
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.fileName}</td>
+				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a></td>
 			</tr>
 		</table>
 			
@@ -297,8 +296,7 @@ td.opinion{
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
 			<c:if test="${requestScope.avo.astatus == '0'}">
-				<span style="margin-left: 55%;">
-					<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
+				<span style="margin-left: 60%;">					
 					<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
 				</span>
 			</c:if>

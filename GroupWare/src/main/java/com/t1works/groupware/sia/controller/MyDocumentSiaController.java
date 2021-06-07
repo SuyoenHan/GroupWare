@@ -2193,15 +2193,61 @@ public class MyDocumentSiaController {
 	
 	//////////////////////////////////////////////////////////////////////
 	
-	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	// 내문서함 - 임시저장함 - 파일 삭제
 	@ResponseBody
-	@RequestMapping(value="/t1/remove.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	@RequestMapping(value="/t1/removeFile.tw", method= {RequestMethod.POST})
+	public String removeFile(HttpServletRequest request) {
+		
+		String ano = request.getParameter("ano");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		
+		ApprovalSiaVO avo = service.getViewFile(paraMap);
+		String fileName = avo.getFileName();
+		
+		if(fileName != null && !"".equals(fileName)) {
+			paraMap.put("fileName", fileName);
+			
+			HttpSession session = request.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			String path = root+"resources"+File.separator+"files";
+			
+			paraMap.put("path", path);
+		}
+	 
+		int n = service.removeFile(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+				
+		return jsonObj.toString();
+	}
+	
+	
+	
+	// 내문서함 - 임시저장함/발신함 - 삭제버튼 클릭
+	@ResponseBody
+	@RequestMapping(value="/t1/remove.tw", method= {RequestMethod.POST})
 	public String remove(HttpServletRequest request) { 
 		
 		String ano = request.getParameter("ano");
 		
 		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("ano", ano);	
+		paraMap.put("ano", ano);
+		
+		ApprovalSiaVO avo = service.getViewFile(paraMap);
+		String fileName = avo.getFileName();
+		
+		if(fileName != null && !"".equals(fileName)) {
+			paraMap.put("fileName", fileName);
+			
+			HttpSession session = request.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			String path = root+"resources"+File.separator+"files";
+			
+			paraMap.put("path", path);
+		}
 	 
 		int n = service.remove(paraMap);
 		
@@ -2284,8 +2330,353 @@ public class MyDocumentSiaController {
 		}
 				
 		return mav;
-	}
+	}	
+	
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 제출버튼 클릭	
+	@RequestMapping(value="/t1/submit.tw", method= {RequestMethod.POST})
+	public ModelAndView submit(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
 		
+		String mdate1 = mrequest.getParameter("mdate1");
+		String mdate2 = mrequest.getParameter("mdate2");
+		String mdate3 = mrequest.getParameter("mdate3");
+		String fk_wiimdate1 = mrequest.getParameter("fk_wiimdate1");
+		String fk_wiimdate2 = mrequest.getParameter("fk_wiimdate2");
+		
+		String mdate = mdate1+" "+mdate2+" ~ "+mdate3;
+		String fk_wiimdate = fk_wiimdate1+" ~ "+fk_wiimdate2;
+		
+		avo.setMdate(mdate);
+		avo.setFk_wiimdate(fk_wiimdate);
+		
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.submit(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.submit_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuNorm_send.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
+		return mav;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 저장버튼 클릭	
+	@RequestMapping(value="/t1/saveSpend.tw", method= {RequestMethod.POST})
+	public ModelAndView saveSpend(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
+						
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.saveSpend(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.saveSpend_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuNorm_temp.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
+		return mav;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭	
+	@RequestMapping(value="/t1/submitSpend.tw", method= {RequestMethod.POST})
+	public ModelAndView submitSpend(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
+					
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.submit(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.submit_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuNorm_send.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
+		return mav;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 근태결재 - 저장버튼 클릭
+	@RequestMapping(value="/t1/saveVacation.tw", method= {RequestMethod.POST})
+	public ModelAndView saveVacation(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
+					
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.saveVacation(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.saveVacation_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuSpend_send.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
+		return mav;
+	}
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭	
+	@RequestMapping(value="/t1/submitVacation.tw", method= {RequestMethod.POST})
+	public ModelAndView submitVacation(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
+					
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.submit(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.submit_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuVacation_send.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
+		return mav;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 			
@@ -2941,7 +3332,7 @@ public class MyDocumentSiaController {
 		try {
 			Integer.parseInt(ano);
 			
-			ApprovalSiaVO avo = service.myDocuNorm_detail(paraMap);
+			ApprovalSiaVO avo = service.getViewFile(paraMap);
 			
 			if(avo == null ||(avo != null &&  avo.getFileName() == null)) {
 				out = response.getWriter();

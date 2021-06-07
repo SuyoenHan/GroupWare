@@ -121,8 +121,63 @@ input.btn {
 	}// end of function goRemove(){}--------------------
 	
 	// 저장
+	function goSave(){
+		var bool = confirm("저장하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/saveVacation.tw";
+			frm.submit();
+			
+			alert("저장되었습니다");
+		}
+	}
 	
 	// 제출
+	function goSubmit(){
+		var bool = confirm("제출하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/submitVacation.tw";
+			frm.submit();
+			
+			alert("제출되었습니다");
+		}
+	}
+	
+	// 파일 삭제
+	function removeFile(){
+		var bool = confirm("파일을 삭제하시겠습니까?");
+		
+		if(bool){			
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/removeFile.tw",
+				data:{"ano":"${requestScope.avo.ano}"},
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){
+						alert("삭제되었습니다");
+						
+						location.reload();
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}
 	
 </script>
 
@@ -150,73 +205,83 @@ input.btn {
 			</tr>
 		</table>
 		
-		<table id="table2">
-			<tr>
-				<th>수신자</th>
-				<td style="width: 35%;"></td>
-				<th>문서번호</th>
-				<td>${requestScope.avo.ano}</td>
-			</tr>
-			<tr>
-				<th>제목</th>
-				<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
-			</tr>
-			
-			<c:if test="${requestScope.avo.vno eq '1'}"> 
+		<form name="docuFrm" enctype="multipart/form-data">
+		<input type="hidden" name="vcatname" value="${requestScope.avo.vcatname}"/>
+			<table id="table2">
 				<tr>
-					<th>요청기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.slstart}"/> - <input type="date" value="${requestScope.avo.slend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
-				</tr>				
-			</c:if>
-			<c:if test="${requestScope.avo.vno eq '2'}">
-				<tr>
-					<th>요청기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
-					<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
-					</td>
-				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.vno eq '3'}">
-				<tr>
-					<th>요청기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.daystart}"/> - <input type="date" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
-				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.vno eq '4'}">
-				<tr>
-					<th>요청기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.congstart}"/> - <input type="date" value="${requestScope.avo.congend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
-				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.vno eq '5'}">
-				<tr>
-					<th>출장기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.bustart}"/> - <input type="date" value="${requestScope.avo.buend}"/></td>
+					<th>수신자</th>
+					<td style="width: 35%;"></td>
+					<th>문서번호</th>
+					<td>${requestScope.avo.ano}</td>
 				</tr>
 				<tr>
-					<th>출장지</th>
-					<td><input type="text" style="width: 300px;" value="${requestScope.avo.buplace}"/></td>				
-					<th>출장인원</th>
-					<td><input type="text" style="width: 300px;" value="${requestScope.avo.bupeople}"/>명</td>
+					<th>제목</th>
+					<td colspan="3"><input type="text" name="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.vno eq '6'}">
-				<tr>
-					<th>요청시간</th>
-					<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.ewdate}"/>시간</td>
-				</tr>
-			</c:if>	
-			
-			<tr>
-				<th style="height:250px;">글내용</th>
-				<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
-			</tr>
 				
-			<tr>
-				<th>첨부파일</th>
-				<td colspan="3"><input type="file" name="attach"/></td>
-			</tr>
-		</table>
+				<c:if test="${requestScope.avo.vno eq '1'}"> 
+					<tr>
+						<th>요청기간</th>
+						<td colspan="3"><input type="date" name="slstart" value="${requestScope.avo.slstart}"/> - <input type="date" name="slend" value="${requestScope.avo.slend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
+					</tr>				
+				</c:if>
+				<c:if test="${requestScope.avo.vno eq '2'}">
+					<tr>
+						<th>요청기간</th>
+						<td colspan="3"><input type="date" name="afdate" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
+						<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
+						</td>
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.vno eq '3'}">
+					<tr>
+						<th>요청기간</th>
+						<td colspan="3"><input type="date" name="daystart" value="${requestScope.avo.daystart}"/> - <input type="date" name="dayend" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.vno eq '4'}">
+					<tr>
+						<th>요청기간</th>
+						<td colspan="3"><input type="date" name="congstart" value="${requestScope.avo.congstart}"/> - <input type="date" name="congend" value="${requestScope.avo.congend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.vno eq '5'}">
+					<tr>
+						<th>출장기간</th>
+						<td colspan="3"><input type="date" name="bustart" value="${requestScope.avo.bustart}"/> - <input type="date" name="buend" value="${requestScope.avo.buend}"/></td>
+					</tr>
+					<tr>
+						<th>출장지</th>
+						<td><input type="text" style="width: 300px;" name="buplace" value="${requestScope.avo.buplace}"/></td>				
+						<th>출장인원</th>
+						<td><input type="text" style="width: 300px;" name="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.vno eq '6'}">
+					<tr>
+						<th>요청시간</th>
+						<td colspan="3"><input type="text" name="ewdate" style="width: 370px;" value="${requestScope.avo.ewdate}"/>시간</td>
+					</tr>
+				</c:if>	
+				
+				<tr>
+					<th style="height:250px;">글내용</th>
+					<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
+				</tr>
+					
+				<tr>
+					<th>첨부파일</th>
+					<td colspan="3">
+					<c:if test="${requestScope.avo.orgFilename == null}">
+						<input type="file" name="attach" value="${requestScope.avo.orgFilename}"/>
+					</c:if>
+					<c:if test="${requestScope.avo.orgFilename != null}">
+						<a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a>&nbsp;&nbsp;<input type="button" style="width: 40px; font-size: 9pt; font-weight: bold; color: white; background-color: #d9534f; border: none;" onclick="removeFile();" value="삭제"/>
+					</c:if>
+					</td>	
+				</tr>
+			</table>
+		</form>
 			
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>

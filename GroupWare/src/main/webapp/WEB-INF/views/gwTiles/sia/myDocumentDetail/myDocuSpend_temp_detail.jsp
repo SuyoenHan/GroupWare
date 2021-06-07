@@ -119,9 +119,65 @@ input.btn {
 		}
 	}// end of function goRemove(){}--------------------
 	
+	
 	// 저장
+	function goSave(){
+		var bool = confirm("저장하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/saveSpend.tw";
+			frm.submit();
+			
+			alert("저장되었습니다");
+		}
+	}
 	
 	// 제출
+	function goSubmit(){
+		var bool = confirm("제출하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/submitSpend.tw";
+			frm.submit();
+			
+			alert("제출되었습니다");
+		}
+	}	
+	
+	// 파일 삭제
+	function removeFile(){
+		var bool = confirm("파일을 삭제하시겠습니까?");
+		
+		if(bool){			
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/removeFile.tw",
+				data:{"ano":"${requestScope.avo.ano}"},
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){
+						alert("삭제되었습니다");
+						
+						location.reload();
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}
 	
 </script>
 
@@ -149,6 +205,8 @@ input.btn {
 			</tr>
 		</table>
 		
+		<form name="docuFrm" enctype="multipart/form-data">
+		<input type="hidden" name="scatname" value="${requestScope.avo.scatname}"/>
 		<table id="table2">
 			<tr>
 				<th>수신자</th>
@@ -209,7 +267,7 @@ input.btn {
 				<td colspan="3"><input type="file" name="attach"/></td>
 			</tr>
 		</table>
-		
+		</form>
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.scatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>
 		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>

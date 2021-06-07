@@ -138,7 +138,48 @@ input.btn {
 	}
 	
 	// 제출
+	function goSubmit(){
+		var bool = confirm("제출하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/submit.tw";
+			frm.submit();
+			
+			alert("제출되었습니다");
+		}
+	}
 	
+	// 파일 삭제
+	function removeFile(){
+		var bool = confirm("파일을 삭제하시겠습니까?");
+		
+		if(bool){			
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/removeFile.tw",
+				data:{"ano":"${requestScope.avo.ano}"},
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){
+						alert("삭제되었습니다");
+						
+						location.reload();
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}
 	
 </script>
 
@@ -181,7 +222,7 @@ input.btn {
 					<tr>
 						<th>회의시간</th>					
 						<td colspan="3">					
-						<input type="date" name="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate1" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate1" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
+						<input type="date" name="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate2" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate3" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '2'}">
@@ -204,7 +245,14 @@ input.btn {
 				
 				<tr>
 					<th>첨부파일</th>
-					<td colspan="3"><input type="file" name="attach" value="${requestScope.avo.orgFilename}"/></td>
+					<td colspan="3">
+					<c:if test="${requestScope.avo.orgFilename == null}">
+						<input type="file" name="attach" value="${requestScope.avo.orgFilename}"/>
+					</c:if>
+					<c:if test="${requestScope.avo.orgFilename != null}">
+						<a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a>&nbsp;&nbsp;<input type="button" style="width: 40px; font-size: 9pt; font-weight: bold; color: white; background-color: #d9534f; border: none;" onclick="removeFile();" value="삭제"/>
+					</c:if>
+					</td>
 				</tr>
 			</table>
 		</form>	
@@ -220,7 +268,7 @@ input.btn {
 			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
 				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
-				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
+				<input type="button" class="btn btn-primary" onclick="goSubmit();" value="제출"/>
 			</span>
 		</div>
 		
