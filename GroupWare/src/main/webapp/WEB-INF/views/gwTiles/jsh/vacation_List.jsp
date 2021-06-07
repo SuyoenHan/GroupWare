@@ -44,7 +44,7 @@
 		         }
 		         else{
 		        	 $.ajax({
-			               url:"<%= ctxPath%>/t1/expWordSearchShow.tw",
+			               url:"<%= ctxPath%>/t1/vacWordSearchShow.tw",
 			               type:"get",
 			               data:{"searchType":$("select#searchType").val()
 			            	 //  ,"searchType":$("select#searchCategory").val()
@@ -109,7 +109,7 @@
 				   var frm = document.searchFrm;
 				   //console.log(frm);
 		      		frm.method = "get";
-		      		frm.action = "<%= ctxPath%>/t1/expApproval_List.tw";
+		      		frm.action = "<%= ctxPath%>/t1/vacation_List.tw";
 		      		frm.submit();
 			}); 
 		
@@ -119,7 +119,7 @@
 		}); //end of  $(document).ready(function(){})--------------------------------------------
 		
 		 
-		  function goView(ano,scatname){
+		  function goView(ano,vcatname){
 		      
 			  <%-- location.href="<%= ctxPath%>/t1/view.tw?ano="+ano+"&ncatname="+ncatname; --%>
 			// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
@@ -128,10 +128,10 @@
 			   
 			    	var frm =document.goViewFrm;
 			    	frm.ano.value = ano;
-			    	frm.scatname.value = scatname;
+			    	frm.vcatname.value = vcatname;
 			    	
 			    	frm.method = "get";
-			    	frm.action = "<%= ctxPath%>/t1/expView.tw";
+			    	frm.action = "<%= ctxPath%>/t1/vacView.tw";
 			        frm.submit();
 			  
 		      
@@ -150,13 +150,15 @@
    
    
    <%-- === #101. 글검색 폼 추가하기 : 카테고리로 검색을 하도록 한다. === --%>
-   <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/expApproval_List.tw">
+   <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/vacation_List.tw">
       <select name="searchCategory" id="searchCategory" style="height: 26px;">
-         <option value="">::지출결재문서종류::</option>
-         <option value="1">지출결의서</option>
-         <option value="2">법인카드사용신청서</option>
-         <option value="3">출장명세서(EX)</option>
-         <option value="4">퇴직금정산신청서(EX)</option>
+         <option value="">::근태결재문서종류::</option>
+         <option value="병가">병가</option>
+         <option value="반차">반차</option>
+         <option value="연차">연차</option>
+         <option value="경조휴가">경조휴가</option>
+         <option value="출장">출장</option>
+         <option value="추가근무">추가근무</option>
       </select>
        <select name="searchType" id="searchType" style="height: 26px;">
          <option value="atitle">글제목</option>
@@ -174,18 +176,18 @@
    <table id="table">
       <tr>
          <th style="width: 60px;  text-align: center;">NO.</th>
-         <th style="width: 110px; text-align: center;">전자결재문서</th>
+         <th style="width: 110px; text-align: center;">근태결재문서</th>
          <th style="width: 330px;  text-align: center;">제목</th>
          <th style="width: 150px; text-align: center;">작성자</th>
          <th style="width: 70px;  text-align: center;">날짜</th>
       </tr>
       
-        <c:forEach var="evo" items="${requestScope.expList}" varStatus="status">
+        <c:forEach var="evo" items="${requestScope.vacList}" varStatus="status">
          <tr>
 	         <td align="center">${evo.rno}</td>
 	         
 	         
-	         <td align="left"> ${evo.scatname} 
+	         <td align="left"> ${evo.vcatname} 
 	         
 	         
 	          <%-- 첨부파일이 있는 경우 시작 --%>
@@ -201,10 +203,10 @@
 	         <td align="center">
 	          <%-- 첨부파일이 있는 경우 시작 --%>
              	<c:if test="${not empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.scatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vcatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
         		</c:if>
         		<c:if test="${empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.scatname}')">${evo.atitle}</span>&nbsp;
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vcatname}')">${evo.atitle}</span>&nbsp;
         		</c:if>
         	   <%-- 첨부파일이 있는 경우 끝 --%>
      	     </td>
@@ -228,7 +230,7 @@
 	        
    <form name="goViewFrm">
    	<input type="hidden" name="ano"/>
-   	<input type="hidden" name="scatname"/>
+   	<input type="hidden" name="vcatname"/>
 	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
    </form>
    

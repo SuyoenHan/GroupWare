@@ -71,9 +71,50 @@ public class ElectronPayJshVO {
 	 private int coprice;   //예상금액
 
 	 
+	 //근태결재
+	 private String vno;  // 근태결재카테고리 (1:병가, 2:반차, 3:연차, 4:경조휴가, 5:출장, 6:추가근무)
+	 private String vcatname;// 근태결재카테고리명 (1:병가, 2:반차, 3:연차, 4:경조휴가, 5:출장, 6:추가근무)
+	 
+	 //병가
+	 private String slno; // 순번
+	 private String fk_vno; //근태결재카테고리 
+	 
+	 private String slstart;  // 사용예정시작일자
+	 private String slend;   // 사용예정마지막일자
+	 private int sldates;   //사용일수
+	 
+	 //반차
+	 private String afno;// 순번
+	 private String afdate;//사용예정일
+	 private int afdan;  // 오전오후 (1: 오전, 2:오후)
+	 private int afdates; // 사용일수 (0.5)
+	 
+	 //연차
+	 private String dayno;// 순번
+	 private String daystart;// 사용예정시작일자
+	 private String dayend;  //사용예정마지막일자
+	 private int daydates;   // 사용일수
+	 
+	 //경조휴가
+	 private String congno;     // 순번
+	 private String congstart;  // 사용예정시작일자
+	 private String congend;   // 사용예정마지막일자
+	 private int congdates;   // 사용일수
 	 
 	 
-	 
+	// 출장
+	private String buno;
+	private String bustart;		// 사용예정시작일자
+	private String buend;		// 사용예정마지막일자
+	private int budates;		// 사용일수
+	private String buplace;		// 출장지
+	private int bupeople;		// 출장인원
+	
+	// 추가근무
+	private String ewno;
+	private String ewdate;		// 사용예정일
+	private int ewhours;		// 추가근무시간
+ 
 	 
 	
 	//Member
@@ -483,6 +524,184 @@ public class ElectronPayJshVO {
 	
 	
 	
+	// 근태
+	
+	public String getVno() {
+		return vno;
+	}
+	public void setVno(String vno) {
+		this.vno = vno;
+	}
+	public String getVcatname() {
+		return vcatname;
+	}
+	public void setVcatname(String vcatname) {
+		this.vcatname = vcatname;
+	}
+	public String getSlno() {
+		return slno;
+	}
+	public void setSlno(String slno) {
+		this.slno = slno;
+	}
+	public String getFk_vno() {
+		return fk_vno;
+	}
+	public void setFk_vno(String fk_vno) {
+		this.fk_vno = fk_vno;
+	}
+	public String getSlstart() {
+		return slstart;
+	}
+	public void setSlstart(String slstart) {
+		this.slstart = slstart;
+	}
+	public String getSlend() {
+		return slend;
+	}
+	public void setSlend(String slend) {
+		this.slend = slend;
+	}
+	public int getSldates() {
+		return sldates;
+	}
+	public void setSldates(int sldates) {
+		this.sldates = sldates;
+	}
+	public String getAfno() {
+		return afno;
+	}
+	public void setAfno(String afno) {
+		this.afno = afno;
+	}
+	public String getAfdate() {
+		return afdate;
+	}
+	public void setAfdate(String afdate) {
+		this.afdate = afdate;
+	}
+	public int getAfdan() {
+		return afdan;
+	}
+	public void setAfdan(int afdan) {
+		this.afdan = afdan;
+	}
+	public int getAfdates() {
+		return afdates;
+	}
+	public void setAfdates(int afdates) {
+		this.afdates = afdates;
+	}
+	public String getDayno() {
+		return dayno;
+	}
+	public void setDayno(String dayno) {
+		this.dayno = dayno;
+	}
+	public String getDaystart() {
+		return daystart;
+	}
+	public void setDaystart(String daystart) {
+		this.daystart = daystart;
+	}
+	public String getDayend() {
+		return dayend;
+	}
+	public void setDayend(String dayend) {
+		this.dayend = dayend;
+	}
+	public int getDaydates() {
+		return daydates;
+	}
+	public void setDaydates(int daydates) {
+		this.daydates = daydates;
+	}
+	public String getCongno() {
+		return congno;
+	}
+	public void setCongno(String congno) {
+		this.congno = congno;
+	}
+	public String getCongstart() {
+		return congstart;
+	}
+	public void setCongstart(String congstart) {
+		this.congstart = congstart;
+	}
+	public String getCongend() {
+		return congend;
+	}
+	public void setCongend(String congend) {
+		this.congend = congend;
+	}
+	public int getCongdates() {
+		return congdates;
+	}
+	public void setCongdates(int congdates) {
+		this.congdates = congdates;
+	}
+	public String getBuno() {
+		return buno;
+	}
+	public void setBuno(String buno) {
+		this.buno = buno;
+	}
+	public String getBustart() {
+		return bustart;
+	}
+	public void setBustart(String bustart) {
+		this.bustart = bustart;
+	}
+	public String getBuend() {
+		return buend;
+	}
+	public void setBuend(String buend) {
+		this.buend = buend;
+	}
+	public int getBudates() {
+		return budates;
+	}
+	public void setBudates(int budates) {
+		this.budates = budates;
+	}
+	public String getBuplace() {
+		return buplace;
+	}
+	public void setBuplace(String buplace) {
+		this.buplace = buplace;
+	}
+	public int getBupeople() {
+		return bupeople;
+	}
+	public void setBupeople(int bupeople) {
+		this.bupeople = bupeople;
+	}
+	public String getEwno() {
+		return ewno;
+	}
+	public void setEwno(String ewno) {
+		this.ewno = ewno;
+	}
+	public String getEwdate() {
+		return ewdate;
+	}
+	public void setEwdate(String ewdate) {
+		this.ewdate = ewdate;
+	}
+	public int getEwhours() {
+		return ewhours;
+	}
+	public void setEwhours(int ewhours) {
+		this.ewhours = ewhours;
+	}
+
+
+
+
+
+
+
+
 	private String rno;
 
 
@@ -493,6 +712,7 @@ public class ElectronPayJshVO {
 	public void setRno(String rno) {
 		this.rno = rno;
 	} 
+	
 	
 	
 	

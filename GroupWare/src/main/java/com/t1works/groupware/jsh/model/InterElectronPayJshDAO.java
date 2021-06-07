@@ -69,6 +69,38 @@ public interface InterElectronPayJshDAO {
 	// 하나의 전자결재내역 문서 보여주기
 	ElectronPayJshVO expOneView(Map<String, String> paraMap);
 	
+	// 2) 전자결재테이블 insert
+	int ElectricExpadd(ElectronPayJshVO epvo);
+	// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert 
+	int expAdd(ElectronPayJshVO epvo);
+	// 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+	int selectExpadd(ElectronPayJshVO epvo);
+
+	// 2) 파일첨부가 있는 전자결재테이블 글쓰기 insert
+	int ElectricExpadd_withFile(ElectronPayJshVO epvo);
+
+	
+	//임시저장함 insert-첨부파일X
+	int saveExpadd(ElectronPayJshVO epvo);
+	//임시저장함 insert-첨부파일o
+	int saveExpadd_withFile(ElectronPayJshVO epvo);
+
+	
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//근태결재
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	//페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+	List<ElectronPayJshVO> vacListSearchWithPaging(Map<String, String> paraMap);
+	
+	// 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다.
+	int vacGetTotalCount(Map<String, String> paraMap);
+	
+	//검색어 입력시 자동글 완성하기
+	List<String> vacWordSearchShow(Map<String, String> paraMap);
+		
 	
 
 }

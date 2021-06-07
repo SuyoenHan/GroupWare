@@ -103,7 +103,7 @@
 
 		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
 		<select id="electronListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select ano ,ncatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate
+			select rno, ano ,ncatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate
 				  , fileName, orgFilename, fileSize   
 			from
 			(
@@ -141,7 +141,7 @@
 		<!-- // 하나의 일반결재내역 문서 보여주기 -->
 		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			  
-			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, fileName ,orgFilename, fileSize 
+			  select ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus, fileName ,orgFilename, fileSize 
 			  <choose>
 				<when test="ncatname eq'회의록'">
 				 , mdate 
@@ -376,7 +376,7 @@
 		<!-- // 하나의 전자결재내역 문서 보여주기 -->
 		<select id="expOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			  
-			  select scatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, fileName ,orgFilename, fileSize 
+			  select scatname, scat, arecipient1, atitle, name ,dname, apaper ,a.ano as ano, acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus, fileName ,orgFilename, fileSize 
 			  <choose>
 				<when test="scatname eq'지출결의서'">
 				 , exdate,  exprice
@@ -408,17 +408,146 @@
 			from tbl_department
 			)d
 			on e.fk_dcode = d.dcode
-			where anocode= 1 and ano=#{ano}
+			where anocode= 2 and ano=#{ano}
 		</select>
 		
 		
 		
 		
+		<!-- 2)전자결재테이블 insert -->
+		<insert id="ElectricExpadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper) 
+			values (#{ano}, #{fk_employeeid}, '2' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0)
+		</insert>
+		
+		<!--  3) 지출결재테이블에 isnert -->
+		<insert id="expAdd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			
+				insert  into tbl_spenda (scat,fk_ano,scatname)  
+				<if test="scatname eq'지출결의서'">
+					values('1',#{ano},'지출결의서')
+				</if>
+				<if test="scatname eq'법인카드사용신청서'">
+					 values('2',#{ano},'법인카드사용신청서')
+				</if>
+				
+		</insert>
+		
+		<!-- 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌  -->
+		<insert id="selectExpadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			<if test="scatname eq'지출결의서'">
+				insert into tbl_expense (exno , fk_scat, fk_ano, exdate , exprice)         values(seq_tbl_expense.nextval,'1',#{ano},#{exdate},#{exprice})
+			</if>
+			<if test="scatname eq'법인카드사용신청서'">
+				insert into tbl_cocard(cono , fk_scat, fk_ano, codate, cocardnum ,copurpose ,coprice)   values(seq_tbl_cocard.nextval,'2',#{ano},#{codate} ,#{cocardnum}, #{copurpose} ,#{coprice})
+			</if>
+			
+		</insert>
+		
+		<!--  파일첨부가 있는 전자결재 문서 글쓰기 insert -->
+		<insert id="ElectricExpadd_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper ,fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '2' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,0 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
+		
+		
+		<!--  파일첨부가 없는 전자결재 문서 임시보관함  insert -->
+		<insert id="saveExpadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper ) 
+			values (#{ano}, #{fk_employeeid}, '2' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,2 )
+		</insert>
+		
+		<!--  파일첨부가 있는 전자결재 문서 임시보관함 insert -->
+		<insert id="saveExpadd_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid,anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper ,fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '2' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,2 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
 		
 		
 		
 		
-		
+		<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  -->
+	<!-- 근태결재 -->
+	
+		<!-- === 검색어 입력시 자동글 완성하기  === -->
+	     <select id="vacWordSearchShow" parameterType="HashMap" resultType="String">
+				<choose>
+					<when test="searchType eq 'name'"> <!-- if -->
+			            select distinct ${searchType}
+			        </when>
+			         <otherwise>   <!-- else -->
+	            		select ${searchType}
+	         		</otherwise>
+				</choose>
+				from tbl_approval a left join 
+					  	 (select employeeid ,name , fk_dcode
+						  from tbl_employee 
+						 )e
+						 on a.fk_employeeid = e.employeeid
+					     where anocode= 3
+				 			   and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			    <if test="searchType neq 'name'">
+			     order by  a.ano desc
+			    </if>
+		</select>
+
+
+       <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
+		<select id="vacGetTotalCount" parameterType="HashMap" resultType="int">
+			select  count(*) 
+			from tbl_approval  a left join tbl_vacation v
+			on a.ano = v.fk_ano
+			where anocode= '3'
+				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
+			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			     </if>
+			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
+			     	 	and vcatname= '#{searchCategory}'
+			     </if>
+			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
+			     	 	and vcatname= '#{searchCategory}'
+			     </if>
+			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
+				     	 and vcatname= '#{searchCategory}'
+				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+				  </if>
+		</select>
+
+		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
+		<select id="vacListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+			select rno ,ano ,vcatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate
+				  , fileName, orgFilename, fileSize   
+			from
+			(
+			select row_number() over(order by a.ano desc) AS rno  
+			      ,a.ano ,vcatname, atitle, name ,dname,asdate    
+			       , fileName, orgFilename, fileSize 
+			from tbl_approval a left join tbl_vacation v
+			on a.ano = v.fk_ano
+			left join 
+			(select employeeid ,name , fk_dcode
+			from tbl_employee 
+			)e
+			on a.fk_employeeid = e.employeeid
+			left join 
+			(select dcode, dname
+			from tbl_department
+			)d
+			on e.fk_dcode = d.dcode
+			where anocode= 3
+				 <if test=' searchCategory == "" and searchWord != "" '>
+			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+			     </if>
+			      <if test=' searchCategory != ""    and searchWord == "" '>
+			     	 	and vcatname= '#{searchCategory}'
+			     </if>
+			     <if test=' searchCategory != ""   and searchWord != "" '>
+				     	 and vcatname= '#{searchCategory}'
+				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+				  </if>
+				 ) V
+		      	where rno between #{startRno} and #{endRno}
+		</select>
 		
 		
 		
