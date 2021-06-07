@@ -39,6 +39,9 @@ public interface InterMemberHsyDAO {
 	// 계층형 조직도를 가져오기
 	List<MemberHsyVO> hierarchicalEmployeeList();
 
+	// 야근수당 리스트에 보여줄 항목 가져오기 
+	List<DoLateVO> getOverNightList(Map<String, String> paraMap);
+
 	
 
 

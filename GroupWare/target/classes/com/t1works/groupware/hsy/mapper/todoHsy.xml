@@ -190,12 +190,12 @@
 	</resultMap>
 	
 	<!-- 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기 -->
-	<select id="getBonusDate" parameterType="String" resultMap="getBonusDateMap">
+	<select id="getBonusDate" parameterType="HashMap" resultMap="getBonusDateMap">
 		select to_char(count(*)) as cnt, to_char(enddate,'yyyy-mm') as endDate
 		from tbl_todo 
 		where fk_employeeid=#{employeeid} and to_date(to_char(sysdate,'yyyy-mm'),'yyyy-mm') > endDate
 		group by to_char(enddate,'yyyy-mm')
-		order by to_date(enddate,'yyyy-mm') desc
+		order by to_date(enddate,'yyyy-mm') ${sortOption}
 	</select>
 	
 	

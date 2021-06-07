@@ -154,9 +154,9 @@ public class MemberHsyService implements InterMemberHsyService {
 
 	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
 	@Override
-	public List<Map<String, String>> getBonusDate(String employeeid) {
+	public List<Map<String, String>> getBonusDate(Map<String,String> paraMap) {
 
-		List<Map<String,String>> bonusDateList= tdao.getBonusDate(employeeid);
+		List<Map<String,String>> bonusDateList= tdao.getBonusDate(paraMap);
 		return bonusDateList;
 		
 	}// end of public List<Map<String, String>> getBonusDate(String employeeid) {----
@@ -168,6 +168,16 @@ public class MemberHsyService implements InterMemberHsyService {
 		String commissionpercase=ddao.getCommissionpercase(employeeid);
 		return commissionpercase;
 	} // end of public String getCommissionpercase(String employeeid) {------------
+
+	
+	// 야근수당 리스트에 보여줄 항목 가져오기 
+	@Override
+	public List<DoLateVO> getOverNightList(Map<String, String> paraMap) {
+		
+		List<DoLateVO> dlvoList= mdao.getOverNightList(paraMap);
+		return dlvoList;
+		
+	} // end of public List<DoLateVO> getOverNightList(String employeeid) {------
 	 
 
 	

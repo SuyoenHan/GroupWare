@@ -1,8 +1,11 @@
 package com.t1works.groupware.hsy.controller;
 
-import java.util.Calendar;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.hsy.model.DepartmentHsyVO;
+import com.t1works.groupware.hsy.model.DoLateVO;
 import com.t1works.groupware.hsy.model.MemberHsyVO;
 import com.t1works.groupware.hsy.service.InterMemberHsyService;
 
@@ -453,7 +457,7 @@ public class MemberHsyController {
 	@RequestMapping(value="/t1/salaryDetail.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
-		mav.setViewName("hsy/employee/salaryDetail.gwTiles");
+		mav.setViewName("hsy/employee/perfNightDetail.gwTiles");
 		return mav;
 	} // end of public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {----
 	
@@ -464,9 +468,14 @@ public class MemberHsyController {
 	public String getBonusList(HttpServletRequest request) {
 		
 		String employeeid= request.getParameter("employeeid");
+		String sortOption= request.getParameter("sortOption");
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("sortOption", sortOption);
 		
 		// 1) 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
-		List<Map<String,String>> bonusDateList= service.getBonusDate(employeeid);
+		List<Map<String,String>> bonusDateList= service.getBonusDate(paraMap);
 		
 		JSONArray jsonArr= new JSONArray();
 		
@@ -556,5 +565,55 @@ public class MemberHsyController {
 		// 실적이 존재하지만 성과금이 없는 경우도 jsonArr.length==0 이 된다
 		
 	} // end of public String getBonusList(HttpServletRequest request) {-------
+	
+	
+	// 야근수당 리스트  ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/getOverNightList.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String getOverNightList(HttpServletRequest request) {
+		
+		String employeeid= request.getParameter("employeeid");
+		String sortOption= request.getParameter("sortOption");
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		paraMap.put("sortOption", sortOption);
+		
+		// 1) 야근수당 리스트에 보여줄 항목 가져오기 
+		List<DoLateVO> dlvoList= service.getOverNightList(paraMap);
+		
+		JSONArray jsonArr= new JSONArray();
+		
+		// 야근 기록이 존재하는 경우
+		if(dlvoList.size()!=0) {
+			
+			for(DoLateVO dlvo : dlvoList) {
+			
+				JSONObject jsonObj= new JSONObject();
+				
+				// 2) 야근 일시를 보여주기 위해서 데이터 가공
+				String[] doLateSysdateArr= dlvo.getDoLateSysdate().split("-");
+				String doLateSysdate= doLateSysdateArr[0]+"년 "+doLateSysdateArr[1]+"월 "+doLateSysdateArr[2]+"일";
+				dlvo.setDoLateSysdate(doLateSysdate);
+				
+				// 3) 야근이 종료된 시간을 보여주기 위해서 데이터 가공
+				String[] endLateTimeArr= dlvo.getEndLateTime().split(":");
+				String endLateTime= endLateTimeArr[0]+"시 "+endLateTimeArr[1]+"분";
+				dlvo.setEndLateTime(endLateTime);
+				
+				jsonObj.put("doLateSysdate", dlvo.getDoLateSysdate());
+				jsonObj.put("doLateTime", dlvo.getDoLateTime());
+				jsonObj.put("doLateWhy", dlvo.getDoLateWhy());
+				jsonObj.put("endLateTime", dlvo.getEndLateTime());
+				jsonObj.put("overnightPay", dlvo.getOvernightPay());
+				
+				jsonArr.put(jsonObj);
+			} // end of for(DoLateVO dlvo : dlvoList) {-------
+		}
+		
+		return jsonArr.toString();
+		//야근 기록이 존재하지 않는 경우 jsonArr.length==0이 된다
+		
+	} // end of public String getOverNightList(HttpServletRequest request) {------
 	
 }
