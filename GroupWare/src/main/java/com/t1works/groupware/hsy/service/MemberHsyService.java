@@ -18,6 +18,8 @@ public class MemberHsyService implements InterMemberHsyService {
 	@Autowired 
 	private InterDepartmentHsyDAO ddao;
 	
+	@Autowired 
+	private InterTodoHsyDAO tdao;
 	
 	// 모든 부서에 대한 정보 가져오기
 	@Override
@@ -149,6 +151,23 @@ public class MemberHsyService implements InterMemberHsyService {
 		return mvoList;
 		
 	}// end of public List<MemberHsyVO> hierarchicalEmployeeList() {--------
+
+	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
+	@Override
+	public List<Map<String, String>> getBonusDate(String employeeid) {
+
+		List<Map<String,String>> bonusDateList= tdao.getBonusDate(employeeid);
+		return bonusDateList;
+		
+	}// end of public List<Map<String, String>> getBonusDate(String employeeid) {----
+
+	
+	// 직급에 맞는 건당성과금 가져오기
+	@Override
+	public String getCommissionpercase(String employeeid) {
+		String commissionpercase=ddao.getCommissionpercase(employeeid);
+		return commissionpercase;
+	} // end of public String getCommissionpercase(String employeeid) {------------
 	 
 
 	

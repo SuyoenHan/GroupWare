@@ -131,7 +131,7 @@
 		background-color: #003d66;
 	}
 	
-	table#oneEmployeeTable td {padding-left: 30px;}
+	table#oneEmployeeTable td {padding-left: 25px;}
 		
 	button.sendMail{
 		cursor:pointer;
@@ -234,6 +234,13 @@
 		});	
 		
 		
+		// 모달창에서 메일 보내기 이벤트
+		$(document).on('click',"button.sendMail",function(){
+			
+			var receiverEmail= $(this).prev().text();
+			location.href="<%=ctxPath%>/t1/new_mail.tw?receiverEmail="+receiverEmail;
+		});
+		
 	}); // end of $(document).ready(function(){----------
 	
 		
@@ -284,12 +291,17 @@
 	   		success:function(json){
 				
 	   			var html= "<table id='oneEmployeeTable'>"+
+					   		  "<tr>"+
+					   		  	"<td rowspan='4' style='width:130px; padding-left:0px;'>"+
+					   		  	"<img src='<%=ctxPath%>/resources/images/bwb/"+json.fileName+"' width='130px' height='150px' />"+
+					   		  	"</td>"+
+					   		  "</tr>"+
 		   					  "<tr>"+
 		   					  	"<th>사번</th>"+
 		   					 	"<td>"+json.employeeid+"</td>"+
 		   						"<th>이메일</th>"+
 		   						"<td colspan='3'>"+
-		   							json.email+
+		   							"<span>"+json.email+"</span>"+
 		   							"<button type='button' class='sendMail'>메일보내기</button>"+
 		   						"</td>"+
 		   					  "</tr>"+

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -159,6 +160,9 @@ public class MemberHsyController {
 		jsonObj.put("dname", mvo.getDname());
 		jsonObj.put("pname", mvo.getPname());
 		jsonObj.put("duty", mvo.getDuty());
+		jsonObj.put("fileName", mvo.getFileName());
+		
+		// System.out.println(mvo.getFileName());
 		
 		return jsonObj.toString();
 	
@@ -444,5 +448,113 @@ public class MemberHsyController {
 		
 	} // end of public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {---
 	
-
+	
+	// 성과금, 야근수당 정보 페이지 매핑 url
+	@RequestMapping(value="/t1/salaryDetail.tw")        // 로그인이 필요한 url
+	public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		mav.setViewName("hsy/employee/salaryDetail.gwTiles");
+		return mav;
+	} // end of public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {----
+	
+	
+	// 성과금 리스트 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/getBonusList.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String getBonusList(HttpServletRequest request) {
+		
+		String employeeid= request.getParameter("employeeid");
+		
+		// 1) 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
+		List<Map<String,String>> bonusDateList= service.getBonusDate(employeeid);
+		
+		JSONArray jsonArr= new JSONArray();
+		
+		if(bonusDateList.size()!=0) { // 실적이 존재하는 날짜가 있는 경우
+			for(int i=0; i<bonusDateList.size(); i++) {
+	
+				// 2) 전달의 실적이 존재하는 지 확인
+				String bonusDate1= bonusDateList.get(i).get("endDate");
+				
+				String bonusDate2="";
+				if(i<bonusDateList.size()-1) { // 실적이 존재하는 마지막 달이 아닌 경우
+					bonusDate2= bonusDateList.get(i+1).get("endDate");
+				}
+				
+				String[] bonusDate1Arr= bonusDate1.split("-"); // 2021-03
+				
+				// 일시 표시해주기 위해 데이터 가공
+				String date= bonusDate1Arr[0]+"년 "+bonusDate1Arr[1]+"월";
+				
+				String prevMonth="";
+				
+				// 2-1) 전달 날짜 만들기
+				
+				// 실적이 존재하는 마지막 달인 경우 전달처리 하지 않는다
+				if("01".equals(bonusDate1Arr[1]) && i!=bonusDateList.size()-1) { // 1월인 경우 전달이 12월이므로 다른 월들과 다르게 처리
+					prevMonth="12";  // 전달처리
+					bonusDate1Arr[0]= String.valueOf(Integer.parseInt(bonusDate1Arr[0])-1); // 전년처리  
+				}
+				else if (i!=bonusDateList.size()-1) {
+					prevMonth= String.valueOf(Integer.parseInt(bonusDate1Arr[1])-1); 
+					if(prevMonth.length()==1) prevMonth="0"+prevMonth;
+				}
+				
+				bonusDate1Arr[1]= prevMonth;
+				
+				String prevDate= bonusDate1Arr[0]+"-"+bonusDate1Arr[1];
+				
+				String goalCnt= "";
+				String prevCnt="";
+				
+				// 2-2) 전달에 실적이 존재하는지 비교하기
+				
+				// 실적이 존재하는 마지막 달인 경우 목표치는 무조건 2건
+				if(!bonusDate2.equals(prevDate) || i==bonusDateList.size()-1 ) {  // 전달에 실적이 없는 경우 목표치는 2건
+					prevCnt="0";
+					goalCnt= "2";
+				}
+				else {  // 전달에 실적이 있는 경우 목표치는 전달실적+2건
+					prevCnt=String.valueOf(Integer.parseInt(bonusDateList.get(i+1).get("cnt")));
+					goalCnt= String.valueOf(Integer.parseInt(prevCnt)+2);
+				}
+			
+				JSONObject jsonObj= new JSONObject();
+				
+				// 3) 달성률 계산하기 (실적/목표*100) => 소수 첫째자리까지 표시
+				
+				double nAchievementRate= Math.round((( Integer.parseInt(bonusDateList.get(i).get("cnt"))/Integer.parseInt(goalCnt) * 100)*10)/10.0);
+				String achievementRate= String.valueOf(nAchievementRate)+" %";
+				
+				// 4) 성과금 계산하기 => 달성건-목표건 * 건당 성과금
+				
+				// 직급에 맞는 건당성과금 가져오기
+				String commissionpercase= service.getCommissionpercase(employeeid);
+				int achievementcnt= Integer.parseInt(bonusDateList.get(i).get("cnt"))-Integer.parseInt(goalCnt);
+				
+				if(achievementcnt>0) { // 성과금이 존재하는 경우
+					int bonus= achievementcnt*Integer.valueOf(commissionpercase);
+					
+					jsonObj.put("date",date); // 일시
+					jsonObj.put("prevCnt",prevCnt);// 전월실적
+					jsonObj.put("goalCnt",goalCnt); // 목표건
+					jsonObj.put("doneCnt",bonusDateList.get(i).get("cnt")); // 달성건
+					jsonObj.put("achievementRate",achievementRate); // 달성률
+					jsonObj.put("bonus",bonus); // 성과금
+				}
+				else { // 성과금이 존재하지 않는 경우
+					continue; 
+				}
+				
+				jsonArr.put(jsonObj);
+				
+			} // end of for(int i=0; i<bonusDateList.size(); i++) {
+		}
+		
+		return jsonArr.toString();
+		// 실적이 존재하지 않으면 jsonArr.length==0 이 된다
+		// 실적이 존재하지만 성과금이 없는 경우도 jsonArr.length==0 이 된다
+		
+	} // end of public String getBonusList(HttpServletRequest request) {-------
+	
 }
