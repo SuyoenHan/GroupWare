@@ -71,7 +71,7 @@
 	<select id="employeeInfoAjaxHsy" parameterType="String" resultType="com.t1works.groupware.hsy.model.MemberHsyVO">
 		select employeeid, email, name, nvl2(mobile,(substr(mobile,1,3)||'-'||substr(mobile,4,4)||'-'||substr(mobile,8)),'-') as mobile,
 	      	   substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, nvl(dname,'-') as dname,
-	      	   pname, salary, nvl(duty,'-') as duty, commissionpercase
+	      	   pname, salary, nvl(duty,'-') as duty, commissionpercase, fileName
 		from tbl_employee left join tbl_department on fk_dcode=dcode
 		left join tbl_position on fk_pcode=pcode
 		where employeeid= #{employeeid}

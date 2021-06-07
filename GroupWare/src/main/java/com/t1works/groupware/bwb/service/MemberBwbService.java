@@ -142,9 +142,55 @@ public class MemberBwbService implements InterMemberBwbService {
 
 	// 미승인된 차량예약정보 가져오기
 	@Override
-	public List<CarGoodsBwbVO> selectCarGoods() {
-		List<CarGoodsBwbVO> carList = dao2.selectCarGoods();
+	public List<CarGoodsBwbVO> selectCarRental() {
+		List<CarGoodsBwbVO> carList = dao2.selectCarRental();
+		
+		for(CarGoodsBwbVO carvo:carList) {
+			
+			String rctime = carvo.getRctime();
+			int irctime = Integer.parseInt(rctime);
+			
+			if(irctime<=8) {
+				rctime = "0"+irctime+":00 ~ "+"0"+(irctime+1)+":00";
+			}
+			else if(irctime==9) {
+				rctime = "0"+irctime+":00 ~ "+(irctime+1)+":00";
+			}
+			else {
+				rctime = irctime+":00 ~ "+(irctime+1)+":00";
+			}
+			
+			carvo.setRctime(rctime);
+		}
+		
 		return carList;
+	}
+
+	// 미승인된 사무용품에약정보 가져오기
+	@Override
+	public List<CarGoodsBwbVO> selectGoodsRental() {
+		
+		List<CarGoodsBwbVO> goodsList = dao2.selectGoodsRental();
+		
+		for(CarGoodsBwbVO carvo:goodsList) {
+			
+			String rgtime = carvo.getRgtime();
+			int irgtime = Integer.parseInt(rgtime);
+			
+			if(irgtime<=8) {
+				rgtime = "0"+irgtime+":00 ~ "+"0"+(irgtime+1)+":00";
+			}
+			else if(irgtime==9) {
+				rgtime = "0"+irgtime+":00 ~ "+(irgtime+1)+":00";
+			}
+			else {
+				rgtime = irgtime+":00 ~ "+(irgtime+1)+":00";
+			}
+			
+			carvo.setRgtime(rgtime);
+		}
+		
+		return goodsList;
 	}
 		
 

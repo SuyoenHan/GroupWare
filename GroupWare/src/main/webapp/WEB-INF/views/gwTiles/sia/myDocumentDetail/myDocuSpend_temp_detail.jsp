@@ -55,11 +55,30 @@ input.btn {
 </style>
 
 <script type="text/javascript">
+	// 전역변수
+	var obj = [];
+	
 	$(document).ready(function(){
 		
 		// 오늘 날짜
 		todayIs();
 		
+		<%-- === #167. 스마트 에디터 구현 시작 === --%>		
+		// 스마트에디터 프레임생성
+		nhn.husky.EZCreator.createInIFrame({
+			oAppRef: obj,
+			elPlaceHolder: "acontent",
+			sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
+			htParams : {
+				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseToolbar : true,            
+				// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseVerticalResizer : true,    
+				// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseModeChanger : true,
+			}
+		});
+		<%-- === 스마트 에디터 구현 끝 === --%>		
 	});
 	
 	// Function Declaration	
@@ -119,9 +138,103 @@ input.btn {
 		}
 	}// end of function goRemove(){}--------------------
 	
+	
 	// 저장
+	function goSave(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
+		var bool = confirm("저장하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/saveSpend.tw";
+			frm.submit();
+			
+			alert("저장되었습니다");
+		}
+	}
 	
 	// 제출
+	function goSubmit(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
+		var bool = confirm("제출하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/submitSpend.tw";
+			frm.submit();
+			
+			alert("제출되었습니다");
+		}
+	}	
+	
+	// 파일 삭제
+	function removeFile(){
+		var bool = confirm("파일을 삭제하시겠습니까?");
+		
+		if(bool){			
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/removeFile.tw",
+				data:{"ano":"${requestScope.avo.ano}"},
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){
+						alert("삭제되었습니다");
+						
+						location.reload();
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}
 	
 </script>
 
@@ -149,6 +262,8 @@ input.btn {
 			</tr>
 		</table>
 		
+		<form name="docuFrm" enctype="multipart/form-data">
+		<input type="hidden" name="scatname" value="${requestScope.avo.scatname}"/>
 		<table id="table2">
 			<tr>
 				<th>수신자</th>
@@ -159,34 +274,34 @@ input.btn {
 			
 			<tr>
 				<th>제목</th>
-				<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
+				<td colspan="3"><input type="text" name="atitle" id="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 			</tr>
 			
 			<c:if test="${requestScope.avo.scat eq '1'}">
 				<tr>
 					<th>지출일자</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.exdate}"/></td>
+					<td colspan="3"><input type="date" name="exdate" id="exdate" value="${requestScope.avo.exdate}"/></td>
 				</tr>
 				<tr>
 					<th>지출금액</th>
-					<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.exprice}"/></td>
+					<td colspan="3"><input type="text" name="exprice" id="exprice" style="width: 370px;" value="${requestScope.avo.exprice}"/></td>
 				</tr>
 			</c:if>
 			<c:if test="${requestScope.avo.scat eq '2'}">
 				<tr>
 					<th>사용예정일</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.codate}"/></td>
+					<td colspan="3"><input type="date" name="codate" id="codate" value="${requestScope.avo.codate}"/></td>
 				</tr>
 				<tr>
 					<th>카드번호</th>
-					<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.cocardnum}"/></td>
+					<td colspan="3"><input type="text" name="cocardnum" id="cocardnum" style="width: 370px;" value="${requestScope.avo.cocardnum}"/></td>
 				</tr>
 				<tr>
 					<th>예상금액</th>
-					<td><input type="text" style="width: 370px;" value="${requestScope.avo.coprice}"/></td>					
+					<td><input type="text" style="width: 370px;" name="coprice" id="coprice" value="${requestScope.avo.coprice}"/></td>					
 					<th>지출목적</th>
 					<td>
-						<select name="copurpose">
+						<select name="copurpose" id="copurpose">
 							<option>선택</option>
 							<option value="1">교통비</option>
 							<option value="2">사무비품</option>
@@ -201,7 +316,7 @@ input.btn {
 			
 			<tr>
 				<th style="height:250px;">글내용</th>
-				<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
+				<td colspan="3"><textarea name="acontent" id="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
 			</tr>
 				
 			<tr>
@@ -209,7 +324,7 @@ input.btn {
 				<td colspan="3"><input type="file" name="attach"/></td>
 			</tr>
 		</table>
-		
+		</form>
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.scatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>
 		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>

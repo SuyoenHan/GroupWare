@@ -56,11 +56,31 @@ input.btn {
 </style>
 
 <script type="text/javascript">
+
+	//전역변수
+	var obj = [];
+	
 	$(document).ready(function(){
 		
 		// 오늘 날짜
 		todayIs();
 		
+		<%-- === #167. 스마트 에디터 구현 시작 === --%>	       
+		// 스마트에디터 프레임생성
+		nhn.husky.EZCreator.createInIFrame({
+			oAppRef: obj,
+			elPlaceHolder: "acontent",
+			sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
+			htParams : {
+				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseToolbar : true,            
+				// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseVerticalResizer : true,    
+				// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseModeChanger : true,
+			}
+		});
+		<%-- === 스마트 에디터 구현 끝 === --%>		
 		
 	});
 	
@@ -124,6 +144,30 @@ input.btn {
 	
 	// 저장
 	function goSave(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		
+		
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
 		var bool = confirm("저장하시겠습니까?");
 		
 		if(bool){
@@ -138,7 +182,67 @@ input.btn {
 	}
 	
 	// 제출
+	function goSubmit(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
+		var bool = confirm("제출하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/submit.tw";
+			frm.submit();
+			
+			alert("제출되었습니다");
+		}
+	}
 	
+	// 파일 삭제
+	function removeFile(){
+		var bool = confirm("파일을 삭제하시겠습니까?");
+		
+		if(bool){			
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/removeFile.tw",
+				data:{"ano":"${requestScope.avo.ano}"},
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){
+						alert("삭제되었습니다");
+						
+						location.reload();
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}
 	
 </script>
 
@@ -162,7 +266,8 @@ input.btn {
 			</tr>
 		</table>
 		
-		<form name="docuFrm" enctype="multipart/form-data">	
+		<form name="docuFrm" enctype="multipart/form-data">
+		<input type="hidden" name="ncatname" value="${requestScope.avo.ncatname}"/>	
 			<table id="table2">
 				<tr>
 					<th>수신자</th>
@@ -176,34 +281,41 @@ input.btn {
 					<td colspan="3"><input type="text" name="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 				</tr>
 						
-				<c:if test="${requestScope.avo.ncat eq '1'}">
+				<c:if test="${requestScope.avo.ncat eq '1'}">				
 					<tr>
 						<th>회의시간</th>					
 						<td colspan="3">					
-						<input type="date" name="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate1" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate1" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
+						<input type="date" name="mdate1" id="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate2" id="mdate2" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate3" id="mdate2" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '2'}">
 					<tr>
 						<th>위임기간</th>					
-						<td colspan="3"><input type="date" name="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
+						<td colspan="3"><input type="date" name="fk_wiimdate1" id="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" id="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '4'}">
 					<tr>
 						<th>타회사명</th>
-						<td colspan="3"><input type="text" name="comname" value="${requestScope.avo.comname}"/></td>					
+						<td colspan="3"><input type="text" name="comname" id="comname" value="${requestScope.avo.comname}"/></td>					
 					</tr>
 				</c:if>		
 				
 				<tr>
 					<th style="height:250px;">글내용</th>
-					<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
+					<td colspan="3"><textarea id="acontent" name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
 				</tr>
 				
 				<tr>
 					<th>첨부파일</th>
-					<td colspan="3"><input type="file" name="attach"/></td>
+					<td colspan="3">
+					<c:if test="${requestScope.avo.orgFilename == null}">
+						<input type="file" name="attach" value="${requestScope.avo.orgFilename}"/>
+					</c:if>
+					<c:if test="${requestScope.avo.orgFilename != null}">
+						<a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a>&nbsp;&nbsp;<input type="button" style="width: 40px; font-size: 9pt; font-weight: bold; color: white; background-color: #d9534f; border: none;" onclick="removeFile();" value="삭제"/>
+					</c:if>
+					</td>
 				</tr>
 			</table>
 		</form>	
@@ -219,7 +331,7 @@ input.btn {
 			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
 				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
-				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
+				<input type="button" class="btn btn-primary" onclick="goSubmit();" value="제출"/>
 			</span>
 		</div>
 		

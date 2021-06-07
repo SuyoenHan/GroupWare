@@ -124,15 +124,28 @@ public interface InterMyDocumentSiaDAO {
 	
 	//////////////////////////////////////////////////////////////////////
 	
+	// 내문서함 - 임시저장함 - 파일 삭제
+	int removeFile(Map<String, String> paraMap);
+	
 	// 내문서함 - 임시저장함 - 삭제버튼 클릭
 	int remove(Map<String, String> paraMap);
+	
+	// 문서번호에 따라 삭제해야할 파일 조회
+	ApprovalSiaVO getViewFile(Map<String, String> paraMap);
 	
 	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
 	int approvalSave(ApprovalSiaVO avo); // 첨부파일 없는 경우 저장
 	int approvalSave_withFile(ApprovalSiaVO avo); // 첨부파일 있는 경우 저장
 	
-	int optionSave(ApprovalSiaVO avo); // 문서 종류에 따라 테이블 update
+	int optionSave(ApprovalSiaVO avo); // 일반결재 문서 종류에 따라 테이블 update
 	
+	// 내문서함 - 임시저장함 - 일반결재 - 제출버튼 클릭
+	int approvalSubmit(ApprovalSiaVO avo); // 첨부파일 없는 경우 저장
+	int approvalSubmit_withFile(ApprovalSiaVO avo); // 첨부파일 있는 경우 저장
+	
+	int optionSaveSpend(ApprovalSiaVO avo); // 지출결재 문서 종류에 따라 테이블 update
+
+	int optionSaveVacation(ApprovalSiaVO avo); // 근태결재 문서 종류에 따라 테이블 update	
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -168,11 +181,10 @@ public interface InterMyDocumentSiaDAO {
 	// 내문서함 - 수신함 - 결재완료 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap);
 
-
 	
 
 	
-
+	
 	
 
 	

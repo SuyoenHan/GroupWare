@@ -1,5 +1,7 @@
 package com.t1works.groupware.bwb.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class MemberBwbVO {
    
    private String employeeid;      // 사번
@@ -15,6 +17,11 @@ public class MemberBwbVO {
    private String status;          // 재직상태 (0:재직중 , 1:퇴사)
    private String managerid;       // 직속상사사번
    private String employeeimg;     // 직원이미지
+   private String fileName;		   // was에 저장될 파일명
+   private String orgFilename;     // 진짜 파일명
+   private String fileSize;		   // 파일크기
+   
+   private MultipartFile attach;
    
    private String pname;           // 직위명
    private String dname;		   // 소속명
@@ -149,6 +156,39 @@ public class MemberBwbVO {
    }
    
    
+	public String getFileName() {
+		return fileName;
+	}
+	
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	public String getOrgFilename() {
+		return orgFilename;
+	}
+	
+	public void setOrgFilename(String orgFilename) {
+		this.orgFilename = orgFilename;
+	}
+	
+	public String getFileSize() {
+		return fileSize;
+	}
+	
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public MultipartFile getAttach() {
+		return attach;
+	}
+
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}
+   
+    
 
    
 }

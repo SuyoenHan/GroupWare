@@ -1039,11 +1039,25 @@
 	
 	
 	<!-- ////////////////////////////////////////////////////////////////////// -->
+	<!-- 내문서함 - 임시저장함 - 첨부파일 삭제 -->
+	<update id="removeFile" parameterType="HashMap">
+		update tbl_approval set fileName = null, orgFilename = null, fileSize = null
+		where ano = #{ano}
+	</update>
+		
+	
 	<!-- 내문서함 - 임시저장함 - 삭제버튼 클릭 -->
 	<delete id="remove" parameterType="HashMap">
 		delete from tbl_approval
 		where ano = #{ano}
 	</delete>
+	
+	<!-- 문서번호에 따라 삭제해야할 파일 조회 -->
+	<select id="getViewFile" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select nvl(fileName,' ') AS fileName, nvl(orgFilename, ' ') AS orgFilename, nvl(to_char(fileSize), ' ') AS fileSize
+		from tbl_approval
+		where ano = #{ano}
+	</select>	
 	
 	
 	<!-- 내문서함 - 임시저장함 - 저장버튼 클릭 -->	
@@ -1051,8 +1065,7 @@
 	<update id="approvalSave" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}  
 		where ano = #{ano}
-	</update>
-	
+	</update>	
 	<!-- 전자결재 테이블 update 첨부파일 있는 경우 - 임시저장 상태 -->	
 	<update id="approvalSave_withFile" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, fileName = #{fileName}, orgFilename = #{orgFilename}, fileSize = #{fileSize}
@@ -1060,22 +1073,78 @@
 	</update>
 	
 	
-	<!-- 문서종류에 따라 테이블에 update -->	 
+	<!-- 내문서함 - 임시저장함 - 제출버튼 클릭 -->	
+	<!-- 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태 -->
+	<update id="approvalSubmit" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, apaper = 0 
+		where ano = #{ano}
+	</update>	
+	<!-- 전자결재 테이블 update 첨부파일 있는 경우 - 임시저장 상태 -->	
+	<update id="approvalSubmit_withFile" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, fileName = #{fileName}, orgFilename = #{orgFilename}, fileSize = #{fileSize}, apaper = 0
+		where ano = #{ano}
+	</update>
+	
+	
+	<!-- 일반결재 문서종류에 따라 테이블에 update -->	 
 	<update id="optionSave" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		<if test='ncatname eq "회의록"'>			
 			update tbl_minutes set mdate = #{mdate}
-			where ano = #{ano}
+			where fk_ano = #{ano}
 		</if>
 		<if test='ncatname eq "위임장"'>
 			update tbl_wiimjang set fk_wiimdate = #{fk_wiimdate}
-			where ano = #{ano}
+			where fk_ano = #{ano}
 		</if>
 		<if test='ncatname eq "협조공문"'>
 			update tbl_coofficial set comname = #{comname}
+			where fk_ano = #{ano}
+		</if>
+		<if test='ncatname eq "외부공문"'>
+			update tbl_approval set asdate = sysdate
 			where ano = #{ano}
+		</if>
+	</update>
+	
+	<!-- 지출결재 문서종류에 따라 테이블에 update -->	 
+	<update id="optionSaveSpend" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		<if test='scatname eq "지출결의서"'>			
+			update tbl_expense set exdate = #{exdate}, exprice = #{exprice}
+			where fk_ano = #{ano}
+		</if>
+		<if test='scatname eq "법인카드사용신청서"'>
+			update tbl_cocard set codate = #{codate}, cocardnum = #{cocardnum}, copurpose = #{copurpose}, coprice = #{coprice}
+			where fk_ano = #{ano}
 		</if>		
 	</update>
 	
+	<!-- 근태결재 문서종류에 따라 테이블에 update -->
+	<update id="optionSaveVacation" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		<if test='vcatname eq "병가"'>			
+			update tbl_sickleave set slstart = #{slstart}, slend = #{slend}, sldates = #{sldates}
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "반차"'>
+			update tbl_afternoonoff set afdate = #{afdate}, afdan = #{afdan}, afdates = #{afdates}
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "연차"'>
+			update tbl_dayoff set daystart = #{daystart}, dayend = #{dayend}, daydates = #{daydates}
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "경조휴가"'>
+			update tbl_congoff set congstart = #{congstart}, congend = #{congend}, congdates = #{congdates}
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "출장"'>
+			update tbl_businesstrip set bustart = #{bustart}, buend = #{buend}, budates = #{budates}, buplace = #{buplace}, bupeople = #{bupeople} 
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "추가근무"'>
+			update tbl_extrawork set ewdate = #{ewdate}, ewhours = #{ewhours}
+			where fk_ano = #{ano}
+		</if>
+	</update>
 	
 	<!-- ////////////////////////////////////////////////////////////////////// -->
 	<!-- ////////////////////////////////////////////////////////////////////// -->

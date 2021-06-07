@@ -45,7 +45,10 @@ public interface InterMemberBwbService {
 	List<MemberBwbVO> selectDepartmentList();
 	
 	// 미승인된 차량예약정보 가져오기
-	List<CarGoodsBwbVO> selectCarGoods();
+	List<CarGoodsBwbVO> selectCarRental();
+	
+	// 미승인된 사무용품에약정보 가져오기
+	List<CarGoodsBwbVO> selectGoodsRental();
 	
 
 }

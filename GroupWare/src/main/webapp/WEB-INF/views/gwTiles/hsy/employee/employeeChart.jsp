@@ -62,12 +62,14 @@
 	
 	div.employeeInfo{
 		border: solid 0px red;
-		font-size: 13pt;
+		font-size: 11pt;
 	}
 	
 	div#orgList{
 		border: solid 2px #d9d9de;
-		padding: 30px 50px 15px 50px;
+		padding: 30px 30px 15px 30px;
+		position: relative;
+		left: -50px;
 	}
 	
 	div.clickedTarget{

@@ -263,16 +263,28 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 	
 	/////////////////////////////////////////////////////////////////////
 	
-	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	// 내문서함 - 임시저장함 - 파일 삭제
+	@Override
+	public int removeFile(Map<String, String> paraMap) {
+		int n = sqlsession4.update("mydocument_sia.removeFile", paraMap);
+		return n;
+	}	
+	
+	// 내문서함 - 임시저장함/발신함 - 삭제버튼 클릭
 	@Override
 	public int remove(Map<String, String> paraMap) {
 		int n = sqlsession4.delete("mydocument_sia.remove", paraMap);
 		return n;
 	}
 	
+	// 문서번호에 따라 삭제해야할 파일 조회
+	@Override
+	public ApprovalSiaVO getViewFile(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.getViewFile", paraMap);
+		return avo;
+	}
 	
-	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
-		
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭		
 	// 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태
 	@Override
 	public int approvalSave(ApprovalSiaVO avo) {
@@ -286,12 +298,39 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return n;
 	}
 
-	// 문서 종류에 따라 테이블 update
+	// 문서 종류에 따라 테이블 update - 일반결재
 	@Override
 	public int optionSave(ApprovalSiaVO avo) {
 		int result = sqlsession4.update("mydocument_sia.optionSave", avo);
 		return result;
-	}	
+	}
+	
+	// 전자결재 테이블 update 첨부파일 없는 경우 - 일반결재 - 제출
+	@Override
+	public int approvalSubmit(ApprovalSiaVO avo) {
+		int n = sqlsession4.update("mydocument_sia.approvalSubmit", avo);
+		return n;
+	}
+	// 전자결재 테이블 update 첨부파일 있는 경우 - 일반결재 - 제출
+	@Override
+	public int approvalSubmit_withFile(ApprovalSiaVO avo) {
+		int n = sqlsession4.update("mydocument_sia.approvalSubmit_withFile", avo);
+		return n;
+	}
+	
+	// 문서 종류에 따라 테이블 update - 지출결재
+	@Override
+	public int optionSaveSpend(ApprovalSiaVO avo) {
+		int result = sqlsession4.update("mydocument_sia.optionSaveSpend", avo);
+		return result;
+	}
+	
+	// 문서 종류에 따라 테이블 update - 근태결재
+	@Override
+	public int optionSaveVacation(ApprovalSiaVO avo) {
+		int result = sqlsession4.update("mydocument_sia.optionSaveVacation", avo);
+		return result;
+	}
 	
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
@@ -362,6 +401,10 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuVacation_complete_detail", paraMap);
 		return avo;
 	}
+
+
+
+	
 
 
 

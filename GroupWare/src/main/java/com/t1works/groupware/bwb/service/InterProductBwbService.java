@@ -64,5 +64,11 @@ public interface InterProductBwbService {
 	
 	// 해당 월의 부서 3개 평균건수 구해오기
 	String selectAvgCnt(String selectedMonth);
+	
+	// 승인버튼 클릭시 status update처리(차량)
+	int updateCarRental(String rscno);
+	
+	// 승인버튼 클릭시 status update처리(사무용품)
+	int updateGoodsRental(String rsgno);
 
 }

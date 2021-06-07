@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.t1works.groupware.bwb.model.InterCarGoodsBwbDAO;
 import com.t1works.groupware.bwb.model.InterProductBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.model.ProductBwbVO;
@@ -17,6 +18,9 @@ public class ProductBwbService implements InterProductBwbService {
 	
 	 @Autowired
      private InterProductBwbDAO dao; 
+	 
+	 @Autowired
+     private InterCarGoodsBwbDAO dao2; 
 	 
 	// 미배정 업무정보 가져오기
 	 @Override
@@ -277,6 +281,21 @@ public class ProductBwbService implements InterProductBwbService {
 		
 		String avgCnt = dao.selectAvgCnt(selectedMonth);
 		return avgCnt;
+	}
+	
+	// 승인버튼 클릭시 status update처리(차량)
+	@Override
+	public int updateCarRental(String rscno) {
+		
+		int n = dao2.updateCarRental(rscno);
+		return n;
+	}
+	
+	// 승인버튼 클릭시 status update처리(사무용품)
+	@Override
+	public int updateGoodsRental(String rsgno) {
+		int n = dao2.updateGoodsRental(rsgno);
+		return n;
 	}
 	
 	
