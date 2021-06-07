@@ -160,6 +160,9 @@ public class MemberHsyController {
 		jsonObj.put("dname", mvo.getDname());
 		jsonObj.put("pname", mvo.getPname());
 		jsonObj.put("duty", mvo.getDuty());
+		jsonObj.put("fileName", mvo.getFileName());
+		
+		// System.out.println(mvo.getFileName());
 		
 		return jsonObj.toString();
 	

@@ -131,7 +131,7 @@
 		background-color: #003d66;
 	}
 	
-	table#oneEmployeeTable td {padding-left: 30px;}
+	table#oneEmployeeTable td {padding-left: 25px;}
 		
 	button.sendMail{
 		cursor:pointer;
@@ -291,6 +291,11 @@
 	   		success:function(json){
 				
 	   			var html= "<table id='oneEmployeeTable'>"+
+					   		  "<tr>"+
+					   		  	"<td rowspan='4' style='width:130px; padding-left:0px;'>"+
+					   		  	"<img src='<%=ctxPath%>/resources/images/bwb/"+json.fileName+"' width='130px' height='150px' />"+
+					   		  	"</td>"+
+					   		  "</tr>"+
 		   					  "<tr>"+
 		   					  	"<th>사번</th>"+
 		   					 	"<td>"+json.employeeid+"</td>"+

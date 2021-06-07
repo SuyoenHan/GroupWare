@@ -14,7 +14,7 @@ public class MemberHsyVO {
 	private String hiredate;  	   // 입사일자
 	private String status;  	   // 재직상태 (0:재직중 , 1:퇴사)
 	private String managerid;  	   // 직속상사사번
-	private String employeeimg;    // 직원이미지
+	private String fileName;       // 직원이미지 업로드된 파일명
 	
 	
 	// select용 변수 생성
@@ -109,13 +109,6 @@ public class MemberHsyVO {
 		this.managerid = managerid;
 	}
 	
-	public String getEmployeeimg() {
-		return employeeimg;
-	}
-	public void setEmployeeimg(String employeeimg) {
-		this.employeeimg = employeeimg;
-	}
-	
 	public String getPname() {
 		return pname;
 	}
@@ -150,5 +143,14 @@ public class MemberHsyVO {
 	public void setCommissionpercase(String commissionpercase) {
 		this.commissionpercase = commissionpercase;
 	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
+	
 	
 }
