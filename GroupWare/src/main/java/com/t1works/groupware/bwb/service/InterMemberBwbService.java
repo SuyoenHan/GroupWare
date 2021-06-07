@@ -3,6 +3,7 @@ package com.t1works.groupware.bwb.service;
 import java.util.List;
 import java.util.Map;
 
+import com.t1works.groupware.bwb.model.CarGoodsBwbVO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 
 public interface InterMemberBwbService {
@@ -42,6 +43,9 @@ public interface InterMemberBwbService {
 	
 	// 부서 전체 이름,코드 가져오기
 	List<MemberBwbVO> selectDepartmentList();
+	
+	// 미승인된 차량예약정보 가져오기
+	List<CarGoodsBwbVO> selectCarGoods();
 	
 
 }

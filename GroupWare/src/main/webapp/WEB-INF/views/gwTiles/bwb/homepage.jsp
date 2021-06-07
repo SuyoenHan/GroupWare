@@ -77,6 +77,14 @@
  	margin-left: 5px;
  	margin-right: 10px;
  }
+ 
+ .fc-event-time{
+ 	display: none;
+ }
+ 
+ .fc-event-title{
+ 	display: none;
+ }
 </style>
 
 <!-- full calendar에 관련된 script -->
@@ -299,7 +307,8 @@
 
          calendar.render();
          calendar.setOption('height', 450);
-    	 
+    	
+         
          $("div#infoCalendar").hide();
          
     	 // 오늘 날짜와 관련된 일정 보여주기

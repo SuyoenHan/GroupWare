@@ -385,14 +385,14 @@ button.btn_r{
 
 <div id="myReserved"  style="margin-left: 80px; ">
 	
-	<h3 style="margin-top: 20px !important;">나의 예약 내역</h3>
+	<h3 style="margin-top: 20px !important;">나의 예약내역</h3>
 	
 
 	<div style="float: left; margin-top: 50px;">
 		<ul class="nav nav-pills">
 			 <li class="active"><a href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
 		</ul>
 	</div>
 
@@ -434,15 +434,18 @@ button.btn_r{
 				<c:forEach var="myRoom" items="${requestScope.myRoomList}">	
 					<tr>
 						<td style="vertical-align: middle;">${myRoom.rdate}</td>
-						<c:if test="${myRoom.rtime<10}">
+						<c:if test="${myRoom.rtime<9}">
+						<td style="vertical-align: middle;">0${myRoom.rtime}:00 ~ 0${myRoom.rtime+1}:00</td>
+						</c:if>
+						<c:if test="${myRoom.rtime==9}">
 						<td style="vertical-align: middle;">0${myRoom.rtime}:00 ~ ${myRoom.rtime+1}:00</td>
 						</c:if>
-						<c:if test="${myRoom.rtime >=10}">
+						<c:if test="${myRoom.rtime >9}">
 						<td style="vertical-align: middle;">${myRoom.rtime}:00 ~ ${myRoom.rtime+1}:00</td>
 						</c:if>
 						
 						<td style="vertical-align: middle;">${myRoom.roomname}</td>
-						<td style="vertical-align: middle;">${myRoom.rsubject}</td>
+						<td style="vertical-align: middle; text-align: left;">${myRoom.rsubject}</td>
 						<td><button type="button" class='btn_r' onclick="editMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}','${myRoom.fk_roomno}')">변경</button></td>
 						<td><button type="button" class='btn_r' onclick="delMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}')">취소</button></td>
 					</tr>

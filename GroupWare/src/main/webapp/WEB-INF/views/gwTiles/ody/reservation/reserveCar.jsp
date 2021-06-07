@@ -510,23 +510,7 @@ $(document).ready(function(){
   	      }
 		});
 	}
-	
-	function returnCar(rscno){
-		$.ajax({
-			url: "<%= ctxPath%>/t1/rsCar/returnReserveCar.tw",
-			type: "post",
-			data: {"rscno":rscno},
-			dataType: "json",
-			success:function(json){
-				alert("차량을 반납하였습니다.");
-     		 	location.href="javascript:history.go(0);"; 
-			}
-			, error: function(request, status, error){
-	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-  	      }
-		});
-	 }
-	
+
 	
 </script>
 

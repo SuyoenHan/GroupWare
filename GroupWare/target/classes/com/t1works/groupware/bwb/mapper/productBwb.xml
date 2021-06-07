@@ -280,4 +280,15 @@
 		)
    </select>
    
+   <!--  미승인된 차량예약정보 가져오기 -->
+   <select id="selectCarGoods" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
+   		select rscno, rcdate, rctime, carname, rdestination, nvl(rcpeople,'없음') as rcpeople, rcsubject,name  
+		from tbl_car C
+		join tbl_rscar R
+		on c.cno = r.fk_cno
+		join tbl_employee E
+		on E.employeeid = R.fk_employeeid
+		where cstatus = '0'
+   </select>
+   
 </mapper>
