@@ -89,12 +89,36 @@ input.btn {
 		$myFrm.method="POST";
 		$myFrm.action="<%=ctxPath%>/t1/myDocuVacation_temp.tw";
 		$myFrm.submit();
-	}
-	
-	
-	// 취소
+	}	
 	
 	// 삭제
+	function goRemove(){
+		var bool = confirm("삭제하시겠습니까?");
+		
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/remove.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){					
+						alert("삭제되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuVacation_temp.tw";						
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}// end of function goRemove(){}--------------------
 	
 	// 저장
 	
@@ -203,10 +227,9 @@ input.btn {
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 55%;">
-				<input type="button" class="btn warning" onclick="goReset();" value="취소"/>
+			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
-				<input type="button" class="btn btn-success" onclick="goSave();" value="저장"/>
+				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
 				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
 			</span>
 		</div>

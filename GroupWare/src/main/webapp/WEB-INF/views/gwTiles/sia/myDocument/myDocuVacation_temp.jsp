@@ -137,15 +137,15 @@ $(document).ready(function(){
 	function goSearch(currentShowPageNo){			
 		var checkArr = new Array();	
 		$("input[name=vno]:checked").each(function(index,item){			
-			var no = $(item).val();
-			checkArr.push(no);			
+			var vno = $(item).val();
+			checkArr.push(vno);			
 		});
 		// console.log(checkArr);
 		
 		var checkArres = checkArr.join();
 		var vno= checkArres;
 		var sort= $("select#sort").val();
-		var searchWord= $("input#searchWord").val();
+		var searchWord = $("input#searchWord").val();
 		
 		$.ajax({
 			url:"<%= ctxPath%>/t1/vacation_templist.tw",
@@ -230,7 +230,7 @@ $(document).ready(function(){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 			}
 		});		
-	} // end of function goSearch2(){}--------------------
+	}// end of function goSearch2(){}--------------------
 		
 	
 	// 페이지바 Ajax로 만들기
@@ -322,8 +322,7 @@ $(document).ready(function(){
 		frm.method = "get";
 		frm.action = "<%= ctxPath%>/t1/myDocuVacation_temp_detail.tw";
 		frm.submit();
-	} 
-	
+	}	
 </script>
 
 <div class="section">

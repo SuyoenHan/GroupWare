@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <% String ctxPath = request.getContextPath(); %>
 
@@ -92,12 +93,49 @@ input.btn {
 		$myFrm.submit();
 	}
 	
-	
-	// 취소
-	
 	// 삭제
+	function goRemove(){
+		var bool = confirm("삭제하시겠습니까?");
+		
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/remove.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){					
+						alert("삭제되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuNorm_temp.tw";						
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}// end of function goRemove(){}--------------------
 	
 	// 저장
+	function goSave(){
+		var bool = confirm("저장하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/save.tw";
+			frm.submit();
+			
+			alert("저장되었습니다");
+		}
+	}
 	
 	// 제출
 	
@@ -124,61 +162,63 @@ input.btn {
 			</tr>
 		</table>
 		
-		<table id="table2">
-			<tr>
-				<th>수신자</th>
-				<td style="width: 35%;"></td>			
-				<th>문서번호</th>
-				<td>${requestScope.avo.ano}</td>
-			</tr>
-			
-			<tr>
-				<th>제목</th>
-				<td colspan="3"><input type="text" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
-			</tr>
-					
-			<c:if test="${requestScope.avo.ncat eq '1'}">
+		<form name="docuFrm" enctype="multipart/form-data">	
+			<table id="table2">
 				<tr>
-					<th>회의시간</th>
-					<td colspan="3"><input type="date"/><input type="time" value=""/> ~ <input type="time" value=""/></td>
+					<th>수신자</th>
+					<td style="width: 35%;">${requestScope.mng.name} ${requestScope.mng.pname} (${requestScope.mng.dname})</td>			
+					<th>문서번호</th>					
+					<td><input type="hidden" name="ano" value="${requestScope.avo.ano}"/>${requestScope.avo.ano}</td>
 				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.ncat eq '2'}">
+				
 				<tr>
-					<th>위임기간</th>
-					<td colspan="3"><input type="date" value="${requestScope.avo.fk_wiimdate}"/></td>					
+					<th>제목</th>
+					<td colspan="3"><input type="text" name="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 				</tr>
-			</c:if>
-			<c:if test="${requestScope.avo.ncat eq '4'}">
+						
+				<c:if test="${requestScope.avo.ncat eq '1'}">
+					<tr>
+						<th>회의시간</th>					
+						<td colspan="3">					
+						<input type="date" name="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate1" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate1" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.ncat eq '2'}">
+					<tr>
+						<th>위임기간</th>					
+						<td colspan="3"><input type="date" name="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
+					</tr>
+				</c:if>
+				<c:if test="${requestScope.avo.ncat eq '4'}">
+					<tr>
+						<th>타회사명</th>
+						<td colspan="3"><input type="text" name="comname" value="${requestScope.avo.comname}"/></td>					
+					</tr>
+				</c:if>		
+				
 				<tr>
-					<th>타회사명</th>
-					<td colspan="3"><input type="text" value="${requestScope.avo.comname}"/></td>					
+					<th style="height:250px;">글내용</th>
+					<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
 				</tr>
-			</c:if>		
-			
-			<tr>
-				<th style="height:250px;">글내용</th>
-				<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
-			</tr>
-			
-			<tr>
-				<th>첨부파일</th>
-				<td colspan="3"><input type="file" name="attach"/></td>
-			</tr>
-		</table>
+				
+				<tr>
+					<th>첨부파일</th>
+					<td colspan="3"><input type="file" name="attach"/></td>
+				</tr>
+			</table>
+		</form>	
 		
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.ncatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>
-		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
+		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
 			
 		<div style="margin-top: 20px;">
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 45%;">
-				<input type="button" class="btn btn-warning" onclick="goReset();" value="취소"/>
+			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
-				<input type="button" class="btn btn-success" onclick="goSave();" value="저장"/>
+				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
 				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
 			</span>
 		</div>

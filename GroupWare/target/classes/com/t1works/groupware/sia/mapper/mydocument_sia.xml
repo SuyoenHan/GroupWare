@@ -74,7 +74,7 @@
 	
 	<!-- 내문서함 - 문서 한 개 상세보기 -->
 	<select id="myDocuNorm_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3, pname 
 		<choose>
 			<when test="ncatname eq '회의록'">
 				, mdate
@@ -195,7 +195,7 @@
 	
 	<!-- 내문서함 - 문서 지출결재문서 한 개 상세보기 -->
 	<select id="myDocuSpend_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="scatname eq '지출결의서'">
 				, to_char(exdate, 'yyyy-mm-dd') AS exdate, exprice
@@ -305,7 +305,7 @@
 	
 	<!-- 내문서함 - 문서 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVacation_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
@@ -456,6 +456,7 @@
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
+			and apaper = '0'
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -489,6 +490,7 @@
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
 		where fk_employeeid = #{userid}
+		and apaper = '0'
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -515,7 +517,7 @@
 	
 	<!-- 내문서함 - 발신함 - 일반결재문서 문서 한 개 상세보기 -->
 	<select id="myDocuNorm_send_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="ncatname eq '회의록'">
 				, mdate
@@ -575,6 +577,7 @@
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
+			and apaper != '0'
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -608,6 +611,7 @@
 		from tbl_approval A join tbl_spenda B
 		on A.ano = B.fk_ano
 		where fk_employeeid = #{userid}
+		and apaper = '0'
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -634,7 +638,7 @@
 	
 	<!-- 내문서함 - 발신함 - 지출 결재 문서 한 개 상세보기 -->
 	<select id="myDocuSpend_send_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="scatname eq '지출결의서'">
 				, to_char(exdate, 'yyyy-mm-dd') AS exdate, exprice
@@ -683,6 +687,7 @@
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
+			and apaper = '0'
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -716,6 +721,7 @@
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
 		where fk_employeeid = #{userid}
+		and apaper = '0'
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -742,7 +748,7 @@
 	
 	<!-- 내문서함 - 발신함 - 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVacation_send_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
@@ -859,7 +865,7 @@
 	
 	<!-- 내문서함 - 임시저장함 - 일반결재문서 문서 한 개 상세보기 -->
 	<select id="myDocuNorm_temp_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate 
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname
 		<choose>
 			<when test="ncatname eq '회의록'">
 				, mdate
@@ -956,7 +962,7 @@
 	
 	<!-- 내문서함 - 임시저장함 - 지출 결재 문서 한 개 상세보기 -->
 	<select id="myDocuSpend_temp_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname 
+		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname 
 		<choose>
 			<when test="scatname eq '지출결의서'">
 				, to_char(exdate, 'yyyy-mm-dd') AS exdate, exprice
@@ -1021,7 +1027,60 @@
 	</select>
 	
 	
-	<!-- 검색에 해당하는 발신함 - 근태결재 글의 총 페이지수를 알아오기 -->
+	<!-- 수신자 정보 select해오기 -->
+	<select id="viewMng" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select name, employeeid, pname, dname
+		from tbl_employee e left join tbl_position p
+		on e.fk_pcode = p. pcode
+		left join tbl_department d
+		on e.fk_dcode = d.dcode
+		where employeeid = (select managerid from tbl_employee where employeeid= #{userid}) 
+	</select>
+	
+	
+	<!-- ////////////////////////////////////////////////////////////////////// -->
+	<!-- 내문서함 - 임시저장함 - 삭제버튼 클릭 -->
+	<delete id="remove" parameterType="HashMap">
+		delete from tbl_approval
+		where ano = #{ano}
+	</delete>
+	
+	
+	<!-- 내문서함 - 임시저장함 - 저장버튼 클릭 -->	
+	<!-- 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태 -->
+	<update id="approvalSave" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}  
+		where ano = #{ano}
+	</update>
+	
+	<!-- 전자결재 테이블 update 첨부파일 있는 경우 - 임시저장 상태 -->	
+	<update id="approvalSave_withFile" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, fileName = #{fileName}, orgFilename = #{orgFilename}, fileSize = #{fileSize}
+		where ano = #{ano}
+	</update>
+	
+	
+	<!-- 문서종류에 따라 테이블에 update -->	 
+	<update id="optionSave" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		<if test='ncatname eq "회의록"'>			
+			update tbl_minutes set mdate = #{mdate}
+			where ano = #{ano}
+		</if>
+		<if test='ncatname eq "위임장"'>
+			update tbl_wiimjang set fk_wiimdate = #{fk_wiimdate}
+			where ano = #{ano}
+		</if>
+		<if test='ncatname eq "협조공문"'>
+			update tbl_coofficial set comname = #{comname}
+			where ano = #{ano}
+		</if>		
+	</update>
+	
+	
+	<!-- ////////////////////////////////////////////////////////////////////// -->
+	<!-- ////////////////////////////////////////////////////////////////////// -->
+	
+	<!-- 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기 -->
 	<select id="getVacationTempTotalPage" parameterType="HashMap" resultType="int">
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_vacation B
@@ -1042,7 +1101,7 @@
 	
 	<!-- 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVacation_temp_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, vno, pname 
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, pname 
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
@@ -1180,7 +1239,7 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 - 일반결재 문서 한 개 상세보기 -->
 	<select id="myDocuNorm_complete_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select ncatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, ncat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="ncatname eq '회의록'">
 				, mdate
@@ -1299,7 +1358,7 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 지출결재문서 한 개 상세보기 -->
 	<select id="myDocuSpend_complete_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select scatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, scat, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="scatname eq '지출결의서'">
 				, to_char(exdate, 'yyyy-mm-dd') AS exdate, exprice
@@ -1407,7 +1466,7 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 근태결재문서 한 개 상세보기 -->
 	<select id="myDocuVacation_complete_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, orgFilename, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, to_char(asdate, 'yyyy')||'년 '||to_char(asdate, 'mm')||'월 '||to_char(asdate, 'dd')||'일' AS asdate, pname, arecipient2, arecipient3, approvaldate1, approvaldate2, approvaldate3 
 		<choose>
 			<when test="vcatname eq '병가'">
 				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates

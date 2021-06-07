@@ -120,6 +120,18 @@ public interface InterMyDocumentSiaService {
 
 	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_temp_detail(Map<String, String> paraMap);
+		
+	// 수신자 정보 찾기
+	ApprovalSiaVO viewMng(Map<String, String> paraMap);	
+	
+	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	int remove(Map<String, String> paraMap);
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
+	int save(ApprovalSiaVO avo) throws Throwable;
+	int save_withFile(ApprovalSiaVO avo) throws Throwable;
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -154,6 +166,7 @@ public interface InterMyDocumentSiaService {
 	
 	// 내문서함 - 수신함 - 결재완료 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap);
+	
 	
 
 }

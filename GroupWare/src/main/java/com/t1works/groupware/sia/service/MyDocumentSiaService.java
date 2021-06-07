@@ -255,6 +255,55 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return avo;
 	}
 	
+	// 수신자 정보 찾기
+	@Override
+	public ApprovalSiaVO viewMng(Map<String, String> paraMap) {
+		ApprovalSiaVO mng = dao.viewMng(paraMap);
+		return mng;
+	}
+	
+	////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	@Override
+	public int remove(Map<String, String> paraMap) {
+		int n = dao.remove(paraMap);
+		return n;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
+	@Override
+	public int save(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int save_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}
+	
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	
@@ -318,11 +367,15 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return totalPage;
 	}
 	
-	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	// 내문서함 - 결재완료 - 근태결재문서 한 개 상세보기
 	@Override
 	public ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap) {
 		ApprovalSiaVO avo = dao.myDocuVacation_complete_detail(paraMap);
 		return avo;
 	}
+
+	
+
+	
 
 }

@@ -1,5 +1,8 @@
 package com.t1works.groupware.sia.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +19,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
 import com.t1works.groupware.sia.service.InterMyDocumentSiaService;
@@ -28,6 +34,10 @@ public class MyDocumentSiaController {
 	
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterMyDocumentSiaService service;	
+	
+	// 파일업로드 및 다운로드를 해주는 FileManager 클래스 의존객체 주입하기  
+	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private FileManager fileManager;
 	
 	// 내문서함 - 수신함 - 일반결재문서 (기본으로 일반결재문서가 보여짐!)
 	@RequestMapping(value="/t1/myDocuNorm_rec.tw")
@@ -1777,24 +1787,26 @@ public class MyDocumentSiaController {
 		mav.addObject("searchWord", request.getParameter("searchWord"));
 		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
 		
-		String employeeid = null;
+		String userid = null;		
 		
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
 		if(loginuser != null) {
-			employeeid = loginuser.getEmployeeid(); 
+			userid = loginuser.getEmployeeid();			
 		}
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
 		paraMap.put("ncatname", ncatname);
-		paraMap.put("employeeid", employeeid);
+		paraMap.put("userid", userid);		
 		
 		try {
-			ApprovalSiaVO avo = service.myDocuNorm_temp_detail(paraMap);			
+			ApprovalSiaVO avo = service.myDocuNorm_temp_detail(paraMap);
+			ApprovalSiaVO mng = service.viewMng(paraMap);
 			
 			mav.addObject("avo", avo);
+			mav.addObject("mng", mng);
 			
 		} catch (NumberFormatException e) {
 			
@@ -1962,23 +1974,27 @@ public class MyDocumentSiaController {
 		mav.addObject("searchWord", request.getParameter("searchWord"));
 		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
 		
-		String employeeid = null;
+		String userid = null;
 		
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
 		if(loginuser != null) {
-			employeeid = loginuser.getEmployeeid(); 
+			userid = loginuser.getEmployeeid(); 
 		}
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
 		paraMap.put("scatname", scatname);
-		paraMap.put("employeeid", employeeid);
+		paraMap.put("userid", userid);
 		
 		try {
-			ApprovalSiaVO avo = service.myDocuSpend_temp_detail(paraMap);			
-			mav.addObject("avo", avo);			
+			ApprovalSiaVO avo = service.myDocuSpend_temp_detail(paraMap);
+			ApprovalSiaVO mng = service.viewMng(paraMap);
+			
+			mav.addObject("avo", avo);
+			mav.addObject("mng", mng);
+						
 		} catch (NumberFormatException e) {
 			
 		}
@@ -2144,25 +2160,27 @@ public class MyDocumentSiaController {
 		mav.addObject("searchWord", request.getParameter("searchWord"));
 		mav.addObject("currentShowPageNo", request.getParameter("currentShowPageNo"));
 				
-		String employeeid = null;
+		String userid = null;
 		
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
 		if(loginuser != null) {
-			employeeid = loginuser.getEmployeeid(); 
+			userid = loginuser.getEmployeeid(); 
 		}
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);
 		paraMap.put("vcatname", vcatname);
-		paraMap.put("employeeid", employeeid);
+		paraMap.put("userid", userid);
 		
 		try {
 			// 근태결재문서 한 개 상세보기
 			ApprovalSiaVO avo = service.myDocuVacation_temp_detail(paraMap);						
+			ApprovalSiaVO mng = service.viewMng(paraMap);
 			
-			mav.addObject("avo", avo);		
+			mav.addObject("avo", avo);
+			mav.addObject("mng", mng);
 			
 		} catch (NumberFormatException e) {
 			
@@ -2170,6 +2188,101 @@ public class MyDocumentSiaController {
 		
 		mav.setViewName("sia/myDocumentDetail/myDocuVacation_temp_detail.gwTiles");
 		
+		return mav;
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	@ResponseBody
+	@RequestMapping(value="/t1/remove.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
+	public String remove(HttpServletRequest request) { 
+		
+		String ano = request.getParameter("ano");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);	
+	 
+		int n = service.remove(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+				
+		return jsonObj.toString();
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭	
+	@RequestMapping(value="/t1/save.tw", method= {RequestMethod.POST})
+	public ModelAndView save(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
+		
+		String mdate1 = mrequest.getParameter("mdate1");
+		String mdate2 = mrequest.getParameter("mdate2");
+		String mdate3 = mrequest.getParameter("mdate3");
+		String fk_wiimdate1 = mrequest.getParameter("fk_wiimdate1");
+		String fk_wiimdate2 = mrequest.getParameter("fk_wiimdate2");
+		
+		String mdate = mdate1+" "+mdate2+" ~ "+mdate3;
+		String fk_wiimdate = fk_wiimdate1+" ~ "+fk_wiimdate2;
+		
+		avo.setMdate(mdate);
+		avo.setFk_wiimdate(fk_wiimdate);
+		
+		MultipartFile attach = avo.getAttach();
+		
+		if(!attach.isEmpty()) {
+			// 첨부파일이 있을 경우
+			
+			HttpSession session = mrequest.getSession();
+			String root = session.getServletContext().getRealPath("/");
+			
+			String path = root+"resources"+File.separator+"files";
+			
+			String newFileName = "";
+			
+			byte[] bytes = null;
+			
+			long fileSize = 0;
+			
+			try {
+				bytes = attach.getBytes();
+				
+				String originalFilename = attach.getOriginalFilename();
+				
+				newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+				
+				avo.setFileName(newFileName);
+				avo.setOrgFilename(originalFilename);
+				
+				fileSize = attach.getSize();
+				avo.setFileSize(String.valueOf(fileSize));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		int n = 0;
+		try {
+			if(attach.isEmpty()) {
+				// 첨부파일이 없는 경우
+				n = service.save(avo);
+			}
+			else {
+				// 첨부파일이 있는 경우
+				n = service.save_withFile(avo);
+			}			
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		
+		if(n==1) {
+			mav.setViewName("redirect:/t1/myDocuNorm_temp.tw");
+		}
+		else {
+			System.out.println("실패!");
+		}
+				
 		return mav;
 	}
 		
@@ -2813,7 +2926,66 @@ public class MyDocumentSiaController {
 	}
 	
 	
-	
+	// 첨부파일 다운로드 받기
+	@RequestMapping(value="/t1/download.tw")
+	public void download(HttpServletRequest request, HttpServletResponse response) {
+		
+		String ano = request.getParameter("ano");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ano", ano);
+		
+		response.setContentType("text/html; charset=UTF-8"); // 리턴타입이 void 이기 때문에 view단이 없기 때문에 html로 작성해야 한다.
+		PrintWriter out = null;
+		
+		try {
+			Integer.parseInt(ano);
+			
+			ApprovalSiaVO avo = service.myDocuNorm_detail(paraMap);
+			
+			if(avo == null ||(avo != null &&  avo.getFileName() == null)) {
+				out = response.getWriter();
+				// 웹브라우저상에 메시지를 쓰기 위한 객체 생성
+				
+				out.println("<script type='text/javascript'>alert('존재하지 않는 문서번호이거나 첨부파일 없으므로 파일 다운로드가 불가합니다!!'); history.back();</script>");
+				
+				return; // 종료
+			}
+			else {
+				String fileName = avo.getFileName();
+								
+				String orgFilename = avo.getOrgFilename();
+				
+				HttpSession session = request.getSession();
+				String root = session.getServletContext().getRealPath("/");
+				
+				String path = root+"resources"+File.separator+"files";
+				
+				// **** file 다운로드 하기 **** //
+				boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도
+				flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+				
+				if(!flag) {
+					
+					out = response.getWriter();
+
+					out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다!!'); history.back();</script>");            
+				}				
+			}
+			
+		} catch (NumberFormatException e) {
+			try {
+				out = response.getWriter();
+				
+				out.println("<script type='text/javascript'>alert('파일 다운로드가 불가합니다!!'); history.back();</script>");
+			} catch (IOException e1) {				
+				
+			}			
+		} catch (IOException e2) {				
+			
+		}
+		
+	}
 	
 	
 	

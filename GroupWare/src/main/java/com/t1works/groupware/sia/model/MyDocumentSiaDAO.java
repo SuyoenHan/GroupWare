@@ -253,6 +253,46 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return avo;
 	}
 	
+
+	// 수신자 정보 찾기
+	@Override
+	public ApprovalSiaVO viewMng(Map<String, String> paraMap) {
+		ApprovalSiaVO mng = sqlsession4.selectOne("mydocument_sia.viewMng", paraMap);
+		return mng;
+	}
+	
+	/////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	@Override
+	public int remove(Map<String, String> paraMap) {
+		int n = sqlsession4.delete("mydocument_sia.remove", paraMap);
+		return n;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
+		
+	// 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태
+	@Override
+	public int approvalSave(ApprovalSiaVO avo) {
+		int n = sqlsession4.update("mydocument_sia.approvalSave", avo);
+		return n;
+	}
+	// 전자결재 테이블 update 첨부파일 있는 경우 - 임시저장 상태
+	@Override
+	public int approvalSave_withFile(ApprovalSiaVO avo) {
+		int n = sqlsession4.update("mydocument_sia.approvalSave_withFile", avo);
+		return n;
+	}
+
+	// 문서 종류에 따라 테이블 update
+	@Override
+	public int optionSave(ApprovalSiaVO avo) {
+		int result = sqlsession4.update("mydocument_sia.optionSave", avo);
+		return result;
+	}	
+	
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
 	
@@ -322,5 +362,15 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		ApprovalSiaVO avo = sqlsession4.selectOne("mydocument_sia.myDocuVacation_complete_detail", paraMap);
 		return avo;
 	}
+
+
+
+	
+	
+
+
+
+	
+
 
 }

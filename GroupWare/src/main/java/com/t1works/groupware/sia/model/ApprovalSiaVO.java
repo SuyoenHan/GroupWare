@@ -1,5 +1,7 @@
 package com.t1works.groupware.sia.model;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class ApprovalSiaVO {
 	
 	private int ano;				// 문서번호
@@ -19,6 +21,8 @@ public class ApprovalSiaVO {
 	private String fileName;		// 첨부파일
 	private String orgFilename;		// 진짜 파일명
 	private String fileSize;		// 파일크기
+	
+	private MultipartFile attach;
 	
 	// 일반결재
 	private String ncat;		// 일반결재카테고리 (1:회의록, 2:위임장, 3:외부공문, 4:협조공문)
@@ -242,6 +246,14 @@ public class ApprovalSiaVO {
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
+	
+	public MultipartFile getAttach() {
+		return attach;
+	}
+
+	public void setAttach(MultipartFile attach) {
+		this.attach = attach;
+	}	
 
 	public String getNcat() {
 		return ncat;
@@ -617,6 +629,7 @@ public class ApprovalSiaVO {
 
 	public void setParentAno(String parentAno) {
 		this.parentAno = parentAno;
-	}	
+	}
+	
 
 }

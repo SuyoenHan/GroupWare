@@ -146,7 +146,41 @@ td.opinion{
 		$myFrm.method="POST";
 		$myFrm.action="<%=ctxPath%>/t1/myDocuNorm_send.tw";
 		$myFrm.submit();
-	}	
+	}
+	
+	// 수정
+	
+	
+	// 삭제
+	function goRemove(){
+		var bool = confirm("삭제하시겠습니까?");
+		
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/remove.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){					
+						alert("삭제되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuNorm_send.tw";						
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}// end of function goRemove(){}--------------------
+	
+	
 </script>
 
 <div id="containerview">		

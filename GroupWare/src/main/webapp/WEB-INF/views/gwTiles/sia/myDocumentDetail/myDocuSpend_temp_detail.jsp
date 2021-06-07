@@ -90,10 +90,34 @@ input.btn {
 		$myFrm.submit();
 	}
 	
-	
-	// 취소
-	
 	// 삭제
+	function goRemove(){
+		var bool = confirm("삭제하시겠습니까?");
+		
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/remove.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){					
+						alert("삭제되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuSpend_temp.tw";						
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}// end of function goRemove(){}--------------------
 	
 	// 저장
 	
@@ -128,7 +152,7 @@ input.btn {
 		<table id="table2">
 			<tr>
 				<th>수신자</th>
-				<td style="width: 35%;"></td>
+				<td style="width: 35%;">${requestScope.mng.name} ${requestScope.mng.pname} (${requestScope.mng.dname})</td>
 				<th>문서번호</th>
 				<td>${requestScope.avo.ano}</td>
 			</tr>
@@ -188,7 +212,7 @@ input.btn {
 		
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.scatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>
-		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name}</div>
+		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
 		
 		
 		
@@ -196,10 +220,9 @@ input.btn {
 			<span style="margin-left: 15%">
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
-			<span style="margin-left: 45%;">
-				<input type="button" class="btn btn-warning" onclick="goReset();" value="취소"/>
+			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
-				<input type="button" class="btn btn-success" onclick="goSave();" value="저장"/>
+				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
 				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
 			</span>
 		</div>
