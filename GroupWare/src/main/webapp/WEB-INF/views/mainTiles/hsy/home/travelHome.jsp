@@ -160,7 +160,7 @@
 		</c:forEach>
 	</c:if>
 	<c:if test="${empty pvoList}">
-		<div align="center" style="margin: 50px 0px 0px 60px;">상품 준비 중 입니다!!</div>
+		<div align="center" style="padding: 80px 0px 0px 60px; color: #0000cc; font-weight: bold; font-size: 30pt;">상품 준비 중 입니다!!</div>
 	</c:if>
 	
 	<!-- float처리 제거를 위함 -->

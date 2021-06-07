@@ -42,7 +42,7 @@ public interface InterTodoHsyDAO {
 	List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap);
 
 	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
-	List<Map<String, String>> getBonusDate(String employeeid);
+	List<Map<String, String>> getBonusDate(Map<String, String> paraMap);
 
 
 

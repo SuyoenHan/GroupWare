@@ -108,6 +108,15 @@ public class MemberHsyDAO implements InterMemberHsyDAO {
 	} // end of public List<MemberHsyVO> hierarchicalEmployeeList() {-----
 
 	
+	// 야근수당 리스트에 보여줄 항목 가져오기 
+	@Override
+	public List<DoLateVO> getOverNightList(Map<String,String> paraMap) {
+
+		List<DoLateVO> dlvoList= sqlsession2.selectList("memberHsy.getOverNightList", paraMap);
+		return dlvoList;
+	} // end of public List<DoLateVO> getOverNightList(String employeeid) {-------
+
+	
 
 
 }
