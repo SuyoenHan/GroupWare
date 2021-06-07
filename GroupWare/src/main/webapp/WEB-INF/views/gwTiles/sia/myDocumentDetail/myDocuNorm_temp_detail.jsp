@@ -56,11 +56,31 @@ input.btn {
 </style>
 
 <script type="text/javascript">
+
+	//전역변수
+	var obj = [];
+	
 	$(document).ready(function(){
 		
 		// 오늘 날짜
 		todayIs();
 		
+		<%-- === #167. 스마트 에디터 구현 시작 === --%>	       
+		// 스마트에디터 프레임생성
+		nhn.husky.EZCreator.createInIFrame({
+			oAppRef: obj,
+			elPlaceHolder: "acontent",
+			sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
+			htParams : {
+				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseToolbar : true,            
+				// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseVerticalResizer : true,    
+				// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseModeChanger : true,
+			}
+		});
+		<%-- === 스마트 에디터 구현 끝 === --%>		
 		
 	});
 	
@@ -124,6 +144,30 @@ input.btn {
 	
 	// 저장
 	function goSave(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		
+		
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
 		var bool = confirm("저장하시겠습니까?");
 		
 		if(bool){
@@ -139,6 +183,25 @@ input.btn {
 	
 	// 제출
 	function goSubmit(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
 		var bool = confirm("제출하시겠습니까?");
 		
 		if(bool){
@@ -222,25 +285,25 @@ input.btn {
 					<tr>
 						<th>회의시간</th>					
 						<td colspan="3">					
-						<input type="date" name="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate2" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate3" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
+						<input type="date" name="mdate1" id="mdate1" value="${fn:substringBefore(requestScope.avo.mdate, ' ')}"/><input type="time" name="mdate2" id="mdate2" value="${fn:substring(requestScope.avo.mdate, 11, 16)}"/> ~ <input type="time" name="mdate3" id="mdate2" value="${fn:substringAfter(requestScope.avo.mdate, '~ ')}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '2'}">
 					<tr>
 						<th>위임기간</th>					
-						<td colspan="3"><input type="date" name="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
+						<td colspan="3"><input type="date" name="fk_wiimdate1" id="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" id="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '4'}">
 					<tr>
 						<th>타회사명</th>
-						<td colspan="3"><input type="text" name="comname" value="${requestScope.avo.comname}"/></td>					
+						<td colspan="3"><input type="text" name="comname" id="comname" value="${requestScope.avo.comname}"/></td>					
 					</tr>
 				</c:if>		
 				
 				<tr>
 					<th style="height:250px;">글내용</th>
-					<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
+					<td colspan="3"><textarea id="acontent" name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>				
 				</tr>
 				
 				<tr>

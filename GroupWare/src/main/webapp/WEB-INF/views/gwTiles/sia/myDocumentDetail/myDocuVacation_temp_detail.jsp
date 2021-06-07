@@ -55,11 +55,30 @@ input.btn {
 </style>
 
 <script type="text/javascript">
+	// 전역변수
+	var obj = [];
 	
 	$(document).ready(function(){
 		
 		// 오늘 날짜
-		todayIs();		
+		todayIs();
+		
+		<%-- === #167. 스마트 에디터 구현 시작 === --%>
+		// 스마트에디터 프레임생성
+		nhn.husky.EZCreator.createInIFrame({
+			oAppRef: obj,
+			elPlaceHolder: "acontent",
+			sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
+			htParams : {
+				// 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseToolbar : true,            
+				// 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseVerticalResizer : true,    
+				// 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+				bUseModeChanger : true,
+			}
+		});
+		<%-- === 스마트 에디터 구현 끝 === --%>	
 		
 	});
 	
@@ -122,6 +141,36 @@ input.btn {
 	
 	// 저장
 	function goSave(){
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		// 유효성 검사
+		var subjectVal = $("input#atitle").val().trim();
+		if(subjectVal == "") {
+			alert("글제목을 입력하세요!!");
+			return;
+		}
+		
+		
+		
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
 		var bool = confirm("저장하시겠습니까?");
 		
 		if(bool){
@@ -136,7 +185,25 @@ input.btn {
 	}
 	
 	// 제출
-	function goSubmit(){
+	function goSubmit(){		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
 		var bool = confirm("제출하시겠습니까?");
 		
 		if(bool){
@@ -216,19 +283,19 @@ input.btn {
 				</tr>
 				<tr>
 					<th>제목</th>
-					<td colspan="3"><input type="text" name="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
+					<td colspan="3"><input type="text" name="atitle" id="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 				</tr>
 				
 				<c:if test="${requestScope.avo.vno eq '1'}"> 
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="slstart" value="${requestScope.avo.slstart}"/> - <input type="date" name="slend" value="${requestScope.avo.slend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
+						<td colspan="3"><input type="date" name="slstart" id="slstart" value="${requestScope.avo.slstart}"/> - <input type="date" name="slend" id="slend" value="${requestScope.avo.slend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
 					</tr>				
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '2'}">
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="afdate" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
+						<td colspan="3"><input type="date" name="afdate" id="afdate" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
 						<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
 						</td>
 					</tr>
@@ -236,37 +303,37 @@ input.btn {
 				<c:if test="${requestScope.avo.vno eq '3'}">
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="daystart" value="${requestScope.avo.daystart}"/> - <input type="date" name="dayend" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
+						<td colspan="3"><input type="date" name="daystart" id="daystart" value="${requestScope.avo.daystart}"/> - <input type="date" name="dayend" id="dayend" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '4'}">
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="congstart" value="${requestScope.avo.congstart}"/> - <input type="date" name="congend" value="${requestScope.avo.congend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
+						<td colspan="3"><input type="date" name="congstart" id="congstart" value="${requestScope.avo.congstart}"/> - <input type="date" name="congend" id="congend" value="${requestScope.avo.congend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '5'}">
 					<tr>
 						<th>출장기간</th>
-						<td colspan="3"><input type="date" name="bustart" value="${requestScope.avo.bustart}"/> - <input type="date" name="buend" value="${requestScope.avo.buend}"/></td>
+						<td colspan="3"><input type="date" name="bustart" id="bustart" value="${requestScope.avo.bustart}"/> - <input type="date" name="buend" id="buend" value="${requestScope.avo.buend}"/></td>
 					</tr>
 					<tr>
 						<th>출장지</th>
-						<td><input type="text" style="width: 300px;" name="buplace" value="${requestScope.avo.buplace}"/></td>				
+						<td><input type="text" style="width: 300px;" name="buplace" id="buplace" value="${requestScope.avo.buplace}"/></td>				
 						<th>출장인원</th>
-						<td><input type="text" style="width: 300px;" name="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
+						<td><input type="text" style="width: 300px;" name="bupeople" id="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '6'}">
 					<tr>
 						<th>요청시간</th>
-						<td colspan="3"><input type="text" name="ewdate" style="width: 370px;" value="${requestScope.avo.ewdate}"/>시간</td>
+						<td colspan="3"><input type="text" name="ewdate" id="ewdate" style="width: 370px;" value="${requestScope.avo.ewdate}"/>시간</td>
 					</tr>
 				</c:if>	
 				
 				<tr>
 					<th style="height:250px;">글내용</th>
-					<td colspan="3"><textarea name="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
+					<td colspan="3"><textarea name="acontent" id="acontent" rows="10" style="width: 100%;">${requestScope.avo.acontent}</textarea></td>
 				</tr>
 					
 				<tr>

@@ -1054,7 +1054,7 @@
 	
 	<!-- 문서번호에 따라 삭제해야할 파일 조회 -->
 	<select id="getViewFile" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select fileName, orgFilename, fileSize
+		select nvl(fileName,' ') AS fileName, nvl(orgFilename, ' ') AS orgFilename, nvl(to_char(fileSize), ' ') AS fileSize
 		from tbl_approval
 		where ano = #{ano}
 	</select>	

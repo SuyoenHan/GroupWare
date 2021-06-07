@@ -2,6 +2,7 @@ package com.t1works.groupware.sia.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -2246,7 +2247,7 @@ public class MyDocumentSiaController {
 			String root = session.getServletContext().getRealPath("/");
 			String path = root+"resources"+File.separator+"files";
 			
-			paraMap.put("path", path);
+			paraMap.put("path", path);			
 		}
 	 
 		int n = service.remove(paraMap);
@@ -3379,6 +3380,47 @@ public class MyDocumentSiaController {
 	}
 	
 	
+	// 스마트에디터. 드래그앤드롭을 사용한 다중사진 파일업로드 
+	@RequestMapping(value="/t1/image/multiplePhotoUpload.tw", method={RequestMethod.POST})
+	public void multiplePhotoUpload(HttpServletRequest req, HttpServletResponse res) {
+		
+		HttpSession session = req.getSession();
+		String root = session.getServletContext().getRealPath("/");
+		String path = root+"resources"+File.separator+"photo_upload";
+		
+		File dir = new File(path);
+		if(!dir.exists())
+			dir.mkdirs();
+		
+		String strURL = "";
+		
+		try {
+			if(!"OPTIONS".equals(req.getMethod().toUpperCase())) {
+				String filename = req.getHeader("file-name"); //파일명을 받는다 - 일반 원본파일명
+				
+				InputStream is = req.getInputStream();
+				
+				String newFilename = fileManager.doFileUpload(is, filename, path);
+				
+				int width = fileManager.getImageWidth(path+File.separator+newFilename);
+				
+				if(width > 600)
+					width = 600;
+				
+				String CP = req.getContextPath();
+				
+				strURL += "&bNewLine=true&sFileName="; 
+				strURL += newFilename;
+				strURL += "&sWidth="+width;
+				strURL += "&sFileURL="+CP+"/resources/photo_upload/"+newFilename;
+			}		
+		
+			PrintWriter out = res.getWriter();
+			out.print(strURL);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	
