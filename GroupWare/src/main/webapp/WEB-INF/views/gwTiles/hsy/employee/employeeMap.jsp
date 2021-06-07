@@ -234,6 +234,13 @@
 		});	
 		
 		
+		// 모달창에서 메일 보내기 이벤트
+		$(document).on('click',"button.sendMail",function(){
+			
+			var receiverEmail= $(this).prev().text();
+			location.href="<%=ctxPath%>/t1/new_mail.tw?receiverEmail="+receiverEmail;
+		});
+		
 	}); // end of $(document).ready(function(){----------
 	
 		
@@ -289,7 +296,7 @@
 		   					 	"<td>"+json.employeeid+"</td>"+
 		   						"<th>이메일</th>"+
 		   						"<td colspan='3'>"+
-		   							json.email+
+		   							"<span>"+json.email+"</span>"+
 		   							"<button type='button' class='sendMail'>메일보내기</button>"+
 		   						"</td>"+
 		   					  "</tr>"+

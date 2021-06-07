@@ -8,10 +8,10 @@
 
 	div#salaryContainer{
 		border: solid 0px red;
-		width:70%;
+		width:1500px;
 		margin: 0 auto;
 		position: relative;
-		left: -150px;
+		left: -70px;
 	}
 
 	div#salaryTitle{
@@ -278,7 +278,7 @@
 	</div>
 	
 	<%-- ajax로 값 넣어주는 곳 --%>
-	<table id="salaryListTable" style="width: 97%; margin-left: 50px;"></table>
+	<table id="salaryListTable" style="width: 85%; margin-left: 50px;"></table>
 	
 	<%-- margin-bottom을 주기 위한 div --%>
 	<div style="margin-bottom:200px;"></div>
