@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.t1works.groupware.bwb.model.CarGoodsBwbVO;
+import com.t1works.groupware.bwb.model.InterCarGoodsBwbDAO;
 import com.t1works.groupware.bwb.model.InterMemberBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.common.AES256;
@@ -20,6 +22,9 @@ public class MemberBwbService implements InterMemberBwbService {
 	
    @Autowired
    private InterMemberBwbDAO dao;
+   
+   @Autowired
+   private InterCarGoodsBwbDAO dao2;
 	
    @Autowired
    private AES256 aes;
@@ -133,6 +138,13 @@ public class MemberBwbService implements InterMemberBwbService {
 		
 		List<MemberBwbVO> departmentList = dao.selectDepartmentList();
 		return departmentList;
+	}
+
+	// 미승인된 차량예약정보 가져오기
+	@Override
+	public List<CarGoodsBwbVO> selectCarGoods() {
+		List<CarGoodsBwbVO> carList = dao2.selectCarGoods();
+		return carList;
 	}
 		
 
