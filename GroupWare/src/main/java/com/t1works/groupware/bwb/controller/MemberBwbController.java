@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.bwb.model.CarGoodsBwbVO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.model.ProductBwbVO;
 import com.t1works.groupware.bwb.service.InterHomepageBwbService;
@@ -1231,11 +1232,35 @@ public class MemberBwbController {
 			jsonObj.put("avgCnt", avgCnt);
 			jsonArr.put(jsonObj);
 		}
-		
-		
-		System.out.println(jsonArr);	
+			
 		return jsonArr.toString();
 	}// end of public String selectAvgCnt(HttpServletRequest request) {
 	
+	// 총무부장 - 예약관리
+	@RequestMapping(value="/t1/rentalManage.tw")
+	public ModelAndView requiredLogin_rentalManage(HttpServletRequest request, HttpServletResponse response,ModelAndView mav) {
+		
+		
+		String sort = request.getParameter("sort");
+		
+		if(sort==null) {
+			sort="0";
+		}
+		else if(!sort.equalsIgnoreCase("0")||!sort.equalsIgnoreCase("1")) {
+			sort="0";
+		}
+		
+		if(sort.equalsIgnoreCase("0")) {
+			// 미승인된 차량예약정보 가져오기
+			List<CarGoodsBwbVO> carList =service2.selectCarGoods();
+			mav.addObject("carList", carList);
+		}
+		
+		
+		
+		mav.setViewName("bwb/todo/rentalManage.gwTiles");
+		
+		return mav;
+	}// end of public ModelAndView requiredLogin_rentalManage(ModelAndView mav) {
 	
 }

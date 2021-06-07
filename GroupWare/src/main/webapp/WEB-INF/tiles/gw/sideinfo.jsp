@@ -161,6 +161,11 @@
                       <a href="<%=ctxPath%>/t1/registerNewEmployee.tw">신입사원등록</a>
                   </li>
               </c:when>
+              <c:when  test="${loginuser.fk_dcode eq '5' && loginuser.fk_pcode eq '3'}">
+                  <li class="clickable">
+                      <a href="<%=ctxPath%>/t1/rentalManage.tw">대여관리</a>
+                  </li>
+              </c:when>
               <c:when  test="${loginuser.fk_pcode eq '3' && (loginuser.fk_dcode eq '1' || loginuser.fk_dcode eq '2' || loginuser.fk_dcode eq '3')}">
                   <li class="clickable">
                       <a href="<%=ctxPath%>/t1/leaderTodo.tw">나의업무현황</a>
