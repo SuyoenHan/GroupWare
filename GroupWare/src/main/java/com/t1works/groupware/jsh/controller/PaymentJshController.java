@@ -1045,7 +1045,10 @@ public class PaymentJshController {
 		      mav.addObject("searchWord", searchWord);
 		     //[추가끝]///////////////////////////////////////////////////////////////////////////
 			
-			
+		     
+				
+		      
+		      
 			// === #125. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
 			// 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
 			// 현재 페이지 주소를 뷰단으로 넘겨준다.
@@ -1067,7 +1070,9 @@ public class PaymentJshController {
 
 				ElectronPayJshVO epvo = service.expOneView(paraMap);
 				// System.out.println("확인용~~ => "+epvo.getAno());
-
+				
+				
+				
 				List<ElectronPayJshVO> opinionList = service.oneOpinionList(paraMap);
 
 				// System.out.println(scatname);
