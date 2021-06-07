@@ -155,30 +155,19 @@
 				var bool = confirm(name+"님을 "+dname+"부서"+" "+pname+"직위로 등록하시겠습니까?");
 				
 				if(bool){
-					var form_data = $("form[name=newPerson]").serialize();
 					
-					$.ajax({
-						url:"<%= request.getContextPath()%>/t1/registerOne.tw",
-						type:"post",
-						data:form_data,
-						dataType:"json",
-						success:function(json){
-							// 정상적으로 update됐을 경우
-							if(json.n == 1){
-								
-								alert("직원정보 등록이 완료 되었습니다. \n 주소록에서 확인해주세요");
-								location.href="javascript:history.go(0)";
-							}
-							
-						},
-						error: function(request, status, error){
-				        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-				        }	
-					});// end of $.ajax({ 
+					if($("input#attach").val() == ""){
+				    	registerOne_noAttach();
+				    }else{
+				    	registerOne_withAttach();
+				    }
+					
+					
 				}// end of if(bool)
 			}// end of if(~~!="" && bemail){)
 			else {
-				alert("직원정보를 올바르게 입력해주세요");
+				alert("직원정보를 올바르게 입력해주세요.");
+				location.href="javascript:history.go(0)";
 				return;
 			}
 			
@@ -186,7 +175,81 @@
 			
 			
 	}); // end of $(document).ready(function(){
+	
+		
+		
+	//Function Declaration
+	
+	// 파일첨부가 있을때의 회원가입
+	function registerOne_withAttach(){
+		
+		var form_data = $("form[name=newPerson]").serialize();
+		
+		$("form[name=newPerson]").ajaxForm({
+			url:"<%= request.getContextPath()%>/t1/registerOne_withAttach.tw",
+			type:"post",
+			enctype:"multipart/form-data",
+			data:form_data,
+			dataType:"json",
+			success:function(json){
+				// 정상적으로 update됐을 경우
+				if(json.n == 1){
+					
+					alert("직원정보 등록이 완료 되었습니다. \n 주소록에서 확인해주세요");
+					location.href="javascript:history.go(0)";
+				}
+				
+			},
+			error: function(request, status, error){
+	        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }	
+		});// end of $.ajaxForm({ 
+			
+		$("form[name=newPerson]").submit();
+		
+	}// end of function goRegister_withAttach(){
+		
+	// 파일첨부가 없을때의 회원가입
+	function registerOne_noAttach(){
+		alert("ㅇㅇ");
+		$.ajax({
+			url:"<%= request.getContextPath()%>/t1/registerOne_noAttach.tw",
+			type:"post",
+			data:{"employeeid":$("input#employeeid").val(),
+				  "email":$("input#email").val(),
+				  "jubun1":$("input#jubun1").val(),
+				  "jubun2":$("input#jubun2").val(),
+				  "name":$("input#name").val(),
+				  "cmobile1":$("input#cmobile1").val(),
+				  "cmobile2":$("input#cmobile2").val(),
+				  "cmobile3":$("input#cmobile3").val(),
+				  "mobile1":$("input#mobile1").val(),
+				  "mobile2":$("input#mobile2").val(),
+				  "mobile3":$("input#mobile3").val(),
+				  "fk_dcode":$("select#fk_dcode").val(),
+				  "fk_pcode":$("select#fk_pcode").val(),
+				  },
+			dataType:"json",
+			success:function(json){
 
+				if(json.n == 1){
+					
+					alert("직원정보 등록이 완료 되었습니다. \n 주소록에서 확인해주세요");
+					location.href="javascript:history.go(0)";
+				}
+			},
+			error: function(request, status, error){
+	        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	        }	
+			
+			
+		}); // end of ajax
+		
+	}// end of function goRegister_noAttach(){	
+		
+		
+		
+		
 </script>
 
 <div id="content">
@@ -196,7 +259,7 @@
    		<table id="newInfo">
   			<tbody>
    			<tr>
-   				<td rowspan="3" style="width:100px !important; padding-left:-30px;"> <input type="file" style="width:150px; font-size:13px !important;"  /> </td> 
+   				<td rowspan="3" style="width:100px !important; padding-left:-30px;"> <input type="file" name="attach" id="attach" style="width:150px; font-size:13px !important;"  /> </td> 
    				<td style="width:80px" class="InfoMenu">사번</td>
    				<td style="width:160px"> <input type="text" id="employeeid" name="employeeid" style="width:110px" /> </td>
    				<td style="width:110px" class="InfoMenu">이메일</td>
