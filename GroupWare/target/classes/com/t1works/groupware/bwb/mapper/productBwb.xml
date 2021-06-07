@@ -281,7 +281,7 @@
    </select>
    
    <!--  미승인된 차량예약정보 가져오기 -->
-   <select id="selectCarGoods" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
+   <select id="selectCarRental" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
    		select rscno, rcdate, rctime, carname, rdestination, nvl(rcpeople,'없음') as rcpeople, rcsubject,name  
 		from tbl_car C
 		join tbl_rscar R
@@ -290,5 +290,26 @@
 		on E.employeeid = R.fk_employeeid
 		where cstatus = '0'
    </select>
+   
+   <!--  미승인된 사무용품 예약정보 가져오기 -->
+   <select id="selectGoodsRental" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
+   		select rsgno, rgdate, rgtime, goodsname, rgsubject,name  
+		from tbl_goods G
+		join tbl_rsgoods R
+		on G.gno = r.fk_gno
+		join tbl_employee E
+		on E.employeeid = R.fk_employeeid
+		where gstatus = '0'
+   </select>
+   
+   <update id="updateCarRental" parameterType="String">
+   		update tbl_rscar set cstatus = 1
+   		where rscno = #{rscno}
+   </update>
+   
+   <update id="updateGoodsRental" parameterType="String">
+   		update tbl_rsgoods set gstatus = 1
+   		where rsgno = #{rsgno}
+   </update>
    
 </mapper>

@@ -36,15 +36,15 @@
 </head>
 <body>
 <div id="body-container">
-   	<tiles:insertAttribute name="header" />
-	<div id="sideinfo-content-container">
-	   <tiles:insertAttribute name="content" />
-	   <div id="sideinfo">
-   		<tiles:insertAttribute name="sideinfo" />     
-	  </div>
+      <tiles:insertAttribute name="header" />
+   <div id="sideinfo-content-container">
+      <tiles:insertAttribute name="content" />
+      <div id="sideinfo">
+         <tiles:insertAttribute name="sideinfo" />     
+     </div>
     </div>     
   </div>
- 	<%-- (디자인은 gwStyle.css에 있음) --%>
+    <%-- (디자인은 gwStyle.css에 있음) --%>
 </body>
 </html>
   
