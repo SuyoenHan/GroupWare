@@ -23,6 +23,16 @@
 <script src="<%=ctxPath%>/resources/js/kdn/jquery.ssd-vertical-navigation.min.js"></script>
 <script src="<%=ctxPath%>/resources/js/kdn/app.js"></script>
 <script src="<%=ctxPath%>/resources/js/kdn/header_sideinfo.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/resources/smarteditor/js/HuskyEZCreator.js" charset="utf-8"></script>
+
+<%--  =====  스피너를 사용하기 위해  jquery-ui 사용하기 ===== --%>
+  <link rel="stylesheet" type="text/css" href="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.css" />
+  <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.js"></script>
+  
+<%-- *** ajax로 파일을 업로드할때 가장 널리 사용하는 방법 ==> ajaxForm *** --%>
+<script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery.form.min.js"></script>
+  
+
 </head>
 <body>
 <div id="body-container">

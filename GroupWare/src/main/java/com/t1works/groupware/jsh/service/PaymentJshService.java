@@ -73,7 +73,7 @@ public class PaymentJshService implements InterPaymentJshService {
 		return opinionList;
 	}
 
-	//일반결재 글쓰기
+	//결재 글쓰기 페이지 요청
 	@Override
 	public ElectronPayJshVO WriteJsh(Map<String, String> paraMap) {
 		ElectronPayJshVO write_view = dao.WriteJsh(paraMap);
@@ -88,7 +88,7 @@ public class PaymentJshService implements InterPaymentJshService {
 
 	
 
-	// 일반결재 문서insert
+	// 일반결재 문서insert (파일첨부 없는)
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
 	public int addPayment(ElectronPayJshVO epvo) throws Throwable {
@@ -225,9 +225,135 @@ public class PaymentJshService implements InterPaymentJshService {
 		return epvo;
 	}
 
-	
+	// 파일첨부가 없는 전자결재 문서 글쓰기 insert
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addExpPayment(ElectronPayJshVO epvo) {
+		
+		// 1) insert될 문서번호를 알아온다
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+					
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.ElectricExpadd(epvo);
+		 
+		if(n1==1) {
+			// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+			 n2 = dao.expAdd(epvo);
+			
+		  }
+		if(n2==1) {
+		 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+			 n3 =dao.selectExpadd(epvo);
+		}
+		return n3;
+	}
+	// 파일첨부가 있는 전자결재 문서 글쓰기insert
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int addExpPayment_withFile(ElectronPayJshVO epvo) {
+		
+		// 1) insert될 문서번호를 알아온다
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+					
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.ElectricExpadd_withFile(epvo);
+		 
+		if(n1==1) {
+			// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+			 n2 = dao.expAdd(epvo);
+			
+		  }
+		if(n2==1) {
+		 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+			 n3 =dao.selectExpadd(epvo);
+		}
+		return n3;
+	}
 
+	//임시저장함 insert-첨부파일X
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int saveExpPayment(ElectronPayJshVO epvo) {
+		
+		// 1) insert될 문서번호를 알아온다
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+					
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.saveExpadd(epvo);
+		 
+		if(n1==1) {
+			// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+			 n2 = dao.expAdd(epvo);
+			
+		  }
+		if(n2==1) {
+		 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+			 n3 =dao.selectExpadd(epvo);
+		}
+		return n3;
+	}
+
+	//임시저장함 insert-첨부파일o
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public int saveExpPayment_withFile(ElectronPayJshVO epvo) {
+		// 1) insert될 문서번호를 알아온다
+		String ano = dao.insertno();
+		epvo.setAno(ano);
+					
+		int n1=0, n2=0, n3=0; 
+		// 2) 전자결재 테이블에 insert
+		 n1 = dao.saveExpadd_withFile(epvo);
+		 
+		if(n1==1) {
+			// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+			 n2 = dao.expAdd(epvo);
+			
+		  }
+		if(n2==1) {
+		 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+			 n3 =dao.selectExpadd(epvo);
+		}
+		return n3;
+	}
 	
+	
+	
+	
+	
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//근태결재
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	//페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+	@Override
+	public List<ElectronPayJshVO> vacListSearchWithPaging(Map<String, String> paraMap) {
+	List<ElectronPayJshVO> vacList = dao.vacListSearchWithPaging(paraMap);
+	return vacList;
+	}
+	
+	// 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다.
+	@Override
+	public int vacGetTotalCount(Map<String, String> paraMap) {
+	int n = dao.vacGetTotalCount(paraMap);
+	return n;
+	}
+	
+	//검색어 입력시 자동글 완성하기
+	@Override
+	public List<String> vacWordSearchShow(Map<String, String> paraMap) {
+	List<String> wordList = dao.vacWordSearchShow(paraMap);
+	return wordList;
+	}
+		
 
 	
 	
