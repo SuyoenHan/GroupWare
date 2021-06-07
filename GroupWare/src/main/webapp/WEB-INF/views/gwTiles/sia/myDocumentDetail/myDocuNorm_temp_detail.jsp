@@ -162,7 +162,8 @@ input.btn {
 			</tr>
 		</table>
 		
-		<form name="docuFrm" enctype="multipart/form-data">	
+		<form name="docuFrm" enctype="multipart/form-data">
+		<input type="hidden" name="ncatname" value="${requestScope.avo.ncatname}"/>	
 			<table id="table2">
 				<tr>
 					<th>수신자</th>
@@ -176,7 +177,7 @@ input.btn {
 					<td colspan="3"><input type="text" name="atitle" style="width: 370px;" value="${requestScope.avo.atitle}"/></td>
 				</tr>
 						
-				<c:if test="${requestScope.avo.ncat eq '1'}">
+				<c:if test="${requestScope.avo.ncat eq '1'}">				
 					<tr>
 						<th>회의시간</th>					
 						<td colspan="3">					
@@ -203,7 +204,7 @@ input.btn {
 				
 				<tr>
 					<th>첨부파일</th>
-					<td colspan="3"><input type="file" name="attach"/></td>
+					<td colspan="3"><input type="file" name="attach" value="${requestScope.avo.orgFilename}"/></td>
 				</tr>
 			</table>
 		</form>	

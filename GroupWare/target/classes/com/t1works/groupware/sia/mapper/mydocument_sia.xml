@@ -1064,16 +1064,20 @@
 	<update id="optionSave" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		<if test='ncatname eq "회의록"'>			
 			update tbl_minutes set mdate = #{mdate}
-			where ano = #{ano}
+			where fk_ano = #{ano}
 		</if>
 		<if test='ncatname eq "위임장"'>
 			update tbl_wiimjang set fk_wiimdate = #{fk_wiimdate}
-			where ano = #{ano}
+			where fk_ano = #{ano}
 		</if>
 		<if test='ncatname eq "협조공문"'>
 			update tbl_coofficial set comname = #{comname}
+			where fk_ano = #{ano}
+		</if>
+		<if test='ncatname eq "외부공문"'>
+			update tbl_approval set asdate = sysdate
 			where ano = #{ano}
-		</if>		
+		</if>
 	</update>
 	
 	

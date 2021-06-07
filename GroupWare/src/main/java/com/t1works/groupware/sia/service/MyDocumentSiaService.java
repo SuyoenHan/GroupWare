@@ -283,7 +283,7 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		n = dao.approvalSave(avo);
 		
 		if(n == 1) {
-			// 문서 종류에 따라 테이블 update
+			// 문서 종류에 따라 테이블 update			
 			result = dao.optionSave(avo);
 		}		
 		return result;
@@ -298,7 +298,7 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		n = dao.approvalSave_withFile(avo);
 		
 		if(n == 1) {			
-			// 문서 종류에 따라 테이블 update
+			// 문서 종류에 따라 테이블 update			
 			result = dao.optionSave(avo);
 		}		
 		return result;
