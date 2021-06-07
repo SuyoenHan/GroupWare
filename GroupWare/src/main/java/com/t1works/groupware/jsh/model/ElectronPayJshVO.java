@@ -61,14 +61,14 @@ public class ElectronPayJshVO {
 	 private String fk_scat;   // 지출결재카테고리
 	 
 	 private String exdate;    // 지출일자
-	 private int exprice;      // 지출금액
+	 private String exprice;      // 지출금액
 	 
 	 //법인카드
 	 private String cono;      // 순번
 	 private String codate;    // 사용예정일
 	 private String cocardnum; //카드번호
 	 private String copurpose; // 지출목적 (1:교통비, 2:사무비품, 3:주유비, 4:출장비, 5:식비, 6:기타)
-	 private int coprice;   //예상금액
+	 private String coprice;   //예상금액
 
 	 
 	 //근태결재
@@ -81,39 +81,39 @@ public class ElectronPayJshVO {
 	 
 	 private String slstart;  // 사용예정시작일자
 	 private String slend;   // 사용예정마지막일자
-	 private int sldates;   //사용일수
+	 private String sldates;   //사용일수
 	 
 	 //반차
 	 private String afno;// 순번
 	 private String afdate;//사용예정일
-	 private int afdan;  // 오전오후 (1: 오전, 2:오후)
-	 private int afdates; // 사용일수 (0.5)
+	 private String afdan;  // 오전오후 (1: 오전, 2:오후)
+	 private String afdates; // 사용일수 (0.5)
 	 
 	 //연차
 	 private String dayno;// 순번
 	 private String daystart;// 사용예정시작일자
 	 private String dayend;  //사용예정마지막일자
-	 private int daydates;   // 사용일수
+	 private String daydates;   // 사용일수
 	 
 	 //경조휴가
 	 private String congno;     // 순번
 	 private String congstart;  // 사용예정시작일자
 	 private String congend;   // 사용예정마지막일자
-	 private int congdates;   // 사용일수
+	 private String congdates;   // 사용일수
 	 
 	 
 	// 출장
 	private String buno;
 	private String bustart;		// 사용예정시작일자
 	private String buend;		// 사용예정마지막일자
-	private int budates;		// 사용일수
+	private String budates;		// 사용일수
 	private String buplace;		// 출장지
-	private int bupeople;		// 출장인원
+	private String bupeople;		// 출장인원
 	
 	// 추가근무
 	private String ewno;
 	private String ewdate;		// 사용예정일
-	private int ewhours;		// 추가근무시간
+	private String ewhours;		// 추가근무시간
  
 	 
 	
@@ -485,10 +485,10 @@ public class ElectronPayJshVO {
 	public void setExdate(String exdate) {
 		this.exdate = exdate;
 	}
-	public int getExprice() {
+	public String getExprice() {
 		return exprice;
 	}
-	public void setExprice(int exprice) {
+	public void setExprice(String exprice) {
 		this.exprice = exprice;
 	}
 	public String getCono() {
@@ -515,10 +515,10 @@ public class ElectronPayJshVO {
 	public void setCopurpose(String copurpose) {
 		this.copurpose = copurpose;
 	}
-	public int getCoprice() {
+	public String getCoprice() {
 		return coprice;
 	}
-	public void setCoprice(int coprice) {
+	public void setCoprice(String coprice) {
 		this.coprice = coprice;
 	}
 	
@@ -562,10 +562,10 @@ public class ElectronPayJshVO {
 	public void setSlend(String slend) {
 		this.slend = slend;
 	}
-	public int getSldates() {
+	public String getSldates() {
 		return sldates;
 	}
-	public void setSldates(int sldates) {
+	public void setSldates(String sldates) {
 		this.sldates = sldates;
 	}
 	public String getAfno() {
@@ -580,16 +580,16 @@ public class ElectronPayJshVO {
 	public void setAfdate(String afdate) {
 		this.afdate = afdate;
 	}
-	public int getAfdan() {
+	public String getAfdan() {
 		return afdan;
 	}
-	public void setAfdan(int afdan) {
+	public void setAfdan(String afdan) {
 		this.afdan = afdan;
 	}
-	public int getAfdates() {
+	public String getAfdates() {
 		return afdates;
 	}
-	public void setAfdates(int afdates) {
+	public void setAfdates(String afdates) {
 		this.afdates = afdates;
 	}
 	public String getDayno() {
@@ -610,10 +610,10 @@ public class ElectronPayJshVO {
 	public void setDayend(String dayend) {
 		this.dayend = dayend;
 	}
-	public int getDaydates() {
+	public String getDaydates() {
 		return daydates;
 	}
-	public void setDaydates(int daydates) {
+	public void setDaydates(String daydates) {
 		this.daydates = daydates;
 	}
 	public String getCongno() {
@@ -634,10 +634,10 @@ public class ElectronPayJshVO {
 	public void setCongend(String congend) {
 		this.congend = congend;
 	}
-	public int getCongdates() {
+	public String getCongdates() {
 		return congdates;
 	}
-	public void setCongdates(int congdates) {
+	public void setCongdates(String congdates) {
 		this.congdates = congdates;
 	}
 	public String getBuno() {
@@ -658,10 +658,10 @@ public class ElectronPayJshVO {
 	public void setBuend(String buend) {
 		this.buend = buend;
 	}
-	public int getBudates() {
+	public String getBudates() {
 		return budates;
 	}
-	public void setBudates(int budates) {
+	public void setBudates(String budates) {
 		this.budates = budates;
 	}
 	public String getBuplace() {
@@ -670,10 +670,10 @@ public class ElectronPayJshVO {
 	public void setBuplace(String buplace) {
 		this.buplace = buplace;
 	}
-	public int getBupeople() {
+	public String getBupeople() {
 		return bupeople;
 	}
-	public void setBupeople(int bupeople) {
+	public void setBupeople(String bupeople) {
 		this.bupeople = bupeople;
 	}
 	public String getEwno() {
@@ -688,10 +688,10 @@ public class ElectronPayJshVO {
 	public void setEwdate(String ewdate) {
 		this.ewdate = ewdate;
 	}
-	public int getEwhours() {
+	public String getEwhours() {
 		return ewhours;
 	}
-	public void setEwhours(int ewhours) {
+	public void setEwhours(String ewhours) {
 		this.ewhours = ewhours;
 	}
 

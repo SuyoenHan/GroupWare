@@ -88,7 +88,7 @@ hr.hr{
 					       
 					      
 				    html2+="<th>지출금액</th>"+
-					       "<td colspan='3'><input type='number' min='1' max='50000000' name ='exprice'/>원</td>";
+					       "<td colspan='3'><input type='number'  name ='exprice'/>원</td>";
 					       
 					  
 						  
@@ -106,7 +106,7 @@ hr.hr{
 						  
 				    html3+= 
 						  "<th>예상금액</th>"+
-						  "<td><input type='number' min='1' max='50000000' name ='coprice'/>원</td>"+
+						  "<td><input type='number'  name ='coprice'/>원</td>"+
 						  "<th>지출목적</th>"+
 						  "<td><select class='myselect' name='copurpose'> "+
 			           		"	<option value='1'>교통비</option> "+
