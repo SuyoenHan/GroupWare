@@ -218,11 +218,11 @@
 	
 	<!-- 나의 차량 대여 현황 -->
 	<select id="showMyCarListSearchWithPaging"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsCarOdyVO">
-		select rno, rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+		select rno, rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination, fk_cno
 		from       
 		(        
 		select row_number() over(order by rcdate desc, rctime desc) as rno,
-		       rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+		       rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination, fk_cno
 				from tbl_rscar S join tbl_car C
 				on S.fk_cno = C.cno
 				where S.fk_employeeid = #{employeeid}
@@ -250,12 +250,6 @@
 	</select>
 	
 	
-	<!-- 회의실 변경하기 -->
-	<insert id="edit_rsRoom" parameterType="HashMap">
-		insert into tbl_rsroom(rsroomno,fk_roomno,fk_employeeid,rsubject,rdate,rtime)
-		values(rsroomnoSeq.nextval, #{fk_roomno},#{fk_employeeid},#{rsubject},#{rdate},#{rtime})
-	</insert>
-	
 	<!-- 사무용품 예약 변경시간 확인 -->
 	<select id="checkTimeGoods"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO">
 		select rgtime
@@ -264,4 +258,10 @@
 	</select>
 	
 	
+	<!-- 차량 예약 변경시간 확인 -->
+	<select id="checkTimeCar"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsCarOdyVO">
+		select rctime
+		from tbl_rscar
+		where rcdate=#{rcdate} and fk_cno = #{fk_cno}
+	</select>
 </mapper>

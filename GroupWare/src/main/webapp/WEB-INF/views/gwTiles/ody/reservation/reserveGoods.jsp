@@ -549,7 +549,7 @@ $(document).ready(function(){
 			</thead>
 			<tbody id="rstimeList">
 				<tr>
-					<td colspan="5">입력된 정보가 없습니다.</td>
+					<td colspan="6">입력된 정보가 없습니다.</td>
 				</tr>
 			</tbody>
 		</table>
