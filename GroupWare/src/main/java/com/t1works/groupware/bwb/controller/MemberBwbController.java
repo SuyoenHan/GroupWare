@@ -1097,8 +1097,8 @@ public class MemberBwbController {
 	
 	
 	
-	// 사장 로그인시 - 전체실적현황
-	@RequestMapping(value="/t1/companyPerformance.tw")
+	// 사장 로그인시 - 부서별실적현황 맵핑
+	@RequestMapping(value="/t1/companyPerformance/departmentPerformance.tw")
 	public ModelAndView requiredLogin_companyPerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		String dcode = "";
@@ -1110,7 +1110,7 @@ public class MemberBwbController {
 		
 		
 		
-		mav.setViewName("bwb/todo/companyPerformance.gwTiles");
+		mav.setViewName("bwb/todo/companyPerformance1.gwTiles");
 		
 		return mav;
 	}
@@ -1156,5 +1156,86 @@ public class MemberBwbController {
 		
 	} // end of public String selectPerformance(HttpServletRequest request) {
 
+	
+	// 사장 로그인시-회사실적현황
+	@RequestMapping(value="/t1/companyPerformance.tw")
+	public ModelAndView requiredLogin_companyPerformance2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String dcode = "";
+
+		// 전체부서의 실적의 가장 예전 날짜, 최근 날짜 가지고 오기
+		Map<String,String> paraMap = service4.selectOldNewDate(dcode);
+		
+		mav.addObject("paraMap", paraMap);
+		
+		
+		mav.setViewName("bwb/todo/companyPerformance2.gwTiles");
+		
+		return mav;
+	} // end of public ModelAndView requiredLogin_companyPerformance2
+	
+
+	
+	@ResponseBody
+	@RequestMapping(value="/t1/selectCoPerformance.tw",produces="text/plain;charset=UTF-8")
+	public String selectCoPerformance(HttpServletRequest request) {
+		
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+		// 넘어온 날짜 배열로 만들어주기.
+		String[] performanceWhenArr = performanceWhenArres.split(","); 
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("firstDate", performanceWhenArr[2]);
+		
+		// 부서 전체 이름,코드 가져오기
+		List<MemberBwbVO> departmentList = service2.selectDepartmentList();
+		
+		JSONArray jsonArr = new JSONArray();
+		for(MemberBwbVO dvo : departmentList) {
+			String dcode = dvo.getFk_dcode();
+			paraMap.put("dcode", dcode);
+			JSONObject jsonObj = new JSONObject();
+			
+			// chart에 들어가기 위한 모든 부서 name값,3개월 각각 건수,합구하기
+			Map<String,String> resultMap = service4.selectAllDepCntPerformance(paraMap);
+			jsonObj.put("dname", dvo.getDname());
+			jsonObj.put("nowCnt", resultMap.get("nowCnt"));
+			jsonObj.put("prevCnt", resultMap.get("prevCnt"));
+			jsonObj.put("pprevCnt", resultMap.get("pprevCnt"));
+			jsonObj.put("totalCnt", resultMap.get("totalCnt"));
+			jsonArr.put(jsonObj);
+			
+		}
+
+		return jsonArr.toString();
+	}// end of public String selectCoPerformance(HttpServletRequest request) {
+	
+	// 해당 월의 부서 3개 평균건수 구해오기(Ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectAvgCnt.tw",produces="text/plain;charset=UTF-8")
+	public String selectAvgCnt(HttpServletRequest request) {
+	
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+		
+		String[] performanceWhenArr = performanceWhenArres.split(",");
+			
+		JSONArray jsonArr = new JSONArray();
+		
+		for(int i=0; i<performanceWhenArr.length; i++) {
+			JSONObject jsonObj = new JSONObject();
+			
+			String selectedMonth = performanceWhenArr[i];
+			
+			// 해당 월의 부서 3개 평균건수 구해오기
+			String avgCnt = service4.selectAvgCnt(selectedMonth);
+			jsonObj.put("avgCnt", avgCnt);
+			jsonArr.put(jsonObj);
+		}
+		
+		
+		System.out.println(jsonArr);	
+		return jsonArr.toString();
+	}// end of public String selectAvgCnt(HttpServletRequest request) {
+	
 	
 }

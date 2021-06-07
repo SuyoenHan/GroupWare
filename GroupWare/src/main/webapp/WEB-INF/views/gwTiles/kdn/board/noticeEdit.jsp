@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
 <% String ctxPath = request.getContextPath(); %>    
+<link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/board.css" />
 
 <style type="text/css">
 
@@ -21,26 +21,31 @@
 <script type="text/javascript">
    $(document).ready(function(){
 	   var categnum = $("input[name=fk_categnum]").val();
-	   $("select#category").val(categnum).prop("selected",true);
+	   $("select#categ").val(categnum).prop("selected",true);
 	   
-	   $("select#category").change(function(){
+	   $("select#categ").change(function(){
 		  $(this).prop('selected',true);
 		  var changedCategnum = $(this).val();
 		  $("input[name=fk_categnum]").val(changedCategnum);
 	   console.log(typeof changedCategnum);
 	   });
+
+	   
+	   $("input[name=attach]").change(function(){
+		   if($("input[name=attach]").val() != null){
+			   $("span#displayFileName").hide();
+		   }
+		   if($("input[name=attach]").val() == ""){
+			   $("span#displayFileName").show();
+		   }
+		   console.log($("input[name=attach]").val());
+		   
+	   });
 	   
 	   
-      <%-- === #167. 스마트 에디터 구현 시작 === --%>
-       
-       <%-- === 스마트 에디터 구현 끝 === --%>
-      
       // 완료버튼
       $("button#btnUpdate").click(function(){
       
-         <%-- === 스마트 에디터 구현 시작 === --%>
-          
-         <%-- === 스마트 에디터 구현 끝 === --%>
          
           // 글제목 유효성 검사
          var subjectVal = $("input#subject").val().trim();
@@ -57,24 +62,6 @@
             return;
          }
         
-         
-         <%-- === 스마트에디터 구현 시작 === --%>
-         //스마트에디터 사용시 무의미하게 생기는 p태그 제거
-          
-              
-           
-           
-           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
-           // 글내용 유효성 검사 
-           
-           
-           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-           
-       
-          
-        
-        
-       <%-- === 스마트에디터 구현 끝 === --%>
          
          // 글암호 유효성 검사
          var pwVal = $("input#pw").val().trim();
@@ -93,62 +80,61 @@
    });// end of $(document).ready(function(){})----------------
 </script>
 
-<div style="padding-left: 10%;">
- <a href="javascript:location.href='employeeBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px;">공지사항</span></a>
-
- <form name="editFrm"> 
- 
-      <table id="table">
-         <tr>
-            <th>성명</th>
-            <td>
-                <input type="hidden" name="seq" value="${requestScope.boardvo.seq}" />
-                ${sessionScope.loginuser.name}       
-            </td>
-         </tr>
-         <tr>
-            <th>구분</th>
-            <td>
-               <input type="text" name="fk_categnum" value="${requestScope.boardvo.fk_categnum}" />       
-            	<select id="category">
-            		<option value="">선택</option>
-            		<option value="1">전체공지</option>
-            		<option value="2">총무공지</option>
-            		<option value="3">경조사</option>
-            	</select>
-            </td>
-         </tr>
-         <tr>
-            <th>제목</th>
-            <td>
-               <input type="text" name="subject" id="subject" class="long" value="${requestScope.boardvo.subject}" />       
-            </td>
-         </tr>
-         <tr>
-            <th>내용</th>
-            <td>
-               <textarea rows="10" cols="100" style="width: 95%; height: 612px;" name="content" id="content">${requestScope.boardvo.content}</textarea>       
-            </td>
-         </tr>
-         
-         <%-- === #150. 파일첨부 타입 추가하기 === --%>
-         
-         
-         <tr>
-            <th>비밀번호</th>
-            <td>
-               <input type="password" name="pw" id="pw" class="short" />       
-            </td>
-         </tr>
-      </table>
-      
-      <div style="margin: 20px;">
-         <button type="button" id="btnUpdate">쓰기</button>
-         <button type="button" onclick="javascript:history.back()">취소</button>
-      </div>
-      
-      
-         
-   </form>
-   
-</div>    
+<div id="board-container">
+	 <i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">공지사항</span>
+	
+	 <form name="editFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 -->
+       	 <input type="hidden" name="seq" value="${requestScope.boardvo.seq}" />
+	    <table id="post-table" class="table">
+	       <tr class="thead">
+	          <th>성명</th>
+	          <td>
+	              <input type="hidden" name="name" class="short" value="${sessionScope.loginuser.name}" readonly />
+	              <span>${sessionScope.loginuser.name}</span>
+	          </td>
+	       </tr>
+	       <tr class="thead">
+	          <th>구분</th>
+	          <td>
+	              <input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />
+	              <input type="hidden" name="fk_categnum" value="${requestScope.boardvo.fk_categnum}" /> 
+	              <select id="categ" style="width: 100px; border-color: #ccc;">
+	              	<option value="1">전체공지</option>
+	              	<option value="2">총무공지</option>
+	              	<option value="3">경조사</option>
+	              </select>
+	          </td>
+	       </tr>
+	       <tr class="thead">
+	          <th>제목</th>
+	          <td>
+	             <input type="text" name="subject" id="subject" style="width: 100%;" value="${requestScope.boardvo.subject}" />       
+	          </td>
+	       </tr>
+	       <tr class="thead">
+         	<th>파일첨부</th>
+         	<td>
+         		<span id="displayFileName">첨부된 파일 : ${requestScope.boardvo.orgFilename}</span>
+         		<input type="file" name="attach" />
+         	</td>
+           </tr>
+	       <tr class="thead">
+	          <th>내용</th>
+	          <td>
+	             <textarea rows="10" cols="100" style="width: 100%; height: 100%;" name="content" id="content">${requestScope.boardvo.content}</textarea>       
+	          </td>
+	       </tr>
+	       <tr class="thead">
+	          <th>비밀번호</th>
+	          <td>
+	             <input type="password" name="pw" id="pw" class="short" />       
+	          </td>
+	       </tr>
+	    </table>
+	      
+	    <div id="btn-container" class="float-right">
+	       <button type="button" id="btnUpdate" class="btn-style"><span style="color: #ffffff;">등록</span></button>
+	       <button type="button" class="btn-style" onclick="javascript:history.back()"><span style="color: #ffffff;">취소</span></button>
+	    </div>
+	 </form>
+</div>   

@@ -80,6 +80,21 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// 파일 첨부가 있는 글쓰기
+	@Override
+	public int noticeUploadwithFile(BoardKdnVO boardvo) {
+		int n = dao.noticeUploadwithFile(boardvo);	//첨부파일이 있는 경우
+		return n;
+	}
+
+	// 첨부파일 변경한 경우 글수정
+	@Override
+	public int noticeEditNewAttach(BoardKdnVO boardvo) {
+		int n = dao.noticeEditNewAttach(boardvo);
+		return n;
+	}
+
+	
 	
 	// ========== 건의사항 ===========
 	
@@ -191,6 +206,20 @@ public class BoardKdnService implements InterBoardKdnService {
 		return n;
 	}
 	
+	// (건의사항) 파일첨부가 있는 글쓰기
+	@Override
+	public int suggUploadWithFile(BoardKdnVO boardvo) {
+		if(boardvo.getParentSeq() == null || boardvo.getParentSeq().trim().isEmpty() ) {
+			// 원글쓰기 이라면 groupno 컬럼의 값은 groupno 컬럼의 최대값(max)+1 로 해야 한다. 
+			int groupno = dao.getGroupnoMax() + 1;
+			boardvo.setGroupno(String.valueOf(groupno));
+		}
+		
+		int n = dao.suggUploadWithFile(boardvo);
+		return n;
+		
+	}
+	
 	// ========== 자유게시판 ===========
 	
 	// 자유게시판 글쓰기 완료 요청
@@ -285,6 +314,24 @@ public class BoardKdnService implements InterBoardKdnService {
 		int n = dao.delGenComment(seq);
 		return n;
 	}
+
+	// (자유게시판) 파일첨부가 있는 글쓰기
+	@Override
+	public int genUploadWithFile(BoardKdnVO boardvo) {
+		int n = dao.genUploadWithFile(boardvo);	//첨부파일이 있는 경우
+		return n;
+	}
+
+	// 첨부파일 변경이 있는 글수정
+	@Override
+	public int generalEditNewAttach(BoardKdnVO boardvo) {
+		int n = dao.generalEditNewAttach(boardvo);
+		return n;
+	}
+
+	
+
+	
 
 	
 

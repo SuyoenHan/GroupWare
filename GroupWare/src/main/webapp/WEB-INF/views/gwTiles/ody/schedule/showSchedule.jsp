@@ -104,8 +104,16 @@ $(document).ready(function(){
 	}); // end of $("input:checkbox[id=checkall]").click(function(){})-------
 	
 	
+	// 내 캘린더 선택
+	$(document).on("click","input:checkbox[name=myscno]",function(){	
+	
+		var scno = document.querySelectorAll("input.myscno");
+	      scno.forEach(function (sel) {
+	        sel.addEventListener("change", function () {
+	        	 calendar.refetchEvents();
+	        });
+	      });
 
-		$(document).on("click","input:checkbox[name=myscno]",function(){	
 		var bool = $(this).prop("checked");
 		
 		if(bool){
@@ -127,31 +135,31 @@ $(document).ready(function(){
 			if(!flag){		
                 $("input#allMyCal").prop("checked",true);
 			}
-			 var scno = document.querySelectorAll("input.myscno");
-		      scno.forEach(function (sel) {
-		        sel.addEventListener("change", function () {
-		        	 calendar.refetchEvents();
-		          console.log(sel);
-		        });
-		      });
-
+			 
 		}
 		else{
 			$("input#allMyCal").prop("checked",false);
 		}
-		
-	});// end of $("input:ch
+	
+	});
 		
 			
-			
+	// 사내캘린더 체크박스 체크/ 해제		
 	$(document).on("click","input:checkbox[name=comscno]",function(){	
+		
+		 var ccno = document.querySelectorAll("input.comscno");
+	      ccno.forEach(function (csel) {
+	        csel.addEventListener("change", function () {
+	        	 calendar.refetchEvents();
+	        });
+	      });
+	      
 		var bool = $(this).prop("checked");
 		
 		if(bool){
 			
 			var flag=false;
-			
-			
+						
 			$("input:checkbox[name=comscno]").each(function(index, item){
 				
 				var bChecked = $(item).prop("checked");
@@ -166,22 +174,15 @@ $(document).ready(function(){
 			if(!flag){		
                 $("input#allComCal").prop("checked",true);
 			}
-			 var ccno = document.querySelectorAll("input.comscno");
-		      ccno.forEach(function (csel) {
-		        csel.addEventListener("change", function () {
-		        	 calendar.refetchEvents();
-		          console.log(csel);
-		        });
-		      });
-
 		}
 		else{
 			$("input#allComCal").prop("checked",false);
 		}
 		
-	});// end of $("input:ch
-	  // 검색할 때 필요한 datepicker
-	  //모든 datepicker에 대한 공통 옵션 설정
+	});
+	
+	
+	
 	    $.datepicker.setDefaults({
 	        dateFormat: 'yy-mm-dd' //Input Display Format 변경
 	        ,showOtherMonths: true //빈 공간에 현재월의 앞뒤월의 날짜를 표시

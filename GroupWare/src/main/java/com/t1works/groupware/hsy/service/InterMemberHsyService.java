@@ -35,6 +35,9 @@ public interface InterMemberHsyService {
 	// 해당 년도, 월의 실적건수와 지난달의 실적건수 가져오기
 	Map<String, String> getDoneCnt(Map<String, String> paraMap);
 
+	// 계층형 조직도를 가져오기
+	List<MemberHsyVO> hierarchicalEmployeeList();
+
 	
 
 }

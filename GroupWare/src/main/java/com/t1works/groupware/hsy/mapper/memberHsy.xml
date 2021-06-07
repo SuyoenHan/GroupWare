@@ -133,9 +133,18 @@
 		select (select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
 		        and to_char(endDate,'yyyy-mm')= #{date}) as specificDoneCnt
 		      ,(select to_char(count(*)) from tbl_todo where fk_employeeid=#{employeeid}
-				and to_char(endDate,'yyyy-mm')=#{prevDate}) as prevDoneCnt
+				and to_char(endDate,'yyyy-mm')= to_char(add_months(to_date(#{date},'yyyy-mm'),-1),'yyyy-mm')) as prevDoneCnt
 		from dual
 	</select>
 	
+	<!-- 계층형 조직도를 가져오기 -->
+	<select id="hierarchicalEmployeeList" resultType="com.t1works.groupware.hsy.model.MemberHsyVO">
+		select name, dname, pname, substr(cmobile,1,2)||'-'||substr(cmobile,3,4)||'-'||substr(cmobile,7) as cmobile, fk_pcode
+		from tbl_employee E join tbl_position on fk_pcode=pcode
+		left join tbl_department on fk_dcode=dcode
+		start with E.managerid is null 
+		connect by prior E.employeeid= E.managerid
+		order siblings by fk_dcode, fk_pcode desc 
+	</select>
 	
 </mapper>

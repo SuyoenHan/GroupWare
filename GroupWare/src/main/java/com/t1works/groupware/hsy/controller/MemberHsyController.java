@@ -36,7 +36,7 @@ public class MemberHsyController {
 	private InterHomepageBwbService service2;
 	
 	
-	// 주소록(조직도) 매핑 주소
+	// 주소록 매핑 주소
 	@RequestMapping(value="/t1/employeeMap.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
@@ -296,7 +296,6 @@ public class MemberHsyController {
 		Map<String,String> paraMap= new HashMap<>();
 		paraMap.put("employeeid", employeeid);
 		paraMap.put("date",year+"-"+month);
-		paraMap.put("prevDate", year+"-"+(Integer.parseInt(month)-1));
 		paraMap.put("anoForIn", anoForIn);
 		
 		// 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) 가져오기
@@ -431,4 +430,19 @@ public class MemberHsyController {
 		return mav;
 		
 	} // end of public ModelAndView salaryDetailForm(HttpServletRequest request, ModelAndView mav) {------
+	
+	
+	// 조직도 매핑 url
+	@RequestMapping(value="/t1/employeeChart.tw")        // 로그인이 필요한 url
+	public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		// 계층형 조직도를 가져오기
+		List<MemberHsyVO> mvoList= service.hierarchicalEmployeeList();
+		mav.addObject("mvoList",mvoList);
+		mav.setViewName("hsy/employee/employeeChart.gwTiles");
+		return mav;
+		
+	} // end of public ModelAndView requiredLogin_employeeChart(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {---
+	
+
 }

@@ -6,4 +6,141 @@
 <!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
 <mapper namespace="email">
 
+	<!-- 이메일주소 자동완성을 위한 주소록 가져오기 -->
+	<select id="getEmailList" resultType="String">
+		select '"'||D.dname||' '||E.name||' '||P.pname||'<![CDATA[<]]>'||E.email||'<![CDATA[>]]>'||'"' as addressInfo
+		from tbl_employee E, tbl_department D, tbl_position P
+		where E.fk_dcode = D.dcode and E.fk_pcode = P.pcode
+	</select>
+	
+	<!-- tbl_mailinbox 테이블에서 groupno 컬럼의 최대값 구하기 === -->
+	<select id="getGroupnoMax" resultType="int">
+		select nvl(max(groupno), 0)
+		from tbl_mailinbox
+	</select>
+	
+	<!-- 파일첨부가 없는 메일쓰기(답메일 기능 있음) -->
+	<insert id="send" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		<if test='parentSeq.equals("")'>
+			<if test="ccEmail != null">
+				insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+									, moveToTrash, readStatus, groupno, parentSeq, depthno)
+				values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+	                        , default, default, #{groupno}, default, default)
+			</if>
+			<if test="ccEmail == null">
+				insert into tbl_mailinbox(seq, senderEmail, receiverEmail, subject, content, sendingDate, checkImportant, saveSentMail
+									, moveToTrash, readStatus, groupno, parentSeq, depthno)
+				values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+	                        , default, default, #{groupno}, default, default)
+			</if>
+		</if>
+		<if test='!parentSeq.equals("")'>
+			<if test="ccEmail != null">
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, #{parentSeq}, #{depthno}+1)
+             </if>
+             <if test="ccEmail == null">
+             insert into tbl_mailinbox(seq, senderEmail, receiverEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, #{parentSeq}, #{depthno}+1)
+             </if>
+		</if>
+	</insert>
+	
+	<!-- 파일첨부가 있는 메일쓰기(답메일 기능 있음) -->
+	<insert id="sendWithFile" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		<if test='parentSeq.equals("")'>
+			<if test="ccEmail != null">
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+            </if>
+            <if test="ccEmail == null">
+            insert into tbl_mailinbox(seq, senderEmail, receiverEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+            </if>
+		</if>
+		<if test='!parentSeq.equals("")'>
+			<if test="ccEmail != null">
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, #{parentSeq}, #{depthno}+1, #{fileName}, #{orgFilename}, #{fileSize})
+            </if>
+            <if test="ccEmail == null">
+            insert into tbl_mailinbox(seq, senderEmail, receiverEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(seq_mail.nextval, #{senderEmail}, #{receiverEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, #{parentSeq}, #{depthno}+1, #{fileName}, #{orgFilename}, #{fileSize})
+            </if>
+            
+		</if>
+	</insert>
+
+	<!-- 총 이메일 건수 구해오기 -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_mailinbox
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+
+	<!-- 페이징 처리한 글목록 가져오기(검색기능, 파일첨부, 답메일 기능 포함) -->
+	<select id="emailListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno
+		from
+		(
+		    select rownum as rno, seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno
+		    from
+		    (
+		        select seq, name as senderName, senderEmail, subject, checkImportant, fileName,
+		               to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate,
+		               groupno, parentSeq, depthno 
+		        from tbl_mailinbox M, tbl_employee E
+		        where M.senderEmail = E.email and receiverEmail = #{email}
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>
+		        start with parentSeq = 0
+		        connect by prior seq = parentSeq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- 이메일 열람하기 -->
+	<select id="getView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, sendingDate, nextseq,nextsubject,
+				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
+		from
+		(
+		select lag(seq,1) over(order by seq desc) as previousseq
+		     , lag(subject,1) over(order by seq desc) as previoussubject
+		     
+		     , seq, subject, content  
+		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
+		     
+		     ,lead(seq,1) over(order by seq desc) as nextseq
+		     ,lead(subject,1) over(order by seq desc) as nextsubject
+		     
+		     ,ccEmail, receiverEmail, E.name as receiverName, senderEmail, E2.name as senderName, groupno, parentSeq, depthno, fileName, orgFilename, M.fileSize
+		from tbl_employee E, tbl_mailinbox M, tbl_employee E2
+		where M.receiverEmail = E.email and M.senderEmail = E2.email
+		<if test='searchType != "" and searchWord != ""'>
+		 and lower(#{searchType}) like '%'||lower(#{searchWord})||'%'
+		 </if>
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	
 </mapper>
