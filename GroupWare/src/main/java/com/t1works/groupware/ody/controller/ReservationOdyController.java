@@ -945,7 +945,7 @@ public class ReservationOdyController {
 				paraMap.put("rsubject", rsubject);
 				paraMap.put("rtime", rtime);
 	
-				n = service.edit_rsRoom(paraMap);
+				n = service.insert_rsRoom(paraMap);
 			
 			}
 	
@@ -955,7 +955,7 @@ public class ReservationOdyController {
 			mav.addObject("loc",request.getContextPath()+"/t1/myReservedRoom.tw");
 		}
 		else {
-			mav.addObject("message","회의실 예약 변경이 실패하였습니다.");
+			mav.addObject("message","회의실 예약 변경을 실패하였습니다.");
 			mav.addObject("loc",request.getContextPath()+"/t1/myReservedRoom.tw");
 		}
 		
@@ -990,11 +990,7 @@ public class ReservationOdyController {
 		
 		return jsArr.toString();
 	}
-	
-	
-	
-	
-	
+
 	
 	// 사무용품 예약 변경하기
 	@RequestMapping(value="/t1/editReserveGoods.tw", method= {RequestMethod.POST})
@@ -1027,11 +1023,11 @@ public class ReservationOdyController {
 		}
 		
 		if(n>0) {
-			mav.addObject("message","사무용품 예약 변경이 되었습니다.");
+			mav.addObject("message","사무용품 예약이 변경되었습니다.");
 			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
 		}
 		else {
-			mav.addObject("message","사무용품 예약을 변경이 실패하였습니다.");
+			mav.addObject("message","사무용품 예약 변경을 실패하였습니다.");
 			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
 		}
 		
@@ -1040,8 +1036,83 @@ public class ReservationOdyController {
 	}
 
 	
+	// 차량 예약 변경 시간 확인
+	@ResponseBody
+	@RequestMapping(value="/t1/reserve/checkTimeCar.tw", produces="text/plain;charset=UTF-8" )
+	public String checkTimeCar(HttpServletRequest request) {
+		String rcdate = request.getParameter("rcdate");
+		String fk_cno = request.getParameter("fk_cno");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("rcdate", rcdate);
+		paraMap.put("fk_cno", fk_cno);
+		
+		List<RsCarOdyVO> carTimeList = service.checkTimeCar(paraMap);
 	
+		JSONArray jsArr = new JSONArray();
+		
+		if(carTimeList!=null) {
+			for(RsCarOdyVO cvo : carTimeList) {
+				JSONObject jsObj = new JSONObject();			
+				jsObj.put("rctime", cvo.getRctime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
 	
-	
+	// 차량 예약 변경하기
+	@RequestMapping(value="/t1/editReserveCar.tw", method= {RequestMethod.POST})
+	public ModelAndView editReserveCar(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String rctimeArr = request.getParameter("rctime");
+		
+		String[] rcArr = rctimeArr.split(",");
+		
+		String cno = request.getParameter("fk_cno");
+		String rcdate= request.getParameter("rcdate");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		String rdestination= request.getParameter("rdestination");
+		String rcpeople= request.getParameter("rcpeople");
+		String rcsubject= request.getParameter("rcsubject");
+		String rscno= request.getParameter("rscno");
+		
+		int n=0;
+		
+		int m = service.delReserveCar(rscno);
+		
+		if(m>0) {
+			for(int i=0;i<rcArr.length;i++) {
+				String rctime= rcArr[i];
+			//	System.out.println(rtime);
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("cno", cno);
+				paraMap.put("rcdate", rcdate);
+				paraMap.put("fk_employeeid", fk_employeeid);
+				paraMap.put("rdestination", rdestination);
+				paraMap.put("rcpeople", rcpeople);
+				paraMap.put("rcsubject", rcsubject);
+				paraMap.put("rctime", rctime);
+				n = service.insert_rsCar(paraMap);
+			}
+		}
+		
+		
+		
+		
+		if(n>0) {
+			mav.addObject("message","차량 예약이 변경되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedCar.tw");
+		}
+		else {
+			mav.addObject("message","차량 예약 변경을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedCar.tw");
+		}
+		
+		mav.setViewName("msg");
+		return mav;
+	}
+
 	
 }

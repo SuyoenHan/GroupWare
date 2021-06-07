@@ -381,13 +381,13 @@ button.btn_r{
 
 <div id="myReserved"  style="margin-left: 80px; ">
 	
-	<h3 style="margin-top: 20px !important;">나의 예약 내역</h3>
+	<h3 style="margin-top: 20px !important;">나의 예약내역</h3>
 	
 
 	<div style="float: left; margin-top: 50px;">
 		<ul class="nav nav-pills">
-			 <li><a href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
 			 <li class="active"><a href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
 		</ul>
 	</div>
@@ -436,15 +436,18 @@ button.btn_r{
 				<c:forEach var="myGoods" items="${requestScope.myGoodsList}">	
 					<tr>
 						<td style="vertical-align: middle;">${myGoods.rgdate}</td>
-						<c:if test="${myGoods.rgtime<10}">
+						<c:if test="${myGoods.rgtime<9}">
+						<td style="vertical-align: middle;">0${myGoods.rgtime}:00 ~ 0${myGoods.rgtime+1}:00</td>
+						</c:if>
+						<c:if test="${myGoods.rgtime==9}">
 						<td style="vertical-align: middle;">0${myGoods.rgtime}:00 ~ ${myGoods.rgtime+1}:00</td>
 						</c:if>
-						<c:if test="${myGoods.rgtime >=10}">
+						<c:if test="${myGoods.rgtime >9}">
 						<td style="vertical-align: middle;">${myGoods.rgtime}:00 ~ ${myGoods.rgtime+1}:00</td>
 						</c:if>
 						
 						<td style="vertical-align: middle;">${myGoods.goodsname}</td>
-						<td style="vertical-align: middle;">${myGoods.rgsubject}</td>
+						<td style="vertical-align: middle; text-align: left;">${myGoods.rgsubject}</td>
 						<c:if test="${myGoods.gstatus == 0}">
 							<td style="vertical-align: middle;">미승인</td>
 						</c:if>
