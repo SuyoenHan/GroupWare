@@ -40,6 +40,7 @@ body > table > thead > tr > th{
 	color: white;
 }
 
+
 /* new_mail.jsp 메일쓰기 페이지 css */
 
 input, textarea {border: solid #ccc 1px;}
@@ -48,3 +49,7 @@ input, textarea {border: solid #ccc 1px;}
 #table th, #table td{padding: 5px;}
 #table th{width: 45em;}
 #table td{width: 500em;}
+
+span#sentMailCheck:hover{
+	
+}
