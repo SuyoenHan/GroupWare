@@ -2,6 +2,7 @@ package com.t1works.groupware.bwb.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -176,6 +177,40 @@ public class HomepageBwbService implements InterHomepageBwbService {
 	public String selectOuttime(Map<String, String> paraMap) {
 		String outtime = dao.selectOuttime(paraMap);
 		return outtime;
+	}
+
+
+	// 이용자의 총 연차수 가지고 오기
+	@Override
+	public String selectTotaloffCnt(String pcode) {
+		String totalOffCnt = dao.selectTotaloffCnt(pcode);
+		return totalOffCnt;
+	}
+
+
+	// 이용자의 사용연차수 가지고 오기
+	@Override
+	public String selectUseoffCnt(String fk_employeeid) {
+		
+		String useOffCnt = dao.selectUseoffCnt(fk_employeeid);
+		return useOffCnt;
+	}
+
+
+	 // 나의 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid) {
+		
+		List<Map<String, String>> myIndolenceList = dao.selectmyMonthIndolence(fk_employeeid);
+		return myIndolenceList;
+	}
+
+
+	// 부서 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectDepMonthIndolence(String fk_dcode) {
+		List<Map<String,String>> depIndolenceList = dao.selectDepMonthIndolence(fk_dcode);
+		return depIndolenceList;
 	}
    
 }
