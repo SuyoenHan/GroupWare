@@ -1,5 +1,6 @@
 package com.t1works.groupware.bwb.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
@@ -29,6 +30,18 @@ public interface InterHomepageBwbService {
    
    // 출퇴근기록 테이블에서 select작업(퇴근시간)
    String selectOuttime(Map<String, String> paraMap);
+   
+   // 이용자의 총 연차수 가지고 오기
+   String selectTotaloffCnt(String pcode);
+   
+   // 이용자의 사용연차수 가지고 오기
+   String selectUseoffCnt(String fk_employeeid);
+   
+   // 나의 월별 출퇴근기록 가지고오기
+   List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid);
+   
+   // 부서 월별 출퇴근기록 가지고오기
+   List<Map<String, String>> selectDepMonthIndolence(String fk_dcode);
    
    
    
