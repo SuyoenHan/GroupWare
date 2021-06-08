@@ -521,7 +521,7 @@ $(document).ready(function(){
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;
-					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button">검색</button>
+					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch(1)">검색</button>
 				</td>
 			</tr>		
 		</table>

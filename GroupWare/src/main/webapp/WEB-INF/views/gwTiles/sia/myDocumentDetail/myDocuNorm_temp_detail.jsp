@@ -352,6 +352,8 @@ input.btn {
 	<form name="myFrm">
 		<input type="hidden" name="ano" value="${ano}" />
 		<input type="hidden" name="ncatname" value="${ncatname}" />
+		<input type="hidden" name="fromDate" value="${fromDate}" />
+		<input type="hidden" name="toDate" value="${toDate}" />
 		<input type="hidden" name="ncat" value="${ncat}" />
 		<input type="hidden" name="sort" value="${sort}" />
 		<input type="hidden" name="searchWord" value="${searchWord}" />

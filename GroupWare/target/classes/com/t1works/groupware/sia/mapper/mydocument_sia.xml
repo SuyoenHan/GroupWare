@@ -26,7 +26,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -34,7 +34,7 @@
 			<if test='a != ""'>
 				and ncat in(${a})
 			</if>
-			and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+			and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 		) V
 		where rno between #{startRno} and #{endRno}
 		order by asdate desc, rno
@@ -47,7 +47,7 @@
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
 		where apaper = '0'
-		and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+		and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -61,7 +61,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -134,7 +134,7 @@
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where apaper = '0'
-			and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+			and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -148,7 +148,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -168,7 +168,7 @@
 		from tbl_approval A join tbl_spenda B
 		on A.ano = B.fk_ano
 		where apaper = '0'
-		and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+		and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -182,7 +182,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -244,7 +244,7 @@
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where apaper = '0'
-			and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+			and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -258,7 +258,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -278,7 +278,7 @@
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
 		where apaper = '0'
-		and (arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null)
+		and ((arecipient1 = #{userid} and approvaldate1 is null) or (arecipient2 = #{userid} and approvaldate2 is null) or (arecipient3 = #{userid} and approvaldate3 is null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -292,7 +292,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -470,7 +470,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -504,7 +504,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -591,7 +591,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -625,7 +625,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -701,7 +701,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -735,7 +735,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -821,16 +821,25 @@
 	
 	<!-- 내문서함 - 임시저장함 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, ncat, ncatname 
+		select rno, atitle, ano, asdate, ncat, ncatname 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, ncat, ncatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
 			and apaper = '2'
+			<if test='fromDate != "" and toDate != ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+			</if>
+			<if test='fromDate != "" and toDate == ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+			</if>
+			<if test='fromDate == "" and toDate != ""'>
+				and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -851,8 +860,17 @@
 		on A.ano = B.fk_ano
 		where fk_employeeid = #{userid}
 		and apaper = '2'
+		<if test='fromDate != "" and toDate != ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+		</if>
+		<if test='fromDate != "" and toDate == ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+		</if>
+		<if test='fromDate == "" and toDate != ""'>
+			and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -918,16 +936,25 @@
 	
 	<!-- 내문서함 - 임시저장함 - 지출결재문서에 해당하는 문서 조회하기 -->
 	<select id="getSpend_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, scat, scatname 
+		select rno, atitle, ano, asdate, scat, scatname 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, scat, scatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
 			and apaper = '2'
+			<if test='fromDate != "" and toDate != ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+			</if>
+			<if test='fromDate != "" and toDate == ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+			</if>
+			<if test='fromDate == "" and toDate != ""'>
+				and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -948,8 +975,17 @@
 		on A.ano = B.fk_ano
 		where fk_employeeid = #{userid}
 		and apaper = '2'
+		<if test='fromDate != "" and toDate != ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+		</if>
+		<if test='fromDate != "" and toDate == ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+		</if>
+		<if test='fromDate == "" and toDate != ""'>
+			and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1004,16 +1040,25 @@
 	
 	<!-- 내문서함 - 임시저장함 - 근태결재문서에 해당하는 문서 조회하기 -->
 	<select id="getVacation_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, vno, vcatname 
+		select rno, atitle, ano, asdate, vno, vcatname 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, vno, vcatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
 			and apaper = '2'
+			<if test='fromDate != "" and toDate != ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+			</if>
+			<if test='fromDate != "" and toDate == ""'>
+				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+			</if>
+			<if test='fromDate == "" and toDate != ""'>
+				and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1026,6 +1071,106 @@
 		order by ano desc, rno
 	</select>
 	
+	
+	<!-- 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기 -->
+	<select id="getVacationTempTotalPage" parameterType="HashMap" resultType="int">
+		select ceil(count(*) / #{sizePerPage})
+		from tbl_approval A join tbl_vacation B
+		on A.ano = B.fk_ano
+		where fk_employeeid = #{userid}
+		and apaper = '2'
+		<if test='fromDate != "" and toDate != ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
+		</if>
+		<if test='fromDate != "" and toDate == ""'>
+			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') >= to_date(#{fromDate}, 'yyyy-mm-dd') 
+		</if>
+		<if test='fromDate == "" and toDate != ""'>
+			and to_date(#{toDate}, 'yyyy-mm-dd') >= to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd')
+		</if>
+		<if test='sort == "" and searchWord != ""'>
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
+		</if>
+		<if test='sort != "" and searchWord != ""'>
+			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
+		</if>
+		<if test='a != ""'>
+			and vno in(${a})
+		</if>
+	</select>
+	
+	
+	<!-- 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기 -->
+	<select id="myDocuVacation_temp_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, pname 
+		<choose>
+			<when test="vcatname eq '병가'">
+				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
+			</when>
+			<when test="vcatname eq '반차'">
+				, to_char(afdate, 'yyyy/mm/dd') AS afdate, afdan, afdates
+			</when>
+			<when test="vcatname eq '연차'">
+				, to_char(daystart, 'yyyy/mm/dd') AS daystart, to_char(dayend, 'yyyy/mm/dd') AS dayend, daydates
+			</when>
+			<when test="vcatname eq '경조휴가'">
+				, to_char(congstart, 'yyyy/mm/dd') AS congstart, to_char(congend, 'yyyy/mm/dd') AS congend, congdates
+			</when>
+			<when test="vcatname eq '출장'">
+				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
+			</when>
+			<when test="vcatname eq '추가근무'">
+				, ewdate, ewhours
+			</when>
+		</choose>
+		from tbl_approval a
+		<choose>
+			<when test="vcatname eq '병가'">
+				left join tbl_sickleave b 
+				on b.fk_ano = a.ano
+			</when>
+			<when test="vcatname eq '반차'">
+				left join tbl_afternoonoff c
+				on c.fk_ano = a.ano
+			</when>
+			<when test="vcatname eq '연차'">
+				left join tbl_dayoff d
+				on d.fk_ano = a.ano
+			</when>
+			<when test="vcatname eq '경조휴가'">
+				left join tbl_congoff e
+				on e.fk_ano = a.ano
+			</when>
+			<when test="vcatname eq '출장'">
+				left join tbl_businesstrip f
+				on f.fk_ano = a.ano
+			</when>
+			<when test="vcatname eq '추가근무'">
+				left join tbl_extrawork g
+				on g.fk_ano = a.ano
+			</when>			
+		</choose>		
+		left join tbl_vacation h
+		on a.ano = h.fk_ano
+		left join 
+		(
+			select employeeid, name, fk_dcode, fk_pcode
+			from tbl_employee 
+		) i
+		on a.fk_employeeid = i.employeeid
+		left join 
+		(
+			select dcode, dname
+			from tbl_department
+		) j
+		on i.fk_dcode = j.dcode
+		left join tbl_position p
+		on i.fk_pcode = p.pcode
+		where anocode = 3 and ano = #{ano}
+	</select>
+		
+	<!-- ///////////////////////////////////////////////////////////////////// -->
+	<!-- ///////////////////////////////////////////////////////////////////// -->
 	
 	<!-- 수신자 정보 select해오기 -->
 	<select id="viewMng" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
@@ -1147,98 +1292,7 @@
 	</update>
 	
 	<!-- ////////////////////////////////////////////////////////////////////// -->
-	<!-- ////////////////////////////////////////////////////////////////////// -->
-	
-	<!-- 검색에 해당하는 임시저장함 - 근태결재 글의 총 페이지수를 알아오기 -->
-	<select id="getVacationTempTotalPage" parameterType="HashMap" resultType="int">
-		select ceil(count(*) / #{sizePerPage})
-		from tbl_approval A join tbl_vacation B
-		on A.ano = B.fk_ano
-		where fk_employeeid = #{userid}
-		and apaper = '2'
-		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
-		</if>
-		<if test='sort != "" and searchWord != ""'>
-			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
-		</if>
-		<if test='a != ""'>
-			and vno in(${a})
-		</if>
-	</select>
-	
-	
-	<!-- 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기 -->
-	<select id="myDocuVacation_temp_detail" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, pname 
-		<choose>
-			<when test="vcatname eq '병가'">
-				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
-			</when>
-			<when test="vcatname eq '반차'">
-				, to_char(afdate, 'yyyy/mm/dd') AS afdate, afdan, afdates
-			</when>
-			<when test="vcatname eq '연차'">
-				, to_char(daystart, 'yyyy/mm/dd') AS daystart, to_char(dayend, 'yyyy/mm/dd') AS dayend, daydates
-			</when>
-			<when test="vcatname eq '경조휴가'">
-				, to_char(congstart, 'yyyy/mm/dd') AS congstart, to_char(congend, 'yyyy/mm/dd') AS congend, congdates
-			</when>
-			<when test="vcatname eq '출장'">
-				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
-			</when>
-			<when test="vcatname eq '추가근무'">
-				, ewdate, ewhours
-			</when>
-		</choose>
-		from tbl_approval a
-		<choose>
-			<when test="vcatname eq '병가'">
-				left join tbl_sickleave b 
-				on b.fk_ano = a.ano
-			</when>
-			<when test="vcatname eq '반차'">
-				left join tbl_afternoonoff c
-				on c.fk_ano = a.ano
-			</when>
-			<when test="vcatname eq '연차'">
-				left join tbl_dayoff d
-				on d.fk_ano = a.ano
-			</when>
-			<when test="vcatname eq '경조휴가'">
-				left join tbl_congoff e
-				on e.fk_ano = a.ano
-			</when>
-			<when test="vcatname eq '출장'">
-				left join tbl_businesstrip f
-				on f.fk_ano = a.ano
-			</when>
-			<when test="vcatname eq '추가근무'">
-				left join tbl_extrawork g
-				on g.fk_ano = a.ano
-			</when>			
-		</choose>		
-		left join tbl_vacation h
-		on a.ano = h.fk_ano
-		left join 
-		(
-			select employeeid, name, fk_dcode, fk_pcode
-			from tbl_employee 
-		) i
-		on a.fk_employeeid = i.employeeid
-		left join 
-		(
-			select dcode, dname
-			from tbl_department
-		) j
-		on i.fk_dcode = j.dcode
-		left join tbl_position p
-		on i.fk_pcode = p.pcode
-		where anocode = 3 and ano = #{ano}
-	</select>
-	
-	<!-- ///////////////////////////////////////////////////////////////////// -->
-	<!-- ///////////////////////////////////////////////////////////////////// -->	
+	<!-- ////////////////////////////////////////////////////////////////////// -->	
 	
 	<!-- 내문서함 - 수신함 - 결재완료 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_completelist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
@@ -1248,7 +1302,7 @@
 			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
-			where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -1262,7 +1316,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1281,7 +1335,7 @@
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_norapproval B
 		on A.ano = B.fk_ano
-		where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+		where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -1295,7 +1349,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1367,7 +1421,7 @@
 			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
-			where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -1381,7 +1435,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1400,7 +1454,7 @@
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_spenda B
 		on A.ano = B.fk_ano
-		where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+		where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -1414,7 +1468,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1475,7 +1529,7 @@
 			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
-			where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
@@ -1489,7 +1543,7 @@
 				and astatus = #{astatus}
 			</if>
 			<if test='sort == "" and searchWord != ""'>
-				and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+				and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 			</if>
 			<if test='sort != "" and searchWord != ""'>
 				and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'
@@ -1508,7 +1562,7 @@
 		select ceil(count(*) / #{sizePerPage})
 		from tbl_approval A join tbl_vacation B
 		on A.ano = B.fk_ano
-		where (arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null)
+		where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
 		<if test='fromDate != "" and toDate != ""'>
 			and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 		</if>
@@ -1522,7 +1576,7 @@
 			and astatus = #{astatus}
 		</if>
 		<if test='sort == "" and searchWord != ""'>
-			and atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%'
+			and (atitle like '%'|| lower(#{searchWord}) ||'%' or ano like '%'|| lower(#{searchWord}) ||'%')
 		</if>
 		<if test='sort != "" and searchWord != ""'>
 			and lower(${sort}) like '%'|| lower(#{searchWord}) ||'%'

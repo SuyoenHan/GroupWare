@@ -143,6 +143,8 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuNorm_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
+		request.setAttribute("fromDate", request.getParameter("fromDate"));
+		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("ncat", request.getParameter("ncat"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -156,6 +158,8 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuSpend_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
+		request.setAttribute("fromDate", request.getParameter("fromDate"));
+		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("scat", request.getParameter("scat"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -169,6 +173,8 @@ public class MyDocumentSiaController {
 	public String requiredLogin_myDocuVacation_temp(HttpServletRequest request, HttpServletResponse response) {
 		
 		request.setAttribute("ano", request.getParameter("ano"));
+		request.setAttribute("fromDate", request.getParameter("fromDate"));
+		request.setAttribute("toDate", request.getParameter("toDate"));
 		request.setAttribute("vno", request.getParameter("vno"));
 		request.setAttribute("sort", request.getParameter("sort"));		
 		request.setAttribute("searchWord", request.getParameter("searchWord"));
@@ -1640,12 +1646,18 @@ public class MyDocumentSiaController {
 	@ResponseBody
 	@RequestMapping(value="/t1/norm_templist.tw", produces="text/plain;charset=UTF-8")
 	public String norm_templist(HttpServletRequest request) {
-				
+		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String ncat = request.getParameter("ncat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String currentShowPageNo = request.getParameter("currentShowPageNo");
-				
+		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -1692,6 +1704,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();		
 		
 		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -1708,7 +1722,8 @@ public class MyDocumentSiaController {
 				JSONObject jsonObj = new JSONObject();
 				jsonObj.put("atitle", appvo.getAtitle());
 				jsonObj.put("ano", appvo.getAno());
-				jsonObj.put("ncatname", appvo.getNcatname());				
+				jsonObj.put("ncatname", appvo.getNcatname());
+				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
 				
 				jsonArr.put(jsonObj);
@@ -1723,11 +1738,17 @@ public class MyDocumentSiaController {
 	@RequestMapping(value="/t1/getNormTempTotalPage.tw", method= {RequestMethod.GET})
 	public String getNormTempTotalPage(HttpServletRequest request) {
 		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String ncat = request.getParameter("ncat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String sizePerPage = request.getParameter("sizePerPage");
 		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -1759,6 +1780,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -1782,7 +1805,9 @@ public class MyDocumentSiaController {
 		String ncatname = request.getParameter("ncatname");
 				
 		mav.addObject("ano", request.getParameter("ano"));
-		mav.addObject("ncatname", request.getParameter("ncatname"));		
+		mav.addObject("ncatname", request.getParameter("ncatname"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
 		mav.addObject("ncat", request.getParameter("ncat"));
 		mav.addObject("sort", request.getParameter("sort"));		
 		mav.addObject("searchWord", request.getParameter("searchWord"));
@@ -1826,11 +1851,17 @@ public class MyDocumentSiaController {
 	@RequestMapping(value="/t1/spend_templist.tw", produces="text/plain;charset=UTF-8")
 	public String spend_templist(HttpServletRequest request) {
 		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String scat = request.getParameter("scat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String currentShowPageNo = request.getParameter("currentShowPageNo");
 				
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -1877,6 +1908,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -1895,6 +1928,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("atitle", appvo.getAtitle());
 				jsonObj.put("ano", appvo.getAno());
 				jsonObj.put("scatname", appvo.getScatname());
+				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
 				
 				jsonArr.put(jsonObj);
@@ -1910,11 +1944,17 @@ public class MyDocumentSiaController {
 	@RequestMapping(value="/t1/getSpendTempTotalPage.tw", method= {RequestMethod.GET})
 	public String getSpendTempTotalPage(HttpServletRequest request) {
 		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String scat = request.getParameter("scat");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String sizePerPage = request.getParameter("sizePerPage");
 		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -1946,6 +1986,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();		
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -1969,7 +2011,9 @@ public class MyDocumentSiaController {
 		String scatname = request.getParameter("scatname");
 		
 		mav.addObject("ano", request.getParameter("ano"));
-		mav.addObject("scatname", request.getParameter("scatname"));		
+		mav.addObject("scatname", request.getParameter("scatname"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
 		mav.addObject("scat", request.getParameter("scat"));
 		mav.addObject("sort", request.getParameter("sort"));		
 		mav.addObject("searchWord", request.getParameter("searchWord"));
@@ -2012,12 +2056,18 @@ public class MyDocumentSiaController {
 	@ResponseBody
 	@RequestMapping(value="/t1/vacation_templist.tw", produces="text/plain;charset=UTF-8")
 	public String vacation_templist(HttpServletRequest request) {
-					
+		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String vno = request.getParameter("vno");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String currentShowPageNo = request.getParameter("currentShowPageNo");		
 		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -2064,6 +2114,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -2081,6 +2133,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("atitle", appvo.getAtitle());
 				jsonObj.put("ano", appvo.getAno());
 				jsonObj.put("vcatname", appvo.getVcatname());
+				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
 				
 				jsonArr.put(jsonObj);
@@ -2096,11 +2149,17 @@ public class MyDocumentSiaController {
 	@RequestMapping(value="/t1/getVacationTempTotalPage.tw", method= {RequestMethod.GET})
 	public String getVacationTempTotalPage(HttpServletRequest request) {
 		
+		String fromDate = request.getParameter("fromDate");
+		String toDate = request.getParameter("toDate");
 		String vno = request.getParameter("vno");
 		String sort = request.getParameter("sort");
 		String searchWord = request.getParameter("searchWord");
 		String sizePerPage = request.getParameter("sizePerPage");
 		
+		if(fromDate == null || toDate == null) {
+			fromDate = "";
+			toDate = "";
+		}
 		if(sort == null || (!"atitle".equals(sort) && !"ano".equals(sort))) {
 			sort = "";
 		}
@@ -2132,6 +2191,8 @@ public class MyDocumentSiaController {
 		String userid = loginuser.getEmployeeid();
 		
 		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("fromDate", fromDate);
+		paraMap.put("toDate", toDate);
 		paraMap.put("sort", sort);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("a", a);
@@ -2155,7 +2216,9 @@ public class MyDocumentSiaController {
 		String vcatname = request.getParameter("vcatname");
 		
 		mav.addObject("ano", request.getParameter("ano"));
-		mav.addObject("vcatname", request.getParameter("vcatname"));		
+		mav.addObject("vcatname", request.getParameter("vcatname"));
+		mav.addObject("fromDate", request.getParameter("fromDate"));
+		mav.addObject("toDate", request.getParameter("toDate"));
 		mav.addObject("vno", request.getParameter("vno"));
 		mav.addObject("sort", request.getParameter("sort"));		
 		mav.addObject("searchWord", request.getParameter("searchWord"));
