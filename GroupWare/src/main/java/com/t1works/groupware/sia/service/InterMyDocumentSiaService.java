@@ -147,9 +147,17 @@ public interface InterMyDocumentSiaService {
 	int saveSpend(ApprovalSiaVO avo) throws Throwable;
 	int saveSpend_withFile(ApprovalSiaVO avo) throws Throwable;
 	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	int submitSpend(ApprovalSiaVO avo);
+	int submitSpend_withFile(ApprovalSiaVO avo) throws Throwable;	
+	
 	// 내문서함 - 임시저장함 - 근태결재 - 저장버튼 클릭
 	int saveVacation(ApprovalSiaVO avo) throws Throwable;
 	int saveVacation_withFile(ApprovalSiaVO avo) throws Throwable;
+	
+	// 내문서함 - 임시저장함 - 근태결재 - 제출버튼 클릭
+	int submitVacation(ApprovalSiaVO avo) throws Throwable;
+	int submitVacation_withFile(ApprovalSiaVO avo) throws Throwable;
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -184,6 +192,8 @@ public interface InterMyDocumentSiaService {
 	
 	// 내문서함 - 수신함 - 결재완료 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap);
+
+	
 
 	
 

@@ -577,7 +577,7 @@
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
-			and apaper != '0'
+			and apaper = '0'
 			<if test='fromDate != "" and toDate != ""'>
 				and to_date(to_char(asdate, 'yyyy-mm-dd'), 'yyyy-mm-dd') between to_date(#{fromDate}, 'yyyy-mm-dd') and to_date(#{toDate}, 'yyyy-mm-dd')
 			</if>
