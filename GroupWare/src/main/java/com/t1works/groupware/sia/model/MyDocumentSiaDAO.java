@@ -402,6 +402,14 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return avo;
 	}
 
+	
+	// 결재의견 삭제하기
+	@Override
+	public int delMyOpinion(Map<String, String> paraMap) {
+		int n = sqlsession4.delete("mydocument_sia.delMyOpinion", paraMap);
+		return n;
+	}
+
 
 
 	

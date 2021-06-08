@@ -104,6 +104,7 @@ public class ApprovalSiaVO {
 	
 	
 	// 전자결재 의견작성
+	private String ono;			// 의견번호
 	private String ocontent;	// 의견내용
 	private String odate;		// 작성일자
 
@@ -629,6 +630,14 @@ public class ApprovalSiaVO {
 
 	public void setParentAno(String parentAno) {
 		this.parentAno = parentAno;
+	}
+
+	public String getOno() {
+		return ono;
+	}
+
+	public void setOno(String ono) {
+		this.ono = ono;
 	}
 	
 

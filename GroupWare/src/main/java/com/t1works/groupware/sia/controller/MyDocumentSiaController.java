@@ -908,6 +908,10 @@ public class MyDocumentSiaController {
 		
 		JSONArray jsonArr = new JSONArray(); // []
 		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
 		if(opinionList != null) {
 			for(ApprovalSiaVO avo : opinionList) {
 				JSONObject jsonObj = new JSONObject();				
@@ -916,10 +920,15 @@ public class MyDocumentSiaController {
 				jsonObj.put("pname", avo.getPname());
 				jsonObj.put("odate", avo.getOdate());
 				jsonObj.put("ocontent", avo.getOcontent());
+				jsonObj.put("employeeid", avo.getEmployeeid());
+				jsonObj.put("userid", userid);
+				jsonObj.put("ono", avo.getOno());
 				
 				jsonArr.put(jsonObj);
 			}
 		}
+		
+		
 		
 		return jsonArr.toString();		
 	}
@@ -2348,7 +2357,7 @@ public class MyDocumentSiaController {
 		avo.setFk_wiimdate(fk_wiimdate);
 		
 		MultipartFile attach = avo.getAttach();
-		System.out.println(attach);
+		
 		if(!attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
@@ -3494,6 +3503,24 @@ public class MyDocumentSiaController {
 		}
 	}
 	
+	
+	// 결재의견 삭제하기
+	@ResponseBody
+	@RequestMapping(value="/t1/delMyOpinion.tw", method= {RequestMethod.POST})
+	public String delMyOpinion(HttpServletRequest request) {
+		
+		String ono = request.getParameter("ono");
+		
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("ono", ono);
+		
+		int n = service.delMyOpinion(paraMap);
+		
+		JSONObject jsonObj = new JSONObject();		
+		jsonObj.put("n", n);
+				
+		return jsonObj.toString();
+	}
 	
 	
 	

@@ -589,6 +589,14 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	}
 
 	
+	// 결재의견 삭제하기
+	@Override
+	public int delMyOpinion(Map<String, String> paraMap) {
+		int n = dao.delMyOpinion(paraMap);
+		return n;
+	}
+
+	
 
 	
 
