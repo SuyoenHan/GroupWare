@@ -301,6 +301,37 @@
 				
 		}// end of if("${requiredState}"!="0"){---------
 			
+		
+		// 진행 중 업무 메일 보내기 버튼 클릭 시 이벤트 => 여행준비물 메일 보내기
+		$(document).on('click',('span.sendMailIng'),function(){
+		
+			var clientmobile= $(this).prev().prev().val();
+			var fk_pNo= $(this).prev().val();
+			var clientname= $(this).parent().prev().prev().text();
+			
+			$.ajax({  // 여행준비물 메일 보내기
+				url:"<%=ctxPath%>/t1/sendEmailIngTodo.tw",
+				data:{"clientmobile":clientmobile, "fk_pNo":fk_pNo},
+				type:"POST",
+				dataType:"JSON",
+				success:function(json){
+					alert(clientname+" 님에게 성공적으로 [여행준비물]메일을 전송했습니다.");	
+				},
+				error: function(request, status, error){
+		        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		        }
+			}); // end of $.ajax({------
+			
+		}); // end of $(document).on('click','(span.sendMailIng)',function(){--------
+		
+			
+		// 진행 완료 업무 메일 보내기 버튼 클릭 시 이벤트 => 여행사 홍보 메일 보내기
+		$(document).on('click',('span.sendMailEnd'),function(){
+		
+			alert("진행 완료 메일 보내기 클릭했다.");
+			
+		}); // end of $(document).on('click','(span.sendMailIng)',function(){--------
+			
 			
 	}); // end of $(document).ready(function(){--------------------------
 	
@@ -449,10 +480,18 @@
 							   		"<td style='text-align:left; padding-left:80px;'>"+
 						   				clientmobile+
 						   				"<input type='hidden' class='clientmobile' value='"+item.clientmobile+"' />"+
-						   				"<input type='hidden' class='fk_pNo' value='"+item.fk_pNo+"' />"+
-						   				"<span class='sendMail'>문자 보내기</span>"
-						   			"</td>"+
-							   "</tr>";
+						   				"<input type='hidden' class='fk_pNo' value='"+item.fk_pNo+"' />";
+						   				
+		   				if(item.endDate!="0"){ // 종료된 업무 => 여행사 홍보 메일보내기
+		   					html+=      "<span class='sendMail sendMailEnd'>메일 보내기</span>";
+		   				}
+		   				else{ // 진행 중 업무 => 여행준비물 메일보내기
+		   					html+=      "<span class='sendMail sendMailIng'>메일 보내기</span>";
+		   				}
+			   			
+		   				html+=		"</td>"+
+						   	   "</tr>";
+						   			
 					}); // end of $.each(json,funtion(index,item){-------
 					
 					html+="</table>";

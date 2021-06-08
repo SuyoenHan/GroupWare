@@ -47,5 +47,8 @@ public interface InterTodoHsyService {
 	// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
 	List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap);
 
+	// 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기
+	ClientHsyVO getInfoForSendEmailIngTodo(Map<String, String> paraMap);
+
 	
 }
