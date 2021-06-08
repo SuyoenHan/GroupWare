@@ -207,7 +207,7 @@ hr.hr{
          <%-- === 스마트 에디터 구현 시작 === --%>
          
         //id가 content인 textarea에 에디터에서 대입
-<<<<<<< HEAD
+
 	         obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
 	         
 	       <%-- === 스마트 에디터 구현 끝 === --%>
@@ -337,7 +337,7 @@ hr.hr{
 		
 	 
 		
-=======
+
             obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
             
           <%-- === 스마트 에디터 구현 끝 === --%>
@@ -467,7 +467,7 @@ hr.hr{
       
     
       
->>>>>>> branch 'main' of https://github.com/bwb930305/GroupWare.git
+
 </script>
 
 <form name="writeGFrm"  enctype="multipart/form-data">
