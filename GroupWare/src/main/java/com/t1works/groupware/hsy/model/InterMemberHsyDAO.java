@@ -42,6 +42,12 @@ public interface InterMemberHsyDAO {
 	// 야근수당 리스트에 보여줄 항목 가져오기 
 	List<DoLateVO> getOverNightList(Map<String, String> paraMap);
 
+	// 사번에 해당하는 직원의 오늘의 근태 정보 가져오기 => 현재  병가, 반차, 연차, 경조휴가, 출장 여부 표시
+	Map<String,String> getAttendanceState(String employeeid);
+
+	// 현재시간이 14시 이전인지 이후인지 알아오기
+	int isTwoBefore();
+
 	
 
 
