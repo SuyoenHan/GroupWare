@@ -70,10 +70,10 @@ function moveToTrash(){
 	<span>첨부파일: 
 	<c:choose>
 		<c:when test="${not empty requestScope.evo.fk_seq}"><!-- 보낸메일함 -->
-			<a href="<%=ctxPath%>/t1/download.tw?seq=${requestScope.evo.seq}&mailBoxNo=2">${requestScope.evo.orgFilename}</a>
+			<a href="<%=ctxPath%>/t1/downloadEmailAttach.tw?seq=${requestScope.evo.seq}&mailBoxNo=2">${requestScope.evo.orgFilename}</a>
 		</c:when>
 		<c:otherwise><!-- 받은메일함, 중요메일함 -->
-			<a href="<%=ctxPath%>/t1/download.tw?seq=${requestScope.evo.seq}&mailBoxNo=1">${requestScope.evo.orgFilename}</a>
+			<a href="<%=ctxPath%>/t1/downloadEmailAttach.tw?seq=${requestScope.evo.seq}&mailBoxNo=1">${requestScope.evo.orgFilename}</a>
 		</c:otherwise>
 	</c:choose>
 	</span>

@@ -688,7 +688,7 @@ public class EmailKdnController {
 	
 	
 	// 첨부파일 다운로드 받기
-	@RequestMapping(value="/t1/download.tw")
+	@RequestMapping(value="/t1/downloadEmailAttach.tw")
 	public void requiredLogin_download(HttpServletRequest request, HttpServletResponse response) {
 		
 		String mailBoxNo = request.getParameter("mailBoxNo");
