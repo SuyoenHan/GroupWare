@@ -171,6 +171,22 @@ public class TodoHsyService implements InterTodoHsyService {
 		List<TodoHsyVO> modalList= tdao.getPerfClientInfoForModal(paraMap);
 		return modalList;
 	} // end of public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {---
+
+
+	// 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기
+	@Override
+	public ClientHsyVO getInfoForSendEmailIngTodo(Map<String, String> paraMap) {
+
+		ClientHsyVO cvo= cdao.getInfoForSendEmailIngTodo(paraMap);
+		
+		// 여행시작일 데이터 가공
+		String[] startDateArr= cvo.getStartDate().split("-");
+		String startDate= startDateArr[0]+"년 "+startDateArr[1]+"월 "+startDateArr[2]+"일";
+		cvo.setStartDate(startDate);
+		
+		return cvo;
+		
+	} // end of public Map<String, String> getInfoForSendEmailIngTodo(Map<String, String> paraMap) {----
  
 
 

@@ -106,6 +106,16 @@ public class ClientHsyDAO implements InterClientHsyDAO {
 		int totalPage= sqlsession2.selectOne("clientHsy.getclientLisTotalPage",paraMap);
 		return totalPage;
 	} // end of public int getclientLisTotalPage(Map<String, String> paraMap) {------
+
+	
+	// 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기
+	@Override
+	public ClientHsyVO getInfoForSendEmailIngTodo(Map<String, String> paraMap) {
+		
+		ClientHsyVO cvo= sqlsession2.selectOne("clientHsy.getInfoForSendEmailIngTodo",paraMap);
+		return cvo;
+		
+	} // end of public Map<String, String> getInfoForSendEmailIngTodo(Map<String, String> paraMap) {----
 	
 	
 	
