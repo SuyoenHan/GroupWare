@@ -196,6 +196,15 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		List<MemberBwbVO> departmentList = sqlsession.selectList("memberBwb.selectDepartmentList");
 		return departmentList;
 	}
+
+	// 야근테이블에 insert하기
+	@Override
+	public int insertdoLate(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("memberBwb.insertdoLate", paraMap);
+		return n;
+		
+	}
 	
     
    

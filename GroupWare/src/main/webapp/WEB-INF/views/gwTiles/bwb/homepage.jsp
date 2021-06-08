@@ -216,7 +216,7 @@
          
          if(intime!="(미출근)"){ // 출근시간이 찍혀 있을때
             
-            if(outtime==""){
+            if(outtime=="(미퇴근)"){
    
                // 출퇴근기록 테이블에 insert하기
                $.ajax({
