@@ -43,6 +43,9 @@ public class EmailKdnController {
 	@RequestMapping(value="/t1/new_mail.tw")
 	public ModelAndView requiredLogin_new_Email(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
+		String receiverEmail = request.getParameter("receiverEmail");
+		mav.addObject("receiverEmail", receiverEmail);
+		
 		// === #142. 답변글쓰기가 추가된 경우 ===
 		String parentSeq = request.getParameter("parentSeq");
 		String groupno = request.getParameter("groupno");

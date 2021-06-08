@@ -54,6 +54,14 @@ span.to-input {
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	var preInputEmail = "${requestScope.receiverEmail}";
+	if(preInputEmail != null){
+		// alert('주소록에서 이메일 가져왓다');
+	  $('#to-input').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	  $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+preInputEmail+'" />');
+	}	
+
+	
 	//보낸메일함 저장여부
     $("input[name=saveSentMail]").val("0");
     $("input#saveSentMail").change(function(){
