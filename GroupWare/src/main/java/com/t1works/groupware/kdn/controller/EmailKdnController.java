@@ -763,6 +763,7 @@ public class EmailKdnController {
 	public ModelAndView delEnd(ModelAndView mav, HttpServletRequest request) {
 		
 		String gobackURL = request.getParameter("gobackURL");
+		mav.addObject("gobackURL",gobackURL);
 		
 		String str_arrEmailSeq = request.getParameter("str_arrEmailSeq");
 		String[] arrEmailSeq = str_arrEmailSeq.split(",");
