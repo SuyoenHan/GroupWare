@@ -6,10 +6,36 @@ public class MemberOdyVO {
 	   private String employeeid;      // 사번
 	   private String name;            // 직원명
 	   private String dname;           // 부서명
-
-
-	   public String getEmployeeid() {
-	      return employeeid;
+	   private String dcode;
+	   private String fk_dcode; 
+	   private String fk_pcode;
+	   
+	   public String getDcode() {
+		   return dcode;
+	   }
+	
+		public void setDcode(String dcode) {
+			this.dcode = dcode;
+		}
+	
+		public String getFk_dcode() {
+			return fk_dcode;
+		}
+	
+		public void setFk_dcode(String fk_dcode) {
+			this.fk_dcode = fk_dcode;
+		}
+	
+		public String getFk_pcode() {
+			return fk_pcode;
+		}
+	
+		public void setFk_pcode(String fk_pcode) {
+			this.fk_pcode = fk_pcode;
+		}
+	
+		public String getEmployeeid() {
+		      return employeeid;
 	   }
 	   
 	   public void setEmployeeid(String employeeid) {
