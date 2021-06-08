@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chatting_ody">
+	
+	<select id="getDepartmentList" resultType="com.t1works.groupware.ody.model.MemberOdyVO">
+		select dcode, dname
+		from tbl_department
+	</select>
+	
+	<select id="getEmployeeList" resultType="com.t1works.groupware.ody.model.MemberOdyVO">
+		select employeeid, fk_dcode, fk_pcode, name
+		from tbl_employee
+		where employeeid != #{employeeid}
+		order by fk_dcode asc, fk_pcode desc
+	</select>
+</mapper>
