@@ -323,6 +323,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -538,6 +539,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -751,6 +753,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1085,6 +1088,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1300,6 +1304,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1498,7 +1503,7 @@ public class MyDocumentSiaController {
 		paraMap.put("a", a);
 		paraMap.put("startRno", String.valueOf(startRno));
 		paraMap.put("endRno", String.valueOf(endRno));
-		paraMap.put("userid", userid);
+		paraMap.put("userid", userid);		
 		
 		List<ApprovalSiaVO> approvalvo = service.getVacation_sendlist(paraMap);		
 		
@@ -1513,6 +1518,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("astatus", appvo.getAstatus());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1725,6 +1731,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("ncatname", appvo.getNcatname());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -1930,6 +1937,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("scatname", appvo.getScatname());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}
@@ -2135,6 +2143,7 @@ public class MyDocumentSiaController {
 				jsonObj.put("vcatname", appvo.getVcatname());
 				jsonObj.put("asdate", appvo.getAsdate());
 				jsonObj.put("rno", appvo.getRno());
+				jsonObj.put("fileName", appvo.getFileName());
 				
 				jsonArr.put(jsonObj);
 			}

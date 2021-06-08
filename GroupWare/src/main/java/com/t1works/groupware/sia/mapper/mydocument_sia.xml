@@ -6,10 +6,10 @@
 
 	<!-- 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_reclist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, ncat, ncatname 
+		select rno, atitle, ano, astatus, asdate, ncat, ncatname, fileName
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname, fileName
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where apaper = '0'
@@ -127,10 +127,10 @@
 	
 	<!-- 내문서함 - 수신함 - 지출결재문서에 해당하는 문서 조회하기 -->
 	<select id="getSpend_reclist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, scat, scatname 
+		select rno, atitle, ano, astatus, asdate, scat, scatname, fileName
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname, fileName
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where apaper = '0'
@@ -237,10 +237,10 @@
 	
 	<!-- 내문서함 - 수신함 - 근태결재문서에 해당하는 문서 조회하기 -->
 	<select id="getVacation_reclist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, vno, vcatname 
+		select rno, atitle, ano, astatus, asdate, vno, vcatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname, fileName
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where apaper = '0'
@@ -449,10 +449,10 @@
 	
 	<!-- 내문서함 - 발신함 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_sendlist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, ncat, ncatname 
+		select rno, atitle, ano, astatus, asdate, ncat, ncatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname, fileName
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -570,10 +570,10 @@
 	
 	<!-- 내문서함 - 발신함 - 지출결재문서에 해당하는 문서 조회하기 -->
 	<select id="getSpend_sendlist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, scat, scatname 
+		select rno, atitle, ano, astatus, asdate, scat, scatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname, fileName
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -680,10 +680,10 @@
 	
 	<!-- 내문서함 - 발신함 - 근태결재문서에 해당하는 문서 조회하기 -->
 	<select id="getVacation_sendlist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, vno, vcatname 
+		select rno, atitle, ano, astatus, asdate, vno, vcatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname, fileName
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -821,10 +821,10 @@
 	
 	<!-- 내문서함 - 임시저장함 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, asdate, ncat, ncatname 
+		select rno, atitle, ano, asdate, ncat, ncatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname, fileName
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -936,10 +936,10 @@
 	
 	<!-- 내문서함 - 임시저장함 - 지출결재문서에 해당하는 문서 조회하기 -->
 	<select id="getSpend_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, asdate, scat, scatname 
+		select rno, atitle, ano, asdate, scat, scatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname, fileName
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -1040,10 +1040,10 @@
 	
 	<!-- 내문서함 - 임시저장함 - 근태결재문서에 해당하는 문서 조회하기 -->
 	<select id="getVacation_templist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, asdate, vno, vcatname 
+		select rno, atitle, ano, asdate, vno, vcatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname, fileName
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where fk_employeeid = #{userid}
@@ -1296,10 +1296,10 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 - 일반결재문서에 해당하는 문서 조회하기  -->
 	<select id="getnorm_completelist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, ncat, ncatname 
+		select rno, atitle, ano, astatus, asdate, ncat, ncatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, ncat, ncatname, fileName
 			from tbl_approval A join tbl_norapproval B
 			on A.ano = B.fk_ano
 			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
@@ -1415,10 +1415,10 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 - 지출결재문서에 해당하는 문서 조회하기 -->
 	<select id="getSpend_completelist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, scat, scatname 
+		select rno, atitle, ano, astatus, asdate, scat, scatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, scat, scatname, fileName
 			from tbl_approval A join tbl_spenda B
 			on A.ano = B.fk_ano
 			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
@@ -1523,10 +1523,10 @@
 	
 	<!-- 내문서함 - 수신함 - 결재완료 - 근태결재문서에 해당하는 문서 조회하기 -->
 	<select id="getVacation_completelist" parameterType="HashMap" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select rno, atitle, ano, astatus, asdate, vno, vcatname 
+		select rno, atitle, ano, astatus, asdate, vno, vcatname, fileName 
 		from
 		(
-			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname
+			select row_number() over(order by asdate desc) as rno, atitle, ano, astatus, to_char(asdate, 'yyyy-mm-dd') AS asdate, vno, vcatname, fileName
 			from tbl_approval A join tbl_vacation B
 			on A.ano = B.fk_ano
 			where ((arecipient1 = #{userid} and approvaldate1 is not null) or (arecipient2 = #{userid} and approvaldate2 is not null) or (arecipient3 = #{userid} and approvaldate3 is not null))
