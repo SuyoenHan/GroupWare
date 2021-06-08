@@ -2412,7 +2412,7 @@ public class MyDocumentSiaController {
 	// 내문서함 - 임시저장함 - 지출결재 - 저장버튼 클릭	
 	@RequestMapping(value="/t1/saveSpend.tw", method= {RequestMethod.POST})
 	public ModelAndView saveSpend(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
-						
+		
 		MultipartFile attach = avo.getAttach();
 		
 		if(!attach.isEmpty()) {
@@ -2462,7 +2462,7 @@ public class MyDocumentSiaController {
 		}
 		
 		if(n==1) {
-			mav.setViewName("redirect:/t1/myDocuNorm_temp.tw");
+			mav.setViewName("redirect:/t1/myDocuSpend_temp.tw");
 		}
 		else {
 			System.out.println("실패!");
@@ -2514,18 +2514,18 @@ public class MyDocumentSiaController {
 		try {
 			if(attach.isEmpty()) {
 				// 첨부파일이 없는 경우
-				n = service.submit(avo);
+				n = service.submitSpend(avo);
 			}
 			else {
 				// 첨부파일이 있는 경우
-				n = service.submit_withFile(avo);
+				n = service.submitSpend_withFile(avo);
 			}			
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		
 		if(n==1) {
-			mav.setViewName("redirect:/t1/myDocuNorm_send.tw");
+			mav.setViewName("redirect:/t1/myDocuSpend_send.tw");
 		}
 		else {
 			System.out.println("실패!");
@@ -2588,7 +2588,7 @@ public class MyDocumentSiaController {
 		}
 		
 		if(n==1) {
-			mav.setViewName("redirect:/t1/myDocuSpend_send.tw");
+			mav.setViewName("redirect:/t1/myDocuVacation_send.tw");
 		}
 		else {
 			System.out.println("실패!");
@@ -2639,11 +2639,11 @@ public class MyDocumentSiaController {
 		try {
 			if(attach.isEmpty()) {
 				// 첨부파일이 없는 경우
-				n = service.submit(avo);
+				n = service.submitVacation(avo);
 			}
 			else {
 				// 첨부파일이 있는 경우
-				n = service.submit_withFile(avo);
+				n = service.submitVacation_withFile(avo);
 			}			
 		} catch (Throwable e) {
 			e.printStackTrace();

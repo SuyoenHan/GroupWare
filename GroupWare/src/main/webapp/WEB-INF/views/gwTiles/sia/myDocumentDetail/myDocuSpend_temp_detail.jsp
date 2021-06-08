@@ -263,13 +263,13 @@ input.btn {
 		</table>
 		
 		<form name="docuFrm" enctype="multipart/form-data">
-		<input type="hidden" name="scatname" value="${requestScope.avo.scatname}"/>
+		<input type="hidden" name="scatname" id="scatname" value="${requestScope.avo.scatname}"/>
 		<table id="table2">
 			<tr>
 				<th>수신자</th>
 				<td style="width: 35%;">${requestScope.mng.name} ${requestScope.mng.pname} (${requestScope.mng.dname})</td>
 				<th>문서번호</th>
-				<td>${requestScope.avo.ano}</td>
+				<td><input type="hidden" name="ano" id="ano" value="${requestScope.avo.ano}"/>${requestScope.avo.ano}</td>
 			</tr>
 			
 			<tr>
@@ -280,7 +280,7 @@ input.btn {
 			<c:if test="${requestScope.avo.scat eq '1'}">
 				<tr>
 					<th>지출일자</th>
-					<td colspan="3"><input type="date" name="exdate" id="exdate" value="${requestScope.avo.exdate}"/></td>
+					<td colspan="3"><input type="text" value="${requestScope.avo.exdate}"><input type="date" name="exdate" id="exdate" value="${requestScope.avo.exdate}"/></td>
 				</tr>
 				<tr>
 					<th>지출금액</th>
@@ -300,15 +300,57 @@ input.btn {
 					<th>예상금액</th>
 					<td><input type="text" style="width: 370px;" name="coprice" id="coprice" value="${requestScope.avo.coprice}"/></td>					
 					<th>지출목적</th>
-					<td>
+					<td>												
 						<select name="copurpose" id="copurpose">
-							<option>선택</option>
-							<option value="1">교통비</option>
-							<option value="2">사무비품</option>
-							<option value="3">주유비</option>
-							<option value="4">출장비</option>
-							<option value="5">식비</option>
-							<option value="6">기타</option>
+							<c:if test="${requestScope.avo.copurpose == 1}">
+								<option value="1" selected>교통비</option>
+								<option value="2">사무비품</option>
+								<option value="3">주유비</option>
+								<option value="4">출장비</option>
+								<option value="5">식비</option>
+								<option value="6">기타</option>							
+							</c:if>
+							<c:if test="${requestScope.avo.copurpose == 2}">
+								<option value="1">교통비</option>
+								<option value="2" selected>사무비품</option>
+								<option value="3">주유비</option>
+								<option value="4">출장비</option>
+								<option value="5">식비</option>
+								<option value="6">기타</option>							
+							</c:if>
+							<c:if test="${requestScope.avo.copurpose == 3}">
+								<option value="1" selected>교통비</option>
+								<option value="2">사무비품</option>
+								<option value="3" selected>주유비</option>
+								<option value="4">출장비</option>
+								<option value="5">식비</option>
+								<option value="6">기타</option>							
+							</c:if>
+							<c:if test="${requestScope.avo.copurpose == 4}">
+								<option value="1" selected>교통비</option>
+								<option value="2">사무비품</option>
+								<option value="3">주유비</option>
+								<option value="4" selected>출장비</option>
+								<option value="5">식비</option>
+								<option value="6">기타</option>							
+							</c:if>
+							<c:if test="${requestScope.avo.copurpose == 5}">
+								<option value="1" selected>교통비</option>
+								<option value="2">사무비품</option>
+								<option value="3">주유비</option>
+								<option value="4">출장비</option>
+								<option value="5" selected>식비</option>
+								<option value="6">기타</option>							
+							</c:if>
+							<c:if test="${requestScope.avo.copurpose == 6}">
+								<option value="1" selected>교통비</option>
+								<option value="2">사무비품</option>
+								<option value="3">주유비</option>
+								<option value="4">출장비</option>
+								<option value="5">식비</option>
+								<option value="6" selected>기타</option>
+							</c:if>
+							
 						</select>
 					</td>
 				</tr>
@@ -321,10 +363,18 @@ input.btn {
 				
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3"><input type="file" name="attach"/></td>
+				<td colspan="3">
+				<c:if test="${requestScope.avo.orgFilename == null}">
+					<input type="file" name="attach" value="${requestScope.avo.orgFilename}"/>
+				</c:if>
+				<c:if test="${requestScope.avo.orgFilename != null}">
+					<a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a>&nbsp;&nbsp;<input type="button" style="width: 40px; font-size: 9pt; font-weight: bold; color: white; background-color: #d9534f; border: none;" onclick="removeFile();" value="삭제"/>
+				</c:if>
+				</td>
 			</tr>
 		</table>
 		</form>
+		
 		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.scatname}</span> 을(를) 제출하오니 재가바랍니다.</div>
 		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: <span id="date"></span></div>
 		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
@@ -338,7 +388,7 @@ input.btn {
 			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
 				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
-				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
+				<input type="button" class="btn btn-primary" onclick="goSubmit();" value="제출"/>
 			</span>
 		</div>
 		
