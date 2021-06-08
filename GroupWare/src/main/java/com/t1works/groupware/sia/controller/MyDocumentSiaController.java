@@ -2276,7 +2276,7 @@ public class MyDocumentSiaController {
 		avo.setFk_wiimdate(fk_wiimdate);
 		
 		MultipartFile attach = avo.getAttach();
-		
+		System.out.println(attach);
 		if(!attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			

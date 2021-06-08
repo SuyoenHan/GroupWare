@@ -291,7 +291,7 @@ input.btn {
 				<c:if test="${requestScope.avo.ncat eq '2'}">
 					<tr>
 						<th>위임기간</th>					
-						<td colspan="3"><input type="date" name="fk_wiimdate1" id="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" id="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, ' ')}"/></td>					
+						<td colspan="3"><input type="date" name="fk_wiimdate1" id="fk_wiimdate1" value="${fn:substringBefore(requestScope.avo.fk_wiimdate, ' ')}"/> ~ <input type="date" name="fk_wiimdate2" id="fk_wiimdate2" value="${fn:substringAfter(requestScope.avo.fk_wiimdate, '~ ')}"/></td>					
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.ncat eq '4'}">
