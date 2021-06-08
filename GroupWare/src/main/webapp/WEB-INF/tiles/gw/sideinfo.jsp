@@ -44,7 +44,7 @@
            <a href="javascript:void(0)"><span id="closebtn-style"><i class="fas fa-times fa-lg closebtn"></i></span></a><br>
            <ul class="submenu-style">
                <li class="active">
-                   <a href="javascript:void(0)">수신함</a>
+                   <a href="<%=ctxPath%>/t1/myDocuNorm_rec.tw">수신함</a>
                   <ul>
                        <li>
                            <a href="<%=ctxPath%>/t1/myDocuNorm_rec.tw">미결재문서</a>
@@ -81,10 +81,10 @@
                    <a href="javascript:void(0)">지출결재</a>
                    <ul>
                        <li>
-                           <a href="#">결재내역</a>
+                           <a href="<%=ctxPath%>/t1/expApproval_List.tw">결재내역</a>
                        </li>
                        <li>
-                           <a href="#">결재문서 작성</a>
+                           <a href="<%=ctxPath%>/t1/expApproval_Write.tw">결재문서 작성</a>
                        </li>
                    </ul>
                </li>
@@ -92,10 +92,10 @@
                    <a href="javascript:void(0)">근태/휴가</a>
                    <ul>
                        <li>
-                           <a href="#">결재내역</a>
+                           <a href="<%=ctxPath%>/t1/vacation_List.tw">결재내역</a>
                        </li>
                        <li>
-                           <a href="#">결재문서 작성</a>
+                           <a href="<%=ctxPath%>/t1/vacation_Write.tw">결재문서 작성</a>
                        </li>
                    </ul>
                </li>
@@ -159,6 +159,11 @@
                   </li>
                   <li class="clickable">
                       <a href="<%=ctxPath%>/t1/registerNewEmployee.tw">신입사원등록</a>
+                  </li>
+              </c:when>
+              <c:when  test="${loginuser.fk_dcode eq '5' && loginuser.fk_pcode eq '3'}">
+                  <li class="clickable">
+                      <a href="<%=ctxPath%>/t1/rentalManage.tw">대여관리</a>
                   </li>
               </c:when>
               <c:when  test="${loginuser.fk_pcode eq '3' && (loginuser.fk_dcode eq '1' || loginuser.fk_dcode eq '2' || loginuser.fk_dcode eq '3')}">

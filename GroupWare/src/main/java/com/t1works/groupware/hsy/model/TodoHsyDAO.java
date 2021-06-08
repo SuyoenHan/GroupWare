@@ -119,4 +119,14 @@ public class TodoHsyDAO implements InterTodoHsyDAO {
 	} // end of public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {----
 
 	
+	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
+	@Override
+	public List<Map<String, String>> getBonusDate(Map<String,String> paraMap) {
+
+		List<Map<String,String>> bonusDateList= sqlsession2.selectList("todoHsy.getBonusDate",paraMap);
+		return bonusDateList;
+		
+	} // end of public List<Map<String, String>> getBonusDate(String employeeid) {---
+
+	
 }

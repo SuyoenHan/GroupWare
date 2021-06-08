@@ -143,7 +143,37 @@ td.opinion{
 		$myFrm.method="POST";
 		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_send.tw";
 		$myFrm.submit();
-	}	
+	}
+
+	
+	// 삭제
+	function goRemove(){
+		var bool = confirm("삭제하시겠습니까?");
+		
+		if(bool){
+			var formData = $("form[name=approvalDocu]").serialize();
+			
+			$.ajax({
+				url:"<%=ctxPath%>/t1/remove.tw",
+				data:formData,
+				type:"post",
+				dataType:"json",
+				success:function(json){		
+					
+					if(json.n == 1){					
+						alert("삭제되었습니다");						
+						location.href = "<%=ctxPath%>/t1/myDocuSpend_send.tw";						
+					}
+					else{
+						alert("삭제 실패했습니다");
+					}					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}
+	}// end of function goRemove(){}--------------------
 </script>
 
 <div id="containerview">	
@@ -227,7 +257,7 @@ td.opinion{
 				
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.fileName}</td>
+				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a></td>
 			</tr>
 		</table>
 		
@@ -273,8 +303,7 @@ td.opinion{
 				<input type="button" class="btn" onclick="goback();" value="목록"/>
 			</span>
 			<c:if test="${requestScope.avo.astatus == '0'}">
-				<span style="margin-left: 55%;">
-					<input type="button" class="btn btn-success" onclick="goChange();" value="수정"/>
+				<span style="margin-left: 60%;">					
 					<input type="button" class="btn btn-warning" onclick="goRemove();" value="삭제"/>
 				</span>
 			</c:if>

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
 import com.t1works.groupware.sia.model.InterMyDocumentSiaDAO;
 
@@ -16,6 +17,9 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	
 	@Autowired
 	private InterMyDocumentSiaDAO dao;
+	
+	@Autowired
+	private FileManager fileManager;
 	
 	// 내문서함 - 수신함 - 일반결재문서에 해당하는 문서 조회하기
 	@Override
@@ -255,6 +259,265 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return avo;
 	}
 	
+	// 수신자 정보 찾기
+	@Override
+	public ApprovalSiaVO viewMng(Map<String, String> paraMap) {
+		ApprovalSiaVO mng = dao.viewMng(paraMap);
+		return mng;
+	}
+	
+	////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 파일 삭제	
+	@Override
+	public int removeFile(Map<String, String> paraMap) {
+		int n = dao.removeFile(paraMap);
+				
+		if(n == 1) {
+			String fileName = paraMap.get("fileName");
+			String path = paraMap.get("path");
+			
+			System.out.println("확인용 fileName" + fileName);
+			System.out.println("확인용 path" + path);
+			
+			if(fileName != null && !"".equals(fileName)) {
+				try {
+					fileManager.doFileDelete(fileName, path);
+				} catch (Exception e) {					
+					e.printStackTrace();
+				}
+			}		
+		}
+		
+		return n;
+	}	
+	
+	// 내문서함 - 임시저장함 - 삭제버튼 클릭
+	@Override
+	public int remove(Map<String, String> paraMap) {
+		int n = dao.remove(paraMap);
+		
+		if(n == 1) {
+			String fileName = paraMap.get("fileName");
+			String path = paraMap.get("path");
+			
+			System.out.println("확인용 fileName" + fileName);
+			System.out.println("확인용 path" + path);
+			
+			if(fileName != null && !"".equals(fileName)) {
+				try {
+					fileManager.doFileDelete(fileName, path);
+				} catch (Exception e) {					
+					e.printStackTrace();
+				}
+			}
+		}
+		return n;
+	}	
+
+	// 문서번호에 따라 삭제해야할 파일 조회
+	@Override
+	public ApprovalSiaVO getViewFile(Map<String, String> paraMap) {
+		ApprovalSiaVO avo = dao.getViewFile(paraMap);
+		return avo;
+	}
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
+	@Override
+	public int save(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int save_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}	
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 제출버튼 클릭
+	@Override
+	public int submit(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int submit_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSave(avo);
+		}		
+		return result;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 저장버튼 클릭
+	@Override
+	public int saveSpend(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int saveSpend_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
+		}
+		
+		return result;		
+	}
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	@Override
+	public int submitSpend(ApprovalSiaVO avo) {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int submitSpend_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
+		}		
+		return result;
+	}
+	
+	
+	// 내문서함 - 임시저장함 - 근태결재 - 저장버튼 클릭
+	@Override
+	public int saveVacation(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+
+	@Override
+	public int saveVacation_withFile(ApprovalSiaVO avo) throws Throwable {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSave_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	@Override
+	public int submitVacation(ApprovalSiaVO avo) {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int submitVacation_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+	
 	////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 	
@@ -318,11 +581,20 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return totalPage;
 	}
 	
-	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
+	// 내문서함 - 결재완료 - 근태결재문서 한 개 상세보기
 	@Override
 	public ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap) {
 		ApprovalSiaVO avo = dao.myDocuVacation_complete_detail(paraMap);
 		return avo;
 	}
+
+	
+
+	
+
+
+	
+
+	
 
 }

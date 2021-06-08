@@ -159,18 +159,18 @@ public class ReservationOdyDAO implements InterReservationOdyDAO {
 		 return roomTimeList;
 	}
 
-	// 회의실 예약 변경하기
-	@Override
-	public int edit_rsRoom(Map<String, String> paraMap) {
-		int n = sqlsession5.insert("reservation_ody.edit_rsRoom",paraMap);
-		return n;
-	}
-
 	// 사무용품 예약 변경 시간 확인
 	@Override
 	public List<RsGoodsOdyVO> checkTimeGoods(Map<String, String> paraMap) {
 		List<RsGoodsOdyVO> goodsTimeList = sqlsession5.selectList("reservation_ody.checkTimeGoods",paraMap);
 		return  goodsTimeList;
+	}
+
+	// 차량 예약 변경 시간 확인
+	@Override
+	public List<RsCarOdyVO> checkTimeCar(Map<String, String> paraMap) {
+		 List<RsCarOdyVO> carTimeList = sqlsession5.selectList("reservation_ody.checkTimeCar",paraMap);
+		return carTimeList;
 	}
 
 

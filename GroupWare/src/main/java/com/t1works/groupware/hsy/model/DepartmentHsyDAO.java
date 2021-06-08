@@ -23,4 +23,12 @@ public class DepartmentHsyDAO implements InterDepartmentHsyDAO {
 	
 	}
 
+	// 직급에 맞는 건당성과금 가져오기
+	@Override
+	public String getCommissionpercase(String employeeid) {
+	
+		String commissionpercase= sqlsession2.selectOne("departmentHsy.getCommissionpercase",employeeid);
+		return commissionpercase;
+	}
+
 }

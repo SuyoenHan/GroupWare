@@ -162,8 +162,8 @@ $(document).ready(function(){
 				var html = "";
 				
 				if(json.length > 0){
-					$.each(json, function(index, item){						
-						
+					$.each(json, function(index, item){
+												
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
@@ -205,7 +205,7 @@ $(document).ready(function(){
 				
 				if(json.length > 0){
 					$.each(json, function(index, item){
-						
+												
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";

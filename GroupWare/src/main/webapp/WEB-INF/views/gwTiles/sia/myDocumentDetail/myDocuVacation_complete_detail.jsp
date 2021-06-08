@@ -248,7 +248,7 @@ td.opinion{
 				
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3">${requestScope.avo.fileName}</td>
+				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a></td>
 			</tr>
 		</table>
 			

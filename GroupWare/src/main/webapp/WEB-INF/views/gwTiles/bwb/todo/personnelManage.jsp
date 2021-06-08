@@ -350,7 +350,7 @@
 			return;
 		}
 		
-		location.href="<%=ctxPath%>/t1/employeeMap.tw?searchType="+searchType+"&searchWord="+searchWord;	
+		location.href="<%=ctxPath%>/t1/personnelManage.tw?searchType="+searchType+"&searchWord="+searchWord;	
 	
 	} // end of function goSearchEmployee(){------- 	
 	
@@ -375,9 +375,7 @@
 	   			$("td#dname").text(json.dname);
 	   			$("td#pname").text(json.pname);
 	   			$("td#duty").text(json.duty);
-	   			
-	   			$("select#dname").val(json.dname);
-	   			$("select#pname").val(json.pname);
+	   			$("img#employeesimg").prop("src","<%= ctxPath%>/resources/images/bwb/"+json.fileName);
 
 	   		},
 	   		error: function(request, status, error){
@@ -488,6 +486,7 @@
       		<table id="oneInfo">
       			<tbody>
 	      			<tr> 
+	      				<td rowspan="3" style="width:130px"><img id="employeesimg"></td>
 	      				<td class="oneInfoMenu" style="width:100px;">사번</td>
 	      				<td id="employeeid" style="padding-left:15px; width:184px;"></td>
 	      				<td class="oneInfoMenu" style="width:100px;">이메일</td>
@@ -518,6 +517,7 @@
       		<table id="oneInfoUpdate" style="margin-top:50px;">
       			<tbody>
 	      			<tr> 
+	      				<td rowspan="3" style="width:160px"> <img id="employeesimg"> </td>
 	      				<td class="oneInfoMenu" style="width:100px;">사번</td>
 	      				<td style="padding-left:15px; width:138.4px;"> <input id="employeeid" name="employeeid" class="updateInfo" type="text" readonly="readonly" /> </td>
 	      				<td class="oneInfoMenu" style="width:100px;">이메일</td>

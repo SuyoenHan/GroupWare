@@ -60,9 +60,9 @@ th{
 			</tr>
 			
 			<tr>
-				<td style="height:70px;">d</td>
-				<td>d</td>
-				<td>d</td>
+				<td style="height:70px;"></td>
+				<td></td>
+				<td></td>
 			</tr>
 		</table>
 		

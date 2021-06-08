@@ -37,7 +37,29 @@ public class LoginBwbController {
          HttpSession session = request.getSession();
          MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
          
-         if(loginuser!=null) {
+         if(loginuser!=null) { // 로그인이 성공했을 경우
+        	
+        	String fk_employeeid = loginuser.getEmployeeid();
+        	String pcode = loginuser.getFk_pcode();
+        	
+        	// 이용자의 총 연차수 가지고 오기
+        	String totalOffCnt = service.selectTotaloffCnt(pcode);
+        	
+        	// 이용자의 사용연차수 가지고 오기
+        	String useOffCnt = service.selectUseoffCnt(fk_employeeid);
+        	
+        	int itotalOffCnt = Integer.parseInt(totalOffCnt);
+        	int iuseOffCnt = Integer.parseInt(useOffCnt);
+        	
+        	// 이용자의 남은연차수
+        	String leftOffCnt = String.valueOf(itotalOffCnt-iuseOffCnt);
+        	
+        	Map<String,String> offMap = new HashMap<>();
+        	offMap.put("totalOffCnt", totalOffCnt);
+        	offMap.put("useOffCnt", useOffCnt);
+        	offMap.put("leftOffCnt", leftOffCnt);
+        	
+        	mav.addObject("offMap", offMap); 
             mav.setViewName("/bwb/homepage.gwTiles");
          }
          else {

@@ -48,6 +48,24 @@ button.btn_r{
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 <script type="text/javascript">
+	
+	var curDate = new Date();
+	
+	var curHour=curDate.getHours();
+	
+	var currtime = curDate.getHours();
+	var curDay = curDate.getDate();
+	var curMonth = curDate.getMonth() + 1;
+	if(curMonth.toString().length < 2){
+		curMonth = "0"+curMonth;
+	}
+	
+	if(curDay.toString().length < 2){
+		curDay = "0"+curDay;
+	}
+	var curYear = curDate.getFullYear();
+	var curTime = curYear + "" + curMonth + "" + curDay;
+
 
 	$(document).ready(function(){
 		
@@ -76,7 +94,7 @@ button.btn_r{
 
 		    $('#toDate').datepicker("option", "minDate", $("#fromDate").val());
 		    $('#toDate').datepicker("option", "onClose", function ( selectedDate ) {
-		    $("#fromDate").datepicker( "option", "maxDate", selectedDate );
+		    	$("#fromDate").datepicker( "option", "maxDate", selectedDate );
 		    });
 		    
 		    //From의 초기값을 오늘 날짜로 설정
@@ -108,7 +126,49 @@ button.btn_r{
 			}
 		    
 		    
-	
+		    $('.modal').on('hidden.bs.modal', function (e) {
+		        console.log('modal close');
+		      $(this).find('form')[0].reset()
+		    });
+		    
+		    $("button#editReserve").click(function(){
+		    	event.stopPropagation();
+	            event.preventDefault();
+	             
+	            var checkCnt= $("input:checkbox[name=chktime]:checked").length;
+	     		var chkTime="";
+	            $("input:checkbox[name=chktime]:checked").each(function(){
+					chkTime= chkTime+ $(this).val()+",";
+				});
+				
+				if(chkTime.length>0){
+					chkTime = chkTime.substring(0,chkTime.length-1);
+				}
+				
+				showTime(chkTime);
+				
+	     		if(checkCnt<1){
+	     			alert("시간을 선택하세요.");
+	     			return false; // 종료
+	     		}
+	     		
+	            var purpose = $("input#purpose").val().trim();
+	            var rdestination = $("input#destination").val().trim(); 
+	            if(purpose == ""){
+	            	 alert("목적을 입력하세요.");
+	            }
+	            if(rdestination ==""){
+	            	alert("도착지를 입력하세요.");
+	            }
+	            else{
+	            	
+	            	<%-- form으로 값 넘겨주기--%>
+	            	 var frm = document.editCar;
+	            	 frm.method = "POST";
+	                 frm.action = "<%= ctxPath%>/t1/editReserveCar.tw";
+	                 frm.submit(); 
+	            }
+		    });
 		    
 	}); // end of $(document).ready(function(){})----------------
 	
@@ -141,18 +201,212 @@ button.btn_r{
 		}
 	}
 	
+	
+	function editMyrscar(rscno, rcdate, rctime, carname, fk_cno){
+		var chgYear = rcdate.substring(0,4);
+		 var chgMonth = rcdate.substring(5,7);
+		 var chgDay = rcdate.substring(8,10);
+		
+		 chgdate=chgYear+""+chgMonth+""+chgDay;
+
+		 // 시간 비교
+		 if(parseInt(chgdate)<parseInt(curTime)){
+				 alert("변경할 수 없습니다.");
+				 return false;
+		}
+		 else if(parseInt(chgdate)==parseInt(curTime) && parseInt(curHour)>parseInt(rctime)){
+				 alert("변경할 수 없습니다.");
+				 return false;
+		 }
+			 
+		 // 모달창 보여주기
+		 else{
+			 $("div#myModal").modal('show');
+			 $("select#selectcar").val(fk_cno);
+			 $("input[name=fk_cno]").val(fk_cno);
+			 $("input[name=rcdate]").val(rcdate);
+			 $("input[name=rscno]").val(rscno);
+			 
+			 $.ajax({
+					url: "<%= ctxPath%>/t1/reserve/checkTimeCar.tw",
+					data:{"rcdate":rcdate, "fk_cno":fk_cno},
+					dataType: "json",
+					success:function(json){
+						
+						var rctime= Array();
+						var index=0;
+						var html="";
+						$.each(json,function(index,item){
+							rctime.push(item.rctime);
+						  });
+						
+						for(var i=0;i<24;i++){
+							var index=jQuery.inArray(i,rctime); 
+							if(parseInt(chgdate)<parseInt(curTime)){
+								index=0;
+							}
+							else if(parseInt(chgdate)==parseInt(curTime) && i<parseInt(curHour)){
+								index=0;
+							}
+							if(index<0){
+								html+="<input type='checkbox' name='chktime' value='"+i+"'/>&nbsp;&nbsp;<span>"+timeText(i)+"</span><br>"
+							}
+						}
+						
+						$("td#strtime").html(html);
+					},
+					error: function(request, status, error){
+			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			  	    }
+				 });
+			 
+			 $('input#rcdate').datepicker({
+				    onSelect: function (date, datepicker) {
+				    	$("td#strtime").html("");
+	                    if (rcdate != "") {
+	                    	 $("input[name=rcdate]").val(date);
+	                    	func_chktime(date,fk_cno);
+	                    }
+	                }
+			 	
+				});
+				
+			$("select#selectcar").change(function(){
+				var fk_cno=$("select#selectcar").val();
+				var rcdate=$("input[name=rcdate]").val();
+				func_chktime(rcdate,fk_cno);
+			});
+			
+				 
+			
+		 }
+
+	}
+	
+	
+	 function timeText(val){
+			
+			var timeText="";
+			
+			if(val<10){
+				stime="0"+val;
+			}
+			else{
+				stime=val;
+			}
+			
+			ntime= parseInt(val)+1;
+			console.log((typeof(ntime)));
+			sntime= ntime.toString();
+			
+			if(ntime<10){
+				sntime="0"+sntime;
+			}
+			
+			timeText=stime+":00 ~ "+sntime+":00";
+			
+			return timeText;
+		}
+	 
+	 
+	 function func_chktime(rcdate,fk_cno){
+		 var chgYear = rcdate.substring(0,4);
+		 var chgMonth = rcdate.substring(5,7);
+		 var chgDay = rcdate.substring(8,10);
+		
+		 var chgdate=chgYear+""+chgMonth+""+chgDay;
+		 
+		 $("input[name=fk_cno]").val(fk_cno);
+		 $("input[name=rcdate]").val(rcdate);
+		
+		 $.ajax({
+				url: "<%= ctxPath%>/t1/reserve/checkTimeCar.tw",
+				data:{"rcdate":rcdate, "fk_cno":fk_cno},
+				dataType: "json",
+				success:function(json){
+					
+					var rctime= Array();
+					var index=0;
+					var html="";
+					$.each(json,function(index,item){
+						rctime.push(item.rctime);
+					  });
+					
+					for(var i=0;i<24;i++){
+						var index=jQuery.inArray(i,rctime); 
+						
+						if(parseInt(chgdate)<parseInt(curTime)){
+							index=0;
+						}
+						else if(parseInt(chgdate)==parseInt(curTime) && i<parseInt(curHour)){
+							index=0;
+						}
+						if(index<0){
+							html+="<input type='checkbox' name='chktime' value='"+i+"'/>&nbsp;&nbsp;<span>"+timeText(i)+"</span><br>"
+						}
+					}
+					
+					$("td#strtime").html(html);
+				},
+				error: function(request, status, error){
+		            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		  	    }
+			 });
+	 }
+	 
+	 
+	 
+	 
+	 function showTime(val){
+			var strTime="";
+			
+			var arrTime= new Array();
+			
+			if(val.indexOf(',')>0){
+				arrTime=val.split(',');
+			}
+			else{
+				arrTime[0]=val;
+			}
+			
+			for(var i=0;i<arrTime.length;i++){
+				strTime=strTime+timeText(arrTime[i])+", ";
+			}
+			console.log(strTime.length);
+			strTime=strTime.substring(0,strTime.length-2);
+			$("input#rctime").val(val);
+		}
+	 
+	 
+	 
+	// 카카오 지도 팝업창 오픈
+	function openMap(){
+		
+		var destination = $("input#destination").val().trim();
+		$("input#destination").val(destination);
+		if(destination==""){
+			alert("목적지를 입력하세요.");
+			return;
+		}
+		else{
+			openChild=window.open("<%= ctxPath%>/t1/searchMap.tw?searchPlace="+destination, "openChild", "left=100px, top=100px, width=800px, height=800px");
+	   		openChild.document.getElementById('keyword').value = document.getElementById('destination').value;
+	      }
+	
+	}
+	
 </script>
 
 <div id="myReserved"  style="margin-left: 80px;">
 	
-	<h3 style="margin-top: 20px !important;">나의 예약 내역</h3>
+	<h3 style="margin-top: 20px !important;">나의 예약내역</h3>
 	
 
 	<div style="float: left; margin-top: 50px;">
 		<ul class="nav nav-pills">
-			 <li><a href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
-			 <li class="active"><a href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
+			 <li class="active"><a href="<%= ctxPath%>/t1/myReservedCar.tw" >차량 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
 		</ul>
 	</div>
 
@@ -182,41 +436,46 @@ button.btn_r{
 		<table class="table" style="width: 90%;">
 			<thead>
 				<tr>
-					<th style="width: 12%">예약날짜</th>
-					<th style="width: 12%">시간</th>
-					<th style="width: 12%">차량명</th>
+					<th style="width: 10%">예약날짜</th>
+					<th style="width: 10%">시간</th>
+					<th style="width: 10%">차량명</th>
 					<th style="width: 10%">도착지</th>
 					<th style="width: 10%">탑승자</th>
 					<th style="width: 20%">목적</th>
 					<th style="width: 10%">승인여부</th>
+					<th style="width: 10%">변경</th>
 					<th style="width: 10%">취소</th>
 				</tr>
 			</thead>		
 			
 			<c:if test="${empty myCarList}">
-				<tr><td colspan="8">차량 예약 내역이 없습니다.</td></tr>
+				<tr><td colspan="9">차량 예약 내역이 없습니다.</td></tr>
 			</c:if>
 			
 			<c:if test="${not empty myCarList}">
 				<c:forEach var="myCar" items="${requestScope.myCarList}">	
 					<tr>
 						<td style="vertical-align: middle;">${myCar.rcdate}</td>
-						<c:if test="${myCar.rctime<10}">
+						<c:if test="${myCar.rctime<9}">
+						<td style="vertical-align: middle;">0${myCar.rctime}:00 ~ 0${myCar.rctime+1}:00</td>
+						</c:if>
+						<c:if test="${myCar.rctime==9}">
 						<td style="vertical-align: middle;">0${myCar.rctime}:00 ~ ${myCar.rctime+1}:00</td>
 						</c:if>
-						<c:if test="${myCar.rctime >=10}">
+						<c:if test="${myCar.rctime >9}">
 						<td style="vertical-align: middle;">${myCar.rctime}:00 ~ ${myCar.rctime+1}:00</td>
 						</c:if>
 						<td style="vertical-align: middle;">${myCar.carname}</td>
-						<td style="vertical-align: middle;">${myCar.rdestination}</td>
-						<td style="vertical-align: middle;">${myCar.rcpeople}</td>
-						<td style="vertical-align: middle;">${myCar.rcsubject}</td>
+						<td style="vertical-align: middle; text-align: left;">${myCar.rdestination}</td>
+						<td style="vertical-align: middle; text-align: left;">${myCar.rcpeople}</td>
+						<td style="vertical-align: middle; text-align: left;">${myCar.rcsubject}</td>
 						<c:if test="${myCar.cstatus == 0}">
-							<td style="vertical-align: middle;">미승인</td>
+							<td style="vertical-align: middle; ">미승인</td>
 						</c:if>
 						<c:if test="${myCar.cstatus == 1}">
 							<td style="vertical-align: middle;">승인 완료</td>
 						</c:if>
+						<td><button type="button" class='btn_r' onclick="editMyrscar('${myCar.rscno}','${myCar.rcdate}','${myCar.rctime}','${myCar.carname}','${myCar.fk_cno}')">변경</button></td>
 						<td><button type="button" class='btn_r' onclick="delMyrscar('${myCar.rscno}','${myCar.rcdate}','${myCar.rctime}','${myCar.carname}')">취소</button></td>
 					</tr>
 				</c:forEach>
@@ -229,3 +488,68 @@ button.btn_r{
 	<div align="center">${pageBar}</div>
 
 </div>
+
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">신청등록</h4>
+        </div>
+        <div class="modal-body">
+         	<form name="editCar">
+         	<table style="width: 100%;" class="table table-bordered">
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">신청날짜</td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="rcdate" name="rcdate"/></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">신청차량</td>
+         				<td style="text-align: left; padding-left: 5px;">
+	         				<select id="selectcar">
+	         					<c:forEach var="car" items="${carList}">
+	         					<option value="${car.cno}">${car.carname}</option>
+	         					</c:forEach>
+	         				</select>
+         				</td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left;">신청시간</td>
+         				<td id="strtime" style="text-align: left; padding-left: 5px;"></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left;">목적</td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="rcsubject"/></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left;">도착지</td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="destination" class="form-control" name="rdestination" style=" width: 250px; display: inline-block;"/>
+         			 	<button class="btn_normal" type="button" onclick="openMap()">검색</button></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left;">탑승자</td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="rcpeople" class="form-control" name="rcpeople"/></td>
+         			</tr>
+         		</table>
+         		<div>
+					<input type="hidden" id="fk_cno" value="" name="fk_cno"/>
+					<input type="hidden" id="rctime" value="" name="rctime"/>
+					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+					<input type="hidden" id="rscno" value="" name="rscno"/>
+				</div>
+         	</form>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        	<button type="button" id="editReserve" class="btn_normal" data-dismiss="modal">변경</button>
+            <button type="button" class="btn_r" data-dismiss="modal">취소</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  

@@ -4,8 +4,18 @@
 
 <mapper namespace="departmentHsy">
 
+	<!-- 모든 부서에 대한 정보 가져오기 -->
 	<select id="selectAllDepartment" resultType="com.t1works.groupware.hsy.model.DepartmentHsyVO">
 		select * from tbl_department
 	</select>
+	
+	<!-- 직급에 맞는 건당성과금 가져오기 -->
+	<select id="getCommissionpercase" parameterType="String" resultType="String">
+		select commissionpercase 
+		from tbl_position 
+		join (select fk_pcode from tbl_employee where employeeid=#{employeeid}) E
+		on fk_pcode=pcode
+	</select>
+	
 	
 </mapper>

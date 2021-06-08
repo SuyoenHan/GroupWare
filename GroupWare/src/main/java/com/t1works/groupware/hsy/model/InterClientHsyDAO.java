@@ -31,4 +31,7 @@ public interface InterClientHsyDAO {
 	// 특정업무에 관한 고객의 totalPage 수 알아오기
 	int getclientLisTotalPage(Map<String, String> paraMap);
 
+	// 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기
+	ClientHsyVO getInfoForSendEmailIngTodo(Map<String, String> paraMap);
+
 }

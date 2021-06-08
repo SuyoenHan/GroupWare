@@ -120,6 +120,44 @@ public interface InterMyDocumentSiaService {
 
 	// 내문서함 - 임시저장함 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_temp_detail(Map<String, String> paraMap);
+		
+	// 수신자 정보 찾기
+	ApprovalSiaVO viewMng(Map<String, String> paraMap);	
+	
+	//////////////////////////////////////////////////////////////////////
+	
+	// 내문서함 - 임시저장함 - 파일 삭제
+	int removeFile(Map<String, String> paraMap);
+	
+	// 내문서함 - 임시저장함/발신함 - 삭제버튼 클릭
+	int remove(Map<String, String> paraMap);
+	
+	// 문서번호에 따라 삭제해야할 파일 조회
+	ApprovalSiaVO getViewFile(Map<String, String> paraMap);
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭
+	int save(ApprovalSiaVO avo) throws Throwable;
+	int save_withFile(ApprovalSiaVO avo) throws Throwable;
+	
+	// 내문서함 - 임시저장함 - 일반결재 - 제출버튼 클릭
+	int submit(ApprovalSiaVO avo) throws Throwable;
+	int submit_withFile(ApprovalSiaVO avo) throws Throwable;
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 저장버튼 클릭
+	int saveSpend(ApprovalSiaVO avo) throws Throwable;
+	int saveSpend_withFile(ApprovalSiaVO avo) throws Throwable;
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	int submitSpend(ApprovalSiaVO avo);
+	int submitSpend_withFile(ApprovalSiaVO avo) throws Throwable;	
+	
+	// 내문서함 - 임시저장함 - 근태결재 - 저장버튼 클릭
+	int saveVacation(ApprovalSiaVO avo) throws Throwable;
+	int saveVacation_withFile(ApprovalSiaVO avo) throws Throwable;
+	
+	// 내문서함 - 임시저장함 - 근태결재 - 제출버튼 클릭
+	int submitVacation(ApprovalSiaVO avo) throws Throwable;
+	int submitVacation_withFile(ApprovalSiaVO avo) throws Throwable;
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -154,6 +192,15 @@ public interface InterMyDocumentSiaService {
 	
 	// 내문서함 - 수신함 - 결재완료 - 근태결재문서 한 개 상세보기
 	ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap);
+
+	
+
+	
+
+	
+
+
+	
 	
 
 }

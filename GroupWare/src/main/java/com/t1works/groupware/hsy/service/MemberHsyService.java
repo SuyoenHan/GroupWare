@@ -18,6 +18,8 @@ public class MemberHsyService implements InterMemberHsyService {
 	@Autowired 
 	private InterDepartmentHsyDAO ddao;
 	
+	@Autowired 
+	private InterTodoHsyDAO tdao;
 	
 	// 모든 부서에 대한 정보 가져오기
 	@Override
@@ -149,6 +151,50 @@ public class MemberHsyService implements InterMemberHsyService {
 		return mvoList;
 		
 	}// end of public List<MemberHsyVO> hierarchicalEmployeeList() {--------
+
+	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
+	@Override
+	public List<Map<String, String>> getBonusDate(Map<String,String> paraMap) {
+
+		List<Map<String,String>> bonusDateList= tdao.getBonusDate(paraMap);
+		return bonusDateList;
+		
+	}// end of public List<Map<String, String>> getBonusDate(String employeeid) {----
+
+	
+	// 직급에 맞는 건당성과금 가져오기
+	@Override
+	public String getCommissionpercase(String employeeid) {
+		String commissionpercase=ddao.getCommissionpercase(employeeid);
+		return commissionpercase;
+	} // end of public String getCommissionpercase(String employeeid) {------------
+
+	
+	// 야근수당 리스트에 보여줄 항목 가져오기 
+	@Override
+	public List<DoLateVO> getOverNightList(Map<String, String> paraMap) {
+		
+		List<DoLateVO> dlvoList= mdao.getOverNightList(paraMap);
+		return dlvoList;
+		
+	} // end of public List<DoLateVO> getOverNightList(String employeeid) {------
+
+	
+	// 사번에 해당하는 직원의 오늘의 근태 정보 가져오기 => 현재  병가, 반차, 연차, 경조휴가, 출장 여부 표시
+	@Override
+	public Map<String,String> getAttendanceState(String employeeid) {
+		Map<String,String> attendanceStateMap= mdao.getAttendanceState(employeeid);
+		return attendanceStateMap;
+	} // end of public List<String> getAttendanceState(String employeeid) {-------
+
+	
+	// 현재시간이 14시 이전인지 이후인지 알아오기
+	@Override
+	public int isTwoBefore() {
+
+		int n= mdao.isTwoBefore(); 
+		return n;
+	} // end of public int isTwoBefore() {-------------------
 	 
 
 	

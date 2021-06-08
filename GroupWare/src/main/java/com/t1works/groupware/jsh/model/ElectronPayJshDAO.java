@@ -193,8 +193,89 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 		return epvo;
 	}
 
+
+	
+	//2 ) 전자결재 테이블에 insert 
+	@Override
+	public int ElectricExpadd(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.ElectricExpadd",epvo);
+		return n1;
+	}
+		
+		
+		
+	// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+	@Override
+	public int expAdd(ElectronPayJshVO epvo) {
+		int n2 = sqlsession6.insert("payment_Jsh.expAdd",epvo);
+		return n2;
+		
+	}
+
+
+	// 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+	@Override
+	public int selectExpadd(ElectronPayJshVO epvo) {
+		int n3 = sqlsession6.insert("payment_Jsh.selectExpadd",epvo);
+		return n3;
+	}
+
+
+	// 파일첨부가 있는 전자결재 문서 글쓰기 insert
+	@Override
+	public int ElectricExpadd_withFile(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.ElectricExpadd_withFile",epvo);
+		return n1;
+	}
+
+
+	//임시저장함 insert-첨부파일X
+	@Override
+	public int saveExpadd(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.saveExpadd",epvo);
+		return n1;
+	}
+
+
+	//임시저장함 insert-첨부파일o
+	@Override
+	public int saveExpadd_withFile(ElectronPayJshVO epvo) {
+		int n1 = sqlsession6.insert("payment_Jsh.saveExpadd_withFile",epvo);
+		return n1;
+	}
+
+
 	
 
+
+	
+	
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//근태결재
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		//페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것)
+		@Override
+		public List<ElectronPayJshVO> vacListSearchWithPaging(Map<String, String> paraMap) {
+		List<ElectronPayJshVO> vacList = sqlsession6.selectList("payment_Jsh.vacListSearchWithPaging",paraMap);
+		return vacList;
+		}
+		
+		
+		// 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다.
+		@Override
+		public int vacGetTotalCount(Map<String, String> paraMap) {
+		int n =sqlsession6.selectOne("payment_Jsh.vacGetTotalCount", paraMap);
+		return n;
+		}
+		
+		
+		//검색어 입력시 자동글 완성하기
+		@Override
+		public List<String> vacWordSearchShow(Map<String, String> paraMap) {
+		List<String> wordList = sqlsession6.selectList("payment_Jsh.vacWordSearchShow", paraMap);
+		return wordList;
+		}
 
 
 

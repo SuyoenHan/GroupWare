@@ -72,11 +72,11 @@ public interface InterReservationOdyService {
 	// 회의실 예약 변경 시간 확인
 	List<RsRoomOdyVO> checkTimeRoom(Map<String, String> paraMap);
 
-	// 회의실 예약 변경하기
-	int edit_rsRoom(Map<String, String> paraMap);
-
 	// 사무용품 예약 변경 시간 확인
 	List<RsGoodsOdyVO> checkTimeGoods(Map<String, String> paraMap);
+
+	// 차량 예약 변경 시간 확인
+	List<RsCarOdyVO> checkTimeCar(Map<String, String> paraMap);
 
 
 
