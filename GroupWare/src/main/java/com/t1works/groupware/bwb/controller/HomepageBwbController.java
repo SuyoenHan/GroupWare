@@ -85,7 +85,7 @@ public class HomepageBwbController {
 	 }
 	 
 	 
-	// 출퇴근기록 테이블에 insert 및 select작업(출근시간)
+	 // 퇴근버튼 클릭시 출퇴근 테이블에 insert 및 select작업 및 야근테이블에 insert작업 (트랜젝션 처리)
 	 @ResponseBody
 	 @RequestMapping(value="/t1/insertSelectOuttime.tw", method= {RequestMethod.POST})
 	 public String requiredLogin_insertSelectOuttime(HttpServletRequest request, HttpServletResponse response) {
@@ -98,20 +98,23 @@ public class HomepageBwbController {
 		 paraMap.put("fk_employeeid", fk_employeeid);
 		 paraMap.put("gooutdate", gooutdate);
 		 
+		 
+		 String outtime = "";
+		 
 		 // 출퇴근테이블에 insert하기(퇴근시간)
-		 service.updateOuttime(paraMap);
+		 try {
+			outtime = service.updateOuttime(paraMap);
+		 } catch (Throwable e) {
+			e.printStackTrace();
+		 }
 
-		 // 출퇴근테이블에서 select하기(퇴근시간)
-		 String outtime = service.selectOuttime(paraMap);
-		 
-		 
 		 JSONObject jsonobj = new JSONObject();
 		 jsonobj.put("outtime", outtime);
-		 
 		 
 		 return jsonobj.toString();
 		 
 	 }// end of public String requiredLogin_insertSelectOuttime
+	
 	 
 	// 출퇴근기록 테이블에서 select작업(퇴근시간)
 	 @ResponseBody

@@ -37,7 +37,8 @@ public class LoginBwbController {
          HttpSession session = request.getSession();
          MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
          
-         if(loginuser!=null) {
+         if(loginuser!=null) { // 로그인이 성공했을 경우
+
             mav.setViewName("/bwb/homepage.gwTiles");
          }
          else {

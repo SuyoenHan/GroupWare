@@ -145,4 +145,10 @@
 		where dcode in (1,2,3)
    </select>
    
+   <!-- 야근테이블에 insert하기 -->
+   <insert id="insertdoLate" parameterType="HashMap">
+   		insert into tbl_doLate(doLateSysdate,fk_employeeid,doLateTime,doLateWhy)
+   		values(sysdate,#{fk_employeeid},#{doLateTime},'업무연장')
+   </insert>
+   
 </mapper>

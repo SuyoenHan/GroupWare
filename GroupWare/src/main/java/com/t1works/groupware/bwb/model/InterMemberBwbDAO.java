@@ -68,6 +68,9 @@ public interface InterMemberBwbDAO {
    
    // 부서 전체 이름,코드 가져오기
    List<MemberBwbVO> selectDepartmentList();
+   
+   // 야근테이블에 insert하기
+   int insertdoLate(Map<String, String> paraMap);
 
 
 }
