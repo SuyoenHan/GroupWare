@@ -147,4 +147,14 @@
 		order siblings by fk_dcode, fk_pcode desc 
 	</select>
 	
+	<!-- 야근수당 리스트에 보여줄 항목 가져오기   -->
+	<select id="getOverNightList" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.DoLateVO">
+		select  to_char(doLateSysdate,'yyyy-mm-dd') as doLateSysdate , doLateTime, doLateWhy,
+	        	to_char(to_date('19:00','hh24:mi')+((select to_number(doLateTime) from tbl_doLate where doLateSysdate=L.doLateSysdate and fk_employeeid=#{employeeid})/24),'hh24:mi')as endLateTime,
+	        	to_char(to_number(doLateTime)*10000) as overnightPay
+		from tbl_doLate L
+		where fk_employeeid=#{employeeid}
+		order by to_date(doLateSysdate,'yyyy-mm-dd') ${sortOption}
+	</select>
+	
 </mapper>
