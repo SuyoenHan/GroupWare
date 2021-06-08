@@ -171,17 +171,17 @@
 	<!-- 사번에 해당하는 직원의 오늘의 근태 정보 가져오기 => 현재  병가, 반차, 연차, 경조휴가, 출장 여부 표시 -->
 	<select id="getAttendanceState" parameterType="String" resultMap="attendanceStateMap">
 		select (select to_char(count(slstart)) from tbl_approval join tbl_sickleave on fk_ano=ano 
-		        where fk_employeeid= #{employeeid} and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between slstart and slstart+sldates-1) as sickleave
+		        where fk_employeeid= #{employeeid} and astatus='3' and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between slstart and slstart+sldates-1) as sickleave
 			  ,(select to_char(count(afdate)) from tbl_approval join tbl_afternoonoff on fk_ano=ano 
-			    where fk_employeeid= #{employeeid} and to_char(sysdate,'yy/mm/dd')= to_char(afdate,'yy/mm/dd') and afdan=1) as afternoonoff1
+			    where fk_employeeid= #{employeeid} and astatus='3' and to_char(sysdate,'yy/mm/dd')= to_char(afdate,'yy/mm/dd') and afdan=1) as afternoonoff1
 			  ,(select to_char(count(afdate)) from tbl_approval join tbl_afternoonoff on fk_ano=ano 
-			    where fk_employeeid= #{employeeid} and to_char(sysdate,'yy/mm/dd')= to_char(afdate,'yy/mm/dd') and afdan=2) as afternoonoff2
+			    where fk_employeeid= #{employeeid} and astatus='3' and to_char(sysdate,'yy/mm/dd')= to_char(afdate,'yy/mm/dd') and afdan=2) as afternoonoff2
 			  ,(select to_char(count(daystart)) from tbl_approval join tbl_dayoff on fk_ano=ano 
-			    where fk_employeeid= #{employeeid} and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between daystart and daystart+daydates-1) as dayoff
+			    where fk_employeeid= #{employeeid} and astatus='3' and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between daystart and daystart+daydates-1) as dayoff
 			  ,(select to_char(count(congstart)) from tbl_approval join tbl_congoff on fk_ano=ano 
-			    where fk_employeeid= #{employeeid} and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between congstart and congstart+congdates-1) as congoff
+			    where fk_employeeid= #{employeeid} and astatus='3' and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between congstart and congstart+congdates-1) as congoff
 			  , (select to_char(count(bustart)) from tbl_approval join tbl_businesstrip on fk_ano=ano 
-			    where fk_employeeid= #{employeeid} and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between bustart and bustart+budates-1) as businesstrip
+			    where fk_employeeid= #{employeeid} and astatus='3' and to_date(to_char(sysdate,'yy/mm/dd'),'yy/mm/dd') between bustart and bustart+budates-1) as businesstrip
 		from dual
 	</select>
 	
