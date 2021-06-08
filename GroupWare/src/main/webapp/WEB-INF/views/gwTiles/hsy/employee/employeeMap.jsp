@@ -131,7 +131,7 @@
 		background-color: #003d66;
 	}
 	
-	table#oneEmployeeTable td {padding-left: 25px;}
+	table#oneEmployeeTable td {padding-left: 15px;}
 		
 	button.sendMail{
 		cursor:pointer;
@@ -148,6 +148,26 @@
 		color: #003d66;
 		border: solid 1px #003d66;
 	}
+	
+	span.attendanceSeq1{background-color: #b30000;}
+	
+	span.attendanceSeq2{background-color: #008060;}
+	
+	span.attendanceSeq{
+		margin-left: 10px;
+		color: #fff;
+		font-weight: bold;
+		display: inline-block;
+		width: 100px;
+		height: 30px;
+		font-size: 14pt;
+		text-align: center;
+		padding-top: 4px;
+		border-radius: 8%;
+		position: relative;
+		top: 3px;
+	}
+	
 </style>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -241,6 +261,7 @@
 			location.href="<%=ctxPath%>/t1/new_mail.tw?receiverEmail="+receiverEmail;
 		});
 		
+		
 	}); // end of $(document).ready(function(){----------
 	
 		
@@ -297,13 +318,20 @@
 					   		  	"</td>"+
 					   		  "</tr>"+
 		   					  "<tr>"+
-		   					  	"<th>사번</th>"+
-		   					 	"<td>"+json.employeeid+"</td>"+
+		   					  	"<th style='width: 70px;'>사번</th>"+
+		   					 	"<td style='width: 80px;'>"+json.employeeid+"</td>"+
 		   						"<th>이메일</th>"+
 		   						"<td colspan='3'>"+
 		   							"<span>"+json.email+"</span>"+
-		   							"<button type='button' class='sendMail'>메일보내기</button>"+
-		   						"</td>"+
+		   							"<button type='button' class='sendMail'>메일보내기</button>";
+	   							if(json.attendanceSeq!="근무 중"){
+	   								html+="<span class='attendanceSeq attendanceSeq1'>"+json.attendanceSeq+"</button>";
+	   							}
+	   							else{
+	   								html+="<span class='attendanceSeq attendanceSeq2'>"+json.attendanceSeq+"</button>";
+	   							}
+		   							
+		   				html+=  "</td>"+
 		   					  "</tr>"+
 		   					  "<tr>"+
 		   						"<th>직원명</th>"+
