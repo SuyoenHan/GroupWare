@@ -11,10 +11,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- JQuery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<!-- JavaScript -->
-<script src="<%=ctxPath%>/resources/js/kdn/jquery.ssd-vertical-navigation.min.js"></script>
-<script src="<%=ctxPath%>/resources/js/kdn/app.js"></script>
-<script src="<%=ctxPath%>/resources/js/kdn/header_sideinfo.js"></script>
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/gwStyle.css" />
 <link href="<%=ctxPath%>/resources/css/kdn/app.css" rel="stylesheet" type="text/css">
@@ -23,7 +19,6 @@
 <!-- Bootstrap -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<<<<<<< HEAD
 <!-- JavaScript -->
 <script src="<%=ctxPath%>/resources/js/kdn/jquery.ssd-vertical-navigation.min.js"></script>
 <script src="<%=ctxPath%>/resources/js/kdn/app.js"></script>
@@ -38,8 +33,6 @@
 <script type="text/javascript" src="<%= ctxPath%>/resources/js/jquery.form.min.js"></script>
   
 
-=======
->>>>>>> refs/heads/valentinakim
 </head>
 <body>
 <div id="body-container">
