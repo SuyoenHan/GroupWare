@@ -484,7 +484,7 @@
 						  from tbl_employee 
 						 )e
 						 on a.fk_employeeid = e.employeeid
-					     where anocode= 3
+					     where anocode= 3 and apaper =0
 				 			   and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			    <if test="searchType neq 'name'">
 			     order by  a.ano desc
@@ -497,30 +497,30 @@
 			select  count(*) 
 			from tbl_approval  a left join tbl_vacation v
 			on a.ano = v.fk_ano
-			where anocode= '3'
+			where anocode= '3' and apaper = 0
 				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
 			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			     </if>
 			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
-			     	 	and vcatname= '#{searchCategory}'
+			     	 	and vno= '#{searchCategory}'
 			     </if>
 			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
-			     	 	and vcatname= '#{searchCategory}'
+			     	 	and vno= '#{searchCategory}'
 			     </if>
 			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
-				     	 and vcatname= '#{searchCategory}'
+				     	 and vno= '#{searchCategory}'
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
 		</select>
 
 		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
 		<select id="vacListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select rno ,ano ,vcatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate
+			select rno ,ano ,vno,vcatname, atitle, name ,dname,to_char(asdate,'yyyy-mm-dd') as asdate ,apaper
 				  , fileName, orgFilename, fileSize   
 			from
 			(
 			select row_number() over(order by a.ano desc) AS rno  
-			      ,a.ano ,vcatname, atitle, name ,dname,asdate    
+			      ,a.ano ,vno ,vcatname, atitle, name ,dname,asdate ,apaper   
 			       , fileName, orgFilename, fileSize 
 			from tbl_approval a left join tbl_vacation v
 			on a.ano = v.fk_ano
@@ -534,15 +534,15 @@
 			from tbl_department
 			)d
 			on e.fk_dcode = d.dcode
-			where anocode= 3
+			where anocode= 3 and apaper = 0 
 				 <if test=' searchCategory == "" and searchWord != "" '>
 			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			     </if>
 			      <if test=' searchCategory != ""    and searchWord == "" '>
-			     	 	and vcatname= '#{searchCategory}'
+			     	 	and vno= #{searchCategory}
 			     </if>
 			     <if test=' searchCategory != ""   and searchWord != "" '>
-				     	 and vcatname= '#{searchCategory}'
+				     	 and vno= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
 				 ) V
