@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.t1works.groupware.hsy.model.DepartmentHsyVO;
+import com.t1works.groupware.hsy.model.DoLateVO;
 import com.t1works.groupware.hsy.model.MemberHsyVO;
 
 public interface InterMemberHsyService {
@@ -39,10 +40,13 @@ public interface InterMemberHsyService {
 	List<MemberHsyVO> hierarchicalEmployeeList();
 
 	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
-	List<Map<String, String>> getBonusDate(String employeeid);
+	List<Map<String, String>> getBonusDate(Map<String, String> paraMap);
 
 	// 직급에 맞는 건당성과금 가져오기
 	String getCommissionpercase(String employeeid);
+
+	// 야근수당 리스트에 보여줄 항목 가져오기 
+	List<DoLateVO> getOverNightList(Map<String, String> paraMap);
 
 	
 
