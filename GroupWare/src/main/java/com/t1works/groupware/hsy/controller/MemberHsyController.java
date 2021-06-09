@@ -652,4 +652,31 @@ public class MemberHsyController {
 		
 	} // end of public String getOverNightList(HttpServletRequest request) {------
 	
+	
+	// 그룹웨어 홈페이지 퀵메뉴에 필요한 정보 가져오는 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/quickMenuInfo.tw", method= {RequestMethod.POST})
+	public String quickMenuInfo(HttpServletRequest request) {
+	
+		String employeeid= request.getParameter("employeeid");
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		
+		// 1) 특정 직원의 읽지않은 메일수, 결재중인 문서 수, 14일 이내에 결재완료된 문서 수 가져오기
+		Map<String,Integer> quickMenuInfoMap= service.getquickMenuInfo(paraMap);
+		
+		JsonObject jsonObj= new JsonObject();
+		jsonObj.addProperty("notReadCnt", quickMenuInfoMap.get("notReadCnt"));
+		jsonObj.addProperty("ingDocuCnt", quickMenuInfoMap.get("ingDocuCnt"));
+		jsonObj.addProperty("doneDocuCnt", quickMenuInfoMap.get("doneDocuCnt"));
+		
+		return new Gson().toJson(jsonObj);
+		
+	} // end of public String quickMenuInfo(HttpServletRequest request) {---------------------
+	
+	
+	
+	
+	
+	
 }
