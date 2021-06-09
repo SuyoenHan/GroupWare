@@ -9,13 +9,14 @@
 
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style>
+
  div#gwContent{left: 80px;}
  
  div#calendarO{
  	border: solid 1px blue;
- 	margin-top: 50px;
- 	width: 500px;
- 	height: 800px;
+ 	width: 480px;
+ 	margin: 10px 0px 50px 40px;
+ 	height: 550px;
  }
  
  /* 달력 css */
@@ -108,6 +109,10 @@
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+<!-- 퀵메뉴에 쓰이는 차트 script -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+ 
 <script type="text/javascript">
    $(document).ready(function(){
       
@@ -493,12 +498,41 @@
            }
 		});
    }
+	
+	
+   <!-- 퀵메뉴에 쓰이는 차트 script 시작 (한수연) --->
+   
+   google.charts.load("current", {packages:["corechart"]});
+   google.charts.setOnLoadCallback(drawChart);
+   function drawChart() {
+     var data = google.visualization.arrayToDataTable([
+       ['Task', 'Hours per Day'],
+       ['Work',     11],
+       ['Eat',      2],
+       ['Commute',  2],
+       ['Watch TV', 2],
+       ['Sleep',    7]
+     ]);
+
+     var options = {
+       title: '<span style="padding-left: 100px;">My Quick Menu</span>',
+       pieHole: 0.4,
+     };
+
+     var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+     chart.draw(data, options);
+   }
+   
+   <!-- 퀵메뉴에 쓰이는 차트 script 끝 (한수연) -->
+	
 </script>
 
 
 
+
 <div id="content">
-  <div id="myInfo">
+  
+  <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
   	 <img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:90px; height:90px; margin-left:80px;">
      <div id="nameDep" style="border-bottom:solid 1px black; text-align:center; margin-top:10px;">
      <span id="name">${loginuser.name}
@@ -568,15 +602,41 @@
   
   
   
+  <%-- =================== 백원빈 시작 =================== --%>
+  <div id="myStatic" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 450px; height: 280px; ">
+  	백원빈 파트 (내통계)
+  </div>
+  <%-- =================== 백원빈 시작 =================== --%>
+  
+  
+  <%-- =================== 한수연 시작 =================== --%>
+  <div id="quickMenu" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 600px; height: 280px;">
+  	<div id="donutchart" style="width: 700px; height: 280px; position: relative; left: -100px;"></div>
+  </div>
+  <%-- =================== 한수연 끝 =================== --%>
+  
+  
+  
+  <!-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div -->
+  <div style="float: left; width: 800px;"></div>
+  
+  
+  
+  <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
+  	다님님 파트(공지사항)
+  </div>
+  
   <%-- start of div(calendar) 오다윤 --%>
-  <div id="calendarO">
-			<div id="calendar" style="width: 400px; " ></div>
-			<div id="todayCal" style="width: 400px; margin-top:10px; padding-left: 10px;"></div>
-			<div id="infoCalendar" style="width: 400px; margin-top:10px; padding-left: 10px;"></div>
+  <div id="calendarO" style="float: right; position: relative; left: -290px;">
+		<div id="calendar"></div>
+		<div id="todayCal" style="margin-top:10px; padding-left: 10px;"></div>
+		<div id="infoCalendar" style="margin-top:10px; padding-left: 10px;"></div>
   </div>
 
   <%-- end of div(calendar) 오다윤 --%>
   
- 
+  <div id="weather" style="border: solid 1px blue; float: left; margin: 10px 0px 50px 40px; width: 580px; height: 230px; ">
+ 	 다윤님 파트 (날씨)
+  </div>
   
 </div>
