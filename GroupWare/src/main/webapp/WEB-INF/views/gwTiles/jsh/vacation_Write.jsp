@@ -141,13 +141,15 @@ height: 100%;
 						   "<select name='afdan' id='afdan'>"+
 						   "<option value='1'>오전</option>"+
 						   "<option value='2'>오후</option>"+
-						   "</select></td>";
+						   "</select>"+
+						   "<span>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
 						
 				}
 				else if(vcatname =="연차"){
 					$("tr#changeVcat").show();
 					html+="<th>요청기간</th>"+
-					  "<td colspan='3'><input type='date' name='daystart' id='daystart'/>"+"&nbsp;~&nbsp;"+"<input type='date' name='dayend' id='dayend'/></td>";
+					  "<td colspan='3'><input type='date' name='daystart' id='daystart'/>"+"&nbsp;~&nbsp;"+"<input type='date' name='dayend' id='dayend'/>"+
+					  "<span>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
 					
 						
 				}
@@ -173,7 +175,9 @@ height: 100%;
 				else if(vcatname =="추가근무"){
 					$("tr#changeVcat").show();
 					html+="<th>요청시간</th>"+
-						  "<td td colspan='3'><input type='number' min='1' max='10' name ='ewdate' id='ewdate'/>시간</td>"
+					
+						  "<td td colspan='3'>"+
+						  "<input type='date' name='ewdate' id= 'ewdate'/>&nbsp;<input type='number' min='1' max='10' name ='ewhours' id='ewhours'/>시간</td>"
 					
 						
 				}
@@ -200,8 +204,60 @@ height: 100%;
 			
 	    // 문서 제출하기
 	    $("button#insertWrite").click(function(){
-		
-		 
+	  
+	    var leftOffCnt = Number(${requestScope.leftOffCnt}); //남은 휴가수 
+	   	
+	   	var afdate = $("input#afdate").val(); // 반차
+	   	var daystart  = $("input#daystart").val(); // 연차시작
+	   	var dayend  = $("input#dayend").val(); // 연차끝
+	   	
+	   	var afdates = 0; //반차사용일자변수
+	   	var daydates = 0;  //연차사용일자변수
+	   	
+	   	var date = new Date();
+	   	var year = date.getFullYear();
+	   	var month = date.getMonth()+1;
+	   	var day = date.getDay();
+	   	if(month <10){
+	   		month = '0'+month;
+	   	}
+	   	if(day <10){
+	   		day = '0'+day;
+	   	}
+	   	var today = (year+"-"+month+"-"+day);
+	   	
+	   	console.log(today);
+	   //	console.log(afdate);
+	   
+	   //	console.log(leftOffCnt);
+	   //	console.log(afdates);
+	   	
+	   //	console.log(leftOffCnt);
+		 /*	var aa = $("input#slstart").val();
+			console.log(aa);
+			//a = 2020-06-10 2020-06-30
+			//b = 2020-06-15 2020-07-03 12
+			
+			var c = Number(substring(a,5,7)); // 06
+			d substring(a,5,7); // 10 
+			f substring(b,5,7); // 06
+			g substring(b,5,7); // 15
+			
+			if(c==f){
+				var k = g-d; // 사용일수
+				if(남은연차 <k){
+					alert("휴가가 남은연차보다 큽니다");
+					return false
+				}
+			}
+			else if(c > f){ 6월시작 4월끝
+				alert("날짜를 ");
+			return false
+			}
+			*/
+			
+			
+			
 		    var vcatname ;
 			$("input[name=vcatname]:checked").each(function(index,item){			
 			      vcatname = $(this).val();
@@ -215,47 +271,96 @@ height: 100%;
 	         var atitleVal = $("input#atitle").val().trim();
 	         if(atitleVal == "") {
 	            alert("글제목을 입력하세요!!");
-	            return;
+	            return false;
 	         }
+	         
+	       
 	         
 		    // 병가 요청기간 유효성 검사
 		    if(vcatname =="병가"){     
 		         var slstart = $("input#slstart").val().trim();
 		         var slend = $("input#slend").val().trim();
-		         if(slstart == "" && slend == "" ) {
+		         if(slstart == "" || slend == "" ) {
 		            alert("요청기간을 입력하세요!!");
-		            return;
+		            return false;
+		         }
+		         else if(slstart == slend || slstart > slend){
+		        	 alert("요청기간을 올바르게 입력하세요!!");
+			         return false;
 		         }
 	         
 		    }
 		    else if(vcatname =="반차"){
 		         // 반차 유효성 검사
-		         var afdate = $("input#afdate").val().trim();
-		         var afdan = $("select#afdan").val().trim();
-		         if(afdate == "" && afdan == null ) {
+		         var afdate = $("input#afdate").val();
+		         var afdan = $("select#afdan").val();
+		         if(afdate == "" || afdan == "" ) {
 		            alert("요청기간을 입력하세요!!");
 		            return;
+		         }
+		         else{
+		        	 
+		        	 	if(afdate){
+		        	   		afdates = 0.5;
+		        	   		leftOffCnt = leftOffCnt - afdates;
+		        	   	}
+		        	   	
+		        	   	if(leftOffCnt<afdates){
+		        	   		alert("남은 휴가수를 초과하였습니다. 남은 일수 확인 후 다시 신청하세요.");
+		        	   		return false;
+		        	   	}
+		        	   	else{
+		        	   		alert("남은 휴가일수는  "+ leftOffCnt+"일 입니다.");
+		        	   		
+		        	   	}
+		        	 
 		         }
 	         
 		    }
 		    else if(vcatname =="연차"){
 		         // 연차 유효성 검사
-		         var daystart = $("input#daystart").val().trim();
-		         var dayend = $("input#dayend").val().trim();
-		         if(daystart == "" && dayend == "" ) {
+		         var daystart = $("input#daystart").val();
+		         var dayend = $("input#dayend").val();
+		         if(daystart == "" || dayend == "" ) {
 		            alert("요청기간을 입력하세요!!");
-		            return;
+		            return false;
                    }
+		         else if(daystart == dayend || daystart > dayend){
+		        	 alert("요청기간을 올바르게 입력하세요!!");
+			         return false;
+		         }
+		         else{
+		        	 
+		        	 daydates = (dayend.substr(8,10)) - (daystart.substr(8,10));
+		        	 leftOffCnt = leftOffCnt - daydates;
+		        	 
+	        		if(leftOffCnt<daydates){
+	        	   		alert("남은 휴가수를 초과하였습니다. 남은 일수 확인 후 다시 신청하세요.");
+	        	   		return false;
+	        	   	}
+	        	   	else{
+	        	   		alert("남은 휴가일수는  "+leftOffCnt+"일 입니다.");
+	        	   	}
+		        	 
+		        	 
+		        	 
+		         }
+		         
+		         
 		    }
 		    else if(vcatname =="경조휴가"){
 		         // 경조휴가 유효성 검사
 		         var congstart = $("input#congstart").val().trim();
 		         var congend = $("input#congend").val().trim();
-		            if(congstart == "" && congend == "" ) {
+		            if(congstart == ""|| congend == "" ) {
 		            alert("요청기간을 입력하세요!!");
-		            return;
+		            return false;
 		         
 		        }
+	            else if(congstart == congend || congstart > congend){
+		        	 alert("요청기간을 올바르게 입력하세요!!");
+			         return false;
+		         }
 		    }
 		    else if(vcatname =="출장"){
 		         // 출장 유효성 검사
@@ -263,19 +368,24 @@ height: 100%;
 		         var buend = $("input#buend").val().trim();
 		         var buplace = $("input#buplace").val().trim();
 		        
-		         if(bustart == "" && buend == ""  ) {
+		         if(bustart == "" || buend == ""  ) {
 		            alert("요청기간을 입력하세요!!");
-		            return;
+		            return false;
+		         }
+		         else if(bustart == buend || bustart > buend){
+		        	 alert("요청기간을 올바르게 입력하세요!!");
+			         return false;
 		         }
 		         else if( buplace == ""){
 		        	 alert("출장지를 입력하세요!!");
-			            return;
+			          return false;
 		         }
 		    }
 		    else if(vcatname =="추가근무"){
 		         // 추가근무 유효성 검사
 		         var ewdate = $("input#ewdate").val().trim();
-		         if(ewdate == ""  ) {
+		         var ewhours = $("input#ewhours").val().trim();
+		         if(ewdate == "" || ewhours == ""  ) {
 		            alert("요청시간을 입력하세요!!");
 		            return;
 		         }
@@ -335,7 +445,7 @@ height: 100%;
 	         var frm = document.writeGFrm;
 	         frm.method = "POST";
 	         frm.action = "<%= ctxPath%>/t1/vacation_WriteEnd.tw";
-	         frm.submit();   
+	         //frm.submit();   
 	         
 		  }
 		  else{
@@ -344,6 +454,12 @@ height: 100%;
 		  }
 	  });	
 		
+			
+			
+			
+			
+			
+			
 	  //문서 임시저장하기
 	  $("button#saveWrite").click(function(){
 		
