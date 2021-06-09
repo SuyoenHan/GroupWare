@@ -6,6 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.t1works.groupware.ody.model.CarOdyVO;
 import com.t1works.groupware.ody.model.GoodsOdyVO;
@@ -158,6 +161,27 @@ public class ReservationOdyService implements InterReservationOdyService {
 	public List<CarOdyVO> showMyCarListSearchWithPaging(Map<String, String> paraMap) {
 		List<CarOdyVO> myCarList = rdao.showMyCarListSearchWithPaging(paraMap);
 		return myCarList;
+	}
+
+	// 회의실 예약 변경시 예약 가능 시간 리스트
+	@Override
+	public List<RsRoomOdyVO> checkTimeRoom(Map<String, String> paraMap) {
+		List<RsRoomOdyVO>  roomTimeList = rdao.checkTimeRoom(paraMap);
+		return roomTimeList;
+	}
+
+	// 사무용품 예약변경 시간 확인
+	@Override
+	public List<RsGoodsOdyVO> checkTimeGoods(Map<String, String> paraMap) {
+		List<RsGoodsOdyVO> goodsTimeList = rdao.checkTimeGoods(paraMap);
+		return goodsTimeList;
+	}
+
+	// 차량 예약 변경 시간 확인
+	@Override
+	public List<RsCarOdyVO> checkTimeCar(Map<String, String> paraMap) {
+		List<RsCarOdyVO> carTimeList = rdao.checkTimeCar(paraMap);
+		return carTimeList;
 	}
 
 

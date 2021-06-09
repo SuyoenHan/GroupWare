@@ -1,5 +1,6 @@
 package com.t1works.groupware.bwb.controller;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
@@ -17,14 +18,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.t1works.groupware.bwb.model.CarGoodsBwbVO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.model.ProductBwbVO;
 import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.bwb.service.InterMemberBwbService;
 import com.t1works.groupware.bwb.service.InterProductBwbService;
 import com.t1works.groupware.common.AES256;
+import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.common.Sha256;
 import com.t1works.groupware.hsy.model.DepartmentHsyVO;
 import com.t1works.groupware.hsy.model.MemberHsyVO;
@@ -48,6 +53,8 @@ public class MemberBwbController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterProductBwbService service4;
 	 
+	@Autowired
+	private FileManager fileManager;
 	
 	// 인사부장- 업무관리(인사관리) 매핑 주소
 	@RequestMapping(value="/t1/personnelManage.tw")        // 로그인이 필요한 url
@@ -179,20 +186,8 @@ public class MemberBwbController {
 	public String updateOneInfo(MemberBwbVO mvo) {
 		
 		// serialize()한 데이터값 뽑아오기
-		String pname = mvo.getPname();
-		String dname = mvo.getDname();
 		String cmobile = mvo.getCmobile();
 		String mobile = mvo.getMobile();
-		
-		Map<String,String> paraMap = new HashMap<>();
-		
-		paraMap.put("pname", pname);
-		paraMap.put("dname", dname);
-		
-		// pname과 dname을 통해 pcode,dcode 가져오기.
-		Map<String,String> PDMap  = service2.selectPDcode(paraMap);
-		mvo.setFk_pcode(PDMap.get("fk_pcode")); 
-		mvo.setFk_dcode(PDMap.get("fk_dcode"));
 		
 		String[] cmobileArr = cmobile.split("-");
 		String[] mobileArr = mobile.split("-");
@@ -257,17 +252,18 @@ public class MemberBwbController {
 		
 	}// end of public String requiredLogin_selectDuty(HttpServletRequest request,HttpServletResponse response) {
 	
-	// 직원정보등록하기 ==> 추후 ajax이용할때, 코드 변경예정...
+	
+	// 직원정보등록하기(파일첨부가 없는)
 	@ResponseBody
-	@RequestMapping(value="/t1/registerOne.tw")
-	public String registerOne(HttpServletRequest request, MemberBwbVO mvo) {
+	@RequestMapping(value="/t1/registerOne_noAttach.tw")
+	public String registerOne_noAttach(HttpServletRequest request, MemberBwbVO mvo) {
 		
 		
 		String jubun1 = request.getParameter("jubun1");
 		String jubun2 = request.getParameter("jubun2");
 		
 		String jubun = jubun1+jubun2;
-		
+
 		mvo.setJubun(jubun);
 		mvo.setPasswd(jubun1);
 		
@@ -289,8 +285,93 @@ public class MemberBwbController {
 		// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
 		String managerid = service2.selectMangerid(dcode);
 		mvo.setManagerid(managerid);
-		
 
+		int n = service2.registerOne(mvo);
+
+		JSONObject jsonObj = new JSONObject();
+		
+		jsonObj.put("n", n);
+			
+		return jsonObj.toString();
+		
+	}// end of public String registerOne
+	
+	
+	
+	
+	// 직원정보등록하기(파일첨부가 있는)
+	@ResponseBody
+	@RequestMapping(value="/t1/registerOne_withAttach.tw")
+	public String registerOne_withAttach(MultipartHttpServletRequest mrequest, MemberBwbVO mvo) {
+		
+		
+		String jubun1 = mrequest.getParameter("jubun1");
+		String jubun2 = mrequest.getParameter("jubun2");
+		
+		String jubun = jubun1+jubun2;
+		
+		mvo.setJubun(jubun);
+		mvo.setPasswd(jubun1);
+		
+		String mobile1 = mrequest.getParameter("mobile1");
+		String mobile2 = mrequest.getParameter("mobile2");
+		String mobile3 = mrequest.getParameter("mobile3");
+		
+		String mobile = mobile1+mobile2+mobile3;
+		mvo.setMobile(mobile);
+		
+		String cmobile1 = mrequest.getParameter("cmobile1");
+		String cmobile2 = mrequest.getParameter("cmobile2");
+		String cmobile3 = mrequest.getParameter("cmobile3");
+		
+		String cmobile = cmobile1+cmobile2+cmobile3;
+		mvo.setCmobile(cmobile);
+		
+		String dcode = mrequest.getParameter("fk_dcode");
+		// 등록한 직원의 fk_dcode를 통해 managerid 알아오기
+		String managerid = service2.selectMangerid(dcode);
+		mvo.setManagerid(managerid);
+		
+		
+		MultipartFile attach = mvo.getAttach(); // 컬럼명X
+		
+		if(!attach.isEmpty()) { // 첨부파일이 있을경우
+			
+			HttpSession session = mrequest.getSession();
+			// was의 절대경로
+			String root = session.getServletContext().getRealPath("/");
+			// String root = "C:/Users/BAEK/git/GroupWare/GroupWare/src/main/webapp";
+			// 첨부파일이 저장될 was의 폴더
+			// String path = root+"resources"+File.separator+"files";
+			String path = root+"resources"+File.separator+"images"+File.separator+"bwb";
+			
+			String newFileName = "";
+	        // WAS(톰캣)의 디스크에 저장될 파일명 
+	           
+            byte[] bytes = null;
+            // 첨부파일의 내용물을 담는 것  
+           
+            long fileSize = 0;
+	        // 첨부파일의 크기 
+			
+            try {
+	            bytes = attach.getBytes();
+	            // 첨부파일의 내용물을 읽어오는 것 
+	            
+	            newFileName = fileManager.doFileUpload(bytes, attach.getOriginalFilename(), path); 
+	            // 첨부되어진 파일을 업로드 하도록 하는 것이다. 
+	            
+	            mvo.setFileName(newFileName);
+	           
+	            mvo.setOrgFilename(attach.getOriginalFilename());
+	            
+	            fileSize= attach.getSize();
+	            mvo.setFileSize(String.valueOf(fileSize));
+	            
+            } catch(Exception e) {
+	              e.printStackTrace();
+            }
+		}
 		
 		int n = service2.registerOne(mvo);
 		
@@ -301,7 +382,7 @@ public class MemberBwbController {
 			
 		return jsonObj.toString();
 		
-	}
+	}// end of public String registerOne
 	
 	// 마이페이지 맵핑
 	@RequestMapping(value="/t1/mypage.tw")
@@ -1097,8 +1178,8 @@ public class MemberBwbController {
 	
 	
 	
-	// 사장 로그인시 - 전체실적현황
-	@RequestMapping(value="/t1/companyPerformance.tw")
+	// 사장 로그인시 - 부서별실적현황 맵핑
+	@RequestMapping(value="/t1/companyPerformance/departmentPerformance.tw")
 	public ModelAndView requiredLogin_companyPerformance(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		String dcode = "";
@@ -1110,7 +1191,7 @@ public class MemberBwbController {
 		
 		
 		
-		mav.setViewName("bwb/todo/companyPerformance.gwTiles");
+		mav.setViewName("bwb/todo/companyPerformance1.gwTiles");
 		
 		return mav;
 	}
@@ -1156,5 +1237,138 @@ public class MemberBwbController {
 		
 	} // end of public String selectPerformance(HttpServletRequest request) {
 
+	
+	// 사장 로그인시-회사실적현황
+	@RequestMapping(value="/t1/companyPerformance.tw")
+	public ModelAndView requiredLogin_companyPerformance2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String dcode = "";
+
+		// 전체부서의 실적의 가장 예전 날짜, 최근 날짜 가지고 오기
+		Map<String,String> paraMap = service4.selectOldNewDate(dcode);
+		
+		mav.addObject("paraMap", paraMap);
+		
+		
+		mav.setViewName("bwb/todo/companyPerformance2.gwTiles");
+		
+		return mav;
+	} // end of public ModelAndView requiredLogin_companyPerformance2
+	
+
+	
+	@ResponseBody
+	@RequestMapping(value="/t1/selectCoPerformance.tw",produces="text/plain;charset=UTF-8")
+	public String selectCoPerformance(HttpServletRequest request) {
+		
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+		// 넘어온 날짜 배열로 만들어주기.
+		String[] performanceWhenArr = performanceWhenArres.split(","); 
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("firstDate", performanceWhenArr[2]);
+		
+		// 부서 전체 이름,코드 가져오기
+		List<MemberBwbVO> departmentList = service2.selectDepartmentList();
+		
+		JSONArray jsonArr = new JSONArray();
+		for(MemberBwbVO dvo : departmentList) {
+			String dcode = dvo.getFk_dcode();
+			paraMap.put("dcode", dcode);
+			JSONObject jsonObj = new JSONObject();
+			
+			// chart에 들어가기 위한 모든 부서 name값,3개월 각각 건수,합구하기
+			Map<String,String> resultMap = service4.selectAllDepCntPerformance(paraMap);
+			jsonObj.put("dname", dvo.getDname());
+			jsonObj.put("nowCnt", resultMap.get("nowCnt"));
+			jsonObj.put("prevCnt", resultMap.get("prevCnt"));
+			jsonObj.put("pprevCnt", resultMap.get("pprevCnt"));
+			jsonObj.put("totalCnt", resultMap.get("totalCnt"));
+			jsonArr.put(jsonObj);
+			
+		}
+
+		return jsonArr.toString();
+	}// end of public String selectCoPerformance(HttpServletRequest request) {
+	
+	// 해당 월의 부서 3개 평균건수 구해오기(Ajax처리)
+	@ResponseBody
+	@RequestMapping(value="/t1/selectAvgCnt.tw",produces="text/plain;charset=UTF-8")
+	public String selectAvgCnt(HttpServletRequest request) {
+	
+		String performanceWhenArres = request.getParameter("performanceWhenArres");
+		
+		String[] performanceWhenArr = performanceWhenArres.split(",");
+			
+		JSONArray jsonArr = new JSONArray();
+		
+		for(int i=0; i<performanceWhenArr.length; i++) {
+			JSONObject jsonObj = new JSONObject();
+			
+			String selectedMonth = performanceWhenArr[i];
+			
+			// 해당 월의 부서 3개 평균건수 구해오기
+			String avgCnt = service4.selectAvgCnt(selectedMonth);
+			jsonObj.put("avgCnt", avgCnt);
+			jsonArr.put(jsonObj);
+		}
+			
+		return jsonArr.toString();
+	}// end of public String selectAvgCnt(HttpServletRequest request) {
+	
+	// 총무부장 - 예약관리
+	@RequestMapping(value="/t1/rentalManage.tw")
+	public ModelAndView requiredLogin_rentalManage(HttpServletRequest request, HttpServletResponse response,ModelAndView mav) {
+		
+		// 미승인된 차량예약정보 가져오기
+		List<CarGoodsBwbVO> carList =service2.selectCarRental();
+		mav.addObject("carList", carList);
+		
+		// 미승인된 사무용품에약정보 가져오기
+		List<CarGoodsBwbVO> goodsList =service2.selectGoodsRental();
+		mav.addObject("goodsList", goodsList);
+		
+		mav.setViewName("bwb/todo/rentalManage.gwTiles");
+		
+		return mav;
+	}// end of public ModelAndView requiredLogin_rentalManage(ModelAndView mav) {
+	
+	
+	// 대여관리에서 차량관리 승인 버튼 클릭시 ajax처리
+	@ResponseBody
+	@RequestMapping(value="/t1/updateCarRental.tw", method= {RequestMethod.POST})
+	public String updateCarRental(HttpServletRequest request) {
+		
+		
+		String rscno = request.getParameter("rscno");
+		
+		// 승인버튼 클릭시 status update처리(차량)
+		int n = service4.updateCarRental(rscno);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+	}// end of public String updateCarRental(HttpServletRequest request) {
+	
+	
+	// 대여관리에서 사무용품관리 승인 버튼 클릭시 ajax처리
+	@ResponseBody
+	@RequestMapping(value="/t1/updateGoodsRental.tw", method= {RequestMethod.POST})
+	public String updateGoodsRental(HttpServletRequest request) {
+		
+		
+		String rsgno = request.getParameter("rsgno");
+		
+		// 승인버튼 클릭시 status update처리(사무용품)
+		int n = service4.updateGoodsRental(rsgno);
+		
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("n", n);
+		
+		return jsonObj.toString();
+		
+	}// end of public String updateCarRental(HttpServletRequest request) {
+	
 	
 }

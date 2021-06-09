@@ -24,6 +24,10 @@ public interface InterBoardKdnService {
 	
 	int noticeDel(Map<String, String> paraMap); // 글 삭제하기
 	
+	int noticeUploadwithFile(BoardKdnVO boardvo); // 파일첨부가 있는 글쓰기
+	
+	int noticeEditNewAttach(BoardKdnVO boardvo); // 첨부파일 변경한 경우 글수정
+	
 	// === 건의사항 ===
 
 	List<BoardKdnVO> listSearchWithPaging(Map<String, String> paraMap);	// (페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
@@ -50,6 +54,8 @@ public interface InterBoardKdnService {
 	
 	int editSuggComment(String seq); // (건의사항) 댓글 수정하기
 	
+	int suggUploadWithFile(BoardKdnVO boardvo); // 파일첨부가 있는 글쓰기
+	
 	// === 자유게시판 ===
 	
 	int genPostUpload(BoardKdnVO boardvo); // 자유게시판 글쓰기 완료 요청
@@ -73,6 +79,16 @@ public interface InterBoardKdnService {
 	int getCommentTotalPage(Map<String, String> paraMap); // 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리)
 
 	int delGenComment(String seq); //(자유게시판) 댓글 삭제하기
+
+	int genUploadWithFile(BoardKdnVO boardvo); // (자유게시판) 파일첨부가 있는 글쓰기
+
+	int generalEditNewAttach(BoardKdnVO boardvo); // 첨부파일 변경이 있는 글수정
+
+	
+
+	
+
+	
 
 	
 

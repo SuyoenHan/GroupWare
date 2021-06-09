@@ -6,4 +6,305 @@
 <!-- ==== #29. 루트 엘리먼트 & 네임스페이스 설정(프로젝트 전체내에서 유일해야 한다.) ==== -->
 <mapper namespace="email">
 
+	<!-- 이메일주소 자동완성을 위한 주소록 가져오기 -->
+	<select id="getEmailList" resultType="String">
+		select '"'||D.dname||' '||E.name||' '||P.pname||'<![CDATA[<]]>'||E.email||'<![CDATA[>]]>'||'"' as addressInfo
+		from tbl_employee E, tbl_department D, tbl_position P
+		where E.fk_dcode = D.dcode and E.fk_pcode = P.pcode
+	</select>
+	
+	<!-- tbl_mailinbox 테이블에서 groupno 컬럼의 최대값 구하기 === -->
+	<select id="getGroupnoMax" resultType="int">
+		select nvl(max(groupno), 0)
+		from tbl_mailinbox
+	</select>
+	
+	<!-- 파일첨부가 없는 메일쓰기(답메일 기능 있음) -->
+	<insert id="send" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		<if test='parentSeq.equals("")'>
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno)
+			values(#{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, default, default)
+		</if>
+		<if test='!parentSeq.equals("")'>
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno)
+			values(#{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+	                       , default, default, #{groupno}, #{parentSeq}, #{depthno}+1)
+		</if>
+	</insert>
+	
+	<!-- 파일첨부가 있는 메일쓰기(답메일 기능 있음) -->
+	<insert id="sendWithFile" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		<if test='parentSeq.equals("")'>
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(#{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+		</if>
+		<if test='!parentSeq.equals("")'>
+			insert into tbl_mailinbox(seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, checkImportant, saveSentMail
+								, moveToTrash, readStatus, groupno, parentSeq, depthno, fileName, orgFilename, fileSize)
+			values(#{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, default, #{checkImportant}, #{saveSentMail}
+                        , default, default, #{groupno}, #{parentSeq}, #{depthno}+1, #{fileName}, #{orgFilename}, #{fileSize})
+		</if>
+	</insert>
+	
+	<!-- 보낸메일함에 저장하기(첨부파일 없는 경우) -->
+	<insert id="saveSentMail" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		insert into tbl_sentmail(seq, fk_seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate)
+		values(seq_sentmail.nextval, #{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, 
+			#{content}, (select sendingDate from tbl_mailinbox where seq = #{seq}) )
+	</insert>
+	<!-- 보낸메일함에 저장하기(첨부파일 있는 경우) -->
+	<insert id="saveSentMailwithAttach" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		insert into tbl_sentmail(seq, fk_seq, senderEmail, receiverEmail, ccEmail, subject, content, sendingDate, fileName, orgFilename, fileSize)
+		values(seq_sentmail.nextval, #{seq}, #{senderEmail}, #{receiverEmail}, #{ccEmail}, #{subject}, #{content}, (select sendingDate from tbl_mailinbox where seq = #{seq})
+            , #{fileName}, #{orgFilename},#{fileSize} )
+     </insert>
+
+	<!-- 받은메일함 총 이메일 건수 구해오기 -->
+	<select id="getTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_mailinbox
+	 	where receiverEmail = #{email}
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+	
+	<!-- 중요메일함 총 이메일 건수 구해오기 -->
+	<select id="getMailImportantTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_mailinbox
+	 	where receiverEmail = #{email} and checkImportant = '1'
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+
+	<!-- (받은메일함, 중요메일함) 페이징 처리한 글목록 가져오기(검색기능, 파일첨부, 답메일 기능 포함) -->
+	<select id="emailListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno
+		from
+		(
+		    select rownum as rno, seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno
+		    from
+		    (
+		        select seq, name as senderName, senderEmail, subject, checkImportant, M.fileName as fileName,
+		               to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate,
+		               groupno, parentSeq, depthno 
+		        from tbl_mailinbox M, tbl_employee E
+		        where M.senderEmail = E.email and receiverEmail = #{email} and moveToTrash = '0'
+		        <if test='checkImportant == "1"'> <!-- 중요메일함 목록 -->
+		        	and checkImportant = '1'
+		        </if>
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>
+		        start with parentSeq = 0
+		        connect by prior seq = parentSeq
+		        order siblings by groupno desc, seq asc
+		    ) V
+		) T
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- 받은메일함 이메일 1개 열람하기 -->
+	<select id="getView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, sendingDate, nextseq,nextsubject,
+				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
+		from
+		(
+		select lag(seq,1) over(order by seq desc) as previousseq
+		     , lag(subject,1) over(order by seq desc) as previoussubject
+		     
+		     , seq, subject, content, saveSentMail  
+		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
+		     
+		     ,lead(seq,1) over(order by seq desc) as nextseq
+		     ,lead(subject,1) over(order by seq desc) as nextsubject
+		     
+		     ,ccEmail, receiverEmail, E.name as receiverName, senderEmail, E2.name as senderName, groupno, parentSeq, depthno, M.fileName as fileName, M.orgFilename as orgFilename, M.fileSize as fileSize
+		from tbl_employee E, tbl_mailinbox M, tbl_employee E2
+		where M.receiverEmail = E.email and M.senderEmail = E2.email and receiverEmail = #{email}
+		<if test='searchType != "" and searchWord != ""'>
+		 and lower(#{searchType}) like '%'||lower(#{searchWord})||'%'
+		 </if>
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	<!-- 중요메일함 이메일 1개 열람하기 -->
+	<select id="getImportantMailView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, checkImportant, sendingDate, nextseq,nextsubject,
+				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
+		from
+		(
+		select lag(seq,1) over(order by seq desc) as previousseq
+		     , lag(subject,1) over(order by seq desc) as previoussubject
+		     
+		     , seq, subject, content, saveSentMail, checkImportant  
+		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
+		     
+		     ,lead(seq,1) over(order by seq desc) as nextseq
+		     ,lead(subject,1) over(order by seq desc) as nextsubject
+		     
+		     ,ccEmail, receiverEmail, E.name as receiverName, senderEmail, E2.name as senderName, groupno, parentSeq, depthno, M.fileName as fileName, M.orgFilename as orgFilename, M.fileSize as fileSize
+		from tbl_employee E, tbl_mailinbox M, tbl_employee E2
+		where M.receiverEmail = E.email and M.senderEmail = E2.email and checkImportant = '1' and receiverEmail = #{email}
+		<if test='searchType != "" and searchWord != ""'>
+		 and lower(#{searchType}) like '%'||lower(#{searchWord})||'%'
+		 </if>
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	<!-- 보낸메일함 총 이메일 건수 구해오기 -->
+	<select id="getMailSentTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_sentmail
+	 	where senderEmail = #{email}
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+	
+	<!-- 보낸메일함 페이징 처리한 글목록 가져오기(검색기능, 파일첨부, 답메일 기능 포함) -->
+	<select id="sentEmailListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select seq, fk_seq, receiverName, receiverEmail, subject, fileName, sendingDate
+		from
+		(
+		    select rownum as rno, seq, fk_seq, receiverName, receiverEmail, subject, fileName, sendingDate
+		    from
+		    (
+		        select seq, fk_seq, name as receiverName, receiverEmail, subject, M.fileName as fileName,
+		               to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
+		        from tbl_sentmail M, tbl_employee E
+		        where senderEmail = #{email} and receiverEmail = email
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>
+		        order by seq desc
+		    ) V
+		) T
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- 보낸메일함의 이메일 열람하기 -->
+	<select id="getSentMailView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, sendingDate, nextseq,nextsubject,
+				ccEmail, receiverEmail, senderEmail, fk_seq, fileName, orgFilename, fileSize
+		from
+		(
+		select lag(seq,1) over(order by seq desc) as previousseq
+		     , lag(subject,1) over(order by seq desc) as previoussubject
+		     
+		     , seq, subject, content  
+		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
+		     
+		     ,lead(seq,1) over(order by seq desc) as nextseq
+		     ,lead(subject,1) over(order by seq desc) as nextsubject
+		     
+		     ,ccEmail, receiverEmail, E.name as receiverName, senderEmail, E2.name as senderName, fk_seq, M.fileName as fileName, M.orgFilename as orgFilename, M.fileSize as fileSize
+		from tbl_employee E, tbl_sentmail M, tbl_employee E2
+		where M.receiverEmail = E.email and M.senderEmail = E2.email and senderEmail = #{email}
+		<if test='searchType != "" and searchWord != ""'>
+		 and lower(#{searchType}) like '%'||lower(#{searchWord})||'%'
+		 </if>
+		) V
+		where V.seq = #{seq}
+	</select>
+	
+	<!-- 휴지통 총 이메일 건수 구해오기 -->
+	<select id="getTrashTotalCount" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_mailinbox
+	 	where receiverEmail = #{email} and moveToTrash = '1'
+	 	<if test='searchWord != ""'>
+	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+	 	</if>
+	</select>
+	
+	<!-- 휴지통 페이징 처리한 글목록 가져오기(검색기능, 파일첨부, 답메일 기능 포함) -->
+	<select id="trashListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
+		select seq, senderName, senderEmail, subject, fileName, sendingDate
+		from
+		(
+		    select rownum as rno, seq, senderName, senderEmail, subject, fileName, sendingDate
+		    from
+		    (
+		        select seq, name as senderName, senderEmail, subject, M.fileName as fileName,
+		               to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate 
+		        from tbl_mailinbox M, tbl_employee E
+		        where M.senderEmail = E.email and receiverEmail = #{email} and moveToTrash = '1'
+		        <if test='searchWord != ""'>
+					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+				</if>		
+				order by sendingDate desc       
+		    ) V
+		) T
+		where rno between #{startRno} and #{endRno}
+	</select>
+	
+	<!-- 새 메일번호 추출하기 -->
+	<select id="getNewSeq" resultType="int">
+		select seq_mail.nextval from dual
+	</select>
+	
+	<!-- 받은메일함의 메일을 휴지통 이동없이 완전삭제 완료하기  -->
+	<delete id="delImmed" parameterType="java.util.List">
+		delete from tbl_mailinbox
+		where seq in
+		 <foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach>  
+	</delete>
+	
+	<!-- 보낸메일함의 메일삭제하기 -->
+	<delete id="delSentMail" parameterType="java.util.List">
+		delete from tbl_sentmail
+		where seq in
+		<foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach> 
+	</delete>
+	
+	<!-- 중요메일함과 받은메일함 메일의 중요표시 해제 -->
+	<update id="removeStar" parameterType="java.util.List">
+		update tbl_mailinbox set checkImportant = '0'
+		where seq in
+		<foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach>
+	</update>
+	
+	<!-- 받은메일함의 메일 중요표시하기 -->
+	<update id="addStar" parameterType="java.util.List">
+		update tbl_mailinbox set checkImportant = '1'
+		where seq in
+		<foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach>
+	</update>	
+	
+	<!-- 받은메일함의 메일 휴지통으로 이동하기 -->
+	<update id="moveToTrash" parameterType="java.util.List">
+		update tbl_mailinbox set moveToTrash = '1'
+		where seq in
+		<foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach>
+	</update>
+	
+	<!-- 휴지통 메일을 받은메일함으로 이동시키기 -->
+	<update id="moveToMailInbox" parameterType="java.util.List">
+		update tbl_mailinbox set moveToTrash = '0'
+		where seq in
+		<foreach collection="list" item="seq" index="idx" separator="," open="(" close=")">
+			#{seq}
+		</foreach>
+	</update>
+		
 </mapper>

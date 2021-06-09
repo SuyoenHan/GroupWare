@@ -97,8 +97,14 @@
    
    <!-- 직원정보 등록하기 ==> 추후 코드 변경 예정 -->
    <insert id="registerOne" parameterType="com.t1works.groupware.bwb.model.MemberBwbVO">
+   		<if test="fileName == null">
    		insert into tbl_employee(employeeid,fk_dcode,fk_pcode,name,passwd,email,mobile,cmobile,jubun,managerid)
    		values(#{employeeid},#{fk_dcode},#{fk_pcode},#{name},#{passwd},#{email},#{mobile},#{cmobile},#{jubun},#{managerid})
+   		</if>
+   		<if test="fileName != null">
+   		insert into tbl_employee(employeeid,fk_dcode,fk_pcode,name,passwd,email,mobile,cmobile,jubun,managerid,fileName, orgFilename, fileSize)
+   		values(#{employeeid},#{fk_dcode},#{fk_pcode},#{name},#{passwd},#{email},#{mobile},#{cmobile},#{jubun},#{managerid},#{fileName},#{orgFilename},#{fileSize})
+   		</if>
    </insert>
    
    <!-- 등록한 직원의 fk_dcode를 통해 managerid 알아오기 -->
@@ -138,5 +144,64 @@
 		from tbl_department
 		where dcode in (1,2,3)
    </select>
+   
+   <!-- 야근테이블에 insert하기 -->
+   <insert id="insertdoLate" parameterType="HashMap">
+   		insert into tbl_doLate(doLateSysdate,fk_employeeid,doLateTime,doLateWhy)
+   		values(sysdate,#{fk_employeeid},#{doLateTime},'업무연장')
+   </insert>
+   
+   <!-- 이용자의 총 연차수 가지고 오기 -->
+   <select id="selectTotaloffCnt" parameterType="String" resultType="String">
+   		select offcnt
+		from tbl_position
+		where pcode=#{pcode}
+   </select>
+   
+   <!-- 이용자의 사용연차수 가지고 오기 -->
+   <select id="selectUseoffCnt" parameterType="String" resultType="String">
+   		select (V.daydates+V.afdates) as useOffCnt
+		from
+		(
+		select 
+		    (select nvl(sum(D.daydates),0) from tbl_approval A join tbl_dayoff D on A.ano = D.fk_ano where fk_employeeid=#{fk_employeeid}) as daydates,
+		    (select nvl(sum(f.afdates),0) from tbl_approval A join tbl_afternoonoff F on A.ano = F.fk_ano where fk_employeeid=#{fk_employeeid}) as afdates
+		from dual)V
+   </select>
+   
+   <!-- 나의 월별 출퇴근기록 가지고오기 -->
+   
+   <resultMap type="HashMap" id="myMonthMap">
+		<result property="name"      column="name"    javaType="String" /> 
+		<result property="intime"    column="intime"  javaType="String" />
+		<result property="outtime"   column="outtime" javaType="String" />
+   </resultMap>
+   
+   
+   <select id="selectmyMonthIndolence" parameterType="String" resultMap="myMonthMap">
+   		select name, intime, outtime
+		from tbl_employee E
+		join tbl_inout I
+		on E.employeeid = I.fk_employeeid
+		where E.employeeid = #{fk_employeeid}
+   </select>
+   
+   <!-- 부서별 출퇴근기록 가지고오기 -->
+   
+   <resultMap type="HashMap" id="depMonthMap">
+		<result property="name"      column="name"    javaType="String" /> 
+		<result property="intime"    column="intime"  javaType="String" />
+		<result property="outtime"   column="outtime" javaType="String" />
+   </resultMap>
+   
+   
+   <select id="selectDepMonthIndolence" parameterType="String" resultMap="depMonthMap">
+   		select name,intime,outtime
+		from tbl_employee E
+		join tbl_inout I
+		on E.employeeid = I.fk_employeeid
+		where fk_dcode = #{fk_dcode} 
+   </select>
+   
    
 </mapper>

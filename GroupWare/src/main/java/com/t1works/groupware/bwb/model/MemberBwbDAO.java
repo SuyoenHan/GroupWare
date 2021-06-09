@@ -196,8 +196,49 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		List<MemberBwbVO> departmentList = sqlsession.selectList("memberBwb.selectDepartmentList");
 		return departmentList;
 	}
+
+	// 야근테이블에 insert하기
+	@Override
+	public int insertdoLate(Map<String, String> paraMap) {
+		
+		int n = sqlsession.insert("memberBwb.insertdoLate", paraMap);
+		return n;
+		
+	}
+
+	// 이용자의 총 연차수 가지고 오기
+	@Override
+	public String selectTotaloffCnt(String pcode) {
+		
+		String totalOffCnt = sqlsession.selectOne("memberBwb.selectTotaloffCnt", pcode);
+		return totalOffCnt;
+	}
+
+	// 이용자의 사용연차수 가지고 오기
+	@Override
+	public String selectUseoffCnt(String fk_employeeid) {
+		
+		String useOffCnt = sqlsession.selectOne("memberBwb.selectUseoffCnt", fk_employeeid);
+		return useOffCnt;
+	}
+
+	 // 나의 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid) {
+		
+		List<Map<String, String>> myIndolenceList = sqlsession.selectList("memberBwb.selectmyMonthIndolence", fk_employeeid);
+		return myIndolenceList;
+	}
 	
-    
+	
+	// 부서 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectDepMonthIndolence(String fk_dcode) {
+		List<Map<String,String>> depIndolenceList = sqlsession.selectList("memberBwb.selectDepMonthIndolence", fk_dcode);
+		return depIndolenceList;
+	}
+	
+	
    
    
    

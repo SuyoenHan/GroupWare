@@ -139,6 +139,54 @@ public class TodoHsyService implements InterTodoHsyService {
 		return totalPage;
 		
 	} // end of public int getclientLisTotalPage(Map<String, String> paraMap) {-----
+
+	
+	// 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기
+	@Override
+	public Map<String, String> getDateBeforeSix(String selectedDate) {
+		Map<String,String> dateMap= tdao.getDateBeforeSix(selectedDate);
+		return dateMap;
+	} // end of public Map<String, String> getDateBeforeSix(String selectedDate) {----
+
+
+	// 해당년월의 처리업무에 해당하는 fk_pno 가져오기
+	@Override
+	public List<String> getFk_pnoListByDate(Map<String, String> paraMap) {
+		List<String> fk_pnoList= tdao.getFk_pnoListByDate(paraMap);
+		return fk_pnoList;
+	} // end of public List<String> getFk_pnoListByDate(Map<String, String> paraMap) {---
+
+
+	// 해당년월의 처리 업무 건 수 와 고객 수 가져오기 
+	@Override
+	public Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2) {
+		Map<String,String> EachPerfAndClientCnt= tdao.getPerfAndClientCnt(paraMap2);
+		return EachPerfAndClientCnt;
+	} // end of public Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2) {---
+
+
+	// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+	@Override
+	public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {
+		List<TodoHsyVO> modalList= tdao.getPerfClientInfoForModal(paraMap);
+		return modalList;
+	} // end of public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {---
+
+
+	// 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기
+	@Override
+	public ClientHsyVO getInfoForSendEmailIngTodo(Map<String, String> paraMap) {
+
+		ClientHsyVO cvo= cdao.getInfoForSendEmailIngTodo(paraMap);
+		
+		// 여행시작일 데이터 가공
+		String[] startDateArr= cvo.getStartDate().split("-");
+		String startDate= startDateArr[0]+"년 "+startDateArr[1]+"월 "+startDateArr[2]+"일";
+		cvo.setStartDate(startDate);
+		
+		return cvo;
+		
+	} // end of public Map<String, String> getInfoForSendEmailIngTodo(Map<String, String> paraMap) {----
  
 
 

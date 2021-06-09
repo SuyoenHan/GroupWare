@@ -14,7 +14,7 @@ div#reserveList{
 .table th {
 	color: #fff;
 	background-color: #395673;
-	text-align: center;
+	text-align: center; 
 }
 
 .table td{
@@ -43,11 +43,29 @@ button.btn_r{
 	font-size: 12pt;
 	padding: 1px 0px;
 }
+
 </style>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 <script type="text/javascript">
+
+	var curDate = new Date();
+	
+	var curHour=curDate.getHours();
+	
+	var currtime = curDate.getHours();
+	var curDay = curDate.getDate();
+	var curMonth = curDate.getMonth() + 1;
+	if(curMonth.toString().length < 2){
+		curMonth = "0"+curMonth;
+	}
+	
+	if(curDay.toString().length < 2){
+		curDay = "0"+curDay;
+	}
+	var curYear = curDate.getFullYear();
+	var curTime = curYear + "" + curMonth + "" + curDay;
 
 	$(document).ready(function(){
 		
@@ -84,8 +102,8 @@ button.btn_r{
 		    
 		    //To의 초기값을 3일후로 설정
 		    $('input#toDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-		  
-		 	
+		    
+		    
 		    // 검색 할 때 엔터를 친 경우
 		    $("input#searchWord").keydown(function(event){
 					if(event.keyCode == 13){ 
@@ -108,7 +126,47 @@ button.btn_r{
 			}
 		    
 	
+		    $('.modal').on('hidden.bs.modal', function (e) {
+		        console.log('modal close');
+		      $(this).find('form')[0].reset()
+		    });
 		    
+		    $("button#editReserve").click(function(){
+		    	event.stopPropagation();
+	            event.preventDefault();
+	             
+	            var checkCnt= $("input:checkbox[name=chktime]:checked").length;
+	     		var chkTime="";
+	            $("input:checkbox[name=chktime]:checked").each(function(){
+					chkTime= chkTime+ $(this).val()+",";
+				});
+				
+				if(chkTime.length>0){
+					chkTime = chkTime.substring(0,chkTime.length-1);
+				}
+				
+				showTime(chkTime);
+				
+	     		if(checkCnt<1){
+	     			alert("시간을 선택하세요.");
+	     			return false; // 종료
+	     		}
+	     		
+	            var purpose = $("input#purpose").val().trim();
+	             
+	            if(purpose == ""){
+	            	 alert("목적을 입력하세요");
+	            }
+	            
+	            else{
+	            	
+	            	<%-- form으로 값 넘겨주기--%>
+	            	 var frm = document.editRoom;
+	            	 frm.method = "POST";
+	                 frm.action = "<%= ctxPath%>/t1/editReserveRoom.tw";
+	                 frm.submit(); 
+	            }
+		    });
 	}); // end of $(document).ready(function(){})----------------
 	
 	
@@ -141,18 +199,200 @@ button.btn_r{
 		}
 	}
 	
+	
+	 function editMyrsroom(rsroomno,roomname,rdate,rtime,fk_roomno){
+		 var chgYear = rdate.substring(0,4);
+		 var chgMonth = rdate.substring(5,7);
+		 var chgDay = rdate.substring(8,10);
+		
+		 chgdate=chgYear+""+chgMonth+""+chgDay;
+
+		 // 시간 비교
+		 if(parseInt(chgdate)<parseInt(curTime)){
+				 alert("변경할 수 없습니다.");
+				 return false;
+		}
+		 else if(parseInt(chgdate)==parseInt(curTime) && parseInt(curHour)>parseInt(rtime)){
+				 alert("변경할 수 없습니다.");
+				 return false;
+		 }
+			 
+		 // 모달창 보여주기
+		 else{
+			 $("div#myModal").modal('show');
+			 $("select#selectroom").val(fk_roomno);
+			 $("input[name=fk_roomno]").val(fk_roomno);
+			 $("input[name=rdate]").val(rdate);
+			 $("input[name=rsroomno]").val(rsroomno);
+			 
+			 $.ajax({
+					url: "<%= ctxPath%>/t1/reserve/checkTimeRoom.tw",
+					data:{"rdate":rdate, "fk_roomno":fk_roomno},
+					dataType: "json",
+					success:function(json){
+						
+						var rtime= Array();
+						var index=0;
+						var html="";
+						$.each(json,function(index,item){
+							rtime.push(item.rtime);
+						  });
+						
+						for(var i=0;i<24;i++){
+							var index=jQuery.inArray(i,rtime); 
+							if(parseInt(chgdate)<parseInt(curTime)){
+								index=0;
+							}
+							else if(parseInt(chgdate)==parseInt(curTime) && i<parseInt(curHour)){
+								index=0;
+							}
+							if(index<0){
+								html+="<input type='checkbox' name='chktime' value='"+i+"'/>&nbsp;&nbsp;<span>"+timeText(i)+"</span><br>"
+							}
+						}
+						
+						$("td#strtime").html(html);
+					},
+					error: function(request, status, error){
+			            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			  	    }
+				 });
+			 
+			 $('input#rdate').datepicker({
+				    onSelect: function (date, datepicker) {
+				    	$("td#strtime").html("");
+	                    if (rdate != "") {
+	                    	 $("input[name=rdate]").val(date);
+	                    	func_chktime(date,fk_roomno);
+	                    }
+	                }
+			 	
+				});
+				
+			$("select#selectroom").change(function(){
+				fk_roomno=$("select#selectroom").val();
+				var rdate=$("input[name=rdate]").val();
+				func_chktime(rdate,fk_roomno);
+			});
+			
+				 
+			
+		 }
+
+	 }
+	 
+	 
+	 function timeText(val){
+			
+			var timeText="";
+			
+			if(val<10){
+				stime="0"+val;
+			}
+			else{
+				stime=val;
+			}
+			
+			ntime= parseInt(val)+1;
+			console.log((typeof(ntime)));
+			sntime= ntime.toString();
+			
+			if(ntime<10){
+				sntime="0"+sntime;
+			}
+			
+			timeText=stime+":00 ~ "+sntime+":00";
+			
+			return timeText;
+		}
+	 
+	 
+	 function func_chktime(rdate,fk_roomno){
+		 var chgYear = rdate.substring(0,4);
+		 var chgMonth = rdate.substring(5,7);
+		 var chgDay = rdate.substring(8,10);
+		
+		 var chgdate=chgYear+""+chgMonth+""+chgDay;
+		 
+		 $("input[name=fk_roomno]").val(fk_roomno);
+		 $("input[name=rdate]").val(rdate);
+		
+		 $.ajax({
+				url: "<%= ctxPath%>/t1/reserve/checkTimeRoom.tw",
+				data:{"rdate":rdate, "fk_roomno":fk_roomno},
+				dataType: "json",
+				success:function(json){
+					
+					var rtime= Array();
+					var index=0;
+					var html="";
+					$.each(json,function(index,item){
+						rtime.push(item.rtime);
+					  });
+					
+					for(var i=0;i<24;i++){
+						var index=jQuery.inArray(i,rtime); 
+						
+						if(parseInt(chgdate)<parseInt(curTime)){
+							index=0;
+						}
+						else if(parseInt(chgdate)==parseInt(curTime) && i<parseInt(curHour)){
+							index=0;
+						}
+						if(index<0){
+							html+="<input type='checkbox' name='chktime' value='"+i+"'/>&nbsp;&nbsp;<span>"+timeText(i)+"</span><br>"
+						}
+					}
+					
+					$("td#strtime").html(html);
+				},
+				error: function(request, status, error){
+		            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		  	    }
+			 });
+	 }
+	 
+	 
+	 
+	 
+	 function showTime(val){
+			var strTime="";
+			
+			var arrTime= new Array();
+			
+			if(val.indexOf(',')>0){
+				arrTime=val.split(',');
+			}
+			else{
+				arrTime[0]=val;
+			}
+			
+			for(var i=0;i<arrTime.length;i++){
+				strTime=strTime+timeText(arrTime[i])+", ";
+			}
+			console.log(strTime.length);
+			strTime=strTime.substring(0,strTime.length-2);
+			$("input#rtime").val(val);
+		}
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 </script>
 
 <div id="myReserved"  style="margin-left: 80px; ">
 	
-	<h3 style="margin-top: 20px !important;">나의 예약 내역</h3>
+	<h3 style="margin-top: 20px !important;">나의 예약내역</h3>
 	
 
 	<div style="float: left; margin-top: 50px;">
 		<ul class="nav nav-pills">
 			 <li class="active"><a href="<%= ctxPath%>/t1/myReservedRoom.tw">회의실 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
-			 <li><a href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedCar.tw">차량 예약 내역</a></li>
+			 <li><a style="color: black;" href="<%= ctxPath%>/t1/myReservedGoods.tw">사무용품 예약 내역</a></li>
 		</ul>
 	</div>
 
@@ -165,11 +405,6 @@ button.btn_r{
 		     	<c:forEach var="room" items="${requestScope.roomList}">	
 		     		<option value="${room.roomno}">${room.roomname}</option>
 		     	</c:forEach>
-		     </select>
-		     <select name="rstatus">
-		     	<option value="-1">승인여부</option>
-		     	<option value="0">미승인</option>
-		     	<option value="1">승인완료</option>
 		     </select>
 			<input type="text" name="searchWord" id="searchWord" placeholder="목적을 입력하세요."/>		
 		<button type="button" class="btn_normal" onclick="goSearch()">검색</button>	
@@ -186,34 +421,32 @@ button.btn_r{
 					<th style="width: 12%">시간</th>
 					<th style="width: 12%">회의실명</th>
 					<th>목적</th>
-					<th style="width: 10%">승인여부</th>
+					<th>변경</th>
 					<th style="width: 10%">취소</th>
 				</tr>
 			</thead>		
 			
 			<c:if test="${empty myRoomList}">
-				<tr><td colspan="6">회의실 예약 내역이 없습니다.</td></tr>
+				<tr><td colspan="5">회의실 예약 내역이 없습니다.</td></tr>
 			</c:if>
 			
 			<c:if test="${not empty myRoomList}">
 				<c:forEach var="myRoom" items="${requestScope.myRoomList}">	
 					<tr>
 						<td style="vertical-align: middle;">${myRoom.rdate}</td>
-						<c:if test="${myRoom.rtime<10}">
+						<c:if test="${myRoom.rtime<9}">
+						<td style="vertical-align: middle;">0${myRoom.rtime}:00 ~ 0${myRoom.rtime+1}:00</td>
+						</c:if>
+						<c:if test="${myRoom.rtime==9}">
 						<td style="vertical-align: middle;">0${myRoom.rtime}:00 ~ ${myRoom.rtime+1}:00</td>
 						</c:if>
-						<c:if test="${myRoom.rtime >=10}">
+						<c:if test="${myRoom.rtime >9}">
 						<td style="vertical-align: middle;">${myRoom.rtime}:00 ~ ${myRoom.rtime+1}:00</td>
 						</c:if>
 						
 						<td style="vertical-align: middle;">${myRoom.roomname}</td>
-						<td style="vertical-align: middle;">${myRoom.rsubject}</td>
-						<c:if test="${myRoom.rstatus == 0}">
-							<td style="vertical-align: middle;">미승인</td>
-						</c:if>
-						<c:if test="${myRoom.rstatus == 1}">
-							<td style="vertical-align: middle;">승인 완료</td>
-						</c:if>
+						<td style="vertical-align: middle; text-align: left;">${myRoom.rsubject}</td>
+						<td><button type="button" class='btn_r' onclick="editMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}','${myRoom.fk_roomno}')">변경</button></td>
 						<td><button type="button" class='btn_r' onclick="delMyrsroom('${myRoom.rsroomno}','${myRoom.roomname}','${myRoom.rdate}','${myRoom.rtime}')">취소</button></td>
 					</tr>
 				</c:forEach>
@@ -226,3 +459,58 @@ button.btn_r{
 	<div align="center">${pageBar}</div>
 
 </div>
+
+<!-- 수정할 수 있는 모달창 생성 -->
+<!-- The Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">신청 수정</h4>
+        </div>
+        <div class="modal-body">
+         	<form name="editRoom">
+         		<table style="width: 100%;" class="table table-bordered">
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">신청날짜</td>
+         				<td style="text-align: left; "><input type="text" id="rdate" name="rdate"/></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">신청회의실</td>
+         				<td style="text-align: left; padding-left: 5px;">
+	         				<select id="selectroom">
+	         					<c:forEach var="room" items="${roomList}">
+	         					<option value="${room.roomno}">${room.roomname}</option>
+	         					</c:forEach>
+	         				</select>
+         				</td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">신청 가능 시간</td>
+         				<td id="strtime" style="text-align: left; padding-left: 5px;"></td>
+         			</tr>
+         			<tr>
+         				<td style="text-align: left; vertical-align: middle;">목적</td>
+         				<td style="text-align: left; padding-left: 5px;"><input type="text" id="purpose" class="form-control" name="rsubject"/></td>
+         			</tr>
+         		</table>
+         		<!-- input 값에 사번, 직원명, 부서, 신청회의실번호, 신청시간, 용도 넣어줘서 이걸 insert할 때 사용하기 -->
+         		<div>
+					<input type="hidden" id="roomno" value="" name="fk_roomno"/>
+					<input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}"/>
+					<input type="hidden" id="rtime" value="" name="rtime"/>
+					<input type="hidden" id="rsroomno" value="" name="rsroomno"/>
+				</div>
+         	</form>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        	<button type="button" id="editReserve" class="btn_normal" data-dismiss="modal">예약</button>
+          <button type="button" class="btn_r" data-dismiss="modal" >취소</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>

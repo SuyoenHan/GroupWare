@@ -11,7 +11,7 @@
 	div#employeeMapContainer{ 
 		border: solid 0px red;
 		overflow: hidden;
-		width:70%;
+		width:1300px;
 		margin: 0 auto;
 		position: relative;
 		left: -150px;
@@ -20,17 +20,16 @@
 	
 	div#employeeMapTitle{
 		border: solid 0px red;
-		margin: 70px 0px 30px 80px;
+		margin: 70px 0px 30px 70px;
 		font-size: 22pt;
 		font-weight: bold;
 	}
 	
 	div#employeeBox{
-		border: solid 0px red;
 		border: solid 2px #003d66;
-		margin: 0px 0px 30px 50px;
+		margin: 0px 0px 30px 70px;
 		float: left;
-		width: 26%;
+		width: 340px;
 		padding: 0px 20px;
 	}
 	
@@ -53,14 +52,14 @@
 		float: left;
 		margin-bottom: 20px;
 		border: solid 0px red;
-		margin: 20px 0px 20px 50px;
+		margin: 20px 0px 20px 70px;
 		border: solid 0px red;
-		width: 26%;
+		width: 350px;
 	}
 	
 	div#allBt button{
-		width: 47.5%;
-		height: 30px;
+		width: 162px;
+		height: 40px;
 		margin-left: 11px;
 		background-color: #003d66;
 		color:#fff;
@@ -132,7 +131,7 @@
 		background-color: #003d66;
 	}
 	
-	table#oneEmployeeTable td {padding-left: 30px;}
+	table#oneEmployeeTable td {padding-left: 15px;}
 		
 	button.sendMail{
 		cursor:pointer;
@@ -149,6 +148,26 @@
 		color: #003d66;
 		border: solid 1px #003d66;
 	}
+	
+	span.attendanceSeq1{background-color: #b30000;}
+	
+	span.attendanceSeq2{background-color: #008060;}
+	
+	span.attendanceSeq{
+		margin-left: 10px;
+		color: #fff;
+		font-weight: bold;
+		display: inline-block;
+		width: 100px;
+		height: 30px;
+		font-size: 14pt;
+		text-align: center;
+		padding-top: 4px;
+		border-radius: 8%;
+		position: relative;
+		top: 3px;
+	}
+	
 </style>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -235,6 +254,14 @@
 		});	
 		
 		
+		// 모달창에서 메일 보내기 이벤트
+		$(document).on('click',"button.sendMail",function(){
+			
+			var receiverEmail= $(this).prev().text();
+			location.href="<%=ctxPath%>/t1/new_mail.tw?receiverEmail="+receiverEmail;
+		});
+		
+		
 	}); // end of $(document).ready(function(){----------
 	
 		
@@ -285,14 +312,26 @@
 	   		success:function(json){
 				
 	   			var html= "<table id='oneEmployeeTable'>"+
+					   		  "<tr>"+
+					   		  	"<td rowspan='4' style='width:130px; padding-left:0px;'>"+
+					   		  	"<img src='<%=ctxPath%>/resources/images/bwb/"+json.fileName+"' width='130px' height='150px' />"+
+					   		  	"</td>"+
+					   		  "</tr>"+
 		   					  "<tr>"+
-		   					  	"<th>사번</th>"+
-		   					 	"<td>"+json.employeeid+"</td>"+
+		   					  	"<th style='width: 70px;'>사번</th>"+
+		   					 	"<td style='width: 80px;'>"+json.employeeid+"</td>"+
 		   						"<th>이메일</th>"+
 		   						"<td colspan='3'>"+
-		   							json.email+
-		   							"<button type='button' class='sendMail'>메일보내기</button>"+
-		   						"</td>"+
+		   							"<span>"+json.email+"</span>"+
+		   							"<button type='button' class='sendMail'>메일보내기</button>";
+	   							if(json.attendanceSeq!="근무 중"){
+	   								html+="<span class='attendanceSeq attendanceSeq1'>"+json.attendanceSeq+"</button>";
+	   							}
+	   							else{
+	   								html+="<span class='attendanceSeq attendanceSeq2'>"+json.attendanceSeq+"</button>";
+	   							}
+		   							
+		   				html+=  "</td>"+
 		   					  "</tr>"+
 		   					  "<tr>"+
 		   						"<th>직원명</th>"+

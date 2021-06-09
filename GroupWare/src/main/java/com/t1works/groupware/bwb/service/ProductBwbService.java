@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.t1works.groupware.bwb.model.InterCarGoodsBwbDAO;
 import com.t1works.groupware.bwb.model.InterProductBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
 import com.t1works.groupware.bwb.model.ProductBwbVO;
@@ -17,6 +18,9 @@ public class ProductBwbService implements InterProductBwbService {
 	
 	 @Autowired
      private InterProductBwbDAO dao; 
+	 
+	 @Autowired
+     private InterCarGoodsBwbDAO dao2; 
 	 
 	// 미배정 업무정보 가져오기
 	 @Override
@@ -234,7 +238,7 @@ public class ProductBwbService implements InterProductBwbService {
 		return paraMap;
 	}
 	
-	// chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
+	// 기본 chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수
 	@Override
 	public Map<String, String> selectDepCntPerformance(Map<String, String> paraMap) {
 		
@@ -261,6 +265,37 @@ public class ProductBwbService implements InterProductBwbService {
 		resultMap.put("compareValue", compareValue);
 		
 		return resultMap;
+	}
+	
+	// 복합 chart에 들어가기 위한 모든 부서 name값,3개월 각각 건수,합구하기
+	@Override
+	public Map<String, String> selectAllDepCntPerformance(Map<String, String> paraMap) {
+		
+		Map<String, String> resultMap = dao.selectAllDepCntPerformance(paraMap);
+		return resultMap;
+	}
+	
+	// 해당 월의 부서 3개 평균건수 구해오기
+	@Override
+	public String selectAvgCnt(String selectedMonth) {
+		
+		String avgCnt = dao.selectAvgCnt(selectedMonth);
+		return avgCnt;
+	}
+	
+	// 승인버튼 클릭시 status update처리(차량)
+	@Override
+	public int updateCarRental(String rscno) {
+		
+		int n = dao2.updateCarRental(rscno);
+		return n;
+	}
+	
+	// 승인버튼 클릭시 status update처리(사무용품)
+	@Override
+	public int updateGoodsRental(String rsgno) {
+		int n = dao2.updateGoodsRental(rsgno);
+		return n;
 	}
 	
 	

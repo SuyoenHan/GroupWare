@@ -1,23 +1,27 @@
-package com.t1works.groupware.jsh.model;
+package com.t1works.groupware.sia.model;
 
-public class MemberJshVO {
+public class MemberSiaVO {
    
-   private String employeeid;     // 사번
-   private String fk_dcode;       // 부서코드
-   private String fk_pcode;      // 직급코드
-   private String name;           // 직원명
-   private String passwd;         // 비밀번호
-   private String email;         // 회사이메일
-   private String mobile;         // 연락처
-   private String cmobile;        // 회사연락처
-   private String jubun;         // 주민번호
+   private String employeeid;      // 사번
+   private String fk_dcode;        // 부서코드
+   private String fk_pcode;        // 직급코드
+   private String name;            // 직원명
+   private String passwd;          // 비밀번호
+   private String email;           // 회사이메일
+   private String mobile;          // 연락처
+   private String cmobile;         // 회사연락처
+   private String jubun;           // 주민번호
    private String hiredate;        // 입사일자
-   private String status;        // 재직상태 (0:재직중 , 1:퇴사)
-   private String managerid;        // 직속상사사번
-   private String employeeimg;    // 직원이미지
+   private String status;          // 재직상태 (0:재직중 , 1:퇴사)
+   private String managerid;       // 직속상사사번
+   private String employeeimg;     // 직원이미지
    
+   private String pname;           // 직위명
+   private String dname;		   // 소속명
+   private String offcnt;		   // 총연차수
    
-   
+
+
    public String getEmployeeid() {
       return employeeid;
    }
@@ -120,4 +124,31 @@ public class MemberJshVO {
       this.employeeimg = employeeimg;
    }
 
+   public String getPname() {
+		return pname;
+   }
+	
+   public void setPname(String pname) {
+		this.pname = pname;
+   }
+
+   public String getDname() {
+		return dname;
+   }
+	
+   public void setDname(String dname) {
+		this.dname = dname;
+   }
+
+   public String getOffcnt() {
+		return offcnt;
+   }
+	
+   public void setOffcnt(String offcnt) {
+		this.offcnt = offcnt;
+   }
+   
+   
+
+   
 }

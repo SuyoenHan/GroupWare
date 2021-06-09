@@ -153,5 +153,21 @@ public class ProductBwbDAO implements InterProductBwbDAO {
 		 Map<String, String> resultMap = sqlsession.selectOne("productBwb.selectDepCntPerformance", paraMap);
 		 return resultMap;
 	}
+	
+	// 복합 chart에 들어가기 위한 모든 부서 name값,3개월 각각 건수,합구하기
+	@Override
+	public Map<String, String> selectAllDepCntPerformance(Map<String, String> paraMap) {
+		
+		Map<String, String> resultMap = sqlsession.selectOne("productBwb.selectAllDepCntPerformance", paraMap);
+		return resultMap;
+	}
+	
+	// 해당 월의 부서 3개 평균건수 구해오기
+	@Override
+	public String selectAvgCnt(String selectedMonth) {
+		
+		String avgCnt = sqlsession.selectOne("productBwb.selectAvgCnt", selectedMonth);
+		return avgCnt;
+	}
 
 }

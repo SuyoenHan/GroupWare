@@ -222,7 +222,7 @@
    
    
    
-   <!-- chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수 -->
+   <!-- 기본(파이) chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수 -->
    <resultMap type="HashMap" id="DepCntMap">
    		<result property="DCnt"       column="DCnt"        javaType="String" />
    		<result property="prevDCnt"   column="prevDCnt"    javaType="String" />
@@ -242,5 +242,74 @@
 		)
    </select>
    
+   
+   <!-- 복합 chart에 들어가기 위한 부서 name값,3개월에 대한 부서 각각 실적건수 -->
+   <resultMap type="HashMap" id="AllDepMap">
+   		<result property="nowCnt"     column="nowCnt"      javaType="String" />
+   		<result property="prevCnt"    column="prevCnt"     javaType="String" />
+   		<result property="pprevCnt"   column="pprevCnt"    javaType="String" />
+   		<result property="totalCnt"   column="totalCnt"    javaType="String" /> 
+   </resultMap>
+   
+   <select id="selectAllDepCntPerformance" parameterType="HashMap" resultMap="AllDepMap">
+   		select nowCnt,prevCnt,pprevCnt,(nowCnt+prevCnt+pprevCnt) as totalCnt
+		from 
+		(
+		    select
+		         (select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{firstDate} and fk_dcode=#{dcode}) as nowCnt
+		        ,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm') = to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-1),'yyyy-mm') and fk_dcode=#{dcode}) as prevCnt
+		        ,(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm') = to_char(add_months(to_date(#{firstDate},'yyyy-mm'),-2),'yyyy-mm') and fk_dcode=#{dcode}) as pprevCnt
+		    from dual
+		)
+   </select>
+   
+   <!-- 해당 월의 부서 3개 평균건수 구해오기 -->
+   <resultMap type="String" id="AvgCntMap">
+   		<result property="avgCnt"  column="avgCnt"  javaType="String" />
+   </resultMap>
+   
+   <select id="selectAvgCnt" parameterType="String" resultMap="AvgCntMap">
+   		select trunc(avg(nowCnt+prevCnt+pprevCnt)/3,0) as avgCnt
+		from 
+		(
+		select
+			(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{selectedMonth} and fk_dcode='1') as nowCnt,
+			(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{selectedMonth} and fk_dcode='2') as prevCnt,
+			(select count(*) from tbl_todo where to_char(endDate,'yyyy-mm')=#{selectedMonth} and fk_dcode='3') as pprevCnt
+		from dual
+		)
+   </select>
+   
+   <!--  미승인된 차량예약정보 가져오기 -->
+   <select id="selectCarRental" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
+   		select rscno, rcdate, rctime, carname, rdestination, nvl(rcpeople,'없음') as rcpeople, rcsubject,name  
+		from tbl_car C
+		join tbl_rscar R
+		on c.cno = r.fk_cno
+		join tbl_employee E
+		on E.employeeid = R.fk_employeeid
+		where cstatus = '0'
+   </select>
+   
+   <!--  미승인된 사무용품 예약정보 가져오기 -->
+   <select id="selectGoodsRental" resultType="com.t1works.groupware.bwb.model.CarGoodsBwbVO">
+   		select rsgno, rgdate, rgtime, goodsname, rgsubject,name  
+		from tbl_goods G
+		join tbl_rsgoods R
+		on G.gno = r.fk_gno
+		join tbl_employee E
+		on E.employeeid = R.fk_employeeid
+		where gstatus = '0'
+   </select>
+   
+   <update id="updateCarRental" parameterType="String">
+   		update tbl_rscar set cstatus = 1
+   		where rscno = #{rscno}
+   </update>
+   
+   <update id="updateGoodsRental" parameterType="String">
+   		update tbl_rsgoods set gstatus = 1
+   		where rsgno = #{rsgno}
+   </update>
    
 </mapper>

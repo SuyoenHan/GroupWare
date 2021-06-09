@@ -10,6 +10,9 @@
 		margin: 30px 0px 30px 50px;
 		width: 85%;
 	}
+	div.tab_select{
+		margin-top: 10px;
+	}
 	a.tab_area{
 		background-color: #ecf2f9;
 		font-size: 12pt;
@@ -55,12 +58,25 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
-	td.th{
-		background-color: #e6e6e6;
+	td.th{		
+		background-color: #ccd9e6;
 		padding: 5px;
+		font-weight: bold;
+	}	
+	#table th{
+		background-color: #395673; 
+		color: #ffffff;
+		padding: 5px;
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
+	tr.tr_hover:hover{
+		cursor: pointer;
+		background-color: #eef2f7;
 	}
 </style>
 
@@ -69,173 +85,305 @@
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function(){	
 	
-	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth()+1; //January is 0!
-	var yyyy = today.getFullYear();
-
-	if(dd<10) {
-	    dd='0'+dd
-	} 
-
-	if(mm<10) {
-	    mm='0'+mm
-	} 
-
-	today = yyyy+'-'+mm+'-'+dd;
-	//console.log(today);
-	
-	// === 전체 datepicker 옵션 일괄 설정하기 ===  
-    //     한번의 설정으로 $("input#fromDate"), $('input#toDate')의 옵션을 모두 설정할 수 있다.
-	$(function() {
-		// 모든 datepicker에 대한 공통 옵션 설정
-		$.datepicker.setDefaults({
-			dateFormat: 'yy-mm-dd'		// Input Display Format 변경
-			,showOtherMonths: true		// 빈 공간에 현재월의 앞뒤월의 날짜를 표시
-			,showMonthAfterYear:true	// 년도 먼저 나오고, 뒤에 월 표시
-			,changeYear: true			// 콤보박스에서 년 선택 가능
-			,changeMonth: true			// 콤보박스에서 월 선택 가능                
-			,showOn: "both"				// button:버튼을 표시하고,버튼을 눌러야만 달력 표시 ^ both:버튼을 표시하고,버튼을 누르거나 input을 클릭하면 달력 표시  
-			,buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif" // 버튼 이미지 경로
-			,buttonImageOnly: true		// 기본 버튼의 회색 부분을 없애고, 이미지만 보이게 함
-		//	,buttonText: "선택"			// 버튼에 마우스 갖다 댔을 때 표시되는 텍스트                
-			,yearSuffix: "년"			// 달력의 년도 부분 뒤에 붙는 텍스트
-			,monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'] // 달력의 월 부분 텍스트
-			,monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'] // 달력의 월 부분 Tooltip 텍스트
-			,dayNamesMin: ['일','월','화','수','목','금','토'] // 달력의 요일 부분 텍스트
-			,dayNames: ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'] // 달력의 요일 부분 Tooltip 텍스트
-		//	,minDate: "-1M"				// 최소 선택일자(-1D:하루전, -1M:한달전, -1Y:일년전)
-		//	,maxDate: "+1M"				// 최대 선택일자(+1D:하루후, -1M:한달후, -1Y:일년후)                    
+	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
+	$(document).on('click','tr.docuInfo',function(){
+		var checkArr = new Array();	
+		$("input[name=vno]:checked").each(function(index,item){			
+			var no = $(item).val();
+			checkArr.push(no);			
 		});
-
-		// input을 datepicker로 선언
-		$("input#fromDate").datepicker();                    
-		$("input#toDate").datepicker();		
 		
-		if($('input#hiddendate').val() == today || $('input#hiddendate').val() == ""){
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', '-3M'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', 'today'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)		
-			}
-		else{
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', $('input#hiddendate').val()); 
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', $('input#hiddendate2').val()); 
-		}
+		var checkArres = checkArr.join();	
 		
+		var ano = $(this).children(".ano").text();
+		var vcatname = $(this).children(".vcatname").text();		
+		var vno = checkArres;
+		var sort= $("select#sort").val();		
+		var searchWord= $("input#searchWord").val();
+		
+		goView(ano, vcatname, vno, sort, searchWord);
 	});
 	
-});
-	
-	//Function Declaration
-	function setSearchDate(start){
-		var num = start.substring(0,1);
-		var str = start.substring(1,2);
-	
-		var today = new Date();
-	
-		var endDate = $.datepicker.formatDate('yy-mm-dd', today);
-		$('#toDate').val(endDate);
-		
-		if(str == 'd'){
-			today.setDate(today.getDate() - num);
-		} else if (str == 'w'){
-			today.setDate(today.getDate() - (num*7));
-		} else if (str == 'm'){
-			today.setMonth(today.getMonth() - num);
-			today.setDate(today.getDate() + 1);
-		}
-		
-		var startDate = $.datepicker.formatDate('yy-mm-dd', today);
-		$('#fromDate').val(startDate);
-		
-		// 종료일은 시작일 이전 날짜 선택하지 못하도록 비활성화
-		$("#toDate").datepicker( "option", "minDate", startDate );
-		
-		// 시작일은 종료일 이후 날짜 선택하지 못하도록 비활성화
-		$("#fromDate").datepicker( "option", "maxDate", endDate );	
-	
-		
+	if("${sort}"=="" && "${searchWord}"=="" && "${vno}"==""){
+		goSearch(1);
 	}
+	else {
+		goSearch2('${currentShowPageNo}');
+		
+		$("select#sort").val("${sort}");
+		$("input#searchWord").val("${searchWord}");
+		
+		var v = "${vno}".split(',');		
+		
+		for(var i=0; i<v.length; i++){
+			$("input:checkbox[id='chx"+v[i]+"']").prop("checked", true);
+		}		
+	}
+	
+	$("input#searchWord").bind("keydown", function(event){
+		if(event.keyCode == 13){
+			// 엔터를 했을 경우
+			goSearch(1);
+		}
+	});
+	
+});// end of $(document).ready(function(){})--------------------
+	
+	// Function Declaration
+	
+	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
+	function goSearch(currentShowPageNo){			
+		var checkArr = new Array();	
+		$("input[name=vno]:checked").each(function(index,item){			
+			var vno = $(item).val();
+			checkArr.push(vno);			
+		});
+		// console.log(checkArr);
+		
+		var checkArres = checkArr.join();
+		var vno= checkArres;
+		var sort= $("select#sort").val();
+		var searchWord = $("input#searchWord").val();
+		
+		$.ajax({
+			url:"<%= ctxPath%>/t1/vacation_templist.tw",
+			data:{"vno": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()
+				, "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json){				
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						html += "<tr class='tr_hover docuInfo'>";
+						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
+						html += "</tr>";
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='4' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#approvalDisplay").html(html);
+				
+				
+				// 페이지바 함수 호출
+				makeApprovalPageBar(currentShowPageNo);				
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}// end of function goSearch(){}--------------------
+	
+	
+	function goSearch2(currentShowPageNo){	
+		
+		$.ajax({
+			url:"<%= ctxPath%>/t1/vacation_templist.tw",
+			data:{"vno": "${vno}"
+				, "sort":"${sort}"
+				, "searchWord":"${searchWord}"
+				, "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json){				
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						html += "<tr class='tr_hover docuInfo'>";
+						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
+						html += "</tr>";						
+						
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='4' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#approvalDisplay").html(html);				
+				
+				// 페이지바 함수 호출
+				makeApprovalPageBar(currentShowPageNo);				
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}// end of function goSearch2(){}--------------------
+		
+	
+	// 페이지바 Ajax로 만들기
+	function makeApprovalPageBar(currentShowPageNo){
+		
+		$("input[name=currentShowPageNo]").val(currentShowPageNo);
+		
+		var checkArr = new Array();	
+		$("input[name=vno]:checked").each(function(index,item){			
+			var vno = $(item).val();
+			checkArr.push(vno);			
+		});		
+		
+		var checkArres = checkArr.join();		
+		
+		// totalPage 수 알아오기
+		$.ajax({
+			url:"<%= ctxPath%>/t1/getVacationTempTotalPage.tw",
+			data:{"vno": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()
+				, "sizePerPage":"10"},
+			type:"get",
+			dataType:"json",
+			success:function(json){
+				
+				if(json.totalPage > 0){
+					// 글이 있는 경우
+					
+					var totalPage = json.totalPage;
+					
+					var pageBarHTML = "<ul class='pagination' style='list-style: none;'>";
+					
+					var blockSize = 5;
+					
+					var loop = 1;
+					
+					if(typeof currentShowPageNo == "string"){
+						currentShowPageNo = Number(currentShowPageNo);
+					}
+					
+					var pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+					
+					// === [맨처음][이전] 만들기 ===
+					if(pageNo != 1) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\"1\")'>First</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+(pageNo-1)+"\")'>Prev</a></li>";
+					}
+					
+					while(!(loop > blockSize || pageNo > totalPage)) {
+						
+						if(pageNo == currentShowPageNo) {
+							pageBarHTML += "<li class='active'><a>"+pageNo+"</a></li>";
+						}
+						else {
+							pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>"+pageNo+"</a></li>";
+						}
+
+						loop++;
+						pageNo++;
+					}// end of while--------------------
+					
+					// === [다음][마지막] 만들기 ===
+					if(pageNo <= totalPage) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>Next</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+totalPage+"\")'>Last</a></li>";
+					}
+					
+					pageBarHTML += "</ul>";
+					
+					$("div#pageBar").html(pageBarHTML);					
+					
+				}				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+	}	
+	
+	function goView(ano, vcatname, vno, sort, searchWord){
+		var frm = document.goViewFrm;
+		
+		frm.ano.value = ano;
+		frm.sort.value = sort;
+		frm.vcatname.value = vcatname;
+		frm.vno.value = vno;
+		
+		frm.method = "get";
+		frm.action = "<%= ctxPath%>/t1/myDocuVacation_temp_detail.tw";
+		frm.submit();
+	}	
 </script>
 
 <div class="section">
-<h3 style="font-size: 22pt; font-weight: bold;">임시저장함</h3>
+<img src="<%= ctxPath%>/resources/images/sia/document.png" width="26px;">
+<span style="font-size: 14pt; font-weight: bold;">임시저장함</span>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_temp.tw" class="tab_area">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_temp.tw" class="tab_area">지출 결재 문서</a>
 		<a href="<%= ctxPath%>/t1/myDocuVacation_temp.tw" class="tab_area selected">근태/휴가 결재 문서</a>			
 	</div>
 	
-	<table>
-		<tr>
-			<td width="20%" class="th">결재상태</td>
-			<td width="80%">&nbsp;&nbsp;
-				<select name="status" id="status">
-					<option>전체보기</option>
-					<option value="0">제출</option>
-					<option value="1">결재진행중</option>
-					<option value="2">반려</option>
-					<option value="3">승인완료</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class="th">작성일자</td>
-			<td>&nbsp;&nbsp;
-				<span class="period">
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType1" onclick="setSearchDate('0d')"/>
-						<label for="dateType1">오늘</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType2" onclick="setSearchDate('1w')"/>
-						<label for="dateType2">1주일</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType3" onclick="setSearchDate('1m')"/>
-						<label for="dateType3">1개월</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType4" onclick="setSearchDate('3m')"/>
-						<label for="dateType4">3개월</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType5" onclick="setSearchDate('6m')"/>
-						<label for="dateType5">6개월</label>
-					</span>
-				</span>
-				<input type="hidden" value="${fromDate}" id="hiddendate"/>
-				<input type="hidden" value="${toDate}" id="hiddendate2"/>
-				<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
-			</td>
-		</tr>
-		<tr>
-			<td class="th">일반 결재 문서</td>
-			<td>&nbsp;&nbsp;
-				<label for="chx1"><input type="checkbox" id="chx1" value="1"> 병가</label>&nbsp;&nbsp;
-				<label for="chx2"><input type="checkbox" id="chx2" value="2"> 반차</label>&nbsp;&nbsp;
-				<label for="chx3"><input type="checkbox" id="chx3" value="3"> 연차</label>&nbsp;&nbsp;
-				<label for="chx4"><input type="checkbox" id="chx4" value="4"> 경조휴가</label>&nbsp;&nbsp;
-				<label for="chx5"><input type="checkbox" id="chx5" value="5"> 출장</label>&nbsp;&nbsp;
-				<label for="chx6"><input type="checkbox" id="chx6" value="6"> 추가근무</label>&nbsp;&nbsp;
-			</td>
-		</tr>			
-		<tr>
-			<td class="th">문서검색</td>
-			<td>&nbsp;&nbsp;
-				<select>
-					<option>전체보기</option>
-					<option value="0">제목</option>
-					<option value="1">문서번호</option>												
-				</select>&nbsp;
-				<input type="text" style="height: 20px;"/> <button type="button">검색</button>
-			</td>
-		</tr>
+	<form name="searchFrm">
+		<table>
+			<tr>
+				<td width="20%" class="th">근태 휴가 결재 문서</td>
+				<td width="80%">&nbsp;&nbsp;
+					<label for="chx1"><input type="checkbox" name="vno" id="chx1" value="1"> 병가</label>&nbsp;&nbsp;
+					<label for="chx2"><input type="checkbox" name="vno" id="chx2" value="2"> 반차</label>&nbsp;&nbsp;
+					<label for="chx3"><input type="checkbox" name="vno" id="chx3" value="3"> 연차</label>&nbsp;&nbsp;
+					<label for="chx4"><input type="checkbox" name="vno" id="chx4" value="4"> 경조휴가</label>&nbsp;&nbsp;
+					<label for="chx5"><input type="checkbox" name="vno" id="chx5" value="5"> 출장</label>&nbsp;&nbsp;
+					<label for="chx6"><input type="checkbox" name="vno" id="chx6" value="6"> 추가근무</label>&nbsp;&nbsp;
+				</td>
+			</tr>			
+			<tr>
+				<td class="th">문서검색</td>
+				<td>&nbsp;&nbsp;
+					<select name="sort" id="sort">
+						<option value="">전체보기</option>
+						<option value="atitle">제목</option>
+						<option value="ano">문서번호</option>												
+					</select>&nbsp;
+					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch(1)">검색</button>
+				</td>
+			</tr>	
+		</table>
 	
-	</table>
+		<br>
+		
+		<table id="table">
+			<thead>
+			<tr>
+				<th style="width: 70px; text-align: center;">번호</th>
+				<th style="width: 300px; text-align: center;">제목</th>
+				<th style="width: 100px; text-align: center;">문서분류</th>
+				<th style="width: 100px; text-align: center;">문서번호</th>				
+			</tr>
+			</thead>		
+			<tbody id="approvalDisplay"></tbody>		
+		</table>
+		
+		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
+	</form>
+	
+	
+	<form name="goViewFrm">
+		<input type="hidden" name="ano" value="" />
+		<input type="hidden" name="vcatname" value="" />		
+		<input type="hidden" name="vno" value="" />
+		<input type="hidden" name="sort" value="" />
+		<input type="hidden" name="searchWord" value="" />
+		<input type="hidden" name="currentShowPageNo" value="" />
+	</form>
 </div>

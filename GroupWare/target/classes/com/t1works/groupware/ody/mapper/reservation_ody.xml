@@ -123,19 +123,16 @@
 		<if test="roomno!=0 ">
 			and S.fk_roomno = #{roomno}
 		</if>
-		<if test="rstatus !=-1 ">
-			and S.rstatus = #{rstatus}
-		</if>
 	</select>
 	
 	
 	<!-- 나의 회의실 대여 현황에서 검색 -->
 	<select id="showMyRoomListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO">
-		select rno, rdate, rtime, rstatus, roomname, rsubject, rsroomno
+		select rno, rdate, rtime, roomname, rsubject, rsroomno, fk_roomno
 		from       
 		(        
 		select row_number() over(order by rdate desc, rtime desc) as rno,
-		       rdate, rtime, rstatus, roomname, rsubject, rsroomno
+		       rdate, rtime,  roomname, rsubject, rsroomno,fk_roomno
 				from tbl_rsroom S join tbl_room R
 				on S.fk_roomno = R.roomno
 				where S.fk_employeeid = #{employeeid}
@@ -147,9 +144,6 @@
 				</if>
 				<if test="roomno !=0 ">
 					and S.fk_roomno = #{roomno}
-				</if>
-				<if test="rstatus !=-1 ">
-					and S.rstatus = #{rstatus}
 				</if>
 		)V
 		 where rno between #{startRno} and #{endRno}
@@ -175,13 +169,13 @@
 		</if>
 	</select>
 	
-	
+	<!-- 사무용품 예약 내역 확인 -->
 	<select id="showMyGoodsListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO">
-		select rno, rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno
+		select rno, rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno, fk_gno
 		from       
 		(        
 		select row_number() over(order by rgdate desc, rgtime desc) as rno,
-		       rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno
+		       rgdate, rgtime, gstatus, goodsname, rgsubject, rsgno, fk_gno
 				from tbl_rsgoods S join tbl_goods G
 				on S.fk_gno = G.gno
 				where S.fk_employeeid = #{employeeid}
@@ -224,11 +218,11 @@
 	
 	<!-- 나의 차량 대여 현황 -->
 	<select id="showMyCarListSearchWithPaging"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsCarOdyVO">
-		select rno, rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+		select rno, rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination, fk_cno
 		from       
 		(        
 		select row_number() over(order by rcdate desc, rctime desc) as rno,
-		       rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination
+		       rcdate, rctime, cstatus, carname, rcsubject, rscno, rcpeople, rdestination, fk_cno
 				from tbl_rscar S join tbl_car C
 				on S.fk_cno = C.cno
 				where S.fk_employeeid = #{employeeid}
@@ -246,11 +240,28 @@
 				</if>
 		)V
 		 where rno between #{startRno} and #{endRno}
+	</select>
 	
-	
+	<!-- 회의실 예약 변경시 가능 시간 -->
+	<select id="checkTimeRoom" parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsRoomOdyVO">
+		select rtime
+		from tbl_rsroom	
+		where rdate=#{rdate} and fk_roomno = #{fk_roomno}
 	</select>
 	
 	
+	<!-- 사무용품 예약 변경시간 확인 -->
+	<select id="checkTimeGoods"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsGoodsOdyVO">
+		select rgtime
+		from tbl_rsgoods
+		where rgdate=#{rgdate} and fk_gno = #{fk_gno}
+	</select>
 	
 	
+	<!-- 차량 예약 변경시간 확인 -->
+	<select id="checkTimeCar"  parameterType="HashMap" resultType="com.t1works.groupware.ody.model.RsCarOdyVO">
+		select rctime
+		from tbl_rscar
+		where rcdate=#{rcdate} and fk_cno = #{fk_cno}
+	</select>
 </mapper>

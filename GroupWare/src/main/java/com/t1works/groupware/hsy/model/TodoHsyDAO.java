@@ -85,7 +85,48 @@ public class TodoHsyDAO implements InterTodoHsyDAO {
 	} // end of public Map<String, String> selectCntTodoByPeriod(String employeeid) {-----
 
 	
+	// 선택 날짜로 부터 6개월 이전까지의 날짜리스트 만들기
+	@Override
+	public Map<String, String> getDateBeforeSix(String selectedDate) {
+		Map<String,String> dateMap= sqlsession2.selectOne("todoHsy.getDateBeforeSix",selectedDate);
+		return dateMap;
+	} // end of public Map<String, String> getDateBeforeSix(String selectedDate) {---
+
 	
+	// 해당년월의 처리업무에 해당하는 fk_pno 가져오기
+	@Override
+	public List<String> getFk_pnoListByDate(Map<String, String> paraMap) {
+		List<String> fk_pnoList= sqlsession2.selectList("todoHsy.getFk_pnoListByDate",paraMap);
+		return fk_pnoList;
+	} // end of public List<String> getFk_pnoListByDate(Map<String, String> paraMap) {---
+
+	
+	// 해당년월의 처리 업무 건 수 와 고객 수 가져오기 
+	@Override
+	public Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2) {
+		Map<String,String> EachPerfAndClientCnt= sqlsession2.selectOne("todoHsy.getPerfAndClientCnt", paraMap2);
+		return EachPerfAndClientCnt;
+	} // end of public Map<String, String> getPerfAndClientCnt(Map<String, String> paraMap2) {---
+
+	
+	// 특정 년월에 끝난 업무 정부 가져오기 => 업무명, 시작일, 종료일, 담당 고객 수 (종료일 오름차순)
+	@Override
+	public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {
+
+		List<TodoHsyVO> modalList= sqlsession2.selectList("todoHsy.getPerfClientInfoForModal", paraMap);
+		return modalList;
+	
+	} // end of public List<TodoHsyVO> getPerfClientInfoForModal(Map<String, String> paraMap) {----
+
+	
+	// 처리 업무가 존재하는 날짜와 날짜별 처리 업무 수 가져오기
+	@Override
+	public List<Map<String, String>> getBonusDate(Map<String,String> paraMap) {
+
+		List<Map<String,String>> bonusDateList= sqlsession2.selectList("todoHsy.getBonusDate",paraMap);
+		return bonusDateList;
+		
+	} // end of public List<Map<String, String>> getBonusDate(String employeeid) {---
 
 	
 }

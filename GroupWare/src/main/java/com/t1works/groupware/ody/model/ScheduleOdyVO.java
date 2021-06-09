@@ -12,9 +12,11 @@ public class ScheduleOdyVO {
 	private int fk_scno; // 캘린더 소분류 번호
 	private int fk_bcno;// 캘린더 대분류 번호
 	private String fk_employeeid; // 사번
-	private String stime;
-	private String etime;
+	private String stime; // 시작 시간
+	private String etime; // 종료시간
 	
+	
+
 	public String getStime() {
 		return stime;
 	}

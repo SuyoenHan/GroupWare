@@ -58,8 +58,9 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
 	td.th{		
 		background-color: #ccd9e6;
@@ -70,7 +71,9 @@
 		background-color: #395673; 
 		color: #ffffff;
 		padding: 5px;
-		border: solid 1px #ccc;}
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
 	tr.tr_hover:hover{
 		cursor: pointer;
 		background-color: #eef2f7;
@@ -82,9 +85,48 @@
 <script type="text/javascript" src="<%= ctxPath%>/resources/jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>
 
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function(){	
 	
-	goSearch(1);
+	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
+	$(document).on('click','tr.docuInfo',function(){
+		var checkArr = new Array();	
+		$("input[name=vno]:checked").each(function(index,item){			
+			var no = $(item).val();
+			checkArr.push(no);			
+		});
+		
+		var checkArres = checkArr.join();	
+		
+		var ano = $(this).children(".ano").text();
+		var vcatname = $(this).children(".vcatname").text();		
+		var fromDate= $("input#fromDate").val();
+		var toDate= $("input#toDate").val();
+		var astatus = $("select#astatus").val();
+		var vno = checkArres;
+		var sort= $("select#sort").val();		
+		var searchWord= $("input#searchWord").val();
+		
+		goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord);
+	});
+	
+	if("${sort}"=="" && "${searchWord}"=="" && "${fromDate}"=="" && "${toDate}"=="" && "${astatus}"=="" && "${vno}"==""){
+		goSearch(1);
+	}
+	else {
+		goSearch2('${currentShowPageNo}');
+		
+		$("select#astatus").val("${astatus}");
+		$("input#fromDate").val("${fromDate}");
+		$("input#toDate").val("${toDate}");
+		$("select#sort").val("${sort}");
+		$("input#searchWord").val("${searchWord}");
+		
+		var v = "${vno}".split(',');		
+		
+		for(var i=0; i<v.length; i++){
+			$("input:checkbox[id='chx"+v[i]+"']").prop("checked", true);
+		}		
+	}
 	
 	$("input#searchWord").bind("keydown", function(event){
 		if(event.keyCode == 13){
@@ -170,22 +212,88 @@ $(document).ready(function(){
 			
 	}
 	
+	function goSearch2(currentShowPageNo){	
+		
+		$.ajax({
+			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
+			data:{"astatus":"${astatus}"
+				, "fromDate":"${fromDate}"
+				, "toDate":"${toDate}"
+				, "vno": "${vno}"
+				, "sort":"${sort}"
+				, "searchWord":"${searchWord}"
+				, "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json){				
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						var status = "";
+						
+						if(item.astatus == 0){
+							status = "제출";
+						}
+						else if(item.astatus == 1){
+							status = "결재진행중";
+						}
+						else if(item.astatus == 2){
+							status = "반려";
+						}
+						else if(item.astatus == 3){
+							status = "승인완료";
+						}
+						
+						html += "<tr class='tr_hover docuInfo'>";
+						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
+						html += "<td align='center'>"+ status +"</td>";
+						html += "<td align='center'>"+ item.asdate +"</td>";
+						html += "</tr>";						
+						
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='6' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#approvalDisplay").html(html);				
+				
+				// 페이지바 함수 호출
+				makeApprovalPageBar(currentShowPageNo);				
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	} // end of function goSearch2(){}--------------------
 	
 	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
 	function goSearch(currentShowPageNo){			
 		var checkArr = new Array();	
 		$("input[name=vno]:checked").each(function(index,item){			
-			var vno = $(item).val();
-			checkArr.push(vno);			
+			var no = $(item).val();
+			checkArr.push(no);			
 		});
 		// console.log(checkArr);
 		
 		var checkArres = checkArr.join();
+		var fromDate= $("input#fromDate").val();
+		var toDate= $("input#toDate").val();
+		var vno= checkArres;
+		var sort= $("select#sort").val();
+		var searchWord= $("input#searchWord").val();
 		
-		$.ajax({			
+		$.ajax({
 			url:"<%= ctxPath%>/t1/vacation_reclist.tw",
-			data:{"anocode":"${requestScope.approvalvo.anocode}"
-				, "astatus":$("select#astatus").val()
+			data:{"astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
 				, "vno": checkArres
@@ -193,7 +301,7 @@ $(document).ready(function(){
 				, "searchWord":$("input#searchWord").val()
 				, "currentShowPageNo":currentShowPageNo},
 			dataType:"json",
-			success:function(json){
+			success:function(json){				
 				
 				var html = "";
 				
@@ -218,7 +326,7 @@ $(document).ready(function(){
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ (index+1) +"</td>";
 						html += "<td>&nbsp;"+ item.atitle +"</td>";
-						html += "<td align='center'>"+ item.vcatname +"</td>";
+						html += "<td class='vcatname' align='center'>"+ item.vcatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
 						html += "<td align='center'>"+ item.asdate +"</td>";
@@ -231,18 +339,12 @@ $(document).ready(function(){
 					html += "</tr>";
 				}
 				
-				$("tbody#commentDisplay").html(html);
-				
-				
-				// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
-				$("tr.docuInfo").click(function(){					
-					var ano = $(this).children(".ano").text();
-					location.href="<%= ctxPath%>/t1/myDocuVaction_detail.tw?ano="+ano;
-				});
-				
+				$("tbody#approvalDisplay").html(html);
+					
 				
 				// 페이지바 함수 호출
-				makeCommentPageBar(currentShowPageNo);
+				makeApprovalPageBar(currentShowPageNo);				
+				
 			},
 			error: function(request, status, error){
 				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -252,7 +354,9 @@ $(document).ready(function(){
 	
 	
 	// 페이지바 Ajax로 만들기
-	function makeCommentPageBar(currentShowPageNo){
+	function makeApprovalPageBar(currentShowPageNo){
+		
+		$("input[name=currentShowPageNo]").val(currentShowPageNo);
 		
 		var checkArr = new Array();	
 		$("input[name=vno]:checked").each(function(index,item){			
@@ -265,8 +369,7 @@ $(document).ready(function(){
 		// totalPage 수 알아오기
 		$.ajax({
 			url:"<%= ctxPath%>/t1/getVacationTotalPage.tw",
-			data:{"anocode":"${requestScope.approvalvo.anocode}"
-				, "astatus":$("select#astatus").val()
+			data:{"astatus":$("select#astatus").val()
 				, "fromDate":$("input#fromDate").val()
 				, "toDate":$("input#toDate").val()
 				, "vno": checkArres
@@ -322,6 +425,7 @@ $(document).ready(function(){
 					pageBarHTML += "</ul>";
 					
 					$("div#pageBar").html(pageBarHTML);					
+					
 				}				
 			},
 			error: function(request, status, error){
@@ -329,11 +433,28 @@ $(document).ready(function(){
 			}
 		});
 	}	
+	
+	function goView(ano, vcatname, fromDate, toDate, astatus, vno, sort, searchWord){
+		var frm = document.goViewFrm;
+		frm.ano.value = ano;
+		frm.sort.value = sort;
+		frm.vcatname.value = vcatname;
+		frm.searchWord.value = searchWord;
+		frm.fromDate.value = fromDate;
+		frm.toDate.value = toDate;
+		frm.astatus.value = astatus;
+		frm.vno.value = vno;
+		
+		frm.method = "get";
+		frm.action = "<%= ctxPath%>/t1/myDocuVacation_detail.tw";
+		frm.submit();
+	} 
+	
 </script>
 
 <div class="section">
 <img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
-<span style="font-size: 14pt; font-weight: bold;">수신함</span>
+<span style="font-size: 14pt; font-weight: bold;">수신함 - 미결재문서</span>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_rec.tw" class="tab_area">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
@@ -399,7 +520,7 @@ $(document).ready(function(){
 				<td class="th">문서검색</td>
 				<td>&nbsp;&nbsp;
 					<select name="sort" id="sort">
-						<option>전체보기</option>
+						<option value="">전체보기</option>
 						<option value="atitle">제목</option>
 						<option value="ano">문서번호</option>												
 					</select>&nbsp;
@@ -421,9 +542,22 @@ $(document).ready(function(){
 				<th style="width: 120px; text-align: center;">기안일</th>
 			</tr>
 			</thead>		
-			<tbody id="commentDisplay"></tbody>		
+			<tbody id="approvalDisplay"></tbody>		
 		</table>
 		
 		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
+	</form>
+	
+	
+	<form name="goViewFrm">
+		<input type="hidden" name="ano" value="" />
+		<input type="hidden" name="vcatname" value="" />		
+		<input type="hidden" name="astatus" value="" />
+		<input type="hidden" name="fromDate" value="" />
+		<input type="hidden" name="toDate" value="" />
+		<input type="hidden" name="vno" value="" />
+		<input type="hidden" name="sort" value="" />
+		<input type="hidden" name="searchWord" value="" />
+		<input type="hidden" name="currentShowPageNo" value="" />
 	</form>
 </div>

@@ -5,8 +5,8 @@
 
 	<!-- 특정 상품에 예약정보 insert 하기 -->
 	<insert id="insertClientAjax" parameterType="com.t1works.groupware.hsy.model.ClientHsyVO">
-		insert into tbl_client (fk_pNo, clientmobile, clientname, cnumber)
-		values (#{fk_pNo}, #{clientmobile}, #{clientname}, #{cnumber})
+		insert into tbl_client (fk_pNo, clientmobile, clientname, cnumber, clientemail)
+		values (#{fk_pNo}, #{clientmobile}, #{clientname}, #{cnumber}, #{clientemail})
 	</insert>
 	
 	<!-- 해당제품에 특정고객의 예약이 존재하는지 확인 -->
@@ -60,12 +60,13 @@
 	
 	<!-- pNo를 이용하여 필요한 고객정보 가져오기 (페이징처리)-->
 	<select id="selectClientInfoByPno" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.ClientHsyVO">
-		select clientmobile, clientname, cnumber
+		select clientmobile, clientname, cnumber, endDate, fk_pNo
 		from
 		(
-			select row_number() over(order by to_number(cnumber) desc) as rno, clientmobile, clientname, cnumber
-			from tbl_client
-			where fk_pNo= #{pNo}
+			select row_number() over(order by to_number(cnumber) desc) as rno, clientmobile, C.fk_pNo
+			     , clientname, cnumber, nvl(to_char(endDate,'yy/mm'),'0') as endDate
+			from tbl_client C join tbl_todo T on C.fk_pno= T.fk_pno 
+			where C.fk_pNo= #{pNo}
 		) V
 		where rno between #{startRno} and #{endRno}
 		order by rno
@@ -77,22 +78,12 @@
 		where fk_pNo= #{fk_pNo}
 	</select>
 	
-	
-	<!-- 월급명세서에 필요한 정보 가져오기 => 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) resultMap 정의-->
-	<resultMap type="HashMap" id="attendanceCntMap">
-		<result property="newTodoCnt" column="newTodoCnt" javaType="String"/>
-		<result property="ingTodoCnt" column="ingTodoCnt" javaType="String"/>
-		<result property="doneTodoCnt" column="doneTodoCnt" javaType="String"/>
-	</resultMap>
-	
-	<!-- 월급명세서에 필요한 정보 가져오기 => 근태내역 (연차/병가/지각/반차/경조휴가 사용 일 수) -->
-	<select id="getAttendanceForSalary" parameterType="HashMap" resultMap="attendanceCntMap">
-	
-	
-	
-	
+	<!-- 업무진행 중에서 고객에게 메일 보낼 때 사용 될 정보 가져오기 -->
+	<select id="getInfoForSendEmailIngTodo" parameterType="HashMap" resultType="com.t1works.groupware.hsy.model.ClientHsyVO">
+		select cnumber, clientname, clientemail, pName, to_char(startDate,'yyyy-mm-dd') as startDate
+		from tbl_client join (select * from tbl_product  where pNo=#{fk_pNo}) on fk_pNo=pNo
+		where clientmobile=#{clientmobile}
 	</select>
-	
 	
 	
 </mapper>

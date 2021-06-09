@@ -6,9 +6,12 @@
 %>
 
 <style type="text/css">
-	div.section{		
+	div.section{
 		margin: 30px 0px 30px 50px;
 		width: 85%;
+	}
+	div.tab_select{
+		margin-top: 10px;
 	}
 	a.tab_area{
 		background-color: #ecf2f9;
@@ -55,12 +58,25 @@
 		margin: 10px 5px;
 		width: 90%;
 	}
-	tr, td{
-		border: solid 1px gray;
+	div.section tr, div.section td{
+		border: solid 1px #ccc;
+		border-collapse: collapse;
 	}
-	td.th{
-		background-color: #e6e6e6;
+	td.th{		
+		background-color: #ccd9e6;
 		padding: 5px;
+		font-weight: bold;
+	}	
+	#table th{
+		background-color: #395673; 
+		color: #ffffff;
+		padding: 5px;
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
+	tr.tr_hover:hover{
+		cursor: pointer;
+		background-color: #eef2f7;
 	}
 </style>
 
@@ -70,6 +86,54 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	// 특정 문서를 클릭하면 그 문서의 상세 정보를 보여주도록 한다.
+	$(document).on('click','tr.docuInfo',function(){
+		var checkArr = new Array();	
+		$("input[name=scat]:checked").each(function(index,item){			
+			var scat = $(item).val();
+			checkArr.push(scat);			
+		});
+		
+		var checkArres = checkArr.join();	
+		
+		var ano = $(this).children(".ano").text();
+		var scatname = $(this).children(".scatname").text();		
+		var fromDate= $("input#fromDate").val();
+		var toDate= $("input#toDate").val();
+		var astatus = $("select#astatus").val();
+		var scat = checkArres;
+		var sort= $("select#sort").val();		
+		var searchWord= $("input#searchWord").val();
+		
+		goView(ano, scatname, fromDate, toDate, astatus, scat, sort, searchWord);
+	});
+	
+	if("${sort}"=="" && "${searchWord}"=="" && "${fromDate}"=="" && "${toDate}"=="" && "${astatus}"=="" && "${scat}"==""){
+		goSearch(1);
+	}
+	else {
+		goSearch2('${currentShowPageNo}');
+		
+		$("select#astatus").val("${astatus}");
+		$("input#fromDate").val("${fromDate}");
+		$("input#toDate").val("${toDate}");
+		$("select#sort").val("${sort}");
+		$("input#searchWord").val("${searchWord}");
+		
+		var s = "${scat}".split(',');		
+		
+		for(var i=0; i<s.length; i++){
+			$("input:checkbox[id='chx"+s[i]+"']").prop("checked", true);
+		}		
+	}
+	
+	$("input#searchWord").bind("keydown", function(event){
+		if(event.keyCode == 13){
+			// 엔터를 했을 경우
+			goSearch(1);
+		}
+	});
 	
 	var today = new Date();
 	var dd = today.getDate();
@@ -114,26 +178,10 @@ $(document).ready(function(){
 		$("input#fromDate").datepicker();                    
 		$("input#toDate").datepicker();		
 		
-		if($('input#hiddendate').val() == today || $('input#hiddendate').val() == ""){
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', '-3M'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', 'today'); // (-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)		
-			}
-		else{
-			// From의 초기값을 3개월 전으로 설정
-			$('input#fromDate').datepicker('setDate', $('input#hiddendate').val()); 
-			// To의 초기값을 오늘로 설정
-			$('input#toDate').datepicker('setDate', $('input#hiddendate2').val()); 
-		}
-		
-	});
-	
-
-	
+	});	
 });
 	
-	//Function Declaration
+	// Function Declaration
 	function setSearchDate(start){
 		var num = start.substring(0,1);
 		var str = start.substring(1,2);
@@ -160,81 +208,352 @@ $(document).ready(function(){
 		
 		// 시작일은 종료일 이후 날짜 선택하지 못하도록 비활성화
 		$("#fromDate").datepicker( "option", "maxDate", endDate );	
-	
-		
 	}
+	
+	
+	// 페이지 로딩 시 해당하는 내역 전체 보여주기(페이징처리)
+	function goSearch(currentShowPageNo){			
+		var checkArr = new Array();	
+		$("input[name=scat]:checked").each(function(index,item){			
+			var scat = $(item).val();
+			checkArr.push(scat);			
+		});
+		// console.log(checkArr);
+		
+		var checkArres = checkArr.join();
+		var fromDate= $("input#fromDate").val();
+		var toDate= $("input#toDate").val();
+		var scat= checkArres;
+		var sort= $("select#sort").val();
+		var searchWord= $("input#searchWord").val();
+		
+		$.ajax({			
+			url:"<%= ctxPath%>/t1/spend_sendlist.tw",
+			data:{"astatus":$("select#astatus").val()
+				, "fromDate":$("input#fromDate").val()
+				, "toDate":$("input#toDate").val()
+				, "scat": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()
+				, "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json){
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						var status = "";
+						
+						if(item.astatus == 0){
+							status = "제출";
+						}
+						else if(item.astatus == 1){
+							status = "결재진행중";
+						}
+						else if(item.astatus == 2){
+							status = "반려";
+						}
+						else if(item.astatus == 3){
+							status = "승인완료";
+						}
+						
+						html += "<tr class='tr_hover docuInfo'>";
+						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
+						html += "<td align='center'>"+ status +"</td>";
+						html += "<td align='center'>"+ item.asdate +"</td>";
+						html += "</tr>";
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='6' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#approvalDisplay").html(html);
+				
+				
+				// 페이지바 함수 호출
+				makeApprovalPageBar(currentShowPageNo);
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	}// end of function goSearch(){}--------------------
+	
+	
+	function goSearch2(currentShowPageNo){	
+		
+		$.ajax({
+			url:"<%= ctxPath%>/t1/spend_sendlist.tw",
+			data:{"astatus":"${astatus}"
+				, "fromDate":"${fromDate}"
+				, "toDate":"${toDate}"
+				, "scat": "${scat}"
+				, "sort":"${sort}"
+				, "searchWord":"${searchWord}"
+				, "currentShowPageNo":currentShowPageNo},
+			dataType:"json",
+			success:function(json){				
+				
+				var html = "";
+				
+				if(json.length > 0){
+					$.each(json, function(index, item){
+						
+						var status = "";
+						
+						if(item.astatus == 0){
+							status = "제출";
+						}
+						else if(item.astatus == 1){
+							status = "결재진행중";
+						}
+						else if(item.astatus == 2){
+							status = "반려";
+						}
+						else if(item.astatus == 3){
+							status = "승인완료";
+						}
+						
+						html += "<tr class='tr_hover docuInfo'>";
+						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
+						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
+						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
+						html += "<td align='center'>"+ status +"</td>";
+						html += "<td align='center'>"+ item.asdate +"</td>";
+						html += "</tr>";						
+						
+					});
+				}
+				else{
+					html += "<tr>";
+					html += "<td colspan='6' align='center' style='padding: 5px;'>해당하는 글이 없습니다</td>";
+					html += "</tr>";
+				}
+				
+				$("tbody#approvalDisplay").html(html);				
+				
+				// 페이지바 함수 호출
+				makeApprovalPageBar(currentShowPageNo);				
+				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});		
+	} // end of function goSearch2(){}--------------------
+	
+	
+	
+	// 페이지바 Ajax로 만들기
+	function makeApprovalPageBar(currentShowPageNo){
+		
+		$("input[name=currentShowPageNo]").val(currentShowPageNo);
+		
+		var checkArr = new Array();	
+		$("input[name=scat]:checked").each(function(index,item){			
+			var scat = $(item).val();
+			checkArr.push(scat);			
+		});
+		// console.log(checkArr);
+		
+		var checkArres = checkArr.join();		
+		
+		// totalPage 수 알아오기
+		$.ajax({
+			url:"<%= ctxPath%>/t1/getSpendSendTotalPage.tw",
+			data:{"astatus":$("select#astatus").val()
+				, "fromDate":$("input#fromDate").val()
+				, "toDate":$("input#toDate").val()
+				, "scat": checkArres
+				, "sort":$("select#sort").val()
+				, "searchWord":$("input#searchWord").val()
+				, "sizePerPage":"10"},
+			type:"get",
+			dataType:"json",
+			success:function(json){
+				
+				if(json.totalPage > 0){
+					// 글이 있는 경우
+					
+					var totalPage = json.totalPage;
+					
+					var pageBarHTML = "<ul class='pagination' style='list-style: none;'>";
+					
+					var blockSize = 5;
+					
+					var loop = 1;
+					
+					if(typeof currentShowPageNo == "string"){
+						currentShowPageNo = Number(currentShowPageNo);
+					}
+					
+					var pageNo = Math.floor((currentShowPageNo - 1)/blockSize) * blockSize + 1;
+					
+					// === [맨처음][이전] 만들기 ===
+					if(pageNo != 1) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\"1\")'>First</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+(pageNo-1)+"\")'>Prev</a></li>";
+					}
+					
+					while(!(loop > blockSize || pageNo > totalPage)) {
+						
+						if(pageNo == currentShowPageNo) {
+							pageBarHTML += "<li class='active'><a>"+pageNo+"</a></li>";
+						}
+						else {
+							pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>"+pageNo+"</a></li>";
+						}
+
+						loop++;
+						pageNo++;
+					}// end of while--------------------
+					
+					// === [다음][마지막] 만들기 ===
+					if(pageNo <= totalPage) {
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+pageNo+"\")'>Next</a></li>";
+						pageBarHTML += "<li><a href='javascript:goSearch(\""+totalPage+"\")'>Last</a></li>";
+					}
+					
+					pageBarHTML += "</ul>";
+					
+					$("div#pageBar").html(pageBarHTML);					
+				}				
+			},
+			error: function(request, status, error){
+				alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+			}
+		});
+	}	
+		
+	function goView(ano, scatname, fromDate, toDate, astatus, scat, sort, searchWord){
+		var frm = document.goViewFrm;
+		frm.ano.value = ano;
+		frm.sort.value = sort;
+		frm.scatname.value = scatname;
+		frm.searchWord.value = searchWord;
+		frm.fromDate.value = fromDate;
+		frm.toDate.value = toDate;
+		frm.astatus.value = astatus;
+		frm.scat.value = scat;
+		
+		frm.method = "get";
+		frm.action = "<%= ctxPath%>/t1/myDocuSpend_send_detail.tw";
+		frm.submit();
+	}	
 </script>
 <div class="section">
-<h3 style="font-size: 22pt; font-weight: bold;">발신함</h3>
+<img src="<%= ctxPath%>/resources/images/sia/document_1.png" width="26px;">
+<span style="font-size: 14pt; font-weight: bold;">발신함</span>
 	<div class="tab_select">
 		<a href="<%= ctxPath%>/t1/myDocuNorm_send.tw" class="tab_area">일반 결재 문서</a> 
 		<a href="<%= ctxPath%>/t1/myDocuSpend_send.tw" class="tab_area selected">지출 결재 문서</a>
 		<a href="<%= ctxPath%>/t1/myDocuVacation_send.tw" class="tab_area">근태/휴가 결재 문서</a>			
 	</div>
 	
-	<table>
-		<tr>
-			<td width="20%" class="th">결재상태</td>
-			<td width="80%">&nbsp;&nbsp;
-				<select name="status" id="status">
-					<option>전체보기</option>
-					<option value="0">제출</option>
-					<option value="1">결재진행중</option>
-					<option value="2">반려</option>
-					<option value="3">승인완료</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td class="th">작성일자</td>
-			<td>&nbsp;&nbsp;
-				<span class="period">
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType1" onclick="setSearchDate('0d')"/>
-						<label for="dateType1">오늘</label>
+	<form name="searchFrm">
+		<table>
+			<tr>
+				<td width="20%" class="th">결재상태</td>
+				<td width="80%">&nbsp;&nbsp;
+					<select name="astatus" id="astatus">
+						<option>전체보기</option>
+						<option value="0">제출</option>
+						<option value="1">결재진행중</option>
+						<option value="2">반려</option>
+						<option value="3">승인완료</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td class="th">작성일자</td>
+				<td>&nbsp;&nbsp;
+					<span class="period">
+						<span class="chkbox">
+							<input type="radio" class="dateType" id="dateType1" onclick="setSearchDate('0d')"/>
+							<label for="dateType1">오늘</label>
+						</span>
+						<span class="chkbox">
+							<input type="radio" class="dateType" id="dateType2" onclick="setSearchDate('1w')"/>
+							<label for="dateType2">1주일</label>
+						</span>
+						<span class="chkbox">
+							<input type="radio" class="dateType" id="dateType3" onclick="setSearchDate('1m')"/>
+							<label for="dateType3">1개월</label>
+						</span>
+						<span class="chkbox">
+							<input type="radio" class="dateType" id="dateType4" onclick="setSearchDate('3m')"/>
+							<label for="dateType4">3개월</label>
+						</span>
+						<span class="chkbox">
+							<input type="radio" class="dateType" id="dateType5" onclick="setSearchDate('6m')"/>
+							<label for="dateType5">6개월</label>
+						</span>
 					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType2" onclick="setSearchDate('1w')"/>
-						<label for="dateType2">1주일</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType3" onclick="setSearchDate('1m')"/>
-						<label for="dateType3">1개월</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType4" onclick="setSearchDate('3m')"/>
-						<label for="dateType4">3개월</label>
-					</span>
-					<span class="chkbox">
-						<input type="radio" class="dateType" id="dateType5" onclick="setSearchDate('6m')"/>
-						<label for="dateType5">6개월</label>
-					</span>
-				</span>
-				<input type="hidden" value="${fromDate}" id="hiddendate"/>
-				<input type="hidden" value="${toDate}" id="hiddendate2"/>
-				<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
-			</td>
-		</tr>
-		<tr>
-			<td class="th">일반 결재 문서</td>
-			<td>&nbsp;&nbsp;
-				<label for="chx1"><input type="checkbox" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
-				<label for="chx2"><input type="checkbox" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
-				<label for="chx3"><input type="checkbox" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
-				<label for="chx4"><input type="checkbox" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
-			</td>
-		</tr>			
-		<tr>
-			<td class="th">문서검색</td>
-			<td>&nbsp;&nbsp;
-				<select>
-					<option>전체보기</option>
-					<option value="0">제목</option>
-					<option value="1">문서번호</option>												
-				</select>&nbsp;
-				<input type="text" style="height: 20px;"/> <button type="button">검색</button>
-			</td>
-		</tr>
+					<input type="hidden" value="${fromDate}" id="hiddendate"/>
+					<input type="hidden" value="${toDate}" id="hiddendate2"/>
+					<input type="text" class="datepicker" id="fromDate" name="fromDate" autocomplete="off" > - <input type="text" class="datepicker" id="toDate" name="toDate" autocomplete="off">					
+				</td>
+			</tr>
+			<tr>
+				<td class="th">지출 결재 문서</td>
+				<td>&nbsp;&nbsp;
+					<label for="chx1"><input type="checkbox" name="scat" id="chx1" value="1"> 지출결의서</label>&nbsp;&nbsp;
+					<label for="chx2"><input type="checkbox" name="scat" id="chx2" value="2"> 법인카드사용신청서</label>&nbsp;&nbsp;
+					<label for="chx3"><input type="checkbox" name="scat" id="chx3" value="3"> 출장명세서</label>&nbsp;&nbsp;
+					<label for="chx4"><input type="checkbox" name="scat" id="chx4" value="4"> 퇴직금정산신청서</label>&nbsp;&nbsp;
+				</td>
+			</tr>			
+			<tr>
+				<td class="th">문서검색</td>
+				<td>&nbsp;&nbsp;
+					<select name="sort" id="sort">
+						<option value="">전체보기</option>
+						<option value="atitle">제목</option>
+						<option value="ano">문서번호</option>												
+					</select>&nbsp;
+					<input type="text" name="searchWord" id="searchWord" style="height: 20px;"/> <button type="button" onclick="goSearch(1)">검색</button>
+				</td>
+			</tr>	
+		</table>
+		
+		<br>
+		
+		<table id="table">
+			<thead>
+			<tr>
+				<th style="width: 70px; text-align: center;">번호</th>
+				<th style="width: 300px; text-align: center;">제목</th>
+				<th style="width: 100px; text-align: center;">문서분류</th>
+				<th style="width: 100px; text-align: center;">문서번호</th>
+				<th style="width: 100px; text-align: center;">결재상태</th>
+				<th style="width: 120px; text-align: center;">기안일</th>
+			</tr>
+			</thead>		
+			<tbody id="approvalDisplay"></tbody>		
+		</table>
+		
+		<div id="pageBar" style="width: 90%; margin-left: 42%;"></div>
+	</form>
 	
-	</table>
+	
+	<form name="goViewFrm">
+		<input type="hidden" name="ano" value="" />
+		<input type="hidden" name="scatname" value="" />		
+		<input type="hidden" name="astatus" value="" />
+		<input type="hidden" name="fromDate" value="" />
+		<input type="hidden" name="toDate" value="" />
+		<input type="hidden" name="scat" value="" />
+		<input type="hidden" name="sort" value="" />
+		<input type="hidden" name="searchWord" value="" />
+		<input type="hidden" name="currentShowPageNo" value="" />
+	</form>
 </div>

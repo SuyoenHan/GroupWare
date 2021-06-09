@@ -6,19 +6,10 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-	// === postupload.jsp 게시판 글쓰기 ===
-      
-      // === #167. 스마트 에디터 구현 시작 ===
-       
-       // === 스마트 에디터 구현 끝 ===
       
       // 쓰기버튼
       $("button#btnWrite").click(function(){
       
-         // === 스마트 에디터 구현 시작 ===
-          
-         // === 스마트 에디터 구현 끝 ===
-         
           // 글제목 유효성 검사
          var subjectVal = $("input#subject").val().trim();
          if(subjectVal == "") {
@@ -32,25 +23,6 @@ $(document).ready(function(){
             alert("글내용을 입력하세요");
             return;
          }
-        
-         
-         // === 스마트에디터 구현 시작 ===
-         //스마트에디터 사용시 무의미하게 생기는 p태그 제거
-          
-              
-           
-           
-           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
-           // 글내용 유효성 검사 
-           
-           
-           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-           
-       
-          
-        
-        
-       // === 스마트에디터 구현 끝 ===
          
          // 글암호 유효성 검사
          var pwVal = $("input#pw").val().trim();
@@ -77,7 +49,7 @@ $(document).ready(function(){
 <div id="board-container">
 	 <i class="fas fa-bullhorn fa-lg"></i>&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">공지사항</span>
 	
-	 <form name="postFrm"> 
+	 <form name="postFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 -->
 	    <table id="table" class="table">
 	       <tr>
 	          <th>성명</th>
@@ -103,6 +75,13 @@ $(document).ready(function(){
 	             <input type="text" name="subject" id="subject" style="width: 100%;" />       
 	          </td>
 	       </tr>
+	       <%-- === #150. 파일첨부 타입 추가하기 === --%>
+	       <tr>
+         	<th>파일첨부</th>
+         	<td>
+         		<input type="file" name="attach" />
+         	</td>
+           </tr>
 	       <tr>
 	          <th>내용</th>
 	          <td>
@@ -110,7 +89,6 @@ $(document).ready(function(){
 	          </td>
 	       </tr>
 	       
-	       <%-- === #150. 파일첨부 타입 추가하기 === --%>
 	       
 	       
 	       <tr>

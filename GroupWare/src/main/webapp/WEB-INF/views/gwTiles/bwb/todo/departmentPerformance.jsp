@@ -64,7 +64,7 @@
 
 
 <figure class="highcharts-figure">
-	<div id="siljuk" style="margin-bottom:50px; margin-top:50px;">
+	<div id="siljuk">
 		<select id="siljukMonth" style="float:right;">
 		</select>
 		<select id="siljukYear" style="float:right;">
@@ -73,7 +73,7 @@
 			</c:forEach>
 		</select>
 	</div>
-    <div id="container" style="width:1000px; height:600px; margin-left:-200px;"></div>
+    <div id="container"></div>
 </figure>
 
 <script type="text/javascript">
@@ -200,7 +200,7 @@
 					// [{"ppreveCnt":"1","name":"육수연","selectCnt":"1","prevCnt":"0"},{"ppreveCnt":"0","name":"구수연","selectCnt":"0","prevCnt":"2"}
 					// ,{"ppreveCnt":"0","name":"십수연","selectCnt":"1","prevCnt":"0"},{"ppreveCnt":"1","name":"백수연","selectCnt":"0","prevCnt":"1"}]	
 						$.each(json,function(index,item){ // [{name값,[데이터값1,데이터값2,데이터값3]}, {},{}]
-
+										
 							performanceDataArr =[];
 							
 							performanceDataArr.push(Number(item.ppreveCnt));

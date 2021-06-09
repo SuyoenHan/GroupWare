@@ -2,14 +2,16 @@ package com.t1works.groupware.bwb.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.t1works.groupware.bwb.model.InterMemberBwbDAO;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
@@ -116,22 +118,99 @@ public class HomepageBwbService implements InterHomepageBwbService {
 	
 	// 출퇴근기록 테이블에 update하기(퇴근시간)
 	@Override
-	public int updateOuttime(Map<String, String> paraMap) {
+	@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+	public String updateOuttime(Map<String, String> paraMap) throws Throwable{
 		
-		int n = dao.updateOuttime(paraMap);
+		 int n = dao.updateOuttime(paraMap);
 		
-	    return n;
-	}
-	
-	// 출퇴근테이블에서 select하기(퇴근시간)
+		 // 출퇴근테이블에서 select하기(퇴근시간)
+		 if(n==1) {
+			 String outtime = dao.selectOuttime(paraMap); // xx:xx:xx
+			 
+			 int outTimehh = Integer.parseInt(outtime.substring(0, 2)); // 시간만 뽑아오기
+			 int outTimemm = Integer.parseInt(outtime.substring(3, 5)); // 분만 뽑아오기
+			 
+			 String doLateTime = "0"; // 적용되는 시간
+			 
+			 if((outTimehh==19 && outTimemm>=45)||(outTimehh==20 && outTimemm<45)) {
+				 doLateTime="1";
+			 }
+			 else if((outTimehh==20 && outTimemm>=45)||(outTimehh==21 && outTimemm<45)) {
+				 doLateTime="2";
+			 }
+			 else if((outTimehh==21 && outTimemm>=45)||(outTimehh==22 && outTimemm<45)) {
+				 doLateTime="3";
+			 }
+			 else if((outTimehh==22 && outTimemm>=45)||(outTimehh==23 && outTimemm<45)) {
+				 doLateTime="4";
+			 }
+			 else if((outTimehh==23 && outTimemm>=45 && outTimemm<=59)) {
+				 doLateTime="5";
+			 }
+			 
+			 // 야근테이블에 insert하기
+			 if(!doLateTime.equalsIgnoreCase("0")) {
+				 paraMap.put("doLateTime", doLateTime);
+				 int m = dao.insertdoLate(paraMap);
+				 
+				 if(m==1) {
+					 return outtime;
+				 }
+				 else {
+					 return "";
+				 }
+			 } // end of if(!doLateTime.equalsIgnoreCase("0")) 
+			 else {
+				 return outtime;
+			 }
+			 
+		 }// end of if(n==1) {
+		 else {
+			 return "";
+		 }
+
+	}// end of public String updateOuttime(Map<String, String> paraMap) throws Throwable
+
+
+	// 출퇴근기록 테이블에서 select작업(퇴근시간)
 	@Override
 	public String selectOuttime(Map<String, String> paraMap) {
-		
 		String outtime = dao.selectOuttime(paraMap);
-		
-	    return outtime;
+		return outtime;
 	}
-	
 
+
+	// 이용자의 총 연차수 가지고 오기
+	@Override
+	public String selectTotaloffCnt(String pcode) {
+		String totalOffCnt = dao.selectTotaloffCnt(pcode);
+		return totalOffCnt;
+	}
+
+
+	// 이용자의 사용연차수 가지고 오기
+	@Override
+	public String selectUseoffCnt(String fk_employeeid) {
+		
+		String useOffCnt = dao.selectUseoffCnt(fk_employeeid);
+		return useOffCnt;
+	}
+
+
+	 // 나의 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid) {
+		
+		List<Map<String, String>> myIndolenceList = dao.selectmyMonthIndolence(fk_employeeid);
+		return myIndolenceList;
+	}
+
+
+	// 부서 월별 출퇴근기록 가지고오기
+	@Override
+	public List<Map<String, String>> selectDepMonthIndolence(String fk_dcode) {
+		List<Map<String,String>> depIndolenceList = dao.selectDepMonthIndolence(fk_dcode);
+		return depIndolenceList;
+	}
    
 }

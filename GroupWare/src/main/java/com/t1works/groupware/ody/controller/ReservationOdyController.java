@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+
 import com.t1works.groupware.bwb.model.MemberBwbVO;
-import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.ody.model.*;
 import com.t1works.groupware.ody.service.InterReservationOdyService;
 
@@ -91,7 +91,6 @@ public class ReservationOdyController {
 		String fk_roomno = request.getParameter("fk_roomno");
 		String rdate= request.getParameter("rdate");
 		String fk_employeeid= request.getParameter("fk_employeeid");
-		String rdepartment= request.getParameter("rdepartment");
 		String rsubject= request.getParameter("rsubject");
 
 		
@@ -103,7 +102,6 @@ public class ReservationOdyController {
 			paraMap.put("fk_roomno", fk_roomno);
 			paraMap.put("rdate", rdate);
 			paraMap.put("fk_employeeid", fk_employeeid);
-			paraMap.put("rdepartment", rdepartment);
 			paraMap.put("rsubject", rsubject);
 			paraMap.put("rtime", rtime);
 			n = service.insert_rsRoom(paraMap);
@@ -157,7 +155,7 @@ public class ReservationOdyController {
 				JSONObject jsonObj = new JSONObject(); // {}
 				 
 				jsonObj.put("rsgno", rsgvo.getRsgno());         // {"no":"101"}
-				jsonObj.put("fk_roomno", rsgvo.getFk_gno());    
+				jsonObj.put("fk_gno", rsgvo.getFk_gno());    
 				jsonObj.put("fk_employeeid", rsgvo.getFk_employeeid()); 
 				jsonObj.put("name", rsgvo.getName()); 
 				jsonObj.put("rgsubject", rsgvo.getRgsubject()); // {"no":"101", "name":"오다윤", "writeday":"2021-05-13 11:38:59"}
@@ -387,7 +385,6 @@ public class ReservationOdyController {
 		String enddate = request.getParameter("enddate");
 		String str_roomno = request.getParameter("roomno");
 		String searchWord = request.getParameter("searchWord");
-		String str_rstatus = request.getParameter("rstatus");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
 		
 		int roomno=0;
@@ -415,17 +412,7 @@ public class ReservationOdyController {
 			enddate="";
 		}
 
-		int rstatus=-1;
-		if(str_rstatus==null || "".equals(str_rstatus)) {
-			rstatus=-1;
-		}
-		else {
-			try {
-				rstatus= Integer.parseInt(str_rstatus);
-			}catch (NumberFormatException e) {
-				rstatus=-1;
-			}
-		}
+		
 		
 		Map<String, String> paraMap = new HashMap<String, String>();
 		paraMap.put("roomno", String.valueOf(roomno));
@@ -433,7 +420,7 @@ public class ReservationOdyController {
 		paraMap.put("startdate", startdate);
 		paraMap.put("enddate", enddate);
 		paraMap.put("employeeid", employeeid);
-		paraMap.put("rstatus",String.valueOf(rstatus));
+
 
 		
 		int totalCount =0;     	
@@ -495,8 +482,8 @@ public class ReservationOdyController {
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo!=1) {
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo=1'>[맨처음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
 		}
 		while(!(loop>blockSize || pageNo>totalPage)) {
 			
@@ -504,7 +491,7 @@ public class ReservationOdyController {
 				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; font-weight: bold;'>"+pageNo+"</li>";
 			}
 			else {
-				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
 			
 			loop++;
@@ -513,8 +500,8 @@ public class ReservationOdyController {
 		
 		// === [다음][마지막] 만들기 === //
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&rstatus="+rstatus+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
+			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?startdate="+startdate+"&enddate="+enddate+"&roomno="+roomno+"&searchWord="+searchWord+"&sizePerPage="+sizePerPage+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
 		}
 		pageBar += "</ul>";
 		
@@ -905,7 +892,227 @@ public class ReservationOdyController {
 	}
 		
 	
+	// 회의실 에약변경 시간 확인
+	@ResponseBody
+	@RequestMapping(value="/t1/reserve/checkTimeRoom.tw", produces="text/plain;charset=UTF-8" )
+	public String checkTimeRoom(HttpServletRequest request) {
+		String rdate = request.getParameter("rdate");
+		String fk_roomno = request.getParameter("fk_roomno");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("rdate", rdate);
+		paraMap.put("fk_roomno", fk_roomno);
+		
+		List<RsRoomOdyVO> roomTimeList = service.checkTimeRoom(paraMap);
+	
+		JSONArray jsArr = new JSONArray();
+		
+		if(roomTimeList!=null) {
+			for(RsRoomOdyVO rvo : roomTimeList) {
+				JSONObject jsObj = new JSONObject();			
+				jsObj.put("rtime", rvo.getRtime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
 	
 	
+	// 회의실 예약 변경하기
+	@RequestMapping(value="/t1/editReserveRoom.tw", method= {RequestMethod.POST})
+	public ModelAndView editReserveRoom(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String rtimeArr = request.getParameter("rtime");
+		
+		String[] rArr = rtimeArr.split(",");
+		
+		String fk_roomno = request.getParameter("fk_roomno");
+		String rdate= request.getParameter("rdate");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		String rsubject= request.getParameter("rsubject");
+		String rsroomno = request.getParameter("rsroomno");
+		int m = service.delReserveRoom(rsroomno);
+		int n=0;
+		if(m>0) {
+			for(int i=0;i<rArr.length;i++) {
+				String rtime= rArr[i];
+			//	System.out.println(rtime);
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("fk_roomno", fk_roomno);
+				paraMap.put("rdate", rdate);
+				paraMap.put("fk_employeeid", fk_employeeid);
+				paraMap.put("rsubject", rsubject);
+				paraMap.put("rtime", rtime);
+	
+				n = service.insert_rsRoom(paraMap);
+			
+			}
+	
+		}
+		if(n>0) {
+			mav.addObject("message","회의실 예약이 변경되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedRoom.tw");
+		}
+		else {
+			mav.addObject("message","회의실 예약 변경을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedRoom.tw");
+		}
+		
+		mav.setViewName("msg");
+
+		return mav;
+	}
+	
+	
+	// 사무용품 예약 변경 시간 확인
+	@ResponseBody
+	@RequestMapping(value="/t1/reserve/checkTimeGoods.tw", produces="text/plain;charset=UTF-8" )
+	public String checkTimeGoods(HttpServletRequest request) {
+		String rgdate = request.getParameter("rgdate");
+		String fk_gno = request.getParameter("fk_gno");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("rgdate", rgdate);
+		paraMap.put("fk_gno", fk_gno);
+		
+		List<RsGoodsOdyVO> goodsTimeList = service.checkTimeGoods(paraMap);
+	
+		JSONArray jsArr = new JSONArray();
+		
+		if(goodsTimeList!=null) {
+			for(RsGoodsOdyVO gvo : goodsTimeList) {
+				JSONObject jsObj = new JSONObject();			
+				jsObj.put("rgtime", gvo.getRgtime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
+
+	
+	// 사무용품 예약 변경하기
+	@RequestMapping(value="/t1/editReserveGoods.tw", method= {RequestMethod.POST})
+	public ModelAndView editReserveGoods(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String rgtimeArr = request.getParameter("rgtime");
+		
+		String[] rgArr = rgtimeArr.split(",");
+		
+		String gno = request.getParameter("fk_gno");
+		String rgdate= request.getParameter("rgdate");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		String rgsubject= request.getParameter("rgsubject");
+		String rsgno= request.getParameter("rsgno");
+		
+		int n=0;
+		int m = service.delReserveGoods(rsgno);
+		
+		if(m>0) {
+			for(int i=0;i<rgArr.length;i++) {
+				String rgtime= rgArr[i];
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("gno", gno);
+				paraMap.put("rgdate", rgdate);
+				paraMap.put("fk_employeeid", fk_employeeid);
+				paraMap.put("rgsubject", rgsubject);
+				paraMap.put("rgtime", rgtime);
+				n = service.insert_rsGoods(paraMap);
+			}
+		}
+		
+		if(n>0) {
+			mav.addObject("message","사무용품 예약이 변경되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
+		}
+		else {
+			mav.addObject("message","사무용품 예약 변경을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedGoods.tw");
+		}
+		
+		mav.setViewName("msg");
+		return mav;
+	}
+
+	
+	// 차량 예약 변경 시간 확인
+	@ResponseBody
+	@RequestMapping(value="/t1/reserve/checkTimeCar.tw", produces="text/plain;charset=UTF-8" )
+	public String checkTimeCar(HttpServletRequest request) {
+		String rcdate = request.getParameter("rcdate");
+		String fk_cno = request.getParameter("fk_cno");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("rcdate", rcdate);
+		paraMap.put("fk_cno", fk_cno);
+		
+		List<RsCarOdyVO> carTimeList = service.checkTimeCar(paraMap);
+	
+		JSONArray jsArr = new JSONArray();
+		
+		if(carTimeList!=null) {
+			for(RsCarOdyVO cvo : carTimeList) {
+				JSONObject jsObj = new JSONObject();			
+				jsObj.put("rctime", cvo.getRctime());
+				jsArr.put(jsObj);
+			}
+		}
+		
+		return jsArr.toString();
+	}
+	
+	// 차량 예약 변경하기
+	@RequestMapping(value="/t1/editReserveCar.tw", method= {RequestMethod.POST})
+	public ModelAndView editReserveCar(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		String rctimeArr = request.getParameter("rctime");
+		
+		String[] rcArr = rctimeArr.split(",");
+		
+		String cno = request.getParameter("fk_cno");
+		String rcdate= request.getParameter("rcdate");
+		String fk_employeeid= request.getParameter("fk_employeeid");
+		String rdestination= request.getParameter("rdestination");
+		String rcpeople= request.getParameter("rcpeople");
+		String rcsubject= request.getParameter("rcsubject");
+		String rscno= request.getParameter("rscno");
+		
+		int n=0;
+		
+		int m = service.delReserveCar(rscno);
+		
+		if(m>0) {
+			for(int i=0;i<rcArr.length;i++) {
+				String rctime= rcArr[i];
+			//	System.out.println(rtime);
+				Map<String,String> paraMap = new HashMap<>();
+				paraMap.put("cno", cno);
+				paraMap.put("rcdate", rcdate);
+				paraMap.put("fk_employeeid", fk_employeeid);
+				paraMap.put("rdestination", rdestination);
+				paraMap.put("rcpeople", rcpeople);
+				paraMap.put("rcsubject", rcsubject);
+				paraMap.put("rctime", rctime);
+				n = service.insert_rsCar(paraMap);
+			}
+		}
+		
+		
+		
+		
+		if(n>0) {
+			mav.addObject("message","차량 예약이 변경되었습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedCar.tw");
+		}
+		else {
+			mav.addObject("message","차량 예약 변경을 실패하였습니다.");
+			mav.addObject("loc",request.getContextPath()+"/t1/myReservedCar.tw");
+		}
+		
+		mav.setViewName("msg");
+		return mav;
+	}
+
 	
 }
