@@ -426,6 +426,14 @@
 		</if>
 	</update>
 	
+	
+	<!-- 결재로그 테이블에 insert 하기(결재승인) -->
+	<insert id="approvalLog" parameterType="HashMap">
+		insert into tbl_alog(logno, fk_ano, fk_employeeid, logstatus, logdate)
+		values(seq_tbl_alog.nextval, #{ano}, #{employeeid}, 1, sysdate)
+	</insert>
+	
+	
 	<!-- 내문서함 - 수신함 반려버튼 클릭 -->
 	<update id="reject" parameterType="HashMap">
 		update tbl_approval set astatus = '2'
@@ -442,6 +450,12 @@
 		</choose>		
 		where ano = #{ano}
 	</update>
+	
+	<!-- 결재로그 테이블에 insert 하기(반려) -->
+	<insert id="rejectLog" parameterType="HashMap">
+		insert into tbl_alog(logno, fk_ano, fk_employeeid, logstatus, logdate)
+		values(seq_tbl_alog.nextval, #{ano}, #{employeeid}, 2, sysdate)
+	</insert>
 	
 	<!-- ///////////////////////////////////////////////////////////////////// -->
 	<!-- ///////////////////////////////////////////////////////////////////// -->
@@ -1291,6 +1305,14 @@
 		</if>
 	</update>
 	
+	
+	<!-- 결재로그 테이블에 insert하기 (제출) -->
+	<insert id="submitLog" parameterType="HashMap">
+		insert into tbl_alog(logno, fk_ano, fk_employeeid, logstatus, logdate)
+		values(seq_tbl_alog.nextval, #{ano}, #{userid}, 0, sysdate)	
+	</insert>
+	
+	
 	<!-- ////////////////////////////////////////////////////////////////////// -->
 	<!-- ////////////////////////////////////////////////////////////////////// -->	
 	
@@ -1663,5 +1685,18 @@
 		where ono = #{ono}	
 	</delete>
 	
+	
+	<!-- 결재로그 리스트보기 -->
+	<select id="approvalLogList" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
+		select nvl(dname, ' ') as dname, name, pname, to_char(logdate, 'yyyy-mm-dd') as logdate, logstatus, employeeid, pcode
+		from tbl_alog a join tbl_employee e
+		on a.fk_employeeid = e.employeeid
+		left join tbl_department d
+		on e.fk_dcode = d.dcode
+		join tbl_position p
+		on e.fk_pcode = p.pcode
+		where fk_ano = #{parentAno}
+		order by logdate
+	</select>
 	
 </mapper>

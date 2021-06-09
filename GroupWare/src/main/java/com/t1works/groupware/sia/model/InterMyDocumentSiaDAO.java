@@ -46,9 +46,13 @@ public interface InterMyDocumentSiaDAO {
 
 	// 내문서함 - 수신함 - 결재버튼 클릭
 	int approval(Map<String, String> paraMap);
-
+	// 결재로그 테이블에 insert 하기(승인)
+	int approvalLog(Map<String, String> paraMap);
+	
 	// 내문서함 - 수신함 - 반려버튼 클릭
-	int reject(Map<String, String> paraMap);
+	int reject(Map<String, String> paraMap);	
+	// 결재로그 테이블에 insert 하기(반려)
+	int rejectLog(Map<String, String> paraMap);
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -147,6 +151,9 @@ public interface InterMyDocumentSiaDAO {
 
 	int optionSaveVacation(ApprovalSiaVO avo); // 근태결재 문서 종류에 따라 테이블 update	
 	
+	// 결재로그 테이블에 insert하기 (제출)
+	int submitLog(Map<String, String> paraMap);
+
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
@@ -183,6 +190,15 @@ public interface InterMyDocumentSiaDAO {
 
 	// 결재의견 삭제하기
 	int delMyOpinion(Map<String, String> paraMap);
+
+	// 결재로그 리스트보기
+	List<ApprovalSiaVO> approvalLogList(String parentAno);
+	
+
+	
+	
+
+	
 
 	
 

@@ -105,11 +105,23 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		int n = sqlsession4.update("mydocument_sia.approval", paraMap);
 		return n;
 	}
+	// 결재로그 테이블에 insert 하기(승인)
+	@Override
+	public int approvalLog(Map<String, String> paraMap) {
+		int n = sqlsession4.insert("mydocument_sia.approvalLog", paraMap);
+		return n;
+	}
 
 	// 내문서함 - 수신함 - 반려버튼 클릭
 	@Override
 	public int reject(Map<String, String> paraMap) {
 		int n = sqlsession4.update("mydocument_sia.reject", paraMap);
+		return n;
+	}
+	// 결재로그 테이블에 insert 하기(반려)
+	@Override
+	public int rejectLog(Map<String, String> paraMap) {
+		int n = sqlsession4.insert("mydocument_sia.rejectLog", paraMap);
 		return n;
 	}
 	
@@ -331,6 +343,13 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		int result = sqlsession4.update("mydocument_sia.optionSaveVacation", avo);
 		return result;
 	}
+
+	// 결재로그 테이블에 insert하기 (제출)
+	@Override
+	public int submitLog(Map<String, String> paraMap) {
+		int n = sqlsession4.insert("mydocument_sia.submitLog", paraMap);
+		return n;
+	}
 	
 	/////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////
@@ -409,6 +428,16 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		int n = sqlsession4.delete("mydocument_sia.delMyOpinion", paraMap);
 		return n;
 	}
+
+	// 결재로그 리스트보기
+	@Override
+	public List<ApprovalSiaVO> approvalLogList(String parentAno) {
+		List<ApprovalSiaVO> avo = sqlsession4.selectList("mydocument_sia.approvalLogList", parentAno);
+		return avo;
+	}
+
+	
+
 
 
 

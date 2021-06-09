@@ -196,6 +196,9 @@ public interface InterMyDocumentSiaService {
 	// 결재의견 삭제하기
 	int delMyOpinion(Map<String, String> paraMap);
 
+	// 결재로그 리스트보기
+	List<ApprovalSiaVO> approvalLogList(String parentAno);
+
 	
 
 	

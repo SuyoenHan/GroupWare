@@ -107,6 +107,12 @@ public class ApprovalSiaVO {
 	private String ono;			// 의견번호
 	private String ocontent;	// 의견내용
 	private String odate;		// 작성일자
+	
+	
+	// 결재로그
+	private String logstatus;	// 결재상태
+	private String logdate;		// 결재일자
+	
 
 	private String rno;
 
@@ -616,6 +622,22 @@ public class ApprovalSiaVO {
 		this.odate = odate;
 	}
 
+	public String getLogstatus() {
+		return logstatus;
+	}
+
+	public void setLogstatus(String logstatus) {
+		this.logstatus = logstatus;
+	}	
+
+	public String getLogdate() {
+		return logdate;
+	}
+
+	public void setLogdate(String logdate) {
+		this.logdate = logdate;
+	}
+	
 	public String getRno() {
 		return rno;
 	}

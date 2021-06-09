@@ -988,13 +988,15 @@ public class MyDocumentSiaController {
 		String ano = request.getParameter("ano");
 		String arecipient1 = request.getParameter("arecipient1");
 		String arecipient2 = request.getParameter("arecipient2");
-		String arecipient3 = request.getParameter("arecipient3");	
+		String arecipient3 = request.getParameter("arecipient3");
+		String employeeid = request.getParameter("employeeid");
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);  
 		paraMap.put("arecipient1", arecipient1);
 		paraMap.put("arecipient2", arecipient2);
-		paraMap.put("arecipient3", arecipient3);		
+		paraMap.put("arecipient3", arecipient3);
+		paraMap.put("employeeid", employeeid);
 	 
 		int n = service.reject(paraMap); 	
 		
@@ -1003,6 +1005,35 @@ public class MyDocumentSiaController {
 				
 		return jsonObj.toString();
 	}
+	
+	
+	// 결재로그 리스트보기
+	@ResponseBody
+	@RequestMapping(value="/t1/approvalLogList.tw", produces="text/plain;charset=UTF-8")
+	public String approvalLogList(HttpServletRequest request) {
+		
+		String parentAno = request.getParameter("parentAno");
+		
+		List<ApprovalSiaVO> approvalLogList = service.approvalLogList(parentAno);
+		
+		JSONArray jsonArr = new JSONArray();
+		
+		if(approvalLogList != null) {
+			for(ApprovalSiaVO avo : approvalLogList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("dname", avo.getDname());
+				jsonObj.put("name", avo.getName());
+				jsonObj.put("pname", avo.getPname());
+				jsonObj.put("logstatus", avo.getLogstatus());
+				jsonObj.put("logdate", avo.getLogdate());
+				jsonObj.put("pcode", avo.getPcode());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+		
+		return jsonArr.toString();
+	}	
 	
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -2427,7 +2458,12 @@ public class MyDocumentSiaController {
 		
 		String mdate = mdate1+" "+mdate2+" ~ "+mdate3;
 		String fk_wiimdate = fk_wiimdate1+" ~ "+fk_wiimdate2;
+
+		HttpSession session = mrequest.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
 		
+		avo.setFk_employeeid(userid);
 		avo.setMdate(mdate);
 		avo.setFk_wiimdate(fk_wiimdate);
 		
@@ -2436,7 +2472,7 @@ public class MyDocumentSiaController {
 		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
-			HttpSession session = mrequest.getSession();
+			session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/");
 			
 			String path = root+"resources"+File.separator+"files";
@@ -2469,12 +2505,12 @@ public class MyDocumentSiaController {
 		try {
 			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
-				System.out.println("1");
+				
 				n = service.submit(avo);
 			}
 			else {
 				// 첨부파일이 있는 경우
-				System.out.println("2");
+				
 				n = service.submit_withFile(avo);
 			}			
 		} catch (Throwable e) {
@@ -2558,13 +2594,19 @@ public class MyDocumentSiaController {
 	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭	
 	@RequestMapping(value="/t1/submitSpend.tw", method= {RequestMethod.POST})
 	public ModelAndView submitSpend(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
-					
+		
+		HttpSession session = mrequest.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		avo.setFk_employeeid(userid);
+		
 		MultipartFile attach = avo.getAttach();
 		
 		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
-			HttpSession session = mrequest.getSession();
+			session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/");
 			
 			String path = root+"resources"+File.separator+"files";
@@ -2683,13 +2725,19 @@ public class MyDocumentSiaController {
 	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭	
 	@RequestMapping(value="/t1/submitVacation.tw", method= {RequestMethod.POST})
 	public ModelAndView submitVacation(ModelAndView mav, ApprovalSiaVO avo, MultipartHttpServletRequest mrequest) { 
-					
+		
+		HttpSession session = mrequest.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		
+		String userid = loginuser.getEmployeeid();
+		
+		avo.setFk_employeeid(userid);
+		
 		MultipartFile attach = avo.getAttach();
 		
 		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
-			HttpSession session = mrequest.getSession();
+			session = mrequest.getSession();
 			String root = session.getServletContext().getRealPath("/");
 			
 			String path = root+"resources"+File.separator+"files";
@@ -3523,54 +3571,6 @@ public class MyDocumentSiaController {
 				
 		return jsonObj.toString();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 
 }
