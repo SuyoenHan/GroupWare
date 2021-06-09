@@ -71,10 +71,15 @@
 		// 내림차순 기본선택값으로 지정
 		$("select#sortOption").val("desc");
 		
-		
-		// default값은 성과금내역 보기, 내림차순
 		var sortOption= $("select#sortOption").val();
-		getBonusList(sortOption);
+		
+		if("${from}"!=""){ // 홈페이지에서 야근 찍고 넘어온 경우 야간수당 내역이 default
+			getOverNightList(sortOption);
+			$("tr.first").css("background-color","#ffff99"); // 맨 위의 tr 배경색 주기	
+		}
+		else{ // 사이드메뉴로 넘어온 경우 default값은 성과금내역 보기, 내림차순
+			getBonusList(sortOption);		
+		}
 		
 		// 성과금 내역 또는 야근수당 내역 라디오 버튼을 클릭한 경우 이벤트
 		$("input[name=salaryDetailOption]").click(function(){
@@ -105,8 +110,19 @@
 				getBonusList(sortOption); // 성과금내역 함수 호출
 			}
 			else{ // 야근수당 내역을 클릭한 경우
-				getOverNightList(sortOption); // 야근수당 내역 함수 호출
-			}
+				
+				if(sortOption=="desc" && "${from}"!="" ){ // 홈페이지에서 야근 찍고 넘어온 경우 + 내림차순인 경우
+					getOverNightList(sortOption); // 야근수당 내역 함수 호출
+					$("tr.first").css("background-color","#ffff99"); // 맨 위의 tr 배경색 주기	
+				}
+				else if(sortOption=="asc" && "${from}"!="" ){ // 홈페이지에서 야근 찍고 넘어온 경우 + 오름차순인 경우
+					getOverNightList(sortOption); // 야근수당 내역 함수 호출
+					$("tr.last").css("background-color","#ffff99"); // 맨 아래의 tr 배경색 주기	
+				}
+				else{  // 사이드메뉴에서 넘어온 경우
+					getOverNightList(sortOption);
+				}
+			} // end of else-------------------------------------------------
 			
 		}); // end of $("select#sortOption").change(function(){-----------------
 			
@@ -146,8 +162,11 @@
 						
 						 var bonus=Number(item.bonus).toLocaleString('en');
 						 
-						 html+= "<tr>"+
-					   				"<td>"+item.date+"</td>"+
+						 if(index==0)  html+= "<tr class='first'>";
+						 else if(index==(json.length-1)) html+= "<tr class='last'>";
+						 else	html+= "<tr>";
+						 
+						 html+=	    "<td>"+item.date+"</td>"+
 					   				"<td style='width:30%'>"+
 					   					item.goalCnt+
 					   					"&nbsp;건<br/><span style='font-size:9pt;'>(&nbsp;목표건:&nbsp;전월실적&nbsp;("+item.prevCnt+"건)&nbsp;+&nbsp;2건&nbsp;)</span>"+
@@ -238,8 +257,14 @@
 	
 	<div id="salaryDetailTitle">${loginuser.name}님의 성과금/야근수당 내역</div>
 	<div id="salaryDetailOption" style="margin: 50px 0px 30px 50px; border: solid 0px red;">
-		<input type="radio" id="radio1" value="radio1" name="salaryDetailOption" checked /><label for="radio1" style="margin-right: 20px;">성과금&nbsp;내역</label>
-		<input type="radio" id="radio2" value="radio2" name="salaryDetailOption" /><label for="radio2">야근수당&nbsp;내역</label>
+		<c:if test="${from ne ''}">
+			<input type="radio" id="radio1" value="radio1" name="salaryDetailOption" /><label for="radio1" style="margin-right: 20px;">성과금&nbsp;내역</label>
+			<input type="radio" id="radio2" value="radio2" name="salaryDetailOption" checked/><label for="radio2">야근수당&nbsp;내역</label>
+		</c:if>
+		<c:if test="${from eq ''}">
+			<input type="radio" id="radio1" value="radio1" name="salaryDetailOption" checked /><label for="radio1" style="margin-right: 20px;">성과금&nbsp;내역</label>
+			<input type="radio" id="radio2" value="radio2" name="salaryDetailOption" /><label for="radio2">야근수당&nbsp;내역</label>
+		</c:if>
 	</div>
 	<div id="orderOption" style="border:solid 0px blue; width:88.5%;" align="right">
 		<span style="margin-right:15px; font-size: 12pt; color: #4c4c4d;">정렬기준</span>

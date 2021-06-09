@@ -315,7 +315,12 @@
 				type:"POST",
 				dataType:"JSON",
 				success:function(json){
-					alert(clientname+" 님에게 성공적으로 [여행준비물]메일을 전송했습니다.");	
+					if(json.n==0){
+						alert(clientname+" 님에게 성공적으로 [여행준비물]메일을 전송했습니다.");
+					}	
+					else{
+						alert("메일 전송에 실패했습니다. 다시 시도해주세요.");
+					}
 				},
 				error: function(request, status, error){
 		        	alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);

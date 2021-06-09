@@ -489,6 +489,10 @@ public class MemberHsyController {
 	@RequestMapping(value="/t1/salaryDetail.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
+		String from= request.getParameter("from"); // 홈페이지에서 야근 찍고 넘어온 경우
+		if(from==null) from=""; // 홈페이지에서 야근 안찍고 사이드메뉴 야근수당 정보페이지로 넘어온 경우
+		mav.addObject("from",from);
+		
 		mav.setViewName("hsy/employee/perfNightDetail.gwTiles");
 		return mav;
 	} // end of public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {----

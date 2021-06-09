@@ -487,7 +487,6 @@ public class TodoHsyController {
 	@RequestMapping(value="/t1/sendEmailIngTodo.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
 	public String sendEmailIngTodo(HttpServletRequest request) {
 		
-		
 		// 고객 테이블의 pk인 clientmobile, fk_pNo를 통해 메일 보낼 때 사용 될 정보 가져오기
 		String clientmobile= request.getParameter("clientmobile");
 		String fk_pNo= request.getParameter("fk_pNo");
