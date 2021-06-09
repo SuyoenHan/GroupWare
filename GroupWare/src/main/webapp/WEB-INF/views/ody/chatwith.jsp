@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<% String ctxPath = request.getContextPath(); %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <meta charset="UTF-8">
 <title>T1Works Talk</title>
@@ -8,6 +10,7 @@
 
 html{
 	background-color: #9bbad8;
+	overflow: hidden;
 }
 input.btn_normal{
 	background-color: #0071bd;
@@ -20,7 +23,10 @@ input.btn_normal{
 	margin-top: 3px;
 }
 
-
+-webkit-scrollbar {
+    width: 5px;
+    background-color: #9bbad8;
+  }
   
 div#sendmsg{
 	position: fixed; bottom: 10px; width: 100%;
@@ -74,9 +80,21 @@ div#sendmsg{
 	  		         JSON.stringify({ x: 5 });            // '{"x":5}'
 	  	          */ 
 	        };
-	       if($("input#toname").val() != $("span.loginuserid").text()){
-
-	       }
+	      
+	        // 아래는 귓속말을 위해서 대화를 나누는 상대방의 이름을 클릭하면 상대방IP주소를 귓속말대상IP주소에 입력하도록 하는 것.
+	        $(document).on("click",".loginuserName",function(){
+	           /* class loginuserName 은 
+	              com.spring.chatting.websockethandler.WebsocketEchoHandler 의 
+	              protected void handleTextMessage(WebSocketSession wsession, TextMessage message) 메소드내에
+	              133번 라인에 기재해두었음.
+	           */
+	           var ip = $(".loginuserName").prev().prev().text();
+	        //   alert(ip);
+	            $("input#to").val(ip); 
+	   
+	        });
+	        
+	        
 	        
 	        if($("span.ip").text()!=""){
 	        	$("input#to").val($("span.ip").text());
@@ -136,7 +154,7 @@ div#sendmsg{
 	                websocket.send(JSON.stringify(messageObj));
 	                // JSON.stringify() 는 값을 그 값을 나타내는 JSON 표기법의 문자열로 변환한다
 	                
-	                $("div#chatMessage").append("<div style='float: right;'><span style='font-size: 10pt;'>"+d.getHours() + "시" + d.getMinutes() +"분</span>&nbsp;<span style='background-color: yellow; padding: 3px 2px;'>" + messageVal + "</span></div><br/><br/>");
+	                $("div#chatMessage").append("<div style='float: right;'><span style='font-size: 10pt;'>"+d.getHours() + ":" + d.getMinutes() +"</span>&nbsp;<span style='background-color: yellow; padding: 3px 2px;'>" + messageVal + "</span></div>&nbsp;<br/><br/>");
 	                $("div#chatMessage").scrollTop(99999999); // 스크롤이 맨위로 간다
 	                 
 	                $("input#message").val("");
@@ -156,7 +174,15 @@ div#sendmsg{
 
 <div id="body">
  
-  <div id="name"></div>	
+  <div id="name">
+  	<c:if test="${not emptyparaMap}">
+  		${paraMap.name}&nbsp;
+  		<c:if test="${paraMap.fk_pcode == '1'}">사원</c:if>
+  		<c:if test="${paraMap.fk_pcode == '2'}">대리님</c:if>
+  		<c:if test="${paraMap.fk_pcode == '3'}">부장님</c:if>
+  		<c:if test="${paraMap.fk_pcode == '4'}">사장님</c:if>
+  	</c:if>
+  </div>	
  
   <div id="chatMessage" style="overFlow: auto; max-height: 550px;"></div>
   
@@ -165,5 +191,5 @@ div#sendmsg{
     <input type="button" id="btnSendMessage" class="btn_normal" value="보내기" />
   </div>
 </div>
-<input type="hidden" id="to" />
-<input type="hidden" id="toname" value="${empId}"/>
+<input type="text" id="to" value=""/>
+<input type="hidden" id="toId" value="${empId}"/>
