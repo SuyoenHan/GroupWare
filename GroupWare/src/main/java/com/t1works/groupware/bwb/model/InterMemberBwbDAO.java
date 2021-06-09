@@ -68,6 +68,21 @@ public interface InterMemberBwbDAO {
    
    // 부서 전체 이름,코드 가져오기
    List<MemberBwbVO> selectDepartmentList();
+   
+   // 야근테이블에 insert하기
+   int insertdoLate(Map<String, String> paraMap);
+   
+   // 이용자의 총 연차수 가지고 오기
+   String selectTotaloffCnt(String pcode);
+   
+   // 이용자의 사용연차수 가지고 오기
+   String selectUseoffCnt(String fk_employeeid);
+   
+   // 나의 월별 출퇴근기록 가지고오기
+   List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid);
+   
+	// 부서 월별 출퇴근기록 가지고오기
+	List<Map<String, String>> selectDepMonthIndolence(String fk_dcode);
 
 
 }

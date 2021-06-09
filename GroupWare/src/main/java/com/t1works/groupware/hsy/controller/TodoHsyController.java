@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.common.GoogleMail;
 import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.ProductHsyVO;
 import com.t1works.groupware.hsy.model.TodoHsyVO;
@@ -247,13 +248,7 @@ public class TodoHsyController {
 
 		// 1) 여행상품 상세번호 알아오기
 		String pNo= request.getParameter("fk_pNo");
-				
-		// pNo 존재하는지 확인하기 (url 장난 방지) => 숫자형태가 아닌 문자입력 또는 존재하지 않는 pNo 입력한 경우
-		int n= service2.isExistPno(pNo);
-		if(n==0) { // url 장난친 경우 제일 첫번째 상품을 보여준다
-			pNo="1"; 
-		}
-		
+			
 		// 2) 페이징바 처리한 고객정보 가져오기 사전작업 => post방식
 		String currentShowPageNo=request.getParameter("currentShowPageNo");
 		if(currentShowPageNo==null) {
@@ -282,6 +277,7 @@ public class TodoHsyController {
 			jsonObj.put("clientmobile",cvo.getClientmobile());
 			jsonObj.put("cnumber",cvo.getCnumber());
 			jsonObj.put("fk_pNo",cvo.getFk_pNo());
+			jsonObj.put("endDate",cvo.getEndDate());
 			
 			jsonArr.put(jsonObj);
 		}// end of for--------------------
@@ -485,5 +481,42 @@ public class TodoHsyController {
 	} // end of public String getPerfClientInfoForModal(HttpServletRequest request) {----
 	
 	
+	
+	// 여행준비물 메일 보내기 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/sendEmailIngTodo.tw",method= {RequestMethod.POST},produces="text/plain;charset=UTF-8")
+	public String sendEmailIngTodo(HttpServletRequest request) {
+		
+		
+		// 고객 테이블의 pk인 clientmobile, fk_pNo를 통해 메일 보낼 때 사용 될 정보 가져오기
+		String clientmobile= request.getParameter("clientmobile");
+		String fk_pNo= request.getParameter("fk_pNo");
+		
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("clientmobile", clientmobile);
+		paraMap.put("fk_pNo", fk_pNo);
+		
+		ClientHsyVO cvo= service.getInfoForSendEmailIngTodo(paraMap);
+		
+		GoogleMail mail = new GoogleMail();
+		
+		int n=0;
+		try {
+			mail.sendmail(cvo);
+			
+		} catch(Exception e) { // 메일 전송이 실패한 경우
+			n=1;
+		}
+		
+		JSONObject jsonObj= new JSONObject();
+		jsonObj.put("n", n);  
+		
+		 /*
+	 	 	n==1 메일 전송 실패
+	 	 	n==0 메일 전송 성공
+		 */
+		
+		return jsonObj.toString();
+	} // end of public String sendEmailIngTodo(HttpServletRequest request) {-----
 	
 }

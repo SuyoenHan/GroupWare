@@ -85,6 +85,22 @@
  .fc-event-title{
  	display: none;
  }
+ 
+ li{
+	margin-left:-10px;
+ }
+   
+  div#myInfo{
+      border:solid 1px red;
+      width:250px;
+      font-size:12pt;
+  }
+  
+  span.sebuInfo:hover{
+  	  cursor:pointer;
+  	  color:blue;
+  	  font-weight:bolder;
+  }	
 </style>
 
 <!-- full calendar에 관련된 script -->
@@ -216,7 +232,7 @@
          
          if(intime!="(미출근)"){ // 출근시간이 찍혀 있을때
             
-            if(outtime==""){
+            if(outtime=="(미퇴근)"){
    
                // 출퇴근기록 테이블에 insert하기
                $.ajax({
@@ -360,7 +376,10 @@
        }
       
       var date = now.getDate();  // 현재일
-       
+      if(date<10){
+    	  date = "0"+date;
+       } 
+      
        var hours = now.getHours(); // 현재시각
        
        if(hours<10){
@@ -476,17 +495,12 @@
    }
 </script>
 
-<style>
-   
-   div#myInfo{
-      border:solid 1px red;
-   }
 
-</style>
 
 <div id="content">
   <div id="myInfo">
-     <div id="image"><img src=""></div>
+  	 <img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:90px; height:90px; margin-left:80px;">
+     <div id="nameDep" style="border-bottom:solid 1px black; text-align:center; margin-top:10px;">
      <span id="name">${loginuser.name}
        <c:if test="${loginuser.fk_pcode eq 1}">
             사원님
@@ -503,44 +517,51 @@
      </span>
      <span id="department">
         <c:if test="${loginuser.fk_dcode eq 1}">
-            CS1팀
+            (CS1팀)
        </c:if>
        <c:if test="${loginuser.fk_dcode eq 2}">
-            CS2팀
+            (CS2팀)
        </c:if>
        <c:if test="${loginuser.fk_dcode eq 3}">
-            CS3팀
+            (CS3팀)
        </c:if>
        <c:if test="${loginuser.fk_dcode eq 4}">
-             인사팀
+             (인사팀)
        </c:if>
        <c:if test="${loginuser.fk_dcode eq 5}">
-            총무팀
+            (총무팀)
        </c:if>
      </span>
-     <div id="loginIp">
-        ${loginip}
      </div>
-     <div id="timer"></div>
-     <span id="indolenceInfo">근태정보</span>
-     <span id="vacationInfo">휴가정보</span>
+     <div id="loginIp" style="font-size:10pt; text-align:center; margin-top:3px;">
+        IP:${loginip}
+     </div>
+     <div id="timer" style="text-align:center;"></div>
+     <div id="sebuMenu" style="text-align:center; border-bottom:solid 1px black; border-top:solid 1px black;">
+	     <span id="indolenceInfo" class="sebuInfo" style="border-bottom:solid 1px black; font-size:13pt">근태정보</span>
+	     <span id="vacationInfo" class="sebuInfo" style="border-bottom:solid 1px black; font-size:13pt;">휴가정보</span>
+     </div>
      <div id="indolence">
-        <div>출퇴근시간</div>
-        <span id="intimeButton">출근</span> <span id="intime"></span>
-        <span id="outtimeButton">퇴근</span> <span id="outtime"></span>
-        <div>
-           <span>월별근태현황</span>
+        <div style="margin-top:5px; text-align:center;">출퇴근시간</div>
+        <div id="buttonDiv" style="text-align:center; margin-top:5px;">
+        <span id="intimeButton" class="sebuInfo">출근</span> <span id="intime"></span>
+        <span id="outtimeButton" class="sebuInfo">퇴근</span> <span id="outtime"></span>
+        </div>
+        <div style="margin-top:10px; border-top:solid 1px black; text-align:center;">
+           <span onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
            <c:if test="${loginuser.fk_pcode eq 3}">
-            <span>부서근태현황</span>
-          </c:if>
+            <span onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
+           </c:if>
         </div>
         
      </div>
-     <div id="vacation">
-        <div id="hiredate">입사일자 : ${fn:substring(loginuser.hiredate,0,10)}</div>
-        <div id="offcnt">총 연차일수 : XX일</div>
-        <div id="useOffcnt">사용 연차 일수 : XX일</div>
-        <div id="leftOffcnt">남은 연차 일수 : XX일</div>
+     <div id="vacation" style="margin-top:5px;">
+     	<ul>
+     		<li>입사일자 : ${fn:substring(loginuser.hiredate,0,10)}</li>
+     		<li>총 연차일수 : ${offMap.totalOffCnt}일</li>
+     		<li>사용 연차 일수 : ${offMap.useOffCnt}일</li>
+     		<li>남은 연차 일수 : ${offMap.leftOffCnt}일</li>
+     	</ul>
      </div>
      
   </div><%-- end of div(myInfo) 백원빈 --%>

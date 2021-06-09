@@ -54,6 +54,14 @@ span.to-input {
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	var preInputEmail = "${requestScope.receiverEmail}";
+	if(preInputEmail != null){
+		// alert('주소록에서 이메일 가져왓다');
+	  $('#to-input').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	  $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+preInputEmail+'" />');
+	}	
+
+	
 	//보낸메일함 저장여부
     $("input[name=saveSentMail]").val("0");
     $("input#saveSentMail").change(function(){
@@ -143,17 +151,8 @@ $(document).ready(function(){
  	// 이메일 주소 부분입력시 자동 완성
     
     
-    
-    <%-- === #167. 스마트 에디터 구현 시작 === --%>
-     
-     <%-- === 스마트 에디터 구현 끝 === --%>
-    
     // 쓰기버튼
     $("button#btnSend").click(function(){
-    
-       <%-- === 스마트 에디터 구현 시작 === --%>
-        
-       <%-- === 스마트 에디터 구현 끝 === --%>
        
        var emailVal = $("input[name=receiverEmail]").val().trim();
        if(emailVal == "") {
@@ -176,35 +175,34 @@ $(document).ready(function(){
           return;
        }
       
-       
-       
-       
-       <%-- === 스마트에디터 구현 시작 === --%>
-       //스마트에디터 사용시 무의미하게 생기는 p태그 제거
-        
-            
-         
-         
-         // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
-         // 글내용 유효성 검사 
-         
-         
-         // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-         
-     
-        
-      
-      
-     <%-- === 스마트에디터 구현 끝 === --%>
-       
        // 폼(form) 을 전송(submit)
        var frm = document.newMailFrm;
        frm.method = "POST";
        frm.action = "<%= ctxPath%>/t1/sendSuccess.tw";
        frm.submit();   
     });
-         
+      
+ 	$("#btnCancel").click(function(){
+ 		if (confirm("입력하신 내용은 저장되지 않습니다. 메일쓰기를 취소하시겠습니까?") == true){    //확인
+			location.href="<%=ctxPath%>/t1/mail.tw";
+		 }else{   //취소
+		     return false;
+		 }
+ 	});
+ 	
  });// end of $(document).ready(function(){})----------------
+ 
+ function checkSaveSentMail(){
+	 
+	 if($("input#saveSentMail").is(":checked") == false) {
+		 	$("input#saveSentMail").prop('checked',true);
+			$("input[name=saveSentMail]").val("1");		
+		} else {
+		 	$("input#saveSentMail").prop('checked',false);
+			$("input[name=saveSentMail]").val("0");
+		}
+ }
+ 
  
 </script>
 
@@ -212,8 +210,8 @@ $(document).ready(function(){
 	 <i class="far fa-paper-plane fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px; margin-bottom: 20px;">메일쓰기</span>
 	 <div id="left-header">
 		 <button type="submit" id="btnSend" class="btn-style float-right">보내기</button>
-		 <button type="button" id="btnCancel" class="btn-style float-right" onclick="javascript:history.back()">취소</button>
-		 <input type="checkbox" id="saveSentMail"/><span>보낸메일함에 저장</span>
+		 <button type="button" id="btnCancel" class="btn-style float-right">취소</button>
+		 <input type="checkbox" id="saveSentMail" />&nbsp;&nbsp;<a href="javascript:checkSaveSentMail()" style="text-decoration:none; color:black;">보낸메일함에 저장</a>
 	 </div>
 </div>
 <div id="mailForm-container" style="padding: 10px; border: solid 1px gray;">
@@ -223,7 +221,7 @@ $(document).ready(function(){
          <tr>
             <th>보내는사람</th>
             <td>
-                <span>${sessionScope.loginuser.name}&lt;${loginuser.email}&gt;</span><input type="hidden" name="fk_employeeid" value="${loginuser.employeeid}" />
+                <span>${sessionScope.loginuser.name}&lt;${loginuser.email}&gt;</span>
                 <input type="hidden" name="senderEmail" value="${sessionScope.loginuser.email}" class="short" readonly />     
             </td>
          </tr>
@@ -238,7 +236,7 @@ $(document).ready(function(){
          <tr>
             <th><label for="cc">참조</label></th>
             <td>
-            	<div id="cc-input" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" name="carbon-copy" id="carbon-copy" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none;"/></div>
+            	<div id="cc-input" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" name="ccEmail" id="carbon-copy" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none;"/></div>
 				<div id="cc-email"></div>
             </td>
          </tr>

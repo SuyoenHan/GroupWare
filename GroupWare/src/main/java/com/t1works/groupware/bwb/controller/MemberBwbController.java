@@ -186,20 +186,8 @@ public class MemberBwbController {
 	public String updateOneInfo(MemberBwbVO mvo) {
 		
 		// serialize()한 데이터값 뽑아오기
-		String pname = mvo.getPname();
-		String dname = mvo.getDname();
 		String cmobile = mvo.getCmobile();
 		String mobile = mvo.getMobile();
-		
-		Map<String,String> paraMap = new HashMap<>();
-		
-		paraMap.put("pname", pname);
-		paraMap.put("dname", dname);
-		
-		// pname과 dname을 통해 pcode,dcode 가져오기.
-		Map<String,String> PDMap  = service2.selectPDcode(paraMap);
-		mvo.setFk_pcode(PDMap.get("fk_pcode")); 
-		mvo.setFk_dcode(PDMap.get("fk_dcode"));
 		
 		String[] cmobileArr = cmobile.split("-");
 		String[] mobileArr = mobile.split("-");

@@ -168,6 +168,38 @@ public class MemberHsyController {
 		
 		// System.out.println(mvo.getFileName());
 		
+		// 3) 사번에 해당하는 직원의 오늘의 근태 정보 가져오기 => 현재  병가, 반차, 연차, 경조휴가, 출장 여부 표시
+		Map<String,String> attendanceStateMap= service.getAttendanceState(employeeid);
+		
+	
+		String attendanceSeq= "근무 중";  // 정상출근인 경우 또는 반차사용 이외 시간에 출근한 상태인 경우 attendanceSeq == "근무중"이 된다
+		
+		// 반차인 경우 오전반차, 오후반차에 따라 (14시 00분 기준) 현재시각과 비교해 상태 표시여부를 달리 해줘야 한다
+		// 현재시간이 14시 이전인지 이후인지 알아오기
+		int n= service.isTwoBefore(); 
+		
+		/*
+		 	n==0 : 현재시간은 2시 이전이다
+		 	n==1 : 현재시간은 2시 이후이다 (2시 포함) 
+		*/
+		
+		// 근태 정보는 병가, 반차, 연차, 경조휴가, 출장 중 하나에만 해당된다
+		if(!"0".equals(attendanceStateMap.get("sickleave"))) attendanceSeq="병가";         
+		else if(!"0".equals(attendanceStateMap.get("dayoff"))) attendanceSeq="연차";    
+		else if(!"0".equals(attendanceStateMap.get("congoff"))) attendanceSeq="경조 휴가";    
+		else if(!"0".equals(attendanceStateMap.get("businesstrip"))) attendanceSeq="출장";    
+		
+		else if(!"0".equals(attendanceStateMap.get("afternoonoff1"))) {  // 오전반차
+			if(n==1) attendanceSeq="근무 중" ; // 반차시간 지나고 출근상태
+			else attendanceSeq="오전 반차";  // 오전반차 상태
+		}
+		else if(!"0".equals(attendanceStateMap.get("afternoonoff2"))) {  // 오후반차
+			if(n==1) attendanceSeq="오후 반차" ; // 오후반차 상태 
+			else attendanceSeq="근무 중";  // 반차시간 이전에 출근상태
+		}
+
+		jsonObj.put("attendanceSeq", attendanceSeq);
+		
 		return jsonObj.toString();
 	
 	} // end of public String employeeInfoAjaxHsy(HttpServletRequest request) {-----

@@ -16,7 +16,7 @@ public interface InterHomepageBwbService {
    // 출퇴근기록 테이블에 insert하기(출근시간)
    int insertIntime(Map<String, String> paraMap);
    
-   // 출퇴근기록 테이블에서 출근시간 select하기
+   // 출퇴근기록 테이블에서 select하기(출근시간)
    String selectIntime(Map<String, String> paraMap);
    
    // 지각여부 판단하기(update)
@@ -26,10 +26,24 @@ public interface InterHomepageBwbService {
    String selectlateno(String intime);
    
    // 출퇴근기록 테이블에 update하기(퇴근시간)
-   int updateOuttime(Map<String, String> paraMap);
+   String updateOuttime(Map<String, String> paraMap) throws Throwable;
    
-   // 출퇴근테이블에서 select하기(퇴근시간)
+   // 출퇴근기록 테이블에서 select작업(퇴근시간)
    String selectOuttime(Map<String, String> paraMap);
+   
+   // 이용자의 총 연차수 가지고 오기
+   String selectTotaloffCnt(String pcode);
+   
+   // 이용자의 사용연차수 가지고 오기
+   String selectUseoffCnt(String fk_employeeid);
+   
+   // 나의 월별 출퇴근기록 가지고오기
+   List<Map<String, String>> selectmyMonthIndolence(String fk_employeeid);
+   
+   // 부서 월별 출퇴근기록 가지고오기
+   List<Map<String, String>> selectDepMonthIndolence(String fk_dcode);
+   
+   
    
 
 

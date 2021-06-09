@@ -297,13 +297,6 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		int n = sqlsession4.update("mydocument_sia.approvalSave_withFile", avo);
 		return n;
 	}
-
-	// 문서 종류에 따라 테이블 update - 일반결재
-	@Override
-	public int optionSave(ApprovalSiaVO avo) {
-		int result = sqlsession4.update("mydocument_sia.optionSave", avo);
-		return result;
-	}
 	
 	// 전자결재 테이블 update 첨부파일 없는 경우 - 일반결재 - 제출
 	@Override
@@ -316,6 +309,13 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 	public int approvalSubmit_withFile(ApprovalSiaVO avo) {
 		int n = sqlsession4.update("mydocument_sia.approvalSubmit_withFile", avo);
 		return n;
+	}
+
+	// 문서 종류에 따라 테이블 update - 일반결재
+	@Override
+	public int optionSave(ApprovalSiaVO avo) {
+		int result = sqlsession4.update("mydocument_sia.optionSave", avo);
+		return result;
 	}
 	
 	// 문서 종류에 따라 테이블 update - 지출결재

@@ -117,6 +117,23 @@ public class MemberHsyDAO implements InterMemberHsyDAO {
 	} // end of public List<DoLateVO> getOverNightList(String employeeid) {-------
 
 	
+	// 사번에 해당하는 직원의 오늘의 근태 정보 가져오기 => 현재  병가, 반차, 연차, 경조휴가, 출장 여부 표시
+	@Override
+	public Map<String,String> getAttendanceState(String employeeid) {
+
+		Map<String,String> attendanceStateMap= sqlsession2.selectOne("memberHsy.getAttendanceState", employeeid);
+		return attendanceStateMap;
+	} // end of public List<String> getAttendanceState(String employeeid) {------
+
+	
+	// 현재시간이 14시 이전인지 이후인지 알아오기
+	@Override
+	public int isTwoBefore() {
+		int n= sqlsession2.selectOne("memberHsy.isTwoBefore");
+		return n;
+	} // end of public int isTwoBefore() {----------------
+
+	
 
 
 }

@@ -406,7 +406,7 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	@Override
 	public int saveSpend_withFile(ApprovalSiaVO avo) {
 		// 첨부파일이 있는 경우
-		
+
 		int n = 0, result = 0;
 		
 		// 전자결재 테이블 update
@@ -415,9 +415,42 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		if(n == 1) {			
 			// 문서 종류에 따라 테이블 update			
 			result = dao.optionSaveSpend(avo);
+		}
+		
+		return result;		
+	}
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	@Override
+	public int submitSpend(ApprovalSiaVO avo) {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
 		}		
 		return result;
-	}	
+	}
+	@Override
+	public int submitSpend_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveSpend(avo);
+		}		
+		return result;
+	}
 	
 	
 	// 내문서함 - 임시저장함 - 근태결재 - 저장버튼 클릭
@@ -445,6 +478,38 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSave_withFile(avo);
+		
+		if(n == 1) {			
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+	
+	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	@Override
+	public int submitVacation(ApprovalSiaVO avo) {
+		// 첨부파일이 없는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit(avo);
+		
+		if(n == 1) {
+			// 문서 종류에 따라 테이블 update			
+			result = dao.optionSaveVacation(avo);
+		}		
+		return result;
+	}
+	@Override
+	public int submitVacation_withFile(ApprovalSiaVO avo) {
+		// 첨부파일이 있는 경우
+		
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approvalSubmit_withFile(avo);
 		
 		if(n == 1) {			
 			// 문서 종류에 따라 테이블 update			
