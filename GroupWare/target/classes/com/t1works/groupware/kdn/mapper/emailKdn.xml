@@ -74,6 +74,13 @@
 	 	</if>
 	</select>
 	
+	<!-- 읽지않은 메일 총 건수 구해오기 -->
+	<select id="getTotalUnreadEmail" parameterType="HashMap" resultType="int">
+	 	select count(*)
+	 	from tbl_mailinbox
+	 	where receiverEmail = #{email} and readStatus = '0'
+	</select>
+	
 	<!-- 중요메일함 총 이메일 건수 구해오기 -->
 	<select id="getMailImportantTotalCount" parameterType="HashMap" resultType="int">
 	 	select count(*)
@@ -113,14 +120,14 @@
 	
 	<!-- 받은메일함 이메일 1개 열람하기 -->
 	<select id="getView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
-		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, sendingDate, nextseq,nextsubject,
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, readStatus, sendingDate, nextseq,nextsubject,
 				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
 		from
 		(
 		select lag(seq,1) over(order by seq desc) as previousseq
 		     , lag(subject,1) over(order by seq desc) as previoussubject
 		     
-		     , seq, subject, content, saveSentMail  
+		     , seq, subject, content, saveSentMail,readStatus  
 		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
 		     
 		     ,lead(seq,1) over(order by seq desc) as nextseq
@@ -138,14 +145,14 @@
 	
 	<!-- 중요메일함 이메일 1개 열람하기 -->
 	<select id="getImportantMailView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
-		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, checkImportant, sendingDate, nextseq,nextsubject,
+		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, checkImportant, readStatus, sendingDate, nextseq,nextsubject,
 				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize
 		from
 		(
 		select lag(seq,1) over(order by seq desc) as previousseq
 		     , lag(subject,1) over(order by seq desc) as previoussubject
 		     
-		     , seq, subject, content, saveSentMail, checkImportant  
+		     , seq, subject, content, saveSentMail, checkImportant, readStatus  
 		     , to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate
 		     
 		     ,lead(seq,1) over(order by seq desc) as nextseq
