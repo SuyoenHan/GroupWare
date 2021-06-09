@@ -45,6 +45,9 @@
              Resolver의 사용우선순위를 InternalResourceViewResolver 을 2로 한다. 
              <beans:property name="order" value="2"/> 를 주면 된다. ===== -->
    
+   <!-- === #179. Spring Scheduler(스프링스케줄러1) 어노테이션을 사용하여 스프링스케줄러를 구현하도록 한다. === -->  
+   <task:annotation-driven/>
+   
    <!-- ==== #18. Controller 에서 만들어진 데이터 정보를 view단 페이지인 jsp 페이지로 넘길시
                   view단 페이지의 지정은 return "view단페이지"; 와 같이 String 타입으로 넘겨주면
                   InternalResourceViewResolver 클래스의 객체가 이 문자열을 받아와서 prefix에 적어둔 경로를 view단페이지 앞에 붙이고,
@@ -97,6 +100,9 @@
          왜냐하면 DispatcherServlet은 파일처리를 사용할 경우 이름(아이디)이 "multipartResolver"인 빈을 사용하도록 설정되어 있기 때문에 
       "multipartResolver" 가 아닌 다른 이름(아이디)으로 지정할경우 MultipartResolver로 사용되지 않는다.
     -->
+   
+   
+   
    
    
    <!-- ==== #18. bean으로 등록될 @Component 클래스가 위치하는 패키지명 지정하기 ====  --> 

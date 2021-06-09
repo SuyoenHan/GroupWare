@@ -51,8 +51,29 @@ $(document).ready(function(){
 		location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=2&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq;
 		
 	});
+	
+	//읽음표시 변경
+	$("select#readStatus").change(function(){
+		if($(this).val() == "0"){
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != "0"){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else if($(this).val() == "1") {
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else {
+			$(this).val("");
+		}
+	});
 
-});
+});//$(document).ready(function() ---------------------------
 
 
 //체크박스 체크유무검사
@@ -99,9 +120,10 @@ function goStar(){
 	 <h4 style="margin-bottom: 20px; font-weight: bold;">중요메일함</h4>
 	 <div id="left-header">
 		 <button type="button" id="goStar" class="btn-style">중요표시해제</button>
-		 <select name="readMark">
-		 	<option value="read">읽음</option>
-		 	<option value="unread">읽지않음</option>
+		 <select id="readStatus">
+		 	<option value="">읽음표시</option>
+		 	<option value="1">읽음</option>
+		 	<option value="0">읽지않음</option>
 		 </select>
 	 <div id="right-header" style="float: right;">
 		 <select name="mailSearch">
@@ -154,7 +176,13 @@ function goStar(){
 	 				<td>${evo.senderName}&lt;${evo.senderEmail}&gt;</td>
 	 				<td>
 	 				<input type="hidden" name="seq" value="${evo.seq}" />
-	 				<a href='javascript:goView("${evo.seq}")' class="anchor-style">${evo.subject}</a></td>
+	 				<c:if test="${evo.readStatus eq '0' }">
+		 				<a href='javascript:goView("${evo.seq}")' class="anchor-style" style="font-weight: bolder;">${evo.subject}</a>
+	 				</c:if>
+	 				<c:if test="${evo.readStatus eq '1' }">
+		 				<a href='javascript:goView("${evo.seq}")' class="anchor-style">${evo.subject}</a>
+	 				</c:if>
+	 				</td>
 	 				<td>${evo.sendingDate}</td>
 	 			</tr>
 	 		</c:forEach>

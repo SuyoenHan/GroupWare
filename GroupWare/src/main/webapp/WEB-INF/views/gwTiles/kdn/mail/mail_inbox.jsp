@@ -4,7 +4,6 @@
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
 <script type="text/javascript">
 $(document).ready(function(){
-	
 	var arrEmailSeq = [];
 	var str_arrEmailSeq = ""; 
 	// 체크박스 전체선택/전체해제
@@ -82,6 +81,27 @@ $(document).ready(function(){
 		}
 	});
 	
+	//읽음표시 변경
+	$("select#readStatus").change(function(){
+		if($(this).val() == "0"){
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != "0"){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else if($(this).val() == "1") {
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else {
+			$(this).val("");
+		}
+	});
+	
 	
 	
 });
@@ -136,16 +156,16 @@ function moveToTrash(){
 		 	<option value="star">중요함</option>
 		 	<option value="unstar">중요안함</option>
 		 </select>
-		 <select name="readMark" style="height: 28px;">
+		 <select id="readStatus" style="height: 28px;">
 		 	<option value="">읽음표시</option>
-		 	<option value="read">읽음</option>
-		 	<option value="unread">읽지않음</option>
+		 	<option value="1">읽음</option>
+		 	<option value="0">읽지않음</option>
 		 </select>
 	 <div id="right-header" style="float: right;">
 		 <select name="searchType">
 		 	<option value="">선택</option>
 		 	<option value="subject">제목</option>
-		 	<option value="sender">보낸사람</option>
+		 	<option value="senderName">보낸사람</option>
 		 	<option value="content">내용</option>
 		 </select>
 		<input type="text" name="searchWord" />
@@ -191,8 +211,15 @@ function moveToTrash(){
 	 				</td>
 	 				<td>${evo.senderName}&lt;${evo.senderEmail}&gt;</td>
 	 				<td>
-	 				<input type="hidden" name="seq" value="${evo.seq}" />
-	 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a></td>
+		 				<input type="hidden" name="seq" value="${evo.seq}" />
+		 				<input type="hidden" class="readStatus" value="${evo.readStatus}" />
+		 				<c:if test="${evo.readStatus eq '0' }">
+			 				<a href="javascript:goView('${evo.seq}')" class="anchor-style" style="font-weight: bolder;">${evo.subject}</a>
+			 			</c:if>
+		 				<c:if test="${evo.readStatus eq '1' }">
+			 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a>
+		 				</c:if>
+		 			</td>
 	 				<td>${evo.sendingDate}</td>
 	 			</tr>
 	 		</c:forEach>

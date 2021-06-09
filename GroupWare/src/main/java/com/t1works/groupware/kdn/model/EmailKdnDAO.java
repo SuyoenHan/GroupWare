@@ -178,4 +178,18 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 		return n;
 	}
 
+	//읽지않음으로 변경
+	@Override
+	public int markAsUnread(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsUnread",emailSeqList);
+		return n;
+	}
+
+	//읽음으로 변경
+	@Override
+	public int markAsRead(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsRead",emailSeqList);
+		return n;
+	}
+
 }

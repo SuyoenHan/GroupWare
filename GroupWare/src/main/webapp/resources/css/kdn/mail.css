@@ -21,6 +21,10 @@
 	color: black;
 }
 
+.unread {
+	font-weight: bold;
+}
+
 /* mail_inbox.jsp 받은메일함 페이지 css */
 
 table {
@@ -50,6 +54,3 @@ input, textarea {border: solid #ccc 1px;}
 #table th{width: 45em;}
 #table td{width: 500em;}
 
-span#sentMailCheck:hover{
-	
-}

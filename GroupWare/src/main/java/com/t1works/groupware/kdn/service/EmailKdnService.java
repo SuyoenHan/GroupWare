@@ -199,5 +199,19 @@ public class EmailKdnService implements InterEmailKdnService {
 		return n;
 	}
 
+	//읽지않음으로 변경
+	@Override
+	public int markAsUnread(List<String> emailSeqList) {
+		int n = dao.markAsUnread(emailSeqList);
+		return n;
+	}
+
+	// 읽음으로 변경
+	@Override
+	public int markAsRead(List<String> emailSeqList) {
+		int n = dao.markAsRead(emailSeqList);
+		return n;
+	}
+
 
 }
