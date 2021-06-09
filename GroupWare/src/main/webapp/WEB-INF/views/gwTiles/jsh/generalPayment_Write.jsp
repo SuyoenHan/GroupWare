@@ -290,11 +290,7 @@ hr.hr{
 		           
 		           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
 		           // 글내용 유효성 검사 
-		           if(contentval == "" || contentval == "<p>&nbsp;</p>") {
-		              alert("글내용을 입력하세요!!");
-		              return;
-		           }
-		           
+		          
 		           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
 		           contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
 			       /*    

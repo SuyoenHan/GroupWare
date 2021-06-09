@@ -3,11 +3,135 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	var arrEmailSeq = [];
+	var str_arrEmailSeq = ""; 
+	// 체크박스 전체선택/전체해제
+	$("input#selectAll").change(function(){
+		if($("input#selectAll").prop("checked")){
+			$("input[name=thisEmail]").prop('checked',true);
+			var arrThisEmail = document.getElementsByName("thisEmail");
+			for(var i=0; i<arrThisEmail.length; i++){
+				var thisEmailSeq = arrThisEmail[i].value;
+				// console.log("thisEmailSeq : "+thisEmailSeq);
+				// console.log("배열 값유무 확인 : "+arrEmailSeq.indexOf(thisEmailSeq));
+				if(arrEmailSeq.indexOf(thisEmailSeq) == -1){
+					arrEmailSeq.push(thisEmailSeq);
+				}
+			}//end of for --------------------
+				console.log("최종 배열 값 :"+arrEmailSeq);
+			
+		} else {
+			$("input[name=thisEmail]").prop('checked',false);
+			arrEmailSeq = [];
+			// console.log(arrEmailSeq);
+		}
+	});
+	
+	// 체크박스 개별체크시
+	$("input[name=thisEmail]").change(function(){
+		check_checkbox();
+		var thisEmailSeq = $(this).val();
+		// console.log("개별선택시 thisEmailSeq"+thisEmailSeq);
+		if($(this).prop("checked") == false){
+			arrEmailSeq.splice(arrEmailSeq.indexOf(thisEmailSeq),1);
+		}
+		if($(this).prop("checked") == true){
+			arrEmailSeq.push(thisEmailSeq);
+		}
+		console.log("최종 배열 :"+arrEmailSeq);
+	});
+	
+	// 완전삭제 버튼 클릭시
+	$("button#delImmed").click(function(){
+		str_arrEmailSeq = arrEmailSeq.toString();
+		// console.log("최종 배열 string :"+str_arrEmailSeq);
+		if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
+			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL=${requestScope.gobackURL}";
+		 }else{   //취소
+		     return false;
+		 }
+	});
+	
+	// 받은메일함으로 이동 버튼 클릭시
+	$("button#toMailinbox").click(function(){
+		str_arrEmailSeq = arrEmailSeq.toString();
+		// console.log("최종 배열 string :"+str_arrEmailSeq);
+		location.href="<%=ctxPath%>/t1/moveToMailInbox.tw?str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL=${requestScope.gobackURL}";
+		<%-- if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
+			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL=${requestScope.gobackURL}";
+		 }else{   //취소
+		     return false;
+		 } --%>
+	});
+	
+	//중요표시 변경
+	$("select#star").change(function(){
+		if($(this).val() == "star"){
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=1&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else if($(this).val() == "unstar") {
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq;
+			}
+			$(this).val("");
+		} else {
+			$(this).val("");
+		}
+	});
+	
+	
+	
+});
 
+//체크박스 체크유무검사
+function check_checkbox(){
+	var arrChckbox = document.getElementsByName("thisEmail");
+	var bFlag = false;
+	
+	for(var i=0; i<arrChckbox.length; i++){
+		if(!arrChckbox[i].checked){
+			bFlag = true;		
+			break;
+		}
+	}//end of for --------------------
+	
+	if(bFlag){	//하위 체크박스 중 1개라도 체크가 해제된 경우
+		document.getElementById("selectAll").checked = false;
+	}
+	else {	//하위 체크박스가 모두 체크된 경우
+		document.getElementById("selectAll").checked = true;
+	}
+}// end of function func_chinaCheck()---------------------------------------
+
+
+function goView(seq){
+		var frm = document.goViewFrm;
+		frm.seq.value = seq;
+		frm.searchType.value = "${requestScope.paraMap.searchType}";
+	    frm.searchWord.value = "${requestScope.paraMap.searchWord}";
+	    
+		frm.method="get";
+		frm.action="<%=ctxPath%>/t1/viewMail.tw";
+		frm.submit();
+		
+	}//end of function goView('${boardvo.seq}') ---------------
+
+
+</script>
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">
 	 <h4 style="margin-bottom: 20px; font-weight: bold;">휴지통</h4>
 	 <div id="left-header">
-		 <button type="button">완전삭제</button>
+		 <button type="button" id="delImmed" class="btn-style">완전삭제</button>
+		 <button type="button" id="toMailinbox" class="btn-style">받은메일함 이동</button>
 	 <div id="right-header" style="float: right;">
 		 <select name="mailSearch">
 		 	<option value="">선택</option>
@@ -30,30 +154,52 @@
  	<table class="table" >
  		<thead>
  			<tr>
- 				<th width=3%><input type="checkbox" name="selectAll" style="margin-left: 10px;"/></th>
+ 				<th width=3%><input type="checkbox" name="selectAll" id="selectAll" style="margin-left: 10px;"/></th>
  				<th width=3%>첨부<br>파일</th>
- 				<th width=13%>보낸사람+이메일주소</th>
- 				<th width=70%>제목</th>
+ 				<th width=13%>보낸사람</th>
+ 				<th width=67%>제목</th>
  				<th width=20%>수신일시</th>
  			</tr>
  		</thead>
  		<tbody>
- 		<!-- 메일목록은 c:forEach문 사용할 것 -->
+ 		<c:if test="${not empty requestScope.emailList}"> 		
+	 		<c:forEach var="evo" items="${requestScope.emailList}" varStatus="status">
+	 			<tr>
+	 				<td><input type="checkbox" name="thisEmail" id="thisEmail" value="${evo.seq}" style="margin-left: 10px;"/></td>
+	 				<td>
+	 					<c:if test="${not empty evo.fileName}">
+	 						<i class="fas fa-paperclip"></i>
+	 					</c:if>
+	 				</td>
+	 				<td>${evo.senderName}&lt;${evo.senderEmail}&gt;</td>
+	 				<td>
+	 				<input type="hidden" name="seq" value="${evo.seq}" />
+	 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a></td>
+	 				<td>${evo.sendingDate}</td>
+	 			</tr>
+	 		</c:forEach>
+ 		</c:if>
+ 		<c:if test="${empty requestScope.emailList}">
  			<tr>
- 				<th><input type="checkbox" name="selectThis" style="margin-left: 10px;"/></th>
- 				<td></td>
- 				<td>이순신(leess@t1works.com)</td>
- 				<td>테스트 메일입니다.</td>
- 				<td>2021-05-22 16:03</td>
+ 				<td colspan="6" align="center"> 휴지통에 메일이 없습니다. </td>
  			</tr>
- 			<tr>
- 				<th><input type="checkbox" name="selectThis" style="margin-left: 10px;"/></th>
- 				<td><i class="fas fa-paperclip"></i></td>
- 				<td>박보영(parkby@t1works.com)</td>
- 				<td>입사를 축하합니다.</td>
- 				<td>2021-05-20 09:28</td>
- 			</tr>
+ 		</c:if>
  		</tbody>
  	</table>
+ 
+ 	<%-- 페이지 바 보여주기 --%>
+ 	<div align="center" style="width: 70%; margin: 20px auto;">
+     	${requestScope.pageBar}
+     </div>
+ 
+ <form name="goViewFrm">
+ 		<input type="hidden" name="mailBoxNo" value="1">
+    	<input type="hidden" name="seq"/>
+    	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+    	<input type="hidden" name="searchType" />
+      	<input type="hidden" name="searchWord" />
+ </form>
+ 
+ 
  
  </div>

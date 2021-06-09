@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class EmailKdnVO {
 	
 	private String seq;    			// 메일번호
+	private String fk_seq;			// 보낸메일함 저장된 사본메일의 원본메일번호
 	private String fk_employeeid ;  // 사번
 	private String senderEmail;   // 발신자메일주소
 	private String senderName;      // 발신자명
@@ -33,10 +34,11 @@ public class EmailKdnVO {
 	
 	public EmailKdnVO() {}
 	
-	public EmailKdnVO(String seq,String fk_employeeid,String senderEmail,String senderName, String receiverName,String receiverEmail,String ccEmail
+	public EmailKdnVO(String seq,String fk_seq, String fk_employeeid,String senderEmail,String senderName, String receiverName,String receiverEmail,String ccEmail
 			,String subject,String content,String sendingDate,String checkImportant,String saveSentMail,String moveToTrash,String readStatus,
 			String groupno,String parentSeq,String depthno,String fileName,String orgFilename,String fileSize) {
 		this.seq = seq;
+		this.fk_seq = fk_seq;
 		this.fk_employeeid = fk_employeeid;
 		this.senderEmail = senderEmail;
 		this.senderName = senderName;
@@ -64,6 +66,15 @@ public class EmailKdnVO {
 	public void setSeq(String seq) {
 		this.seq = seq;
 	}
+
+	public String getFk_seq() {
+		return fk_seq;
+	}
+
+	public void setFk_seq(String fk_seq) {
+		this.fk_seq = fk_seq;
+	}
+
 	public String getFk_employeeid() {
 		return fk_employeeid;
 	}

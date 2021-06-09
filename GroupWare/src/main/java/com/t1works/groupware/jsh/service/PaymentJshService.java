@@ -355,6 +355,109 @@ public class PaymentJshService implements InterPaymentJshService {
 	}
 		
 
+	// 파일첨부가 없는 근태결재 문서 글쓰기 insert
+		@Override
+		@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+		public int addVacPayment(ElectronPayJshVO epvo) {
+			
+			// 1) insert될 문서번호를 알아온다
+			String ano = dao.insertno();
+			epvo.setAno(ano);
+						
+			int n1=0, n2=0, n3=0; 
+			// 2) 전자결재 테이블에 insert
+			 n1 = dao.ElectricExpadd(epvo);
+			 
+			if(n1==1) {
+				// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+				 n2 = dao.vacAdd(epvo);
+				
+			  }
+			if(n2==1) {
+			 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+				 n3 =dao.selectVacadd(epvo);
+			}
+			return n3;
+		}
+		// 파일첨부가 있는 근태결재 문서 글쓰기insert
+		@Override
+		@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+		public int addVacPayment_withFile(ElectronPayJshVO epvo) {
+			
+			// 1) insert될 문서번호를 알아온다
+			String ano = dao.insertno();
+			epvo.setAno(ano);
+						
+			int n1=0, n2=0, n3=0; 
+			// 2) 전자결재 테이블에 insert
+			 n1 = dao.ElectricVacadd_withFile(epvo);
+			 
+			if(n1==1) {
+				// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+				 n2 = dao.vacAdd(epvo);
+				
+			  }
+			if(n2==1) {
+			 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+				 n3 =dao.selectVacadd(epvo);
+			}
+			return n3;
+		}
+
+		//임시저장함 insert-첨부파일X
+		@Override
+		@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+		public int saveVacPayment(ElectronPayJshVO epvo) {
+			
+			// 1) insert될 문서번호를 알아온다
+			String ano = dao.insertno();
+			epvo.setAno(ano);
+						
+			int n1=0, n2=0, n3=0; 
+			// 2) 전자결재 테이블에 insert
+			 n1 = dao.saveVacadd(epvo);
+			 
+			if(n1==1) {
+				// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+				 n2 = dao.vacAdd(epvo);
+				
+			  }
+			if(n2==1) {
+			 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+				 n3 =dao.selectVacadd(epvo);
+			}
+			return n3;
+		}
+
+		//임시저장함 insert-첨부파일o
+		@Override
+		@Transactional(propagation=Propagation.REQUIRED, isolation=Isolation.READ_COMMITTED, rollbackFor= {Throwable.class})
+		public int saveVacPayment_withFile(ElectronPayJshVO epvo) {
+			// 1) insert될 문서번호를 알아온다
+			String ano = dao.insertno();
+			epvo.setAno(ano);
+						
+			int n1=0, n2=0, n3=0; 
+			// 2) 전자결재 테이블에 insert
+			 n1 = dao.saveVacadd_withFile(epvo);
+			 
+			if(n1==1) {
+				// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+				 n2 = dao.vacAdd(epvo);
+				
+			  }
+			if(n2==1) {
+			 // 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+				 n3 =dao.selectVacadd(epvo);
+			}
+			return n3;
+		}
+		
+	
+	
+	
+	
+	
 	
 	
 }

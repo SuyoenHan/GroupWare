@@ -258,7 +258,7 @@
 				insert into tbl_wiimjang(wno , fk_ncat, fk_ano, fk_wiimdate)   values(seq_tbl_wiimjang.nextval,'2',#{ano},#{fk_wiimdate})
 			</if>
 			<if test="ncatname eq'외부공문'">
-				into tbl_exofficial(eno, fk_ncat ,fk_ano)                      values(seq_tbl_exofficial.nextval,'3',#{ano})
+				insert into tbl_exofficial(eno, fk_ncat ,fk_ano)               values(seq_tbl_exofficial.nextval,'3',#{ano})
 			</if>
 			<if test="ncatname eq'협조공문'">
 				insert into tbl_coofficial(cno, fk_ncat ,fk_ano, comname)       values(seq_tbl_coofficial.nextval,'4',#{ano},#{comname})
@@ -502,13 +502,13 @@
 			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			     </if>
 			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
-			     	 	and vno= '#{searchCategory}'
+			     	 	and vcatname= #{searchCategory}
 			     </if>
 			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
-			     	 	and vno= '#{searchCategory}'
+			     	 	and vcatname= #{searchCategory}
 			     </if>
 			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
-				     	 and vno= '#{searchCategory}'
+				     	 and vcatname= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
 		</select>
@@ -539,10 +539,10 @@
 			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			     </if>
 			      <if test=' searchCategory != ""    and searchWord == "" '>
-			     	 	and vno= #{searchCategory}
+			     	 	and vcatname= #{searchCategory}
 			     </if>
 			     <if test=' searchCategory != ""   and searchWord != "" '>
-				     	 and vno= #{searchCategory}
+				     	 and vcatname= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
 				 ) V
