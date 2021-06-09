@@ -1,5 +1,6 @@
 package com.t1works.groupware.sia.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -108,15 +109,31 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	// 내문서함 - 수신함 결재버튼 클릭
 	@Override
 	public int approval(Map<String, String> paraMap) {
-		int n = dao.approval(paraMap);
-		return n;
+		int n = 0, result = 0;
+		
+		// 전자결재 테이블 update
+		n = dao.approval(paraMap);
+		
+		if(n == 1) {
+			// 결재로그 테이블 insert(승인)
+			result = dao.approvalLog(paraMap);
+		}
+		return result;
 	}
 
 	// 내문서함 - 수신함 반려버튼 클릭
 	@Override
 	public int reject(Map<String, String> paraMap) {
-		int n = dao.reject(paraMap);
-		return n;
+		int n = 0, result = 0; 
+		
+		// 전자결재 테이블 update
+		n = dao.reject(paraMap);
+		
+		if(n == 1) {
+			// 결재로그 테이블 insert(반려)
+			result = dao.rejectLog(paraMap);
+		}
+		return result;
 	}
 
 	////////////////////////////////////////////////////////////////////
@@ -359,30 +376,49 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	public int submit(ApprovalSiaVO avo) throws Throwable {
 		// 첨부파일이 없는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0, result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit(avo);
 		
 		if(n == 1) {
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSave(avo);
-		}		
+			m = dao.optionSave(avo);
+		}
+		
+		if(m == 1) {
+			
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	@Override
 	public int submit_withFile(ApprovalSiaVO avo) {
 		// 첨부파일이 있는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0, result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit_withFile(avo);
 		
 		if(n == 1) {			
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSave(avo);
-		}		
+			m = dao.optionSave(avo);
+		}
+		
+		if(m == 1) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	
@@ -425,30 +461,48 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	public int submitSpend(ApprovalSiaVO avo) {
 		// 첨부파일이 없는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0, result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit(avo);
 		
 		if(n == 1) {
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSaveSpend(avo);
-		}		
+			m = dao.optionSaveSpend(avo);
+		}
+		
+		if(m == 1) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	@Override
 	public int submitSpend_withFile(ApprovalSiaVO avo) {
 		// 첨부파일이 있는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0, result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit_withFile(avo);
 		
 		if(n == 1) {			
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSaveSpend(avo);
-		}		
+			m = dao.optionSaveSpend(avo);
+		}
+		
+		if(m == 1) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	
@@ -486,35 +540,53 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		return result;
 	}
 	
-	// 내문서함 - 임시저장함 - 지출결재 - 제출버튼 클릭
+	// 내문서함 - 임시저장함 - 근태결재 - 제출버튼 클릭
 	@Override
 	public int submitVacation(ApprovalSiaVO avo) {
 		// 첨부파일이 없는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0,result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit(avo);
 		
 		if(n == 1) {
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSaveVacation(avo);
-		}		
+			m = dao.optionSaveVacation(avo);
+		}
+		
+		if(m == 1) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	@Override
 	public int submitVacation_withFile(ApprovalSiaVO avo) {
 		// 첨부파일이 있는 경우
 		
-		int n = 0, result = 0;
+		int n = 0, m = 0, result = 0;
 		
 		// 전자결재 테이블 update
 		n = dao.approvalSubmit_withFile(avo);
 		
 		if(n == 1) {			
 			// 문서 종류에 따라 테이블 update			
-			result = dao.optionSaveVacation(avo);
-		}		
+			m = dao.optionSaveVacation(avo);
+		}
+		
+		if(m == 1) {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("userid", avo.getFk_employeeid());			
+			paraMap.put("ano", String.valueOf(avo.getAno()));			
+			
+			result = dao.submitLog(paraMap);
+		}
+		
 		return result;
 	}
 	
@@ -585,6 +657,22 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 	@Override
 	public ApprovalSiaVO myDocuVacation_complete_detail(Map<String, String> paraMap) {
 		ApprovalSiaVO avo = dao.myDocuVacation_complete_detail(paraMap);
+		return avo;
+	}
+
+	
+	// 결재의견 삭제하기
+	@Override
+	public int delMyOpinion(Map<String, String> paraMap) {
+		int n = dao.delMyOpinion(paraMap);
+		return n;
+	}
+
+	
+	// 결재로그 리스트보기
+	@Override
+	public List<ApprovalSiaVO> approvalLogList(String parentAno) {
+		List<ApprovalSiaVO> avo = dao.approvalLogList(parentAno);
 		return avo;
 	}
 
