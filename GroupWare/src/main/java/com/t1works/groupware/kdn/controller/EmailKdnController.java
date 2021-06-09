@@ -241,7 +241,7 @@ public class EmailKdnController {
 		
 		// === 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다. ===
 		String gobackURL = MyUtil.getCurrentURL(request);
-		
+		System.out.println("페이지 로딩 후 gobackURL :"+gobackURL);
 		mav.addObject("gobackURL", gobackURL);
 		
 		// == 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
@@ -807,7 +807,7 @@ public class EmailKdnController {
 	
 	// 중요메일함 중요표시체크해제, 받은메일함 중요표시체크/체크해제
 	@RequestMapping(value="/t1/goStar.tw")
-	public ModelAndView goUnstarred(ModelAndView mav, HttpServletRequest request) {
+	public ModelAndView goStar(ModelAndView mav, HttpServletRequest request) {
 		
 		String checkImportant = request.getParameter("checkImportant");
 		//System.out.println("중요표시여부 0은 표시해제, 1은 표시: "+checkImportant);
@@ -822,7 +822,7 @@ public class EmailKdnController {
 		if(checkImportant.equals("0")) { 
 			n = service.removeStar(emailSeqList); //중요표시해제
 			if(n == 0) {
-				mav.addObject("message", "에러발생으로 중요표시해제를 하지 못했습니다.");
+				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
 				if(mailBoxNo.equals("1")) { // mailBoxNo가 1인 경우 받은메일함으로 이동
 					mav.addObject("loc", request.getContextPath()+"/t1/mail.tw"); // 받은메일함으로 이동
 				} else {
@@ -841,7 +841,7 @@ public class EmailKdnController {
 		} else { 
 			m = service.addStar(emailSeqList); // 중요표시하기
 			if(m == 0) {
-				mav.addObject("message", "에러발생으로 중요표시를 하지 못했습니다.");
+				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
 				if(mailBoxNo.equals("1")) {
 					mav.addObject("loc", request.getContextPath()+"/t1/mail.tw");
 				} else {
@@ -875,7 +875,7 @@ public class EmailKdnController {
 		int n = service.moveToTrash(emailSeqList);
 		
 		if(n == 0) {
-            mav.addObject("message", "에러발생으로 선택하신 작업을 실패하였습니다.");
+            mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
            	mav.addObject("loc", request.getContextPath()+"/t1/mail.tw");
            	mav.setViewName("msg");
         }            
@@ -884,9 +884,7 @@ public class EmailKdnController {
     	   mav.addObject("loc", request.getContextPath()+"/t1/mail.tw");
     	   mav.setViewName("pageReloadOnly");
         }
-		
 		return mav;
-		
 	}
 	
 	// 휴지통 메일을 받은메일함으로 이동시키기
@@ -902,7 +900,7 @@ public class EmailKdnController {
 		int n = service.moveToMailInbox(emailSeqList);
 		
 		if(n == 0) {
-			mav.addObject("message", "에러발생으로 선택하신 작업을 실패하였습니다.");
+			mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
 			mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 			mav.setViewName("msg");
 		}            
@@ -911,12 +909,69 @@ public class EmailKdnController {
 			mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 			mav.setViewName("pageReloadOnly");
 		}
+		return mav;
+	}
+	
+	// 받은메일함, 중요메일함 읽음상태 변경
+	@RequestMapping(value="/t1/readStatus.tw")
+	public ModelAndView readStatus(ModelAndView mav, HttpServletRequest request) {
 		
+		String gobackURL = request.getParameter("gobackURL");
+		mav.addObject("gobackURL",gobackURL);
+		
+		String readStatus = request.getParameter("readStatus");
+		//System.out.println("읽음표시 0은 읽지않음, 1은 읽음: "+readStatus);
+		String mailBoxNo = request.getParameter("mailBoxNo");
+		//System.out.println("메일함 번호: "+mailBoxNo);
+		String str_arrEmailSeq = request.getParameter("str_arrEmailSeq");
+		String[] arrEmailSeq = str_arrEmailSeq.split(",");
+		//System.out.println("체크한 메일번호 배열: "+str_arrEmailSeq);
+		List<String> emailSeqList = Arrays.asList(arrEmailSeq);
+
+		int n = 0, m = 0;
+		if(readStatus.equals("0")) { 
+			n = service.markAsUnread(emailSeqList); //읽지않음으로 변경
+			if(n == 0) {
+				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
+				if(mailBoxNo.equals("1")) { // mailBoxNo가 1인 경우 받은메일함으로 이동
+					mav.addObject("loc", request.getContextPath()+"/t1/mail.tw"); // 받은메일함으로 이동
+				} else {
+					mav.addObject("loc", request.getContextPath()+"/t1/mail_important.tw"); // 중요메일함으로 이동
+				}
+				mav.setViewName("msg");
+			} else {        
+				//mav.addObject("message", "선택하신 메일을 읽지않음 처리했습니다.");
+				if(mailBoxNo.equals("1")) {
+					mav.addObject("loc", request.getContextPath()+"/t1/mail.tw");
+				} else {
+					mav.addObject("loc", request.getContextPath()+"/t1/mail_important.tw");
+				}
+				mav.setViewName("pageReloadOnly");
+			}
+		} else { 
+			m = service.markAsRead(emailSeqList); // 읽음으로 변경
+			if(m == 0) {
+				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
+				if(mailBoxNo.equals("1")) {
+					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				} else {
+					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				}
+				mav.setViewName("msg");
+			} else {            
+				//mav.addObject("message", "선택하신 메일을 읽음 처리했습니다.");
+				if(mailBoxNo.equals("1")) {
+					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				} else {
+					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				}
+				mav.setViewName("pageReloadOnly");
+			}
+		}
+        
 		return mav;
 		
 	}
-	
-	
 	
 	
 }

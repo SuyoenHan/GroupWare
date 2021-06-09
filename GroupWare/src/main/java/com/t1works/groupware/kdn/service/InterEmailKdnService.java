@@ -48,6 +48,11 @@ public interface InterEmailKdnService {
 
 	int moveToMailInbox(List<String> emailSeqList); // 휴지통 메일을 받은메일함으로 이동시키기
 
+	int markAsUnread(List<String> emailSeqList); //읽지않음으로 변경
+
+	int markAsRead(List<String> emailSeqList); //읽음으로 변경
+
+
 
 	
 

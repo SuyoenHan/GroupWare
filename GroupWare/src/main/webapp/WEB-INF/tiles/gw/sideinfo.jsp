@@ -10,10 +10,10 @@
       <p class="menu-btn myDocument"><i class="far fa-file-alt fa-lg"></i><br><span>내문서함</span></p>
       <p class="menu-btn electronPay"><i class="fas fa-desktop fa-lg"></i><br><span>전자결재</span></p>
       <p class="menu-btn employeeMap"><i class="far fa-address-card fa-lg"></i><br><span>주소록</span></p>
-      <p class="menu-btn employeeBoard"><i class="far fa-comments fa-lg"></i><br><span>게시판</span></p>
+      <p class="menu-btn employeeBoard"><i class="far fa-list-alt fa-lg"></i><br><span>게시판</span></p>
       <p class="menu-btn salary"><i class="fas fa-won-sign fa-md"></i><br><span>월급관리</span></p>
       <p class="menu-btn toDo"><i class="fas fa-file-signature fa-lg"></i><br><span>업무관리</span></p>
-      <p class="menu-btn reservation"><i class="far fa-list-alt fa-lg"></i><br><span>예약관리</span></p>
+      <p class="menu-btn reservation"><i class="fas fa-tasks fa-lg"></i><br><span>예약관리</span></p>
    </div>
 
    <!-- 세부메뉴  -->

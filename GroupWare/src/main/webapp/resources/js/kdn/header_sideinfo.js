@@ -15,6 +15,9 @@ $(document).ready(function(){
 	$("td.rsv").click(function(){
 		location.href="travelschedule.tw";
 	});
+	$("td.groupchat").click(function(){
+		window.open("chatting/chatmain.tw");
+	});
 	
 	// == 사이드바 == 
 	$("div#contentLeft").hide();	
