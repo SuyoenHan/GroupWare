@@ -1219,12 +1219,12 @@
 	
 	
 	<!-- 내문서함 - 임시저장함 - 제출버튼 클릭 -->	
-	<!-- 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태 -->
+	<!-- 전자결재 테이블 update 첨부파일 없는 경우 - 제출 -->
 	<update id="approvalSubmit" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, apaper = 0 
 		where ano = #{ano}
 	</update>	
-	<!-- 전자결재 테이블 update 첨부파일 있는 경우 - 임시저장 상태 -->	
+	<!-- 전자결재 테이블 update 첨부파일 있는 경우 - 제출 -->	
 	<update id="approvalSubmit_withFile" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		update tbl_approval set atitle = #{atitle}, asdate = sysdate, acontent = #{acontent}, fileName = #{fileName}, orgFilename = #{orgFilename}, fileSize = #{fileSize}, apaper = 0
 		where ano = #{ano}

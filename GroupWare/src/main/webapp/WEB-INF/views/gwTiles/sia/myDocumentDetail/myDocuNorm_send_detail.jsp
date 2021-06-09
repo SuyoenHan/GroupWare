@@ -64,9 +64,22 @@ input.btn {
 	border-radius: 0;
 	font-weight: bold;
 }
-
 td.opinion{
 	border: solid 1px white;
+}
+div#delBtn{
+	display: inline-block;
+	font-size: 9pt;
+	border: none;
+	background-color: #e89996; 
+	color: white;
+	font-weight: bold;
+	width: 11pt;
+	height: 11pt;
+}
+div#delBtn:hover{
+	cursor: pointer;
+	background-color: #bc2e29;
 }
 </style>
 
@@ -83,7 +96,9 @@ td.opinion{
 	});
 	
 	
-	// Function Declaration	
+	// Function Declaration
+	
+	// 의견 작성
 	function goAddWrite(){
 		var opinionVal = $("textarea#ocontent").val().trim();
 		if(opinionVal == ""){
@@ -109,7 +124,7 @@ td.opinion{
 		});		
 	}// end of function goAddWrite(){}--------------------
 	
-	
+	// 의견 작성 리스트 보기
 	function goViewOpinion(){
 		$.ajax({
 			url:"<%= ctxPath%>/t1/opinionList.tw",
@@ -121,7 +136,12 @@ td.opinion{
 				
 				if(json.length > 0){
 					$.each(json, function(index, item){						
-						html += "<div>▶"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"</span>&nbsp;"+item.pname+"&nbsp;&nbsp;["+item.odate+"]</div>";
+						if(item.userid == item.employeeid){
+							html += "<div>▶"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"&nbsp;"+item.pname+"&nbsp;&nbsp;["+item.odate+"]&nbsp;&nbsp;<div id='delBtn' onclick='delMyOpinion("+item.ono+")'>&nbsp;X&nbsp;</div></div>";
+						}
+						else{
+							html += "<div>▶"+item.dname+"&nbsp;<span style='font-weight: bold;'>"+item.name+"&nbsp;"+item.pname+"&nbsp;&nbsp;["+item.odate+"]</div>";
+						}
 						html += "<div>"+ item.ocontent +"</div>";
 						html += "<hr style='margin: 2px;'>";
 					});
@@ -175,10 +195,37 @@ td.opinion{
 					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
 				}			
 			});
-		}
-		
+		}		
 	}// end of function goRemove(){}--------------------
 	
+	
+	// 결재의견 삭제하기
+	function delMyOpinion(ono){
+		var bool = confirm("의견을 삭제하시겠습니까?");
+	 	
+		if(bool){
+			$.ajax({
+				url:"<%=ctxPath%>/t1/delMyOpinion.tw",
+				data:{"ono":ono},
+				type:"post",
+				dataType:"json",
+				success:function(json){			
+					
+					if(json.n == 1){					
+						alert("의견이 삭제되었습니다.");
+						goViewOpinion();
+					}
+					else{
+						alert("의견 삭제가 실패했습니다.");
+					}
+					
+				},
+				error: function(request, status, error){
+					alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+				}			
+			});
+		}		
+	}
 	
 </script>
 

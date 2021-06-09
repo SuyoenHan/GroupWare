@@ -2358,7 +2358,7 @@ public class MyDocumentSiaController {
 		
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2392,7 +2392,7 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
 				n = service.save(avo);
 			}
@@ -2433,7 +2433,7 @@ public class MyDocumentSiaController {
 		
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2467,12 +2467,14 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
+				System.out.println("1");
 				n = service.submit(avo);
 			}
 			else {
 				// 첨부파일이 있는 경우
+				System.out.println("2");
 				n = service.submit_withFile(avo);
 			}			
 		} catch (Throwable e) {
@@ -2496,7 +2498,7 @@ public class MyDocumentSiaController {
 		
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2530,7 +2532,7 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
 				n = service.saveSpend(avo);
 			}
@@ -2559,7 +2561,7 @@ public class MyDocumentSiaController {
 					
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2593,7 +2595,7 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
 				n = service.submitSpend(avo);
 			}
@@ -2622,7 +2624,7 @@ public class MyDocumentSiaController {
 					
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2656,7 +2658,7 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
 				n = service.saveVacation(avo);
 			}
@@ -2684,7 +2686,7 @@ public class MyDocumentSiaController {
 					
 		MultipartFile attach = avo.getAttach();
 		
-		if(!attach.isEmpty()) {
+		if(attach != null && !attach.isEmpty()) {
 			// 첨부파일이 있을 경우
 			
 			HttpSession session = mrequest.getSession();
@@ -2718,7 +2720,7 @@ public class MyDocumentSiaController {
 		
 		int n = 0;
 		try {
-			if(attach.isEmpty()) {
+			if(attach == null || attach.isEmpty()) {
 				// 첨부파일이 없는 경우
 				n = service.submitVacation(avo);
 			}
