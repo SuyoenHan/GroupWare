@@ -243,8 +243,19 @@
                   dataType:"json",
                   success:function(json){
                      
-                        $("span#outtime").text(json.outtime);
-   
+                        $("span#outtime").text(json.outtime); 16:25:46
+                        
+                        var lateTime = json.outtime;
+                        var lateHH = Number(substring(lateTime,0,2));
+                        var lateMM = Number(substring(lateTime,3,5));
+                        
+                        if(lateHH = 19 && lateMM>=45){
+ 							location.href='<%= ctxPath%>/t1/salaryDetail.tw?from=homepage';
+                        }
+                        else if(lateHH>20){
+                        	location.href='<%= ctxPath%>/t1/salaryDetail.tw?from=homepage';
+                        }
+                        
                   },
                   error: function(request, status, error){
                         alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
