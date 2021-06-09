@@ -89,7 +89,16 @@ public interface InterPaymentJshService {
 	//검색어 입력시 자동글 완성하기
 	List<String> vacWordSearchShow(Map<String, String> paraMap);
 
-
+	// 파일첨부가 없는 근태결재 문서 글쓰기 insert
+	int addVacPayment(ElectronPayJshVO epvo);
+	// 파일첨부가 있는 근태결재 문서 글쓰기 insert
+	int addVacPayment_withFile(ElectronPayJshVO epvo);
+	
+	
+	//임시저장함 insert-첨부파일X
+	int saveVacPayment(ElectronPayJshVO epvo);
+	//임시저장함 insert-첨부파일O
+	int saveVacPayment_withFile(ElectronPayJshVO epvo);
 
 
 
