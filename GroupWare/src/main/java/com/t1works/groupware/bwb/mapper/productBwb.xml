@@ -135,7 +135,7 @@
 		from
 		(
 		select row_number() over(order by cnumber desc) as rno,clientname,to_number(cnumber) as cnumber,
-			   (substr(clientmobile,0,3)||'-'||substr(clientmobile,3,4)||'-'||substr(clientmobile,7,4)) as clientmobile
+			   (substr(clientmobile,1,3)||'-'||substr(clientmobile,4,4)||'-'||substr(clientmobile,8,4)) as clientmobile
 		from tbl_client C
 		join tbl_todo T
 		on C.fk_pNo = T.fk_pNo

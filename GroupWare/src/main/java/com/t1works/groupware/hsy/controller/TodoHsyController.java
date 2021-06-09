@@ -505,6 +505,7 @@ public class TodoHsyController {
 			mail.sendmail(cvo);
 			
 		} catch(Exception e) { // 메일 전송이 실패한 경우
+			e.printStackTrace();
 			n=1;
 		}
 		
