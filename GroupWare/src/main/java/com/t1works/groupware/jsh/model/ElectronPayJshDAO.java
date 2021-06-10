@@ -303,6 +303,21 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 			return n3;
 		}
 
+		// 5) 직급테이블 휴가 수 update
+		@Override
+		public int offUpdate(ElectronPayJshVO epvo) {
+			int n4 = sqlsession6.update("payment_Jsh.offUpdate",epvo);
+			return n4;
+		}
+
+
+		// 6) 결재로그에 insert
+		@Override
+		public int logInsert(ElectronPayJshVO epvo) {
+			int n5 = sqlsession6.insert("payment_Jsh.logInsert",epvo);
+			return n5;
+		}
+
 
 		// 파일첨부가 있는 전자결재 문서 글쓰기 insert
 		@Override
@@ -326,6 +341,9 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 			int n1 = sqlsession6.insert("payment_Jsh.saveVacadd_withFile",epvo);
 			return n1;
 		}
+
+
+		
 
 
 

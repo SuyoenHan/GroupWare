@@ -10,6 +10,7 @@
 		margin: 0 auto;
 		position: relative;
 		left: -80px;
+		margin-bottom: 200px;
 	}
 
 	div#salaryDetailTitle{
@@ -61,6 +62,8 @@
 	table#salaryDetailTable1 td {height: 80px;}
 	table#salaryDetailTable2 td {height: 60px;}
 	
+	tr.colorTr{background-color: #ffff99;}
+	
 </style>
 
 <script type="text/javascript">
@@ -75,7 +78,6 @@
 		
 		if("${from}"!=""){ // 홈페이지에서 야근 찍고 넘어온 경우 야간수당 내역이 default
 			getOverNightList(sortOption);
-			$("tr.first").css("background-color","#ffff99"); // 맨 위의 tr 배경색 주기	
 		}
 		else{ // 사이드메뉴로 넘어온 경우 default값은 성과금내역 보기, 내림차순
 			getBonusList(sortOption);		
@@ -110,19 +112,8 @@
 				getBonusList(sortOption); // 성과금내역 함수 호출
 			}
 			else{ // 야근수당 내역을 클릭한 경우
-				
-				if(sortOption=="desc" && "${from}"!="" ){ // 홈페이지에서 야근 찍고 넘어온 경우 + 내림차순인 경우
-					getOverNightList(sortOption); // 야근수당 내역 함수 호출
-					$("tr.first").css("background-color","#ffff99"); // 맨 위의 tr 배경색 주기	
-				}
-				else if(sortOption=="asc" && "${from}"!="" ){ // 홈페이지에서 야근 찍고 넘어온 경우 + 오름차순인 경우
-					getOverNightList(sortOption); // 야근수당 내역 함수 호출
-					$("tr.last").css("background-color","#ffff99"); // 맨 아래의 tr 배경색 주기	
-				}
-				else{  // 사이드메뉴에서 넘어온 경우
-					getOverNightList(sortOption);
-				}
-			} // end of else-------------------------------------------------
+				getOverNightList(sortOption);
+			}
 			
 		}); // end of $("select#sortOption").change(function(){-----------------
 			
@@ -162,11 +153,8 @@
 						
 						 var bonus=Number(item.bonus).toLocaleString('en');
 						 
-						 if(index==0)  html+= "<tr class='first'>";
-						 else if(index==(json.length-1)) html+= "<tr class='last'>";
-						 else	html+= "<tr>";
-						 
-						 html+=	    "<td>"+item.date+"</td>"+
+						 html+=	 "<tr>"+   
+							 		"<td>"+item.date+"</td>"+
 					   				"<td style='width:30%'>"+
 					   					item.goalCnt+
 					   					"&nbsp;건<br/><span style='font-size:9pt;'>(&nbsp;목표건:&nbsp;전월실적&nbsp;("+item.prevCnt+"건)&nbsp;+&nbsp;2건&nbsp;)</span>"+
@@ -220,13 +208,16 @@
 				 		    "</tr>";
 				 }
 				 else{ // 야근수당 내역이 존재하는 경우
-				 
+					
 					 $.each(json,function(index,item){
 						
 						 var overnightPay=Number(item.overnightPay).toLocaleString('en');
-						 
-						 html+= "<tr>"+
-					   				"<td>"+item.doLateSysdate+"</td>"+
+						
+						 if(index==0 && sortOption=="desc" && "${from}"!="" )  html+= "<tr class='colorTr'>"; // 홈페이지에서 야근 찍고 넘어온 경우 + 내림차순인 경우
+ 						 else if(index==(json.length-1) && sortOption=="asc" && "${from}"!="" ) html+= "<tr class='colorTr'>"; // 홈페이지에서 야근 찍고 넘어온 경우 + 오름차순인 경우
+						 else	html+= "<tr>";
+					     
+						 html+=		"<td>"+item.doLateSysdate+"</td>"+
 					   				"<td style='font-size: 11pt;'>19시&nbsp;00분&nbsp;부터<br/>"+
 					   					item.endLateTime+"&nbsp;까지"+
 					   				"</td>"+

@@ -141,7 +141,10 @@ td.opinion{
 					$.each(json, function(index, item){
 						
 						var logstatus = item.logstatus;
-						if(logstatus == '1'){
+						if(logstatus == '0'){
+							logstatus = "제출";
+						}
+						else if(logstatus == '1'){
 							logstatus = "승인";
 						}
 						else if(logstatus == '2'){
@@ -325,7 +328,6 @@ td.opinion{
 			<tr>
 				<th>결재로그</th>
 				<td>
-					[${requestScope.avo.asdate}] ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname} <span style="color: red; font-weight: bold;">제출</span>
 					<span id="logDisplay"></span>
 				</td>
 			</tr>

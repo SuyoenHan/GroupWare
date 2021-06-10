@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.sia.model.ApprovalSiaVO;
 import com.t1works.groupware.sia.service.InterMyDocumentSiaService;
 
@@ -39,6 +40,10 @@ public class MyDocumentSiaController {
 	// 파일업로드 및 다운로드를 해주는 FileManager 클래스 의존객체 주입하기  
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private FileManager fileManager;
+	
+	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private InterHomepageBwbService service2;
+	
 	
 	// 내문서함 - 수신함 - 일반결재문서 (기본으로 일반결재문서가 보여짐!)
 	@RequestMapping(value="/t1/myDocuNorm_rec.tw")
@@ -928,8 +933,6 @@ public class MyDocumentSiaController {
 			}
 		}
 		
-		
-		
 		return jsonArr.toString();		
 	}
 	
@@ -969,13 +972,7 @@ public class MyDocumentSiaController {
 		
 		JSONObject jsonObj = new JSONObject();		
 		jsonObj.put("n", n);
-		/*
-		 * jsonObj.put("employeeid", avo.getEmployeeid()); jsonObj.put("arecipient1",
-		 * avo.getArecipient1()); jsonObj.put("arecipient2", avo.getArecipient2());
-		 * jsonObj.put("arecipient3", avo.getArecipient3()); jsonObj.put("fk_pcode",
-		 * avo.getFk_pcode());
-		 */
-	
+		
 		return jsonObj.toString();
 	}
 	
@@ -983,13 +980,14 @@ public class MyDocumentSiaController {
 	// 내문서함 - 수신함 - 반려버튼 클릭
 	@ResponseBody
 	@RequestMapping(value="/t1/reject.tw", method= {RequestMethod.POST}, produces="text/plain;charset=UTF-8")
-	public String reject(HttpServletRequest request) { 
+	public String reject(HttpServletRequest request, ApprovalSiaVO avo) { 
 		
 		String ano = request.getParameter("ano");
 		String arecipient1 = request.getParameter("arecipient1");
 		String arecipient2 = request.getParameter("arecipient2");
 		String arecipient3 = request.getParameter("arecipient3");
 		String employeeid = request.getParameter("employeeid");
+		String vcatname = request.getParameter("vcatname");
 		
 		Map<String, String> paraMap = new HashMap<>();
 		paraMap.put("ano", ano);  
@@ -997,7 +995,8 @@ public class MyDocumentSiaController {
 		paraMap.put("arecipient2", arecipient2);
 		paraMap.put("arecipient3", arecipient3);
 		paraMap.put("employeeid", employeeid);
-	 
+		paraMap.put("vcatname", vcatname);
+		
 		int n = service.reject(paraMap); 	
 		
 		JSONObject jsonObj = new JSONObject();		
@@ -2280,24 +2279,34 @@ public class MyDocumentSiaController {
 		
 		if(loginuser != null) {
 			userid = loginuser.getEmployeeid(); 
-		}
+			String pcode = loginuser.getFk_pcode();
+			
+			String totalOffCnt = service2.selectTotaloffCnt(pcode);
+			
+			// 이용자의 사용연차수 가지고 오기
+	    	String useOffCnt = service2.selectUseoffCnt(userid);
+	    	
+	    	// 전체 연차수
+	    	double dtotalOffCnt = Double.parseDouble(totalOffCnt);
+	    	// 사용 연차수
+	    	double duseOffCnt = Double.parseDouble(useOffCnt);
+	    	
+	    	// 이용자의 남은연차수
+	    	String leftOffCnt = String.valueOf(dtotalOffCnt-duseOffCnt);		
 		
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("ano", ano);
-		paraMap.put("vcatname", vcatname);
-		paraMap.put("userid", userid);
-		
-		try {
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("ano", ano);
+			paraMap.put("vcatname", vcatname);
+			paraMap.put("userid", userid);
+			
 			// 근태결재문서 한 개 상세보기
 			ApprovalSiaVO avo = service.myDocuVacation_temp_detail(paraMap);						
 			ApprovalSiaVO mng = service.viewMng(paraMap);
 			
 			mav.addObject("avo", avo);
 			mav.addObject("mng", mng);
-			
-		} catch (NumberFormatException e) {
-			
-		}		
+			mav.addObject("leftOffCnt", leftOffCnt);			
+		}
 		
 		mav.setViewName("sia/myDocumentDetail/myDocuVacation_temp_detail.gwTiles");
 		
@@ -2713,7 +2722,7 @@ public class MyDocumentSiaController {
 		}
 		
 		if(n==1) {
-			mav.setViewName("redirect:/t1/myDocuVacation_send.tw");
+			mav.setViewName("redirect:/t1/myDocuVacation_temp.tw");
 		}
 		else {
 			System.out.println("실패!");

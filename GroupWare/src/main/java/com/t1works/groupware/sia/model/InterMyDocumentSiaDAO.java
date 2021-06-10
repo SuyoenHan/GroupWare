@@ -193,6 +193,9 @@ public interface InterMyDocumentSiaDAO {
 
 	// 결재로그 리스트보기
 	List<ApprovalSiaVO> approvalLogList(String parentAno);
+
+	// 연차 반차 개수 복구하기
+	int subtract(Map<String, String> paraMap);
 	
 
 	

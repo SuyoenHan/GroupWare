@@ -237,6 +237,13 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		List<Map<String,String>> depIndolenceList = sqlsession.selectList("memberBwb.selectDepMonthIndolence", fk_dcode);
 		return depIndolenceList;
 	}
+
+	// 여행상품들의 일정 뽑아오기
+	@Override
+	public List<Map<String, String>> productSchedule() {
+		List<Map<String, String>> productList = sqlsession.selectList("memberBwb.productSchedule");
+		return productList;
+	}
 	
 	
    

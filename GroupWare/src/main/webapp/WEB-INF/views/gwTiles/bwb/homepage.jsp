@@ -102,6 +102,33 @@
   	  color:blue;
   	  font-weight:bolder;
   }	
+  
+  <%-- quickMenu css 한수연 시작 --%>
+  
+  button.quickMenuBt{
+	  background-color: #dfe8f3;
+	  width: 120px;
+	  height: 50px;
+	  border: none;
+	  color:#000099;
+	  font-size: 11pt;
+	  border-radius: 5%;
+  }
+  
+  button.quickMenuBt:hover{
+	  background-color: #0066cc;
+	  color: #dfe8f3;
+	  font-weight: bold;
+  }
+  
+  span.quickCnt{
+  	color: red;
+  	font-weight: bold;
+  	text-decoration: underline;
+  }
+  
+  <%-- quickMenu css 한수연 끝 --%>
+  
 </style>
 
 <!-- full calendar에 관련된 script -->
@@ -248,13 +275,13 @@
                   dataType:"json",
                   success:function(json){
                      
-                        $("span#outtime").text(json.outtime); 16:25:46
+                        $("span#outtime").text(json.outtime); // 16:25:46
                         
                         var lateTime = json.outtime;
-                        var lateHH = Number(substring(lateTime,0,2));
-                        var lateMM = Number(substring(lateTime,3,5));
+                        var lateHH = Number(lateTime.substring(0,2));
+                        var lateMM = Number(lateTime.substring(3,5));
                         
-                        if(lateHH = 19 && lateMM>=45){
+                        if(lateHH == 19 && lateMM>=45){
  							location.href='<%= ctxPath%>/t1/salaryDetail.tw?from=homepage';
                         }
                         else if(lateHH>20){
@@ -374,8 +401,61 @@
                 alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
             }
  		});  
-    	  
-    	  
+    	
+    	 
+        <%-- 퀵메뉴에 쓰이는 차트 script 시작 한수연 ---%>
+    	$.ajax({
+    		url: "<%= ctxPath%>/t1/quickMenuInfo.tw",
+ 			data: {"employeeid": "${loginuser.employeeid}"},
+ 			type: "POST",
+ 			dataType: "JSON",
+ 			success:function(json){
+ 				
+ 				var emptyCnt=0;
+ 				
+ 				// 읽지않은 메일, 결재 진행 중 문서, 최근 결재완료 문서가 모두 0건인 경우에도 차트를 표시해 주기 
+ 				if(json.notReadCnt==0 && json.ingDocuCnt==0 && json.doneDocuCnt==0){
+ 					emptyCnt=1;
+ 				}
+ 				
+ 				// ========== 퀵메뉴 차트 코드 시작
+ 				google.charts.load("current", {packages:["corechart"]});
+ 		        google.charts.setOnLoadCallback(drawChart);
+ 		        function drawChart() {
+	 		        var data = google.visualization.arrayToDataTable([
+			 		             ['quickMenu', 'cnt'],
+			 		             ['읽지 않은 메일', json.notReadCnt],
+			 		             ['결재 진행 중 문서', json.ingDocuCnt],
+			 		             ['최근 결재 완료 문서', json.doneDocuCnt],
+			 		             ['해당 사항 없음', emptyCnt]
+	 		          		   ]);
+	
+	 		        var options = {
+				 		             pieHole: 0.4,
+				 		             chartArea:{left:0,top:70,width:'100%',height:'70%'},
+				 		             colors: ["#006680", "#00b8e6", "#0099ff","#c0bfbf"],
+				 		             legend: 'none',
+				 		             backgroundColor: "transparent"
+	 		            		   };
+	
+	 		         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+	 		         chart.draw(data, options);
+ 		         }
+ 		     	// ========== 퀵메뉴 차트 코드 끝
+ 		     	
+ 		     	// legend에 각 값 넣어주기
+ 		     	$("span#notReadCnt").text(json.notReadCnt);
+ 		     	$("span#ingDocuCnt").text(json.ingDocuCnt);
+ 		     	$("span#doneDocuCnt").text(json.doneDocuCnt);
+			 			
+ 			},
+ 			error: function(request, status, error){
+                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+            }
+    	}); // end of $.ajax({-------------------------------- 
+         
+        <%-- 퀵메뉴에 쓰이는 차트 script 끝 한수연 ---%> 
+    	 
     	  
     	  
    }); // end of $(document).ready(function(){
@@ -510,38 +590,12 @@
 		});
    }
 	
-	
-   <!-- 퀵메뉴에 쓰이는 차트 script 시작 (한수연) --->
-   
-   google.charts.load("current", {packages:["corechart"]});
-   google.charts.setOnLoadCallback(drawChart);
-   function drawChart() {
-     var data = google.visualization.arrayToDataTable([
-       ['Task', 'Hours per Day'],
-       ['Work',     11],
-       ['Eat',      2],
-       ['Commute',  2],
-       ['Watch TV', 2],
-       ['Sleep',    7]
-     ]);
-
-     var options = {
-       title: '<span style="padding-left: 100px;">My Quick Menu</span>',
-       pieHole: 0.4,
-     };
-
-     var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-     chart.draw(data, options);
-   }
-   
-   <!-- 퀵메뉴에 쓰이는 차트 script 끝 (한수연) -->
-	
 </script>
 
 
 
 
-<div id="content">
+<div id="content" style="width: 1580px;">
   
   <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
   	 <img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:90px; height:90px; margin-left:80px;">
@@ -621,24 +675,43 @@
   
   
   <%-- =================== 한수연 시작 =================== --%>
-  <div id="quickMenu" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 600px; height: 280px;">
-  	<div id="donutchart" style="width: 700px; height: 280px; position: relative; left: -100px;"></div>
+  <div id="quickMenu" style="border: solid 2px #bbc3c3; float: left; margin: 50px 0px 40px 40px; width: 600px; height: 280px;">
+  	<div style="border: solid 2px #0071bd; background-color:#0071bd; color:#fff; font-size:15pt; width:200px; height:35px; text-align: center; padding-top: 2px; ">
+  		My Quick Menu
+  	</div>
+  	<div id="donutchart" style="width: 300px; height: 280px; float:left; border: solid 0px red; position:relative; top:-40px;"></div>
+	<div style='font-size:13pt; float:left; border: solid 0px red;'>
+		<div style='margin-bottom: 18px;'>
+			<button type="button" class='quickMenuBt' onclick='location.href="<%=ctxPath%>/t1/mail.tw"'>받은메일함</button>
+			<button type="button" class='quickMenuBt' style='margin-left:20px;' onclick='location.href="<%=ctxPath%>/t1/myDocuNorm_send.tw"'>문서 발신함</button>
+		</div>
+		<div>
+			<span style='color:#006680; font-size: 22pt; padding-left:5px;'>■</span>
+			&nbsp;&nbsp;읽지 않은 메일 <span class="quickCnt" id="notReadCnt"></span>&nbsp;건
+		</div>
+		<div>
+			<span style='color:#00b8e6; font-size: 22pt; padding-left:5px;'>■</span>
+			&nbsp;&nbsp;결재 진행 중 문서 <span class="quickCnt" id="ingDocuCnt"></span>&nbsp;건
+		</div>
+		<div>
+			<span style='color:#0099ff; font-size: 22pt; padding-left:5px;'>■</span>
+			&nbsp;&nbsp;최근 결재 완료 문서 <span class="quickCnt" id="doneDocuCnt"></span>&nbsp;건
+		</div>
+	</div> 
   </div>
   <%-- =================== 한수연 끝 =================== --%>
   
   
   
-  <!-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div -->
+  <%-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div --%>
   <div style="float: left; width: 800px;"></div>
-  
-  
   
   <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
   	다님님 파트(공지사항)
   </div>
   
   <%-- start of div(calendar) 오다윤 --%>
-  <div id="calendarO" style="float: right; position: relative; left: -290px;">
+  <div id="calendarO" style="float: right;">
 		<div id="calendar"></div>
 		<div id="todayCal" style="margin-top:10px; padding-left: 10px;"></div>
 		<div id="infoCalendar" style="margin-top:10px; padding-left: 10px;"></div>

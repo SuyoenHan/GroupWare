@@ -1,7 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<% String ctxPath = request.getContextPath();%>
+<%@ page import="java.net.InetAddress"%>
+<% 
+	String ctxPath = request.getContextPath();
+
+	// 웹 채팅 서버 받기
+	InetAddress inet = InetAddress.getLocalHost(); 
+	String serverIP = inet.getHostAddress();
+	int portnumber = request.getServerPort();
+	String serverName = "http://"+serverIP+":"+portnumber; 
+%>
+
 
 <div id="mainMenu"> 
 	<div id="left-menu">
@@ -26,7 +36,7 @@
 		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
 		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
 		   			<td class="notice"><i class="fas fa-bullhorn fa-2x"></i></td>
-		   			<td class="groupchat"><i class="far fa-comments fa-2x"></i></td>
+		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=500px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
 				   	<input type="text"/>

@@ -134,6 +134,9 @@ $(document).ready(function(){
 		$("input#roomno").val(roomno);
 		$("input#roomname").val(roomname);
 		$(this).addClass("roomClick");
+		
+		
+		
 	});
 	
         var calendarEl = document.getElementById('calendar');
@@ -149,11 +152,11 @@ $(document).ready(function(){
 	    	  },
 	    	  
           dateClick: function(info) {
-        	//  alert('Date: ' + info.dateStr);
+        	 // alert('Date: ' + info.dateStr);
         	    $(".fc-day").css('background','none'); // 현재 날짜 배경색 없애기
         	    info.dayEl.style.backgroundColor = '#b1b8cd';
         	    chgdate=info.dateStr;
-        	    $("input#chgdate").val(chgdate);
+        	    $("input#chgdate").val(chgdate); 
         	  }
         });
         

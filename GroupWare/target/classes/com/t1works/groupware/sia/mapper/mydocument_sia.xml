@@ -323,7 +323,7 @@
 				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq '추가근무'">
-				, ewdate, ewhours
+				, to_char(ewdate, 'yyyy/mm/dd') AS ewdate, ewhours
 			</when>
 		</choose>
 		from tbl_approval a
@@ -450,6 +450,20 @@
 		</choose>		
 		where ano = #{ano}
 	</update>
+	
+	
+	<!-- 근태 테이블(연차, 반차) 반려버튼 클릭 시 차감 연차 복구하기 --> 
+	<update id="subtract" parameterType="HashMap">
+		<if test='vcatname eq "반차"'>
+			update tbl_afternoonoff set afdates = -0.5
+			where fk_ano = #{ano}
+		</if>
+		<if test='vcatname eq "연차"'>
+			update tbl_dayoff set daystart = #{daystart}, dayend = #{dayend}, daydates = (select (to_date(#{daystart}, 'yyyy-mm-dd') - to_date(#{dayend}, 'yyyy-mm-dd') - 1) as daydates from dual)
+			where fk_ano = #{ano}
+		</if>
+	</update>
+	
 	
 	<!-- 결재로그 테이블에 insert 하기(반려) -->
 	<insert id="rejectLog" parameterType="HashMap">
@@ -780,7 +794,7 @@
 				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq '추가근무'">
-				, ewdate, ewhours
+				, to_char(ewdate, 'yyyy/mm/dd') AS ewdate, ewhours
 			</when>
 		</choose>
 		from tbl_approval a
@@ -1119,22 +1133,22 @@
 		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, pname 
 		<choose>
 			<when test="vcatname eq '병가'">
-				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
+				, to_char(slstart, 'yyyy-mm-dd') AS slstart, to_char(slend, 'yyyy-mm-dd') AS slend, sldates
 			</when>
 			<when test="vcatname eq '반차'">
-				, to_char(afdate, 'yyyy/mm/dd') AS afdate, afdan, afdates
+				, to_char(afdate, 'yyyy-mm-dd') AS afdate, afdan, afdates
 			</when>
 			<when test="vcatname eq '연차'">
-				, to_char(daystart, 'yyyy/mm/dd') AS daystart, to_char(dayend, 'yyyy/mm/dd') AS dayend, daydates
+				, to_char(daystart, 'yyyy-mm-dd') AS daystart, to_char(dayend, 'yyyy-mm-dd') AS dayend, daydates
 			</when>
 			<when test="vcatname eq '경조휴가'">
-				, to_char(congstart, 'yyyy/mm/dd') AS congstart, to_char(congend, 'yyyy/mm/dd') AS congend, congdates
+				, to_char(congstart, 'yyyy-mm-dd') AS congstart, to_char(congend, 'yyyy-mm-dd') AS congend, congdates
 			</when>
 			<when test="vcatname eq '출장'">
-				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
+				, to_char(bustart, 'yyyy-mm-dd') AS bustart, to_char(buend, 'yyyy-mm-dd') AS buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq '추가근무'">
-				, ewdate, ewhours
+				, to_char(ewdate, 'yyyy-mm-dd') AS ewdate, ewhours
 			</when>
 		</choose>
 		from tbl_approval a
@@ -1280,23 +1294,23 @@
 	<!-- 근태결재 문서종류에 따라 테이블에 update -->
 	<update id="optionSaveVacation" parameterType="com.t1works.groupware.sia.model.ApprovalSiaVO">
 		<if test='vcatname eq "병가"'>			
-			update tbl_sickleave set slstart = #{slstart}, slend = #{slend}, sldates = #{sldates}
+			update tbl_sickleave set slstart = #{slstart}, slend = #{slend}, sldates = (select (to_date(#{slend}, 'yyyy-mm-dd') - to_date(#{slstart}, 'yyyy-mm-dd') + 1) as sldates from dual)
 			where fk_ano = #{ano}
 		</if>
 		<if test='vcatname eq "반차"'>
-			update tbl_afternoonoff set afdate = #{afdate}, afdan = #{afdan}, afdates = #{afdates}
+			update tbl_afternoonoff set afdate = #{afdate}, afdan = #{afdan}, afdates = 0.5
 			where fk_ano = #{ano}
 		</if>
 		<if test='vcatname eq "연차"'>
-			update tbl_dayoff set daystart = #{daystart}, dayend = #{dayend}, daydates = #{daydates}
+			update tbl_dayoff set daystart = #{daystart}, dayend = #{dayend}, daydates = (select (to_date(#{dayend}, 'yyyy-mm-dd') - to_date(#{daystart}, 'yyyy-mm-dd') + 1) as daydates from dual)
 			where fk_ano = #{ano}
 		</if>
 		<if test='vcatname eq "경조휴가"'>
-			update tbl_congoff set congstart = #{congstart}, congend = #{congend}, congdates = #{congdates}
+			update tbl_congoff set congstart = #{congstart}, congend = #{congend}, congdates = (select (to_date(#{congend}, 'yyyy-mm-dd') - to_date(#{congstart}, 'yyyy-mm-dd') + 1) as congdates from dual)
 			where fk_ano = #{ano}
 		</if>
 		<if test='vcatname eq "출장"'>
-			update tbl_businesstrip set bustart = #{bustart}, buend = #{buend}, budates = #{budates}, buplace = #{buplace}, bupeople = #{bupeople} 
+			update tbl_businesstrip set bustart = #{bustart}, buend = #{buend}, budates = (select (to_date(#{buend}, 'yyyy-mm-dd') - to_date(#{bustart}, 'yyyy-mm-dd') + 1) as budates from dual), buplace = #{buplace}, bupeople = #{bupeople} 
 			where fk_ano = #{ano}
 		</if>
 		<if test='vcatname eq "추가근무"'>
@@ -1629,7 +1643,7 @@
 				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq '추가근무'">
-				, ewdate, ewhours
+				, to_char(ewdate, 'yyyy/mm/dd') AS ewdate, ewhours
 			</when>
 		</choose>
 		from tbl_approval a
@@ -1688,15 +1702,19 @@
 	
 	<!-- 결재로그 리스트보기 -->
 	<select id="approvalLogList" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select nvl(dname, ' ') as dname, name, pname, to_char(logdate, 'yyyy-mm-dd') as logdate, logstatus, employeeid, pcode
-		from tbl_alog a join tbl_employee e
-		on a.fk_employeeid = e.employeeid
-		left join tbl_department d
-		on e.fk_dcode = d.dcode
-		join tbl_position p
-		on e.fk_pcode = p.pcode
-		where fk_ano = #{parentAno}
-		order by logdate
+		select dname, name, pname, to_char(logdate, 'yyyy-mm-dd') as logdate, logstatus, employeeid, pcode
+		from
+		(
+			select nvl(dname, ' ') as dname, name, pname, logdate, logstatus, employeeid, pcode
+			from tbl_alog a join tbl_employee e
+			on a.fk_employeeid = e.employeeid
+			left join tbl_department d
+			on e.fk_dcode = d.dcode
+			join tbl_position p
+			on e.fk_pcode = p.pcode
+			where fk_ano = #{parentAno}
+			order by logdate
+		)
 	</select>
 	
 </mapper>

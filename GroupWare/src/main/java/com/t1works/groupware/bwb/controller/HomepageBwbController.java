@@ -225,5 +225,47 @@ public class HomepageBwbController {
 		 
 	 }// end of public String selectmyMonthIndolence
 	 
+	 
+	 @RequestMapping(value="/t1/travelschedule.tw")
+	 public ModelAndView travelschedule(ModelAndView mav) {
+		 
+		 
+		 mav.setViewName("bwb/travelschedule.gwTiles");
+		 
+		 return mav;
+	 }// end of public ModelAndView travelschedule(ModelAndView mav) {
+	 
+	 
+	 @ResponseBody
+	 @RequestMapping(value="/t1/selectProductSchedule.tw",produces="text/plain;charset=UTF-8" )
+	 public String selectProductSchedule() {
+		 
+		 
+		 // 여행상품들의 일정 뽑아오기
+		 List<Map<String,String>> productList = service.productSchedule();
+		 
+		 JSONArray jsonArr = new JSONArray();
+		 for(Map<String,String> resultMap:productList) {
+			 JSONObject jsonObj = new JSONObject();
+			 jsonObj.put("name", resultMap.get("pname"));
+			 jsonObj.put("startdate", resultMap.get("startdate"));
+			 jsonObj.put("enddate", resultMap.get("enddate"));
+			 if(resultMap.get("pname").indexOf("국내")>0) {
+				 jsonObj.put("sort", 1);
+			 }
+			 else if(resultMap.get("pname").indexOf("유럽")>0) {
+				 jsonObj.put("sort", 2);
+			 }
+			 else {
+				 jsonObj.put("sort", 3);
+			 }
+			 jsonArr.put(jsonObj);
+		 }
+		 
+		 return jsonArr.toString();
+		 
+	 }// end of public String selectProductSchedule() {
+	 
+	 
 }
 

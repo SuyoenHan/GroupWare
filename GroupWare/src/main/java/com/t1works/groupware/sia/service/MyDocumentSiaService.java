@@ -133,6 +133,11 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 			// 결재로그 테이블 insert(반려)
 			result = dao.rejectLog(paraMap);
 		}
+		
+		if("반차".equals(paraMap.get("vcatname")) || "연차".equals(paraMap.get("vcatname"))) {
+			result = dao.subtract(paraMap);
+		}
+		
 		return result;
 	}
 
@@ -294,9 +299,6 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 			String fileName = paraMap.get("fileName");
 			String path = paraMap.get("path");
 			
-			System.out.println("확인용 fileName" + fileName);
-			System.out.println("확인용 path" + path);
-			
 			if(fileName != null && !"".equals(fileName)) {
 				try {
 					fileManager.doFileDelete(fileName, path);
@@ -317,9 +319,6 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		if(n == 1) {
 			String fileName = paraMap.get("fileName");
 			String path = paraMap.get("path");
-			
-			System.out.println("확인용 fileName" + fileName);
-			System.out.println("확인용 path" + path);
 			
 			if(fileName != null && !"".equals(fileName)) {
 				try {

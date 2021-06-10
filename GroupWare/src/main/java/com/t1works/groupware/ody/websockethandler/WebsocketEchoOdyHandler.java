@@ -1,17 +1,16 @@
 package com.t1works.groupware.ody.websockethandler;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+
 
 public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
 
@@ -22,7 +21,6 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
     public void init() throws Exception {
        
     }
-    
  // === 클라이언트가 웹소켓서버에 연결했을때의 작업 처리하기 ===
     /*
        afterConnectionEstablished(WebSocketSession wsession) 메소드는 
@@ -82,11 +80,13 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
            MemberBwbVO loginuser = (MemberBwbVO)map.get("loginuser");  
            // "loginuser" 은 HttpSession에 저장된 키 값으로 로그인 되어진 사용자이다.
             connectingUserName += loginuser.getName()+" "; 
+          
         }
         connectingUserName += "」";
     
-    //   System.out.println("~~~확인용 connectingUserName: "+connectingUserName);
+       System.out.println("~~~확인용 connectingUserName: "+connectingUserName);
     //   ~~~확인용 connectingUserName: 「오다윤 김유신 」
+        
         
         
         for (WebSocketSession webSocketSession : connectedUsers) {
@@ -148,7 +148,7 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
                    // webSocketSession 은 웹소켓서버에 연결된 모든 클라이언트중 하나임.
                    // wsession.getId() 와  webSocketSession.getId() 는 자동증가되는 고유한 숫자로 나옴 
                     webSocketSession.sendMessage(
-                            new TextMessage("<span class='ip' style='display: none;'>"+wsession.getRemoteAddress().getAddress().getHostAddress()+"</span><span class='loginuserid' style='display: none;'>"+loginuser.getEmployeeid()+"</span>&nbsp;<p style='font-size:11pt; ' class='loginuserName'>" +loginuser.getName()+ "</p>" + "<span>"+messageVO.getMessage()+"</span>&nbsp;<span style='font-size: 10pt;'>"+currentTime+"</span>"));  
+                            new TextMessage("<span class='ip' style='display: none;'>"+wsession.getRemoteAddress().getAddress().getHostAddress()+"</span><p style='font-size:11pt; ' class='loginuserName'>" +loginuser.getName()+ "</p>" + "<span style='background-color: #fff; padding:0px 4px;'>"+messageVO.getMessage()+"</span>&nbsp;<span style='font-size: 10pt;'>"+currentTime+"</span>"));  
                 }
             } 
             else { // 채팅할 대상이 "전체"가 아닌 특정대상(지금은 귓속말대상 IP address 임) 일 경우 
@@ -160,7 +160,7 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
                     webSocketSession.sendMessage(
                             new TextMessage(
 
-                                    "<span class='ip' style='display: none;'>"+ wsession.getRemoteAddress().getAddress().getHostAddress() +"</span><span class='loginuserid' style='display: none;'>"+loginuser.getEmployeeid()+"</span>&nbsp;<p style='font-size:11pt;' class='loginuserName'>" +loginuser.getName()+ "</p>"  + "<span>"+messageVO.getMessage()+"</span>&nbsp;<span  style='font-size: 10pt;'>"+currentTime+"</span>"
+                                    "<span class='ip' style='display: none;'>"+ wsession.getRemoteAddress().getAddress().getHostAddress() +"</span><p style='font-size:11pt;' class='loginuserName'>" +loginuser.getName()+ "</p>"  + "<span style='background-color: #fff; padding:0px 4px; '>"+messageVO.getMessage()+"</span>&nbsp;<span  style='font-size: 10pt;'>"+currentTime+"</span>"
                                    ) 
                     );
                     break; // 지금의 특정대상(지금은 귓속말대상 IP address 임)은 1개이므로 
@@ -195,7 +195,7 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
         for (WebSocketSession webSocketSession : connectedUsers) {
            
            // 퇴장했다라는 메시지를 자기자신을 뺀 나머지 모든 사용자들에게 메시지를 보내도록 한다.
-      /*     if (!wsession.getId().equals(webSocketSession.getId())) { 
+    /*     if (!wsession.getId().equals(webSocketSession.getId())) { 
                 webSocketSession.sendMessage(
                    new TextMessage(wsession.getRemoteAddress().getAddress().getHostAddress() +" [<span style='font-weight:bold;'>" +loginuser.getName()+ "</span>]" + "님이 <span style='color: red;'>퇴장</span>했습니다.")
                 ); 
@@ -223,8 +223,5 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
         }
         ///// ===== 접속해제시 접속자명단을 알려주기 위한 것 끝 ===== /////
     }
-    
-    
-    
     
 }
