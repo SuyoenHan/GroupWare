@@ -184,7 +184,7 @@ div#sendmsg{
   	</c:if>
   </div>	
  
-  <div id="chatMessage" style="overFlow: auto; max-height: 550px;"></div>
+  <div id="chatMessage" style="overFlow: auto; max-height: 500px;"></div>
   
   <div id="sendmsg">
 	<input type="text" id="message" size="54" style="height: 35px;"  placeholder="메시지 내용"/>

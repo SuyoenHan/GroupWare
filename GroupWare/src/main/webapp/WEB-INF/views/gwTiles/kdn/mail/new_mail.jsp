@@ -55,8 +55,9 @@ span.to-input {
 $(document).ready(function(){
 	
 	var preInputEmail = "${requestScope.receiverEmail}";
-	if(preInputEmail != null){
-		// alert('주소록에서 이메일 가져왓다');
+	console.log(preInputEmail);
+	if(preInputEmail != null && preInputEmail != ""){
+		alert('주소록에서 이메일 가져왓다');
 	  $('#to-input').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
 	  $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+preInputEmail+'" />');
 	}	

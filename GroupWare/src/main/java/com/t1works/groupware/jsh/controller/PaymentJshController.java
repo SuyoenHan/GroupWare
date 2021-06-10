@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
@@ -41,6 +42,8 @@ public class PaymentJshController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private FileManager fileManager;
 	
+	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private InterHomepageBwbService service2;
 	
 	
 	
@@ -1780,6 +1783,7 @@ public class PaymentJshController {
 					// System.out.println("loginuser=>"+loginuser);
 					if (loginuser != null) {
 						userid = loginuser.getEmployeeid();
+						String pcode = loginuser.getFk_pcode();
 
 						HashMap<String, String> paraMap = new HashMap<String, String>();
 						paraMap.put("userid", userid);
@@ -1788,7 +1792,17 @@ public class PaymentJshController {
 						//System.out.println(write_view.getManagerid());
 						ElectronPayJshVO write_mview = service.mWriteJsh(paraMap); // 수신자 정보 select해오기
 						
+						String totalOffCnt = service2.selectTotaloffCnt(pcode);
+						// 이용자의 사용연차수 가지고 오기
+			        	String useOffCnt = service2.selectUseoffCnt(userid);
+			        	
+			        	int itotalOffCnt = Integer.parseInt(totalOffCnt);
+			        	int iuseOffCnt = Integer.parseInt(useOffCnt);
+			        	
+			        	// 이용자의 남은연차수
+			        	String leftOffCnt = String.valueOf(itotalOffCnt-iuseOffCnt);
 						
+						mav.addObject("leftOffCnt", leftOffCnt);
 						mav.addObject("write_view", write_view);
 						mav.addObject("write_mview", write_mview);
 
