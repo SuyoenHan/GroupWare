@@ -68,7 +68,7 @@
 	<select id="getTotalCount" parameterType="HashMap" resultType="int">
 	 	select count(*)
 	 	from tbl_mailinbox
-	 	where receiverEmail like '%' || #{email} || '%'
+	 	where receiverEmail like '%' || #{email} || '%' and moveToTrash = '0'
 	 	<if test='searchWord != ""'>
 	 		and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 	 	</if>
