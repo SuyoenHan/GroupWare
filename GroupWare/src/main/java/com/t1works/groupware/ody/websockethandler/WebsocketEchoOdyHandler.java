@@ -1,17 +1,17 @@
 package com.t1works.groupware.ody.websockethandler;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.ody.model.ChatRoom;
 
 public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
 
@@ -22,7 +22,6 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
     public void init() throws Exception {
        
     }
-    
  // === 클라이언트가 웹소켓서버에 연결했을때의 작업 처리하기 ===
     /*
        afterConnectionEstablished(WebSocketSession wsession) 메소드는 
@@ -82,6 +81,7 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
            MemberBwbVO loginuser = (MemberBwbVO)map.get("loginuser");  
            // "loginuser" 은 HttpSession에 저장된 키 값으로 로그인 되어진 사용자이다.
             connectingUserName += loginuser.getName()+" "; 
+          
         }
         connectingUserName += "」";
     
@@ -223,8 +223,5 @@ public class WebsocketEchoOdyHandler extends TextWebSocketHandler {
         }
         ///// ===== 접속해제시 접속자명단을 알려주기 위한 것 끝 ===== /////
     }
-    
-    
-    
     
 }
