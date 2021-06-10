@@ -65,6 +65,8 @@ button.btn_edit{
 	border: none;
 	background-color: #fff;
 }
+
+
 </style>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -95,7 +97,42 @@ $(document).ready(function(){
 			$("input:checkbox[name=comscno]").prop("checked",true);
 		}
 	});
-	
+	// 사내캘린더 체크박스 체크/ 해제		
+	$(document).on("click","input:checkbox[name=comscno]",function(){	
+		
+		 var ccno = document.querySelectorAll("input.comscno");
+	      ccno.forEach(function (csel) {
+	        csel.addEventListener("change", function () {
+	        	 calendar.refetchEvents();
+	        });
+	      });
+	      
+		var bool = $(this).prop("checked");
+		
+		if(bool){
+			
+			var flag=false;
+						
+			$("input:checkbox[name=comscno]").each(function(index, item){
+				
+				var bChecked = $(item).prop("checked");
+				
+				if(!bChecked){
+					flag=true;
+					return false; 
+				}
+				
+			}); // end of $("input:checkbox[name=person]").each(function(index, item){})---------
+
+			if(!flag){		
+                $("input#allComCal").prop("checked",true);
+			}
+		}
+		else{
+			$("input#allComCal").prop("checked",false);
+		}
+		
+	});
 	
 	// === 체크박스 전체 선택/전체 해제 === //
 	$("input#allMyCal").click(function(){		
@@ -144,42 +181,7 @@ $(document).ready(function(){
 	});
 		
 			
-	// 사내캘린더 체크박스 체크/ 해제		
-	$(document).on("click","input:checkbox[name=comscno]",function(){	
-		
-		 var ccno = document.querySelectorAll("input.comscno");
-	      ccno.forEach(function (csel) {
-	        csel.addEventListener("change", function () {
-	        	 calendar.refetchEvents();
-	        });
-	      });
-	      
-		var bool = $(this).prop("checked");
-		
-		if(bool){
-			
-			var flag=false;
-						
-			$("input:checkbox[name=comscno]").each(function(index, item){
-				
-				var bChecked = $(item).prop("checked");
-				
-				if(!bChecked){
-					flag=true;
-					return false; 
-				}
-				
-			}); // end of $("input:checkbox[name=person]").each(function(index, item){})---------
-
-			if(!flag){		
-                $("input#allComCal").prop("checked",true);
-			}
-		}
-		else{
-			$("input#allComCal").prop("checked",false);
-		}
-		
-	});
+	
 	
 	
 	
