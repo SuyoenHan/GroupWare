@@ -411,6 +411,13 @@
  			dataType: "JSON",
  			success:function(json){
  				
+ 				var emptyCnt=0;
+ 				
+ 				// 읽지않은 메일, 결재 진행 중 문서, 최근 결재완료 문서가 모두 0건인 경우에도 차트를 표시해 주기 
+ 				if(json.notReadCnt==0 && json.ingDocuCnt==0 && json.doneDocuCnt==0){
+ 					emptyCnt=1;
+ 				}
+ 				
  				// ========== 퀵메뉴 차트 코드 시작
  				google.charts.load("current", {packages:["corechart"]});
  		        google.charts.setOnLoadCallback(drawChart);
@@ -420,12 +427,13 @@
 			 		             ['읽지 않은 메일', json.notReadCnt],
 			 		             ['결재 진행 중 문서', json.ingDocuCnt],
 			 		             ['최근 결재 완료 문서', json.doneDocuCnt],
+			 		             ['해당 사항 없음', emptyCnt]
 	 		          		   ]);
 	
 	 		        var options = {
 				 		             pieHole: 0.4,
 				 		             chartArea:{left:0,top:70,width:'100%',height:'70%'},
-				 		             colors: ["#006680", "#00b8e6", "#0099ff"],
+				 		             colors: ["#006680", "#00b8e6", "#0099ff","#c0bfbf"],
 				 		             legend: 'none',
 				 		             backgroundColor: "transparent"
 	 		            		   };
