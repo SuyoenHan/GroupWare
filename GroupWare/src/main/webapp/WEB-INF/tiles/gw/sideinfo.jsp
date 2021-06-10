@@ -2,6 +2,29 @@
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath();%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$.ajax({
+		url:"<%=ctxPath%>/t1/displayTotalEmail.tw",
+		dataType:"json",
+		success:function(json){
+			var totalEmailCount = json.totalEmailCount;
+			var totalUnreadEmail = json.totalUnreadEmail;
+			
+			$("span#totalUnreadEmail").children().text(totalUnreadEmail);
+			$("span#totalEmail").text(totalEmailCount);
+		},
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+ 		}
+		
+	});
+	
+	
+});
+
+</script>
 
 <div id="contentWrapper">
    <!-- 사이드바 -->
@@ -26,7 +49,7 @@
                    <a href="<%= ctxPath%>/t1/new_mail.tw">메일쓰기</a>                
                </li>
                <li>
-                   <a href="<%= ctxPath%>/t1/mail.tw">받은메일함</a>
+                   <a href="<%= ctxPath%>/t1/mail.tw">받은메일함&nbsp;<span id="totalUnreadEmail"><b></b></span>&nbsp;/&nbsp;<span id="totalEmail"></span></a>
                </li>
                <li>
                    <a href="<%= ctxPath%>/t1/mail_sent.tw">보낸메일함</a>

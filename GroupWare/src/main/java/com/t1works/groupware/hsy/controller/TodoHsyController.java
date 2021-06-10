@@ -38,6 +38,9 @@ public class TodoHsyController {
 	@Autowired 
 	private InterProductHsyService service2;
 	
+	@Autowired
+	private GoogleMail mail;
+	
 	// 사원 업무관리 페이지 매핑 url
 	@RequestMapping(value="/t1/employeeTodo.tw")    // 로그인이 필요한 url
 	public ModelAndView requiredLogin_employeeTodo(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
@@ -496,8 +499,6 @@ public class TodoHsyController {
 		paraMap.put("fk_pNo", fk_pNo);
 		
 		ClientHsyVO cvo= service.getInfoForSendEmailIngTodo(paraMap);
-		
-		GoogleMail mail = new GoogleMail();
 		
 		int n=0;
 		try {

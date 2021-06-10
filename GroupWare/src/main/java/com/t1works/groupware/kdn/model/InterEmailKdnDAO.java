@@ -17,6 +17,8 @@ public interface InterEmailKdnDAO {
 	int sendWithFile(EmailKdnVO evo); // 파일 첨부가 있는 이메일 쓰기
 
 	int getTotalCount(Map<String, String> paraMap); // 받은메일함 총 이메일 건수 구해오기
+	
+	int getTotalUnreadEmail(Map<String, String> paraMap); // 읽지않은 메일 총 건수 구해오기
 
 	List<EmailKdnVO> emailListSearchWithPaging(Map<String, String> paraMap); // 페이징 처리한 이메일목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 
@@ -57,6 +59,8 @@ public interface InterEmailKdnDAO {
 	int markAsUnread(List<String> emailSeqList); //읽지않음으로 변경
 
 	int markAsRead(List<String> emailSeqList); // 읽음으로 변경
+
+	
 
 
 

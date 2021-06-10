@@ -1,9 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	//console.log("${requestScope.gobackURL}");
+	
 	var arrEmailSeq = [];
 	var str_arrEmailSeq = ""; 
 	// 체크박스 전체선택/전체해제
@@ -42,12 +46,16 @@ $(document).ready(function(){
 		console.log("최종 배열 :"+arrEmailSeq);
 	});
 	
+	
+	var gobackURL = "${requestScope.gobackURL}";
+	gobackURL = gobackURL.replaceAll('&', ' ');
+	
 	// 완전삭제 버튼 클릭시
 	$("button#delImmed").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		// console.log("최종 배열 string :"+str_arrEmailSeq);
 		if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
-			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL=${requestScope.gobackURL}";
+			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 		 }else{   //취소
 		     return false;
 		 }
@@ -57,7 +65,7 @@ $(document).ready(function(){
 	$("button#del").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		console.log("최종 배열 string :"+str_arrEmailSeq);
-		location.href="<%=ctxPath%>/t1/moveToTrash.tw?str_arrEmailSeq="+str_arrEmailSeq;
+		location.href="<%=ctxPath%>/t1/moveToTrash.tw?str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 	});
 	
 	//중요표시 변경
@@ -66,14 +74,14 @@ $(document).ready(function(){
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=1&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else if($(this).val() == "unstar") {
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else {
@@ -86,15 +94,17 @@ $(document).ready(function(){
 		if($(this).val() == "0"){
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
-			if(str_arrEmailSeq != "0"){
-				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq;
+			if(str_arrEmailSeq != ""){
+				//console.log("바꾸기 전:"+gobackURL);
+				//console.log(gobackURL);
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else if($(this).val() == "1") {
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else {
@@ -236,6 +246,8 @@ function moveToTrash(){
  	<div align="center" style="width: 70%; margin: 20px auto;">
      	${requestScope.pageBar}
      </div>
+ 
+ <c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
  
  <form name="goViewFrm">
  		<input type="hidden" name="mailBoxNo" value="1">

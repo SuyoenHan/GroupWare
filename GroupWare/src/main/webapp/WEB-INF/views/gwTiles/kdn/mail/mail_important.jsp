@@ -44,11 +44,14 @@ $(document).ready(function(){
 		console.log("개별체크 후 최종 배열값: "+arrEmailSeq);
 	});
 	
+	var gobackURL = "${requestScope.gobackURL}";
+	gobackURL = gobackURL.replaceAll('&', ' ');
+	
 	//중요표시해제
 	$("button#goStar").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		console.log("최종 배열 :"+str_arrEmailSeq);
-		location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=2&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq;
+		location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=2&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 		
 	});
 	
@@ -58,14 +61,14 @@ $(document).ready(function(){
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != "0"){
-				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else if($(this).val() == "1") {
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=3&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else {
