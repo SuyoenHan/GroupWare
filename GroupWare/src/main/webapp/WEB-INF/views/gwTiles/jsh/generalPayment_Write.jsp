@@ -373,7 +373,6 @@ hr.hr{
 			<tr>
 				<th style="width:200px;">수신참조</th>
 				<td><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
-				<%-- <td><button type="button" >수신자찾기</button><span id="arecipient1" name="arecipient1"></span></td>--%>
 			</tr>
 			
 			<tr>

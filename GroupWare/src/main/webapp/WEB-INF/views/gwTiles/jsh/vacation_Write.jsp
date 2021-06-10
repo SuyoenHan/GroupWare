@@ -84,6 +84,9 @@ height: 100%;
 			$("div#containerview").hide();
 			var obj = []; //전역변수 
 					
+	var a= "${requestScope.leftOffCnt}";
+	console.log("a: "+a);
+			
 			//일반결재내역 문서 카테고리 라디오 클릭 이벤트
 			$("input[name=vcatname]").click(function(){
 				
@@ -168,7 +171,7 @@ height: 100%;
 					html1+="<th>출장지</th>" +
 							"<td ><input type='text' name='buplace' id='buplace' /></td>"+
 							"<th>출장인원</th>"+
-							"<td><input type='number' name='bupeople' id='bupeople' />명</td>"
+							"<td><input type='number' name='bupeople' id='bupeople' />명</td>";
 						
 						
 				}
@@ -187,6 +190,7 @@ height: 100%;
 				if(vcatname =="출장"){
 					$("tr#html1").show();
 					$("tr#html1").html(html1);
+					$("tr#changeVcat").html(html);
 					
 				}
 				else{
@@ -202,8 +206,8 @@ height: 100%;
 			
 		
 			
-	    // 문서 제출하기
-	    $("button#insertWrite").click(function(){
+    // 문서 제출하기
+    $("button#insertWrite").click(function(){
 	  
 	    var leftOffCnt = Number(${requestScope.leftOffCnt}); //남은 휴가수 
 	   	
@@ -445,7 +449,7 @@ height: 100%;
 	         var frm = document.writeGFrm;
 	         frm.method = "POST";
 	         frm.action = "<%= ctxPath%>/t1/vacation_WriteEnd.tw";
-	         //frm.submit();   
+	         frm.submit();   
 	         
 		  }
 		  else{
@@ -575,6 +579,15 @@ height: 100%;
 		</table>
 		
 		<table id="table2">
+			<tr>
+				<th>작성자</th>
+				<td><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
+				
+			</tr>
+			<tr>
+				<th style="width:200px;">수신참조</th>
+				<td><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
+			</tr>
 			<tr>
 				<th>문서상태</th>
 				<td style="width:" colspan="3"><input type="hidden" name="astatus" value="0"/>작성중...	</td>
