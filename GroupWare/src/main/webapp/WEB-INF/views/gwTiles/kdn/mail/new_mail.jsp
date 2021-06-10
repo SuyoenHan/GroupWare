@@ -54,14 +54,14 @@ span.to-input {
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	// 주소록 페이지에서 받는사람 이메일 주소 넘겨받은경우
 	var preInputEmail = "${requestScope.receiverEmail}";
 	console.log(preInputEmail);
 	if(preInputEmail != null && preInputEmail != ""){
-		alert('주소록에서 이메일 가져왓다');
-	  $('#to-input').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+		console.log ('주소록에서 이메일 가져왓다');
+	  $('#receiver').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
 	  $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+preInputEmail+'" />');
 	}	
-
 	
 	//보낸메일함 저장여부
     $("input[name=saveSentMail]").val("0");
@@ -78,47 +78,80 @@ $(document).ready(function(){
  	var availableEmail = ${requestScope.emailList};
  	
  	// 받는사람 이메일주소 자동완성
-    $("#receiver").autocomplete({
+    $("#to-input").autocomplete({
       source: availableEmail
     });
-    
-    $("#receiver").keydown(function (e) {
+ 	
+ 	// 받는사람 이메일 입력
+ 	var arrReceiverEmail = [];
+    $("#to-input").keydown(function (e) {
    	  if (e.keyCode == 13 || e.keyCode == 32) {
    		 var getValue = $(this).val();
-   		 var emailStartIndex = getValue.indexOf("<")+2;
-   		 var emailEndIndex = getValue.indexOf(">")-1;
-   		 var emailOnly = getValue.substring(emailStartIndex,emailEndIndex);
-   		 $('#to-input').append('<span class="email-ids">'+ getValue +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-    	 $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+emailOnly+'" />');
+   		 console.log("getValue : "+getValue);
+   		 var emailStartIdx = getValue.indexOf("<")+2;
+   		 var emailEndIdx = getValue.indexOf(">")-1;
+   		 var emailOnly = getValue.substring(emailStartIdx,emailEndIdx);
+   		 if(getValue.trim() != null && getValue.trim() != ""){
+	   		 $('#receiver').append('<span class="email-ids" name="email-container">'+ getValue +' <span class="cancel-email" name="cancel-btn" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	   		 arrReceiverEmail.push(emailOnly);
+	    	 console.log(arrReceiverEmail);
+   		 }
+   		 //$('#receiver-email').append('<input type="text" name="receiverEmail" value="'+emailOnly+'" />');
+    	 
    		 $(this).val('');
+   	  }
+   	  // 백스페이스 눌렀을때 이메일박스 지우기
+   	  if(e.keyCode == 8){
+   		  console.log('백스페이스 눌렀다');
    	  }
    	});
 
+    
     // 참조 이메일주소 자동완성
-    $("#carbon-copy").autocomplete({
+    $("#cc-input").autocomplete({
       source: availableEmail
     });
     
-    $("#carbon-copy").keydown(function (e) {
+    // 참조이메일 입력
+    var arrCcEmail = [];
+    $("#cc-input").keydown(function (e) {
    	  if (e.keyCode == 13 || e.keyCode == 32) {
    		 var getValue = $(this).val();
-   		 $('#cc-input').append('<span class="email-ids">'+ getValue +' <span class="cancel-ccemail" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-    	 $('#cc-email').append('<input type="text" name="ccEmail" value="'+getValue+'" />');
+   		 console.log("getValue : "+getValue);
+  		 var ccStartIndex = getValue.indexOf("<")+2;
+  		 var ccEndIndex = getValue.indexOf(">")-1;
+  		 var emailOnly = getValue.substring(ccStartIndex,ccEndIndex);
+  		 if(getValue.trim() != null && getValue.trim() != ""){
+	   		 $('#cc').append('<span class="email-ids">'+ getValue +' <span class="cancel-ccemail" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	   		 arrCcEmail.push(emailOnly);
+	    	 console.log(arrCcEmail);
+   		 }
    		 $(this).val('');
    	  }
    	});
     
    	/// Cancel 
 	//받는메일주소 취소클릭시
-   	$(document).on('click','.cancel-email',function(){
+   	$(document).on('click','[name=cancel-btn]',function(){
 	      $(this).parent().remove();
 	      $("input[name=receiver]").val("");
+	      
+	      console.log("이 취소버튼의 인덱스 번호 :"+$(this).index());
+	      
+	      /* 
+	      for(let i = 0; i < arr.length; i++) {
+	    	  if(arr[i] === 'b')  {
+	    	    arr.splice(i, 1);
+	    	    i--;
+	    	  }
+	    	} */
+	      
 	});
     
   //참조메일주소 취소클릭시
    	$(document).on('click','.cancel-ccemail',function(){
 	      $(this).parent().remove();
-	      $("input[name=carbon-copy]").val("");
+	      $("input#cc-input").val("");
 	});
     
 	
@@ -126,15 +159,18 @@ $(document).ready(function(){
     $("input#write-to-myself").change(function(){
 		if($("input#write-to-myself").is(":checked") == true) {
 			var myEmail="${loginuser.email}";
-			$('#to-input').append('<span class="email-ids write-to-myself">'+myEmail+' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-			/* $("input#receiver").val("${loginuser.email}");		 */
-			if($("input[name=receiver]").value == null ){
+			$('#receiver').append('<span class="email-ids write-to-myself">'+myEmail+' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+			arrReceiverEmail.push(myEmail);
+			console.log(arrReceiverEmail);
+/* 			if($("input[name=receiver]").value == null ){
 				$('#receiver-email').append('<input type="text" name="receiverEmail" value="'+myEmail+'" />');
 			} else {
 				$("input[name=receiver]").append(myEmail);
-			}
+			} */
 		} else {
 			$("span.write-to-myself").remove();
+			arrReceiverEmail.splice(arrReceiverEmail.indexOf(myEmail),1);
+			console.log(arrReceiverEmail);
 			$("input[name=receiverEmail]").val("");
 		}
     });
@@ -155,10 +191,22 @@ $(document).ready(function(){
     // 쓰기버튼
     $("button#btnSend").click(function(){
        
-       var emailVal = $("input[name=receiverEmail]").val().trim();
-       if(emailVal == "") {
+       //var emailVal = $("input[name=receiverEmail]").val().trim();
+       
+       var find = $("div#receiver").find('span').val();
+       console.log("find: "+find);
+       
+       if($("div#receiver").find('span').val() == null){
           alert("받는사람 이메일주소를 입력하세요");
           return;
+       }
+    	   
+       var str_arrReceiverEmail = arrReceiverEmail.join();
+       console.log("str_arrReceiverEmail: "+str_arrReceiverEmail);
+       
+       if(arrCcEmail != null){
+    	   var str_arrCcEmail = arrCcEmail.join();
+	       console.log("str_arrCcEmail: "+str_arrCcEmail);
        }
        
         // 글제목 유효성 검사
@@ -175,9 +223,11 @@ $(document).ready(function(){
           alert("내용을 입력하세요");
           return;
        }
-      
+       
        // 폼(form) 을 전송(submit)
        var frm = document.newMailFrm;
+       frm.receiverEmail.value = str_arrReceiverEmail;
+       frm.ccEmail.value = str_arrCcEmail;
        frm.method = "POST";
        frm.action = "<%= ctxPath%>/t1/sendSuccess.tw";
        frm.submit();   
@@ -193,6 +243,7 @@ $(document).ready(function(){
  	
  });// end of $(document).ready(function(){})----------------
  
+ // 보낸메일함 저장하기
  function checkSaveSentMail(){
 	 
 	 if($("input#saveSentMail").is(":checked") == false) {
@@ -229,16 +280,15 @@ $(document).ready(function(){
          <tr>
             <th><label for="receiver">받는사람&nbsp;&nbsp;&nbsp;&nbsp;</label><input type="checkbox" id="write-to-myself" />&nbsp;&nbsp;내게쓰기</th>
             <td>
-               <div id="to-input" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" id="receiver" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none;"/></div><button type="button" id="contact" class="btn-style" style="display:inline-block;">주소록</button> 
-               <div id="receiver-email"></div>
-            
+               <div id="receiver" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" id="to-input" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none; overflow:hidden;"/></div><button type="button" id="contact" class="btn-style" style="display:inline-block;">주소록</button> 
+               <input type="hidden" name="receiverEmail" />
             </td>
          </tr>
          <tr>
             <th><label for="cc">참조</label></th>
             <td>
-            	<div id="cc-input" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" name="ccEmail" id="carbon-copy" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none;"/></div>
-				<div id="cc-email"></div>
+            	<div id="cc" style="width:95%; border: solid 1px #ccc; display: inline-block;"><input type="text" id="cc-input" style="width:300px; margin-right: 10px; display: inline-block; border: none; outline:none;"/></div>
+	            <input type="hidden" name="ccEmail" />
             </td>
          </tr>
          <tr>

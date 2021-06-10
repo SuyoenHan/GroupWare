@@ -146,6 +146,17 @@ public class EmailKdnService implements InterEmailKdnService {
 	@Override
 	public EmailKdnVO getSentMailView(Map<String, String> paraMap) {
 		EmailKdnVO evo = dao.getSentMailView(paraMap);
+		
+		if(evo != null) {
+			String readStatus = evo.getReadStatus();
+			List<String> thisEmail = new ArrayList<>();
+			thisEmail.add(evo.getSeq());
+			
+			if(readStatus.equals("0")) {
+				dao.markAsReadSentMail(thisEmail);
+			}
+		}
+		
 		return evo;
 	}
 
@@ -224,6 +235,24 @@ public class EmailKdnService implements InterEmailKdnService {
 		return emailList;
 	}
 
+	// 휴지통 이메일 열람하기
+	@Override
+	public EmailKdnVO getTrashView(Map<String, String> paraMap) {
+		EmailKdnVO evo = dao.getTrashView(paraMap);
+		
+		if(evo != null) {
+			String readStatus = evo.getReadStatus();
+			List<String> thisEmail = new ArrayList<>();
+			thisEmail.add(evo.getSeq());
+			
+			if(readStatus.equals("0")) {
+				dao.markAsRead(thisEmail);
+			}
+		}
+		
+		return evo;
+	}
+	
 	// 휴지통 메일을 받은메일함으로 이동시키기
 	@Override
 	public int moveToMailInbox(List<String> emailSeqList) {
@@ -244,6 +273,29 @@ public class EmailKdnService implements InterEmailKdnService {
 		int n = dao.markAsRead(emailSeqList);
 		return n;
 	}
+
+	// 보낸메일함 메일 읽지 않음으로 변경
+	@Override
+	public int markAsUnreadSentMail(List<String> emailSeqList) {
+		int n = dao.markAsUnreadSentMail(emailSeqList);
+		return n;
+	}
+
+	// 보낸메일함 메일 읽음으로 변경
+	@Override
+	public int markAsReadSentMail(List<String> emailSeqList) {
+		int n = dao.markAsReadSentMail(emailSeqList);
+		return n;
+	}
+
+	// 휴지통 비우기
+	@Override
+	public int emptyTrash(String email) {
+		int n = dao.emptyTrash(email);
+		return n;
+	}
+
+	
 
 	
 

@@ -28,6 +28,8 @@ public interface InterEmailKdnService {
 
 	EmailKdnVO getImportantMailView(Map<String, String> paraMap); // 중요메일함의 이메일 열람하기 
 	
+	EmailKdnVO getTrashView(Map<String, String> paraMap); // 휴지통 이메일 열람하기
+	
 	int getMailSentTotalCount(Map<String, String> paraMap); // 보낸메일함 총 이메일 건수 구해오기 
 
 	int getMailImportantTotalCount(Map<String, String> paraMap); // 중요메일함 총 이메일 건수 구해오기 
@@ -53,6 +55,15 @@ public interface InterEmailKdnService {
 	int markAsUnread(List<String> emailSeqList); //읽지않음으로 변경
 
 	int markAsRead(List<String> emailSeqList); //읽음으로 변경
+
+	int markAsUnreadSentMail(List<String> emailSeqList); // 보낸메일함 메일 읽지 않음으로 변경
+
+	int markAsReadSentMail(List<String> emailSeqList); // 보낸메일함 메일 읽음으로 변경
+
+	int emptyTrash(String email); // 휴지통 비우기
+	
+	
+
 
 	
 

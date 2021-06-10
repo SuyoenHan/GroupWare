@@ -173,8 +173,14 @@ function goView(seq){
 	 				</td>
 	 				<td>${evo.senderName}&lt;${evo.senderEmail}&gt;</td>
 	 				<td>
-	 				<input type="hidden" name="seq" value="${evo.seq}" />
-	 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a></td>
+		 				<input type="hidden" name="seq" value="${evo.seq}" />
+		 				<c:if test="${evo.readStatus eq '0' }">
+		 					<a href="javascript:goView('${evo.seq}')" class="anchor-style" style="font-weight:bold;">${evo.subject}</a>
+		 				</c:if>
+		 				<c:if test="${evo.readStatus eq '1' }">
+		 					<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a>
+		 				</c:if>
+	 				</td>
 	 				<td>${evo.sendingDate}</td>
 	 			</tr>
 	 		</c:forEach>
@@ -193,7 +199,7 @@ function goView(seq){
      </div>
  
  <form name="goViewFrm">
- 		<input type="hidden" name="mailBoxNo" value="1">
+ 		<input type="hidden" name="mailBoxNo" value="4">
     	<input type="hidden" name="seq"/>
     	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
     	<input type="hidden" name="searchType" />

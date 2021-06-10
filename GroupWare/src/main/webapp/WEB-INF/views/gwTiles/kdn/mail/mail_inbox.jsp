@@ -54,7 +54,7 @@ $(document).ready(function(){
 	$("button#delImmed").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		// console.log("최종 배열 string :"+str_arrEmailSeq);
-		if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
+		if (confirm("선택하신 메일을 영구삭제하시겠습니까?") == true){    //확인
 			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 		 }else{   //취소
 		     return false;

@@ -14,20 +14,35 @@ $(document).ready(function(){
 		$(this).children().css("color", "#999999");
 	});
 	
-	
-	
 });
 
-
-function moveToTrash(){
+// 휴지통으로 이동
+function moveToTrash(seq){
 	var frm = document.toTrashFrm;
-	frm.seq.value = "${requestScope.evo.seq}";
+	frm.seq.value = seq;
 	frm.searchType.value = "${requestScope.paraMap.searchType}";
     frm.searchWord.value = "${requestScope.paraMap.searchWord}";
 	
 	frm.method="get";
 	frm.action="<%=ctxPath%>/t1/moveToTrash.tw";
 	frm.submit();
+}
+// 메일 완전 삭제
+function delImmed(seq){
+	var frm = document.delImmedFrm;
+	frm.seq.value = seq;
+	frm.searchType.value = "${requestScope.paraMap.searchType}";
+    frm.searchWord.value = "${requestScope.paraMap.searchWord}";
+	
+	frm.method="get";
+	frm.action="<%=ctxPath%>/t1/delImmed.tw";
+	
+	if (confirm("메일을 완전히 삭제하시겠습니까?") == true){    //확인
+		frm.submit();
+	 }else{   //취소
+	     return false;
+	 }
+	
 }
 
 </script>
@@ -36,7 +51,7 @@ function moveToTrash(){
 <div id="viewmail-container">
 
 	<c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
-
+<c:if test="${not empty requestScope.evo}">
 	<c:if test="${not empty requestScope.gobackURL}">
 		<a href="<%=ctxPath%>/${requestScope.gobackURL}" class="viewmail-icon"><i class="fas fa-arrow-left fa-lg viewmail-icon" style="color: #999999; margin-top: 20px; margin-left:0;"></i></a>
 	</c:if>
@@ -53,6 +68,9 @@ function moveToTrash(){
 			<c:when test="${requestScope.mailBoxNo eq '3'}"><!-- 중요메일함 열람의 경우 -->
 				<a href="javascript:location.href='viewMail.tw?mailBoxNo=3&seq=${requestScope.evo.previousseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-left fa-lg viewmail-icon" style="color: #999999;"></i></a>
 			</c:when>
+			<c:when test="${requestScope.mailBoxNo eq '4'}"><!-- 휴지통 열람의 경우 -->
+				<a href="javascript:location.href='viewMail.tw?mailBoxNo=4&seq=${requestScope.evo.previousseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-left fa-lg viewmail-icon" style="color: #999999;"></i></a>
+			</c:when>
 			<c:otherwise><!-- 받은메일함 열람의 경우 -->
 				<a href="javascript:location.href='viewMail.tw?mailBoxNo=1&seq=${requestScope.evo.previousseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-left fa-lg viewmail-icon" style="color: #999999;"></i></a>
 			</c:otherwise>
@@ -66,13 +84,25 @@ function moveToTrash(){
 			<c:when test="${requestScope.mailBoxNo eq '3'}"><!-- 중요메일함 열람의 경우 -->
 				<a href="javascript:location.href='viewMail.tw?mailBoxNo=3&seq=${requestScope.evo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-right fa-lg viewmail-icon" style="color: #999999;"></i></a>
 			</c:when>
+			<c:when test="${requestScope.mailBoxNo eq '4'}"><!-- 휴지통 열람의 경우 -->
+				<a href="javascript:location.href='viewMail.tw?mailBoxNo=4&seq=${requestScope.evo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-right fa-lg viewmail-icon" style="color: #999999;"></i></a>
+			</c:when>
 			<c:otherwise><!-- 받은메일함 열람의 경우 -->
 				<a href="javascript:location.href='viewMail.tw?mailBoxNo=1&seq=${requestScope.evo.nextseq}&searchType=${requestScope.searchType}&searchWord=${requestScope.searchWord}&gobackURL=${gobackURL2}'" class="viewmail-icon"><i class="fas fa-chevron-right fa-lg viewmail-icon" style="color: #999999;"></i></a>
 			</c:otherwise>
 		</c:choose>
 	</c:if>
-	<a href="t1/new_mail.tw?seq='${requestScope.evo.groupno}" class="viewmail-icon"><i class="fas fa-reply fa-lg viewmail-icon" style="color: #999999;"></i></a>
-	<a href="javascript:moveToTrash()" class="viewmail-icon"><i class="far fa-trash-alt fa-lg viewmail-icon" style="color: #999999;"></i></a>
+	<c:if test="${requestScope.mailBoxNo eq '1' || requestScope.mailBoxNo eq '3'}">
+		<a href="<%=ctxPath%>/t1/new_mail.tw?seq='${requestScope.evo.groupno}" class="viewmail-icon"><i class="fas fa-reply fa-lg viewmail-icon" style="color: #999999;"></i></a>
+	</c:if>
+		<c:if test="${requestScope.mailBoxNo eq '2' || requestScope.evo.moveToTrash eq '1'}"><!-- 보낸메일함, 휴지통 메일 열람의 경우 -->
+			<a href="javascript:delImmed('${requestScope.evo.seq}')" class="viewmail-icon"><i class="far fa-trash-alt fa-lg viewmail-icon" style="color: #999999;"></i></a>
+		</c:if>
+		<c:if test="${requestScope.mailBoxNo eq '1' && requestScope.evo.moveToTrash eq '0'}"><!-- 받은메일함 열람의 경우 -->
+			<a href="javascript:moveToTrash('${requestScope.evo.seq}')" class="viewmail-icon"><i class="far fa-trash-alt fa-lg viewmail-icon" style="color: #999999;"></i></a>
+		</c:if>
+	
+	
 	</div>
 	<hr style="clear:both; margin: 10px 0 20px 0;">
 	<h3>${requestScope.evo.subject}</h3>
@@ -82,7 +112,11 @@ function moveToTrash(){
 	<c:if test="${not empty requestScope.evo.ccEmail}">
 		<span style="color: #999999;">참조메일: </span><span>${requestScope.evo.ccEmail}</span><br>
 	</c:if>
+	<hr>
+	<p>${requestScope.evo.content}</p>
+	
 	<c:if test="${not empty requestScope.evo.fileName}">
+	<hr style="border-top: double 3px #eee; margin-top: 50px;">
 		<span style="color: #999999;">첨부파일: </span>
 		<span>
 			<c:choose>
@@ -95,13 +129,28 @@ function moveToTrash(){
 			</c:choose>
 		</span>
 	</c:if>
-	<hr>
-	<p>${requestScope.evo.content}</p>
+</c:if>	
+<c:if test="${empty requestScope.evo}">
+	<c:if test="${not empty requestScope.gobackURL}">
+		<a href="<%=ctxPath%>/${requestScope.gobackURL}" class="viewmail-icon"><i class="fas fa-arrow-left fa-lg viewmail-icon" style="color: #999999; margin-top: 20px; margin-left:0;"></i></a>
+	</c:if>
+	<c:if test="${empty requestScope.gobackURL}">
+		<a href="mail.tw"><i class="fas fa-arrow-left fa-lg viewmail-icon" style="color:black;"></i></a>
+	</c:if>
+	<h4>메일이 존재하지 않습니다.</h4>
+</c:if>
 
 </div>
 
  <form name="toTrashFrm">
     	<input type="hidden" name="seq" />
+    	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
+    	<input type="hidden" name="searchType" />
+      	<input type="hidden" name="searchWord" />
+ </form>
+ <form name="delImmedFrm">
+    	<input type="hidden" name="seq" />
+    	<input type="hidden" name="mailBoxNo" value="${requestScope.mailBoxNo}" />
     	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
     	<input type="hidden" name="searchType" />
       	<input type="hidden" name="searchWord" />
