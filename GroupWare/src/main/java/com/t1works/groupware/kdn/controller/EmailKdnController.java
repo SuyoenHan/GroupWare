@@ -90,6 +90,14 @@ public class EmailKdnController {
 		
 		String ccMail = request.getParameter("ccMail");
 		String checkSaveSentMail = request.getParameter("saveSentMail");
+		String receiverEmail = request.getParameter("receiverEmail");
+		String ccEmail = request.getParameter("ccEmail");
+
+		//System.out.println(receiverEmail);
+		evo.setReceiverEmail(receiverEmail);
+		//System.out.println("ccEmail: "+ccEmail);
+		evo.setCcEmail(ccEmail);
+		
 		if(ccMail == null) {
 			ccMail = "";
 		}
@@ -324,8 +332,11 @@ public class EmailKdnController {
 			} else if(mailBoxNo.equals("2")) {	// 보낸메일함
 				evo = service.getSentMailView(paraMap);
 				mav.addObject("evo", evo);
-			} else {	// 중요메일함
+			} else if(mailBoxNo.equals("3")){	// 중요메일함
 				evo = service.getImportantMailView(paraMap);
+				mav.addObject("evo", evo);
+			} else { // 휴지통
+				evo = service.getTrashView(paraMap);
 				mav.addObject("evo", evo);
 			}
 		}catch(NumberFormatException e) {
@@ -704,7 +715,6 @@ public class EmailKdnController {
 		
 		// == 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
 		///////////////////////////////////////////////////////////////
-		
 		mav.addObject("emailList", emailList);
 		mav.setViewName("kdn/mail/mail_trash.gwTiles");
 		return mav;
@@ -783,7 +793,7 @@ public class EmailKdnController {
 		
 	}
 	
-	// 받은메일함&보낸메일함 목록에서 단일 혹은 다중 선택하여 메일 삭제하기
+	// 받은메일함&보낸메일함 목록에서 단일 혹은 다중 선택하여 메일 완전삭제하기
 	@RequestMapping(value="/t1/delImmed.tw")
 	public ModelAndView delEnd(ModelAndView mav, HttpServletRequest request) {
 		
@@ -797,11 +807,23 @@ public class EmailKdnController {
 		}
 		mav.addObject("gobackURL", gobackURL);
 		
+		
+		String seq = request.getParameter("seq");
 		String str_arrEmailSeq = request.getParameter("str_arrEmailSeq");
-		String[] arrEmailSeq = str_arrEmailSeq.split(",");
+		//System.out.println("seq : "+seq);
+		//System.out.println("str_arrEmailSeq : "+str_arrEmailSeq);
+		
+		List<String> emailSeqList = new ArrayList<>();
+		
+		if(str_arrEmailSeq == null && seq != null) {	// 이메일 열람 페이지에서 이메일 1개 휴지통 이동시키는 경우
+			emailSeqList.add(seq);
+		} else if(str_arrEmailSeq != null && seq == null) {  // 여러 이메일 휴지통 이동시키는 경우
+			String[] arrEmailSeq = str_arrEmailSeq.split(",");
+			//System.out.println("받은메일함 체크한 메일번호 배열: "+str_arrEmailSeq);
+			emailSeqList = Arrays.asList(arrEmailSeq);
+		}
+		
 		String mailBoxNo = request.getParameter("mailBoxNo");
-		System.out.println(str_arrEmailSeq);
-		List<String> emailSeqList = Arrays.asList(arrEmailSeq);
 		
         int n = 0;
         if(mailBoxNo.equals("1")) {
@@ -916,10 +938,18 @@ public class EmailKdnController {
 		}
 		mav.addObject("gobackURL", gobackURL);
 		
+		String seq = request.getParameter("seq");
 		String str_arrEmailSeq = request.getParameter("str_arrEmailSeq");
-		String[] arrEmailSeq = str_arrEmailSeq.split(",");
-		//System.out.println("받은메일함 체크한 메일번호 배열: "+str_arrEmailSeq);
-		List<String> emailSeqList = Arrays.asList(arrEmailSeq);
+		
+		List<String> emailSeqList = new ArrayList<>();
+		
+		if(str_arrEmailSeq == null && seq != null) {	 // 이메일 열람 페이지에서 이메일 1개 휴지통 이동시키는 경우
+			emailSeqList.add(seq);
+		} else if(str_arrEmailSeq != null && seq == null) { // 여러 이메일 휴지통 이동시키는 경우
+			String[] arrEmailSeq = str_arrEmailSeq.split(",");
+			//System.out.println("받은메일함 체크한 메일번호 배열: "+str_arrEmailSeq);
+			emailSeqList = Arrays.asList(arrEmailSeq);
+		}
 		
 		int n = service.moveToTrash(emailSeqList);
 		
@@ -992,44 +1022,62 @@ public class EmailKdnController {
 		String[] arrEmailSeq = str_arrEmailSeq.split(",");
 		//System.out.println("체크한 메일번호 배열: "+str_arrEmailSeq);
 		List<String> emailSeqList = Arrays.asList(arrEmailSeq);
-
+		
 		int n = 0, m = 0;
 		if(readStatus.equals("0")) { 
-			n = service.markAsUnread(emailSeqList); //읽지않음으로 변경
+			if(mailBoxNo.equals("4")) {
+				n = service.markAsUnreadSentMail(emailSeqList); // 보낸메일함에서 읽지않음으로 변경
+			} else {
+				n = service.markAsUnread(emailSeqList); // 받은메일함, 중요메일함에서 읽지않음으로 변경
+			}
+			
 			if(n == 0) {
 				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
+				mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				/*
 				if(mailBoxNo.equals("1")) { // mailBoxNo가 1인 경우 받은메일함으로 이동
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 				} else {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
-				}
+				}*/
 				mav.setViewName("msg");
 			} else {        
 				//mav.addObject("message", "선택하신 메일을 읽지않음 처리했습니다.");
+				mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				/*
 				if(mailBoxNo.equals("1")) {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 				} else {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
-				}
+				} */
 				mav.setViewName("pageReloadOnly");
 			}
 		} else { 
-			m = service.markAsRead(emailSeqList); // 읽음으로 변경
+			if(mailBoxNo.equals("4")) {
+				m = service.markAsReadSentMail(emailSeqList); // 보낸메일함 메일 읽음으로 변경
+			} else {
+				m = service.markAsRead(emailSeqList); // 받은메일함, 중요메일함 메일 읽음으로 변경
+			}
+			
 			if(m == 0) {
 				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
+				mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				/*
 				if(mailBoxNo.equals("1")) {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 				} else {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
-				}
+				} */
 				mav.setViewName("msg");
 			} else {            
 				//mav.addObject("message", "선택하신 메일을 읽음 처리했습니다.");
+				mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
+				/*
 				if(mailBoxNo.equals("1")) {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
 				} else {
 					mav.addObject("loc", request.getContextPath()+"/"+gobackURL);
-				}
+				} */
 				mav.setViewName("pageReloadOnly");
 			}
 		}
@@ -1038,5 +1086,45 @@ public class EmailKdnController {
 		
 	}
 	
+	// 휴지통 비우기
+	@RequestMapping(value="/t1/emptyTrash.tw")
+	public ModelAndView emptyTrash(ModelAndView mav, HttpServletRequest request) {
+		
+		HttpSession session = request.getSession();
+		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
+		
+		String email = loginuser.getEmail();
+		
+		Map<String, String> paraMap = new HashMap <>();
+		paraMap.put("searchType", "");
+		paraMap.put("searchWord", "");
+		paraMap.put("email", email);
+		paraMap.put("moveToTrash", "1");
+		
+		int m = service.getTrashTotalCount(paraMap);
+		
+		if(m == 0) { // 휴지통에 메일이 없는 경우
+		
+			mav.addObject("message", "영구삭제할 메일이 없습니다.");
+			mav.addObject("loc", request.getContextPath()+"/t1/mail_trash.tw");
+
+		} else { // 휴지통에 메일이 있는 경우
+			
+			int n = service.emptyTrash(email);
+			
+			if(n == 0) {
+				mav.addObject("message", "에러발생으로 선택하신 작업을 완료하지 못했습니다.");
+				mav.addObject("loc", request.getContextPath()+"/t1/mail_trash.tw");
+			}            
+			else {
+				mav.addObject("message", "휴지통에 보관된 모든 메일이 영구삭제되었습니다.");
+				mav.addObject("loc", request.getContextPath()+"/t1/mail_trash.tw");
+			}
+			
+		}
+		
+        mav.setViewName("msg");
+		return mav;
+	}
 	
 }

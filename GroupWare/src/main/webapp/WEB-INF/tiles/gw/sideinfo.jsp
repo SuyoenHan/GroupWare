@@ -24,6 +24,15 @@ $(document).ready(function(){
 	
 });
 
+function goEmptyTrash(){
+	if (confirm("휴지통을 비우시겠습니까?") == true){    //확인
+		location.href="<%=ctxPath%>/t1/emptyTrash.tw";
+	 }else{   //취소
+	     return false;
+	 }
+	
+}
+
 </script>
 
 <div id="contentWrapper">
@@ -58,7 +67,8 @@ $(document).ready(function(){
                    <a href="<%= ctxPath%>/t1/mail_important.tw">중요메일함</a>
                </li>
                <li class="clickable">
-                   <a href="<%= ctxPath%>/t1/mail_trash.tw">휴지통</a>
+                   <a href="<%= ctxPath%>/t1/mail_trash.tw" style="width:150px; display:inline-block;">휴지통</a>
+                   <a class="delicon" href="javascript:goEmptyTrash()" style="display:inline-block; width:46px;"><i class="far fa-trash-alt" style="float:right; margin-right: 15px; font-size: 12pt;"></i></a>
                </li>
            </ul>
         </div>

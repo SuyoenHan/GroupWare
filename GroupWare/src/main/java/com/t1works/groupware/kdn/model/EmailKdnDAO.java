@@ -178,6 +178,13 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 		return boardList;
 	}
 
+	// 휴지통 메일 열람하기
+	@Override
+	public EmailKdnVO getTrashView(Map<String, String> paraMap) {
+		EmailKdnVO evo = sqlsession3.selectOne("email.getTrashView",paraMap);
+		return evo;
+	}
+
 	// 휴지통 메일을 받은메일함으로 이동시키기
 	@Override
 	public int moveToMailInbox(List<String> emailSeqList) {
@@ -196,6 +203,27 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 	@Override
 	public int markAsRead(List<String> emailSeqList) {
 		int n = sqlsession3.update("email.markAsRead",emailSeqList);
+		return n;
+	}
+
+	// 보낸메일함 메일 읽지 않음으로 변경
+	@Override
+	public int markAsUnreadSentMail(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsUnreadSentMail",emailSeqList);
+		return n;
+	}
+
+	// 보낸메일함 메일 읽음으로 변경
+	@Override
+	public int markAsReadSentMail(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsReadSentMail",emailSeqList);
+		return n;
+	}
+
+	// 휴지통 비우기
+	@Override
+	public int emptyTrash(String email) {
+		int n = sqlsession3.update("email.emptyTrash",email);
 		return n;
 	}
 

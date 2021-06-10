@@ -47,13 +47,40 @@ $(document).ready(function(){
 	var gobackURL = "${requestScope.gobackURL}";
 	gobackURL = gobackURL.replaceAll('&', ' ');
 	
+	// 메일 완전삭제
 	$("button#delImmed").click(function(){
 		
 		str_arrEmailSeq = arrEmailSeq.toString();
 		/* console.log("최종 배열 :"+str_arrEmailSeq); */
+		if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
+			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=2&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
+		 }else{   //취소
+		     return false;
+		 }
 		
-		location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=2&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
-		
+	});
+	
+	//읽음표시 변경
+	$("select#readStatus").change(function(){
+		if($(this).val() == "0"){
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				//console.log("바꾸기 전:"+gobackURL);
+				//console.log(gobackURL);
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=4&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
+			}
+			$(this).val("");
+		} else if($(this).val() == "1") {
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=4&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
+			}
+			$(this).val("");
+		} else {
+			$(this).val("");
+		}
 	});
 	
 	
@@ -98,10 +125,10 @@ function goView(seq){
 	 <h4 style="margin-bottom: 20px; font-weight: bold;">보낸메일함</h4>
 	 <div id="left-header">
 		 <button id="delImmed" type="button" class="btn-style"><i class="fas fa-times fa-lg"></i>&nbsp;완전삭제</button>
-		 <select name="readMark">
+		 <select id="readStatus">
 		 	<option value="">읽음표시</option>
-		 	<option value="read">읽음</option>
-		 	<option value="unread">읽지않음</option>
+		 	<option value="1">읽음</option>
+		 	<option value="0">읽지않음</option>
 		 </select>
 	 <div id="right-header" style="float: right;">
 		 <select name="mailSearch">
@@ -145,7 +172,13 @@ function goView(seq){
 	 				<td>${evo.receiverName}&lt;${evo.receiverEmail}&gt;</td>
 	 				<td>
 	 				<input type="hidden" name="seq" value="${evo.seq}" />
-	 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a></td>
+	 				<c:if test="${evo.readStatus eq '0' }">
+		 				<a href="javascript:goView('${evo.seq}')" class="anchor-style" style="font-weight:bold;">${evo.subject}</a>
+		 			</c:if>
+		 			<c:if test="${evo.readStatus eq '1' }">
+		 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a>
+		 			</c:if>
+	 				</td>
 	 				<td>${evo.sendingDate}</td>
 	 			</tr>
 	 		</c:forEach>
