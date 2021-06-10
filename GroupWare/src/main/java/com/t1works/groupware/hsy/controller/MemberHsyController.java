@@ -489,6 +489,10 @@ public class MemberHsyController {
 	@RequestMapping(value="/t1/salaryDetail.tw")        // 로그인이 필요한 url
 	public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
+		String from= request.getParameter("from"); // 홈페이지에서 야근 찍고 넘어온 경우
+		if(from==null) from=""; // 홈페이지에서 야근 안찍고 사이드메뉴 야근수당 정보페이지로 넘어온 경우
+		mav.addObject("from",from);
+		
 		mav.setViewName("hsy/employee/perfNightDetail.gwTiles");
 		return mav;
 	} // end of public ModelAndView requiredLogin_salaryDetail(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {----
@@ -647,5 +651,32 @@ public class MemberHsyController {
 		//야근 기록이 존재하지 않는 경우 jsonArr.length==0이 된다
 		
 	} // end of public String getOverNightList(HttpServletRequest request) {------
+	
+	
+	// 그룹웨어 홈페이지 퀵메뉴에 필요한 정보 가져오는 ajax 매핑 url
+	@ResponseBody
+	@RequestMapping(value="/t1/quickMenuInfo.tw", method= {RequestMethod.POST})
+	public String quickMenuInfo(HttpServletRequest request) {
+	
+		String employeeid= request.getParameter("employeeid");
+		Map<String,String> paraMap= new HashMap<>();
+		paraMap.put("employeeid", employeeid);
+		
+		// 1) 특정 직원의 읽지않은 메일수, 결재중인 문서 수, 14일 이내에 결재완료된 문서 수 가져오기
+		Map<String,Integer> quickMenuInfoMap= service.getquickMenuInfo(paraMap);
+		
+		JsonObject jsonObj= new JsonObject();
+		jsonObj.addProperty("notReadCnt", quickMenuInfoMap.get("notReadCnt"));
+		jsonObj.addProperty("ingDocuCnt", quickMenuInfoMap.get("ingDocuCnt"));
+		jsonObj.addProperty("doneDocuCnt", quickMenuInfoMap.get("doneDocuCnt"));
+		
+		return new Gson().toJson(jsonObj);
+		
+	} // end of public String quickMenuInfo(HttpServletRequest request) {---------------------
+	
+	
+	
+	
+	
 	
 }

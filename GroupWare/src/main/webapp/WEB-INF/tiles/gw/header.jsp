@@ -26,6 +26,7 @@
 		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
 		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
 		   			<td class="notice"><i class="fas fa-bullhorn fa-2x"></i></td>
+		   			<td class="groupchat"><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
 				   	<input type="text"/>
@@ -39,6 +40,7 @@
 		   			<td class="schedule">일정관리</td>
 		   			<td class="rsv">예약현황</td>
 		   			<td class="notice">공지사항</td>
+		   			<td class="notice">그룹챗</td>
 		   		</tr>
 		    </tbody>
 	    </table>

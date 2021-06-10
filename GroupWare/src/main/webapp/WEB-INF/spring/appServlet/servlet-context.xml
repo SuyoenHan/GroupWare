@@ -18,6 +18,16 @@
    <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
    <mvc:resources mapping="/resources/**" location="/resources/" />
 
+   <!-- === 엑셀파일다운로드를 위해  BeanNameViewResolver 추가하기 === -->
+   <!-- 스프링 프레임워크(Spring Framework)에서 JSP가 아닌 컨트롤러를 호출하여 파일을 다운로드 하려면 다음과 같은 단계를 거쳐야 한다. 
+        BeanNameViewResolver 뷰 리졸버를 추가한 후 파일 다운로드를 처리해줄 빈을 등록한다.
+                 쉽게 생각해서 파일 다운로드 처리를 해주는 view 페이지 라고 생각하면 된다. -->
+      
+   <beans:bean id="excelDownloadView" class="com.t1works.excel.ExcelDownloadView"/>
+   <beans:bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <beans:property name="order" value="0"/>
+    </beans:bean>
+
    <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
       <beans:property name="prefix" value="/WEB-INF/views/" />
@@ -44,6 +54,9 @@
    <!-- ===> ViewResolver 를 우선적으로 tiles 프레임워크를 사용할 것이지만, 기존에 있던 기본적인 ViewResolver 를 사용할 수도 있으므로 
              Resolver의 사용우선순위를 InternalResourceViewResolver 을 2로 한다. 
              <beans:property name="order" value="2"/> 를 주면 된다. ===== -->
+   
+   <!-- === #179. Spring Scheduler(스프링스케줄러1) 어노테이션을 사용하여 스프링스케줄러를 구현하도록 한다. === -->  
+   <task:annotation-driven/>
    
    <!-- ==== #18. Controller 에서 만들어진 데이터 정보를 view단 페이지인 jsp 페이지로 넘길시
                   view단 페이지의 지정은 return "view단페이지"; 와 같이 String 타입으로 넘겨주면
@@ -97,6 +110,9 @@
          왜냐하면 DispatcherServlet은 파일처리를 사용할 경우 이름(아이디)이 "multipartResolver"인 빈을 사용하도록 설정되어 있기 때문에 
       "multipartResolver" 가 아닌 다른 이름(아이디)으로 지정할경우 MultipartResolver로 사용되지 않는다.
     -->
+   
+   
+   
    
    
    <!-- ==== #18. bean으로 등록될 @Component 클래스가 위치하는 패키지명 지정하기 ====  --> 

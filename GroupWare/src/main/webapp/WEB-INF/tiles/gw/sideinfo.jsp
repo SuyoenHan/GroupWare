@@ -2,6 +2,29 @@
     pageEncoding="UTF-8"%>
 <% String ctxPath = request.getContextPath();%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	$.ajax({
+		url:"<%=ctxPath%>/t1/displayTotalEmail.tw",
+		dataType:"json",
+		success:function(json){
+			var totalEmailCount = json.totalEmailCount;
+			var totalUnreadEmail = json.totalUnreadEmail;
+			
+			$("span#totalUnreadEmail").children().text(totalUnreadEmail);
+			$("span#totalEmail").text(totalEmailCount);
+		},
+		error: function(request, status, error){
+			alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+ 		}
+		
+	});
+	
+	
+});
+
+</script>
 
 <div id="contentWrapper">
    <!-- 사이드바 -->
@@ -10,10 +33,10 @@
       <p class="menu-btn myDocument"><i class="far fa-file-alt fa-lg"></i><br><span>내문서함</span></p>
       <p class="menu-btn electronPay"><i class="fas fa-desktop fa-lg"></i><br><span>전자결재</span></p>
       <p class="menu-btn employeeMap"><i class="far fa-address-card fa-lg"></i><br><span>주소록</span></p>
-      <p class="menu-btn employeeBoard"><i class="far fa-comments fa-lg"></i><br><span>게시판</span></p>
+      <p class="menu-btn employeeBoard"><i class="far fa-list-alt fa-lg"></i><br><span>게시판</span></p>
       <p class="menu-btn salary"><i class="fas fa-won-sign fa-md"></i><br><span>월급관리</span></p>
       <p class="menu-btn toDo"><i class="fas fa-file-signature fa-lg"></i><br><span>업무관리</span></p>
-      <p class="menu-btn reservation"><i class="far fa-list-alt fa-lg"></i><br><span>예약관리</span></p>
+      <p class="menu-btn reservation"><i class="fas fa-tasks fa-lg"></i><br><span>예약관리</span></p>
    </div>
 
    <!-- 세부메뉴  -->
@@ -26,7 +49,7 @@
                    <a href="<%= ctxPath%>/t1/new_mail.tw">메일쓰기</a>                
                </li>
                <li>
-                   <a href="<%= ctxPath%>/t1/mail.tw">받은메일함</a>
+                   <a href="<%= ctxPath%>/t1/mail.tw">받은메일함&nbsp;<span id="totalUnreadEmail"><b></b></span>&nbsp;/&nbsp;<span id="totalEmail"></span></a>
                </li>
                <li>
                    <a href="<%= ctxPath%>/t1/mail_sent.tw">보낸메일함</a>

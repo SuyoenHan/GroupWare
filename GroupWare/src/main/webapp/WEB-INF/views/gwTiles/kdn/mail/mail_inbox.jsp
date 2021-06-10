@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
 <script type="text/javascript">
 $(document).ready(function(){
+	
+	//console.log("${requestScope.gobackURL}");
 	
 	var arrEmailSeq = [];
 	var str_arrEmailSeq = ""; 
@@ -43,12 +46,16 @@ $(document).ready(function(){
 		console.log("최종 배열 :"+arrEmailSeq);
 	});
 	
+	
+	var gobackURL = "${requestScope.gobackURL}";
+	gobackURL = gobackURL.replaceAll('&', ' ');
+	
 	// 완전삭제 버튼 클릭시
 	$("button#delImmed").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		// console.log("최종 배열 string :"+str_arrEmailSeq);
 		if (confirm("선택하신 메일을 완전히 삭제하시겠습니까?") == true){    //확인
-			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL=${requestScope.gobackURL}";
+			location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 		 }else{   //취소
 		     return false;
 		 }
@@ -58,7 +65,7 @@ $(document).ready(function(){
 	$("button#del").click(function(){
 		str_arrEmailSeq = arrEmailSeq.toString();
 		console.log("최종 배열 string :"+str_arrEmailSeq);
-		location.href="<%=ctxPath%>/t1/moveToTrash.tw?str_arrEmailSeq="+str_arrEmailSeq;
+		location.href="<%=ctxPath%>/t1/moveToTrash.tw?str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 	});
 	
 	//중요표시 변경
@@ -67,14 +74,37 @@ $(document).ready(function(){
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=1&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else if($(this).val() == "unstar") {
 			str_arrEmailSeq = arrEmailSeq.toString();
 			//console.log("최종 배열 :"+str_arrEmailSeq);
 			if(str_arrEmailSeq != ""){
-				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq;
+				location.href="<%=ctxPath%>/t1/goStar.tw?mailBoxNo=1&checkImportant=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
+			}
+			$(this).val("");
+		} else {
+			$(this).val("");
+		}
+	});
+	
+	//읽음표시 변경
+	$("select#readStatus").change(function(){
+		if($(this).val() == "0"){
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				//console.log("바꾸기 전:"+gobackURL);
+				//console.log(gobackURL);
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=0&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
+			}
+			$(this).val("");
+		} else if($(this).val() == "1") {
+			str_arrEmailSeq = arrEmailSeq.toString();
+			//console.log("최종 배열 :"+str_arrEmailSeq);
+			if(str_arrEmailSeq != ""){
+				location.href="<%=ctxPath%>/t1/readStatus.tw?mailBoxNo=1&readStatus=1&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 			}
 			$(this).val("");
 		} else {
@@ -136,16 +166,16 @@ function moveToTrash(){
 		 	<option value="star">중요함</option>
 		 	<option value="unstar">중요안함</option>
 		 </select>
-		 <select name="readMark" style="height: 28px;">
+		 <select id="readStatus" style="height: 28px;">
 		 	<option value="">읽음표시</option>
-		 	<option value="read">읽음</option>
-		 	<option value="unread">읽지않음</option>
+		 	<option value="1">읽음</option>
+		 	<option value="0">읽지않음</option>
 		 </select>
 	 <div id="right-header" style="float: right;">
 		 <select name="searchType">
 		 	<option value="">선택</option>
 		 	<option value="subject">제목</option>
-		 	<option value="sender">보낸사람</option>
+		 	<option value="senderName">보낸사람</option>
 		 	<option value="content">내용</option>
 		 </select>
 		<input type="text" name="searchWord" />
@@ -191,8 +221,15 @@ function moveToTrash(){
 	 				</td>
 	 				<td>${evo.senderName}&lt;${evo.senderEmail}&gt;</td>
 	 				<td>
-	 				<input type="hidden" name="seq" value="${evo.seq}" />
-	 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a></td>
+		 				<input type="hidden" name="seq" value="${evo.seq}" />
+		 				<input type="hidden" class="readStatus" value="${evo.readStatus}" />
+		 				<c:if test="${evo.readStatus eq '0' }">
+			 				<a href="javascript:goView('${evo.seq}')" class="anchor-style" style="font-weight: bolder;">${evo.subject}</a>
+			 			</c:if>
+		 				<c:if test="${evo.readStatus eq '1' }">
+			 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a>
+		 				</c:if>
+		 			</td>
 	 				<td>${evo.sendingDate}</td>
 	 			</tr>
 	 		</c:forEach>
@@ -209,6 +246,8 @@ function moveToTrash(){
  	<div align="center" style="width: 70%; margin: 20px auto;">
      	${requestScope.pageBar}
      </div>
+ 
+ <c:set var="gobackURL2" value="${fn:replace(requestScope.gobackURL,'&', ' ') }" />
  
  <form name="goViewFrm">
  		<input type="hidden" name="mailBoxNo" value="1">

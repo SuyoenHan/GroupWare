@@ -262,9 +262,16 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
+						var image = "<%= ctxPath%>/resources/images/sia/disk.gif";
+						
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
-						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						if(item.fileName != null){
+							html += "<td>&nbsp;"+ item.atitle +"&nbsp;<img src='"+ image +"'/></td>";
+						}
+						else if(item.fileName == null){
+							html += "<td>&nbsp;"+ item.atitle +"</td>";
+						}
 						html += "<td class='ncatname' align='center'>"+ item.ncatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
@@ -324,9 +331,16 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
+						var image = "<%= ctxPath%>/resources/images/sia/disk.gif";
+						
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
-						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						if(item.fileName != null){
+							html += "<td>&nbsp;"+ item.atitle +"&nbsp;<img src='"+ image +"'/></td>";
+						}
+						else if(item.fileName == null){
+							html += "<td>&nbsp;"+ item.atitle +"</td>";
+						}
 						html += "<td class='ncatname' align='center'>"+ item.ncatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
@@ -461,8 +475,8 @@ $(document).ready(function(){
 		<a href="<%= ctxPath%>/t1/myDocuSpend_rec.tw" class="tab_area">지출 결재 문서</a>
 		<a href="<%= ctxPath%>/t1/myDocuVacation_rec.tw" class="tab_area">근태/휴가 결재 문서</a>			
 	</div>
-
-	<form name="searchFrm">	
+ 
+	<form name="searchFrm">
 		<table>
 			<tr>
 				<td width="20%" class="th">결재상태</td>

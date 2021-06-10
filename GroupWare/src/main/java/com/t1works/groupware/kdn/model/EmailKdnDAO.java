@@ -50,6 +50,13 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 		return n;
 	}
 
+	// 읽지않은 메일 총 건수 구해오기
+	@Override
+	public int getTotalUnreadEmail(Map<String, String> paraMap) {
+		int n =sqlsession3.selectOne("email.getTotalUnreadEmail", paraMap);
+		return n;
+	}
+	
 	// (받은메일함, 중요메일함) 페이징 처리한 이메일목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 	@Override
 	public List<EmailKdnVO> emailListSearchWithPaging(Map<String, String> paraMap) {
@@ -177,5 +184,21 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 		int n = sqlsession3.update("email.moveToMailInbox", emailSeqList);
 		return n;
 	}
+
+	//읽지않음으로 변경
+	@Override
+	public int markAsUnread(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsUnread",emailSeqList);
+		return n;
+	}
+
+	//읽음으로 변경
+	@Override
+	public int markAsRead(List<String> emailSeqList) {
+		int n = sqlsession3.update("email.markAsRead",emailSeqList);
+		return n;
+	}
+
+	
 
 }

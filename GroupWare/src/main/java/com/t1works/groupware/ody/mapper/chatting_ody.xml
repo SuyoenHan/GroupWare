@@ -15,4 +15,15 @@
 		where employeeid != #{employeeid}
 		order by fk_dcode asc, fk_pcode desc
 	</select>
+	
+	<resultMap type="HashMap" id="findChatNameMap">
+		<result property="name"      column="name" javaType="String"/>
+		<result property="fk_pcode"  column="fk_pcode" javaType="String"/>
+	</resultMap>
+	
+	<select id="findChatName" parameterType="String" resultMap="findChatNameMap">
+		select name, fk_pcode
+		from tbl_employee
+		where employeeid = #{empId}
+	</select>
 </mapper>
