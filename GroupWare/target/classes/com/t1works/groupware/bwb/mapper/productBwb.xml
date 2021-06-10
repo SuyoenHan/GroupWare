@@ -312,4 +312,6 @@
    		where rsgno = #{rsgno}
    </update>
    
+   
+   
 </mapper>

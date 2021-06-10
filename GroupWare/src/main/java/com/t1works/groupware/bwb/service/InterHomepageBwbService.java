@@ -43,6 +43,9 @@ public interface InterHomepageBwbService {
    // 부서 월별 출퇴근기록 가지고오기
    List<Map<String, String>> selectDepMonthIndolence(String fk_dcode);
    
+   // 여행상품들의 일정 뽑아오기
+   List<Map<String, String>> productSchedule();
+   
    
    
 
