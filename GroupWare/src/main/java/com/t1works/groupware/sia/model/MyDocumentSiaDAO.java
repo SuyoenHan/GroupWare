@@ -436,6 +436,13 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return avo;
 	}
 
+	// 연차 반차 개수 복구하기
+	@Override
+	public int subtract(Map<String, String> paraMap) {
+		int n = sqlsession4.update("mydocument_sia.subtract", paraMap);
+		return n;
+	}
+
 	
 
 

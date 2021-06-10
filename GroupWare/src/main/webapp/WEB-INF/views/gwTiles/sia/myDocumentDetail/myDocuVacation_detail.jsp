@@ -282,6 +282,9 @@ div#delBtn:hover{
 					$.each(json, function(index, item){
 						
 						var logstatus = item.logstatus;
+						if(logstatus == '0'){
+							logstatus = "제출";
+						}
 						if(logstatus == '1'){
 							logstatus = "승인";
 						}
@@ -453,7 +456,7 @@ div#delBtn:hover{
 				
 			<tr>
 				<th>첨부파일</th>
-				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}></a></td>
+				<td colspan="3"><a href="<%= ctxPath%>/t1/download.tw?ano=${requestScope.avo.ano}">${requestScope.avo.orgFilename}</a></td>
 			</tr>
 		</table>
 			
@@ -465,8 +468,7 @@ div#delBtn:hover{
 		<table id="table3">
 			<tr>
 				<th>결재로그</th>
-				<td>
-					[${requestScope.avo.asdate}] ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname} <span style="color: red; font-weight: bold;">제출</span>
+				<td>					
 					<span id="logDisplay"></span>
 				</td>
 			</tr>
@@ -515,7 +517,8 @@ div#delBtn:hover{
 		<input type="hidden" name="arecipient2" value="${requestScope.avo.arecipient2}"/>
 		<input type="hidden" name="arecipient3" value="${requestScope.avo.arecipient3}"/>
 		<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
-		<input type=hidden name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />		
+		<input type="hidden" name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />
+		<input type="hidden" name="vcatname" value="${requestScope.avo.vcatname}" />		
 	</form>
 	
 	

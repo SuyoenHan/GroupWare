@@ -133,6 +133,11 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 			// 결재로그 테이블 insert(반려)
 			result = dao.rejectLog(paraMap);
 		}
+		
+		if("반차".equals(paraMap.get("vcatname")) || "연차".equals(paraMap.get("vcatname"))) {
+			result = dao.subtract(paraMap);
+		}
+		
 		return result;
 	}
 

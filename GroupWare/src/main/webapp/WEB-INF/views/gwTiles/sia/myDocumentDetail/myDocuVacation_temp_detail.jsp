@@ -351,7 +351,7 @@ input.btn {
 				<c:if test="${requestScope.avo.vno eq '1'}"> 
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="slstart" id="slstart" value="${requestScope.avo.slstart}"/> - <input type="date" name="slend" id="slend" value="${requestScope.avo.slend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.sldates}</span>일]</td>
+						<td colspan="3"><input type="date" name="slstart" id="slstart" value="${requestScope.avo.slstart}"/> - <input type="date" name="slend" id="slend" value="${requestScope.avo.slend}"/></td>
 					</tr>				
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '2'}">
@@ -367,20 +367,24 @@ input.btn {
 									<option value="1">오전</option>
 									<option value="2" selected>오후</option>															
 								</c:if>
-							</select>
+							</select>&nbsp;&nbsp;
+							[남은일자: <span style="color: blue; font-weight: bold;">${requestScope.leftOffCnt}</span>일]
 						</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '3'}">
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="daystart" id="daystart" value="${requestScope.avo.daystart}"/> - <input type="date" name="dayend" id="dayend" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.daydates}</span>일]</td>
+						<td colspan="3">
+							<input type="date" name="daystart" id="daystart" value="${requestScope.avo.daystart}"/> - <input type="date" name="dayend" id="dayend" value="${requestScope.avo.dayend}"/>&nbsp;&nbsp;&nbsp;
+							[남은일자: <span style="color: blue; font-weight: bold;">${requestScope.leftOffCnt}</span>일]
+						</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '4'}">
 					<tr>
 						<th>요청기간</th>
-						<td colspan="3"><input type="date" name="congstart" id="congstart" value="${requestScope.avo.congstart}"/> - <input type="date" name="congend" id="congend" value="${requestScope.avo.congend}"/>&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.congdates}</span>일]</td>
+						<td colspan="3"><input type="date" name="congstart" id="congstart" value="${requestScope.avo.congstart}"/> - <input type="date" name="congend" id="congend" value="${requestScope.avo.congend}"/></td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '5'}">
@@ -398,7 +402,10 @@ input.btn {
 				<c:if test="${requestScope.avo.vno eq '6'}">
 					<tr>
 						<th>요청시간</th>
-						<td colspan="3"><input type="text" name="ewdate" id="ewdate" style="width: 370px;" value="${requestScope.avo.ewdate}"/>시간</td>
+						<td colspan="3">
+							<input type="date" name="ewdate" id="ewdate" value="${requestScope.avo.ewdate}"/>&nbsp;
+							<input type="number" class="numOnly" name="ewhours" id="ewhours" style="width: 70px;" value="${requestScope.avo.ewhours}"> 시간
+						</td>
 					</tr>
 				</c:if>	
 				

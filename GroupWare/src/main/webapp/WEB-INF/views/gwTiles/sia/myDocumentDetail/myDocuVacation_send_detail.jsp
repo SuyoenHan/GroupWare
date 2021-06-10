@@ -401,19 +401,19 @@ div#delBtn:hover{
 			<c:if test="${requestScope.avo.vno eq '5'}">
 				<tr>
 					<th>출장기간</th>
-					<td colspan="3">${requestScope.avo.bustart} - ${requestScope.avo.buend}</td>
+					<td colspan="3">${requestScope.avo.bustart} - ${requestScope.avo.buend} [출장일수: <span style="color: blue; font-weight: bold;">${requestScope.avo.budates}</span>일]</td>
 				</tr>
 				<tr>
 					<th>출장지</th>
 					<td>${requestScope.avo.buplace}</td>				
 					<th>출장인원</th>
-					<td>${requestScope.avo.bupeople}</td>
+					<td>${requestScope.avo.bupeople} 명</td>
 				</tr>
 			</c:if>
 			<c:if test="${requestScope.avo.vno eq '6'}">
 				<tr>
 					<th>요청시간</th>
-					<td colspan="3">${requestScope.avo.ewdate}시간</td>
+					<td colspan="3">${requestScope.avo.ewdate}&nbsp;&nbsp;&nbsp;<span style="color: blue; font-weight: bold;">${requestScope.avo.ewhours}</span>시간</td>
 				</tr>
 			</c:if>	
 			
@@ -486,7 +486,8 @@ div#delBtn:hover{
 		<input type="hidden" name="arecipient2" value="${requestScope.avo.arecipient2}"/>
 		<input type="hidden" name="arecipient3" value="${requestScope.avo.arecipient3}"/>
 		<input type="hidden" name="employeeid" value="${sessionScope.loginuser.employeeid}" />
-		<input type=hidden name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />		
+		<input type="hidden" name="fk_pcode" value="${sessionScope.loginuser.fk_pcode}" />
+		<input type="hidden" name="vcatname" value="${requestScope.avo.vcatname}" />	
 	</form>
 	
 	
