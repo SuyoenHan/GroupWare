@@ -212,5 +212,13 @@ public class HomepageBwbService implements InterHomepageBwbService {
 		List<Map<String,String>> depIndolenceList = dao.selectDepMonthIndolence(fk_dcode);
 		return depIndolenceList;
 	}
+
+
+	// 여행상품들의 일정 뽑아오기
+	@Override
+	public List<Map<String, String>> productSchedule() {
+		List<Map<String, String>> productList = dao.productSchedule();
+		return productList;
+	}
    
 }

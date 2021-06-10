@@ -7,6 +7,10 @@
 
 <style>
 
+	div.fc-daygrid-event-harness{
+		margin-bottom:20px !important;
+	}
+	
 </style>
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 
@@ -32,12 +36,9 @@
 		    },
 			// db와 연동하는 법
 		    events:function(info, successCallback, failureCallback){
-				
-		    	var fk_employeeid ="${loginuser.employeeid}"; 
 		    	
 		    	$.ajax({
-	                 url: '<%= ctxPath%>/t1/selectmyMonthIndolence.tw',
-	                 data:{"fk_employeeid":fk_employeeid},
+	                 url: '<%= ctxPath%>/t1/selectProductSchedule.tw',
 	                 dataType: "json",
 	                 success:function(json) {
 	                	 var events = [];
@@ -45,32 +46,35 @@
 	                         
 	                             $.each(json, function(index, item) {
 
-	                                    var enddate =moment(item.outtime).format('YYYY-MM-DD HH:mm:ss');     
-	                                    var subject = item.name;
-	                         			
-	                                    if(item.intime != undefined){// 조건을 안걸어줄경우, 자동으로 sysdate가 들어옴.
-	                                    	
-	                                    	  var startdate=moment(item.intime).format('YYYY-MM-DD HH:mm:ss'); // 다윤씨가 말하는 시작일 
-                                    		  events.push({
-		                                               title: item.name+" 출근",
-		                                               start: startdate,
-		                                               color:"blue"
-		                                      }); // events.push
-
-	                                    }
-	                                    
-	                                    
-	                                    if(item.outtime != undefined){// 조건을 안걸어줄경우, 자동으로 sysdate가 들어옴.
-	                                    	var enddate =moment(item.outtime).format('YYYY-MM-DD HH:mm:ss');
-	                                    
- 		                                    events.push({
- 	                                           title: item.name+" 퇴근",
- 	                                           start: enddate,
- 	                                           color:"red"
- 	                               		    }); // events.push
-	 	                                 
-	                                    }
-	                                    	   		                                    
+	                                  var startdate =moment(item.startdate).format('YYYY-MM-DD');
+	                                  var enddate   =moment(item.enddate).format('YYYY-MM-DD');
+	                                  var subject = item.name;
+  	 								  var sort = Number(item.sort);
+  	 								  
+  	 								  if(sort==1){// 국내여행일때
+	                                	  events.push({
+	                                               title: subject,
+	                                               start: startdate,
+	                                               end: enddate,
+	                                               color:"#66b3ff"
+	                                      }); // events.push
+  	 								  }
+  	 								  else if(sort==2){ // 유럽여행일때
+  	 									events.push({
+                                            title: subject,
+                                            start: startdate,
+                                            end: enddate,
+                                            color:"#8c8cd9"
+                                   		}); // events.push
+  	 								  }
+  	 								  else{ // 미국여행일때
+  	 									events.push({
+                                            title: subject,
+                                            start: startdate,
+                                            end: enddate,
+                                            color:"#94b8b8"
+                                   		}); // events.push  
+  	 								  }
 	                             });  //.each()
 	                             
 	                         }                             
@@ -91,14 +95,10 @@
 
 
 <div id="indolenceMenu" style="margin-left:610px; margin-top:30px; font-size:20pt; font-weight:bolder;">
-	<span>${loginuser.name}님의 월별 근태관리</span>
+	<span>T1여행사의 상품일정</span>
 </div>
 
 
 
 <div id="calendar" style="width:70%; margin-left:100px; margin-top:50px;">
 </div>
-  
-
-
-

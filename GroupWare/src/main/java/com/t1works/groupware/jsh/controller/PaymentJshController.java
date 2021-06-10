@@ -1784,7 +1784,7 @@ public class PaymentJshController {
 					if (loginuser != null) {
 						userid = loginuser.getEmployeeid();
 						String pcode = loginuser.getFk_pcode();
-
+							
 						HashMap<String, String> paraMap = new HashMap<String, String>();
 						paraMap.put("userid", userid);
 
@@ -1793,19 +1793,25 @@ public class PaymentJshController {
 						ElectronPayJshVO write_mview = service.mWriteJsh(paraMap); // 수신자 정보 select해오기
 						
 						String totalOffCnt = service2.selectTotaloffCnt(pcode);
+						
 						// 이용자의 사용연차수 가지고 오기
 			        	String useOffCnt = service2.selectUseoffCnt(userid);
 			        	
-			        	int itotalOffCnt = Integer.parseInt(totalOffCnt);
-			        	int iuseOffCnt = Integer.parseInt(useOffCnt);
+			        	double dtotalOffCnt = Double.parseDouble(totalOffCnt);
 			        	
+			        	double duseOffCnt = Double.parseDouble(useOffCnt);
+			        	System.out.println("dtotalOffCnt"+dtotalOffCnt);
+			        	
+			        	System.out.println("duseOffCnt"+duseOffCnt);
 			        	// 이용자의 남은연차수
-			        	String leftOffCnt = String.valueOf(itotalOffCnt-iuseOffCnt);
-						
+			        	String leftOffCnt = String.valueOf(dtotalOffCnt-duseOffCnt);
+			        	System.out.println("leftOffCnt"+leftOffCnt);
 						mav.addObject("leftOffCnt", leftOffCnt);
 						mav.addObject("write_view", write_view);
 						mav.addObject("write_mview", write_mview);
-
+						//System.out.println("leftOffCnt =>" +leftOffCnt);
+						
+						
 					}
 
 				} catch (NumberFormatException e) {
@@ -1820,7 +1826,7 @@ public class PaymentJshController {
 			
 				
 			
-			//전자결재문 제출하기 insert시키기
+			//근태결재문 제출하기 insert시키기
 			@RequestMapping(value = "/t1/vacation_WriteEnd.tw", method= {RequestMethod.POST})
 			 public ModelAndView vacWriteEnd(Map<String,String> paraMap, ModelAndView mav, ElectronPayJshVO epvo, MultipartHttpServletRequest mrequest) {
 				 

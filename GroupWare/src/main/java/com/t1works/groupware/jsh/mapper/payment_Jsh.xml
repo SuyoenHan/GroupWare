@@ -550,6 +550,108 @@
 		</select>
 		
 		
+		<!-- 제출하기 -->
+		
+		<!-- 2)첨부파일이 없는 근태결재테이블 insert -->
+		<insert id="ElectricVacadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano, fk_employeeid, anocode, arecipient1, atitle , astatus , acontent ,asdate, apaper) 
+			values (#{ano}, #{fk_employeeid}, '3' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate, 0)
+		</insert>
+		
+		<!--  3) 근태결재테이블에 isnert -->
+		<insert id="vacAdd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			
+				insert into tbl_vacation (vno , fk_ano, vcatname)
+				<if test="vcatname eq'병가'">
+					values(1,#{ano} ,'병가')
+				</if>
+				<if test="vcatname eq'반차'">
+					values(2,#{ano} ,'반차')
+				</if>
+				<if test="vcatname eq'연차'">
+					values(3,#{ano} ,'연차')
+				</if>
+				<if test="vcatname eq'경조휴가'">
+					values(4,#{ano} ,'경조휴가')
+				</if>
+				<if test="vcatname eq'출장'">
+					values(5,#{ano} ,'출장')
+				</if>
+				<if test="vcatname eq'추가근무'">
+					values(6,#{ano} ,'추가근무')
+				</if>
+				
+		</insert>
+		
+		<!-- 4) vcatname 조건에 따라 (병가,반차,연차,경조휴가,출장,추가근무) 테이블에 insert 시켜줌  -->
+		<insert id="selectVacadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			    <if test="vcatname eq'병가'">
+					insert into tbl_sickleave (slno, fk_vno, fk_ano, slstart, slend, sldates)
+					values ( seq_tbl_sickleave.nextval, 1, #{ano}, #{slstart}, #{slend},
+						   (select  (to_date(#{slend},'yyyy-mm-dd') - to_date(#{slstart},'yyyy-mm-dd')+1) as sldates from dual) )
+				</if>
+				<if test="vcatname eq'반차'">
+					insert into tbl_afternoonoff (afno, fk_vno, fk_ano, afdate, afdan, afdates)
+					values (seq_tbl_afternoonoff.nextval, 2, #{ano}, #{afdate}, #{afdan}, default)
+				</if>
+				<if test="vcatname eq'연차'">
+					insert into tbl_dayoff (dayno,fk_vno,fk_ano,daystart, dayend, daydates)
+					values (seq_tbl_dayoff.nextval, 3, #{ano}, #{daystart}, #{dayend} , 
+					(select (to_date(#{dayend},'yyyy-mm-dd') - to_date(#{daystart},'yyyy-mm-dd')+1) as daydates from dual))
+				</if>
+				<if test="vcatname eq'경조휴가'">
+					insert into tbl_congoff (congno, fk_vno, fk_ano, congstart, congend, congdates)
+					values (seq_tbl_congoff.nextval, 4, #{ano}, #{congstart} , #{congend}, 
+					(select (to_date(#{congend},'yyyy-mm-dd') - to_date(#{congstart},'yyyy-mm-dd')+1) as congdates from dual))
+				</if>
+				<if test="vcatname eq'출장'">
+					insert into tbl_businesstrip (buno, fk_vno, fk_ano, bustart, buend, budates , buplace , bupeople)
+					values (seq_tbl_businesstrip.nextval, 5 , #{ano}, #{bustart}, #{buend}, 
+					(select (to_date(#{buend},'yyyy-mm-dd') - to_date(#{bustart},'yyyy-mm-dd')+1) as congdates from dual) ,
+					#{buplace} , #{bupeople})
+				</if>
+				<if test="vcatname eq'추가근무'">
+					insert into tbl_extrawork (ewno, fk_vno, fk_ano, ewdate, ewhours)
+					values (seq_tbl_extrawork.nextval,6, #{ano}, #{ewdate}, #{ewhours})
+				</if>
+		</insert>
+		
+	 
+		
+		<!-- 6) 결재로그에 insert -->
+		<insert id="logInsert" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_alog (logno, fk_ano, fk_employeeid , logstatus , logdate)
+			values (seq_tbl_alog.nextval, #{ano}, #{fk_employeeid} , default, default)
+		</insert>
+		
+		
+		
+		<!-- =================================================================================================================================================  -->
+		
+		<!--  파일첨부가 있는 근태결재 문서 글쓰기 insert -->
+		<insert id="ElectricVacadd_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano, fk_employeeid, anocode, arecipient1, atitle ,astatus , acontent ,asdate,apaper ,fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '3' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate, 0 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
+		
+		
+		<!--  파일첨부가 없는 근태 결재 테이블 > 근태결재 문서 임시보관함  insert (전자결재) -->
+		<insert id="saveVacadd" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid, anocode,arecipient1, atitle ,astatus , acontent ,asdate,apaper ) 
+			values (#{ano}, #{fk_employeeid}, '3' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,2 )
+		</insert>
+		
+		<!--  파일첨부가 있는 근태결재 문서 임시보관함 insert -->
+		<insert id="saveVacadd_withFile" parameterType="com.t1works.groupware.jsh.model.ElectronPayJshVO"  >
+			insert into tbl_approval (ano,fk_employeeid, anocode, arecipient1, atitle , astatus , acontent ,asdate, apaper ,fileName, orgFilename, fileSize) 
+			values (#{ano}, #{fk_employeeid}, '3' , #{arecipient1}, #{atitle} ,0 , #{acontent} ,sysdate,2 , #{fileName}, #{orgFilename}, #{fileSize})
+		</insert>
+		
+		
+		
+		
+		
+		
 		
 		
 </mapper>

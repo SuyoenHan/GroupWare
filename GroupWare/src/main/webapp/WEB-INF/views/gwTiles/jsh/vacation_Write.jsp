@@ -84,6 +84,9 @@ height: 100%;
 			$("div#containerview").hide();
 			var obj = []; //전역변수 
 					
+	var a= "${requestScope.leftOffCnt}";
+	console.log("a: "+a);
+			
 			//일반결재내역 문서 카테고리 라디오 클릭 이벤트
 			$("input[name=vcatname]").click(function(){
 				
@@ -168,7 +171,7 @@ height: 100%;
 					html1+="<th>출장지</th>" +
 							"<td ><input type='text' name='buplace' id='buplace' /></td>"+
 							"<th>출장인원</th>"+
-							"<td><input type='number' name='bupeople' id='bupeople' />명</td>"
+							"<td><input type='number' name='bupeople' id='bupeople' />명</td>";
 						
 						
 				}
@@ -187,6 +190,7 @@ height: 100%;
 				if(vcatname =="출장"){
 					$("tr#html1").show();
 					$("tr#html1").html(html1);
+					$("tr#changeVcat").html(html);
 					
 				}
 				else{
@@ -202,18 +206,18 @@ height: 100%;
 			
 		
 			
-	    // 문서 제출하기
-	    $("button#insertWrite").click(function(){
+    // 문서 제출하기
+    $("button#insertWrite").click(function(){
 	  
 	    var leftOffCnt = Number(${requestScope.leftOffCnt}); //남은 휴가수 
 	   	
 	   	var afdate = $("input#afdate").val(); // 반차
 	   	var daystart  = $("input#daystart").val(); // 연차시작
 	   	var dayend  = $("input#dayend").val(); // 연차끝
-	   	
+	   	var i =1;
 	   	var afdates = 0; //반차사용일자변수
 	   	var daydates = 0;  //연차사용일자변수
-	   	
+/*	   	
 	   	var date = new Date();
 	   	var year = date.getFullYear();
 	   	var month = date.getMonth()+1;
@@ -225,38 +229,9 @@ height: 100%;
 	   		day = '0'+day;
 	   	}
 	   	var today = (year+"-"+month+"-"+day);
-	   	
-	   	console.log(today);
-	   //	console.log(afdate);
-	   
-	   //	console.log(leftOffCnt);
-	   //	console.log(afdates);
-	   	
-	   //	console.log(leftOffCnt);
-		 /*	var aa = $("input#slstart").val();
-			console.log(aa);
-			//a = 2020-06-10 2020-06-30
-			//b = 2020-06-15 2020-07-03 12
-			
-			var c = Number(substring(a,5,7)); // 06
-			d substring(a,5,7); // 10 
-			f substring(b,5,7); // 06
-			g substring(b,5,7); // 15
-			
-			if(c==f){
-				var k = g-d; // 사용일수
-				if(남은연차 <k){
-					alert("휴가가 남은연차보다 큽니다");
-					return false
-				}
-			}
-			else if(c > f){ 6월시작 4월끝
-				alert("날짜를 ");
-			return false
-			}
-			*/
-			
-			
+*/	   	
+	   //	console.log(today);
+	 
 			
 		    var vcatname ;
 			$("input[name=vcatname]:checked").each(function(index,item){			
@@ -302,7 +277,7 @@ height: 100%;
 		        	 
 		        	 	if(afdate){
 		        	   		afdates = 0.5;
-		        	   		leftOffCnt = leftOffCnt - afdates;
+		        	   		leftOffCnt = leftOffCnt - afdates ;
 		        	   	}
 		        	   	
 		        	   	if(leftOffCnt<afdates){
@@ -325,13 +300,14 @@ height: 100%;
 		            alert("요청기간을 입력하세요!!");
 		            return false;
                    }
-		         else if(daystart == dayend || daystart > dayend){
+		         else if(daystart > dayend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
 		         else{
 		        	 
-		        	 daydates = (dayend.substr(8,10)) - (daystart.substr(8,10));
+		        	 daydates = (dayend.substr(8,10)) - (daystart.substr(8,10)) + 1;
+		        	
 		        	 leftOffCnt = leftOffCnt - daydates;
 		        	 
 	        		if(leftOffCnt<daydates){
@@ -361,6 +337,7 @@ height: 100%;
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
+	            
 		    }
 		    else if(vcatname =="출장"){
 		         // 출장 유효성 검사
@@ -445,7 +422,7 @@ height: 100%;
 	         var frm = document.writeGFrm;
 	         frm.method = "POST";
 	         frm.action = "<%= ctxPath%>/t1/vacation_WriteEnd.tw";
-	         //frm.submit();   
+	         frm.submit();   
 	         
 		  }
 		  else{
@@ -575,6 +552,15 @@ height: 100%;
 		</table>
 		
 		<table id="table2">
+			<tr>
+				<th>작성자</th>
+				<td><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
+				
+			</tr>
+			<tr>
+				<th style="width:200px;">수신참조</th>
+				<td><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
+			</tr>
 			<tr>
 				<th>문서상태</th>
 				<td style="width:" colspan="3"><input type="hidden" name="astatus" value="0"/>작성중...	</td>
