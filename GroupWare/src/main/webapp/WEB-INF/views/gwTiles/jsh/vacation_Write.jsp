@@ -214,10 +214,10 @@ height: 100%;
 	   	var afdate = $("input#afdate").val(); // 반차
 	   	var daystart  = $("input#daystart").val(); // 연차시작
 	   	var dayend  = $("input#dayend").val(); // 연차끝
-	   	
+	   	var i =1;
 	   	var afdates = 0; //반차사용일자변수
 	   	var daydates = 0;  //연차사용일자변수
-	   	
+/*	   	
 	   	var date = new Date();
 	   	var year = date.getFullYear();
 	   	var month = date.getMonth()+1;
@@ -229,38 +229,9 @@ height: 100%;
 	   		day = '0'+day;
 	   	}
 	   	var today = (year+"-"+month+"-"+day);
-	   	
-	   	console.log(today);
-	   //	console.log(afdate);
-	   
-	   //	console.log(leftOffCnt);
-	   //	console.log(afdates);
-	   	
-	   //	console.log(leftOffCnt);
-		 /*	var aa = $("input#slstart").val();
-			console.log(aa);
-			//a = 2020-06-10 2020-06-30
-			//b = 2020-06-15 2020-07-03 12
-			
-			var c = Number(substring(a,5,7)); // 06
-			d substring(a,5,7); // 10 
-			f substring(b,5,7); // 06
-			g substring(b,5,7); // 15
-			
-			if(c==f){
-				var k = g-d; // 사용일수
-				if(남은연차 <k){
-					alert("휴가가 남은연차보다 큽니다");
-					return false
-				}
-			}
-			else if(c > f){ 6월시작 4월끝
-				alert("날짜를 ");
-			return false
-			}
-			*/
-			
-			
+*/	   	
+	   //	console.log(today);
+	 
 			
 		    var vcatname ;
 			$("input[name=vcatname]:checked").each(function(index,item){			
@@ -306,7 +277,7 @@ height: 100%;
 		        	 
 		        	 	if(afdate){
 		        	   		afdates = 0.5;
-		        	   		leftOffCnt = leftOffCnt - afdates;
+		        	   		leftOffCnt = leftOffCnt - afdates ;
 		        	   	}
 		        	   	
 		        	   	if(leftOffCnt<afdates){
@@ -329,13 +300,14 @@ height: 100%;
 		            alert("요청기간을 입력하세요!!");
 		            return false;
                    }
-		         else if(daystart == dayend || daystart > dayend){
+		         else if(daystart > dayend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
 		         else{
 		        	 
-		        	 daydates = (dayend.substr(8,10)) - (daystart.substr(8,10));
+		        	 daydates = (dayend.substr(8,10)) - (daystart.substr(8,10)) + 1;
+		        	
 		        	 leftOffCnt = leftOffCnt - daydates;
 		        	 
 	        		if(leftOffCnt<daydates){
@@ -365,6 +337,7 @@ height: 100%;
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
+	            
 		    }
 		    else if(vcatname =="출장"){
 		         // 출장 유효성 검사

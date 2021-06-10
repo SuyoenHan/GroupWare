@@ -588,7 +588,7 @@
 			    <if test="vcatname eq'병가'">
 					insert into tbl_sickleave (slno, fk_vno, fk_ano, slstart, slend, sldates)
 					values ( seq_tbl_sickleave.nextval, 1, #{ano}, #{slstart}, #{slend},
-						   (select  (to_date(#{slend},'yyyy-mm-dd') - to_date(#{slstart},'yyyy-mm-dd')) as sldates from dual) )
+						   (select  (to_date(#{slend},'yyyy-mm-dd') - to_date(#{slstart},'yyyy-mm-dd')+1) as sldates from dual) )
 				</if>
 				<if test="vcatname eq'반차'">
 					insert into tbl_afternoonoff (afno, fk_vno, fk_ano, afdate, afdan, afdates)
@@ -597,17 +597,17 @@
 				<if test="vcatname eq'연차'">
 					insert into tbl_dayoff (dayno,fk_vno,fk_ano,daystart, dayend, daydates)
 					values (seq_tbl_dayoff.nextval, 3, #{ano}, #{daystart}, #{dayend} , 
-					(select (to_date(#{dayend},'yyyy-mm-dd') - to_date(#{daystart},'yyyy-mm-dd')) as daydates from dual))
+					(select (to_date(#{dayend},'yyyy-mm-dd') - to_date(#{daystart},'yyyy-mm-dd')+1) as daydates from dual))
 				</if>
 				<if test="vcatname eq'경조휴가'">
 					insert into tbl_congoff (congno, fk_vno, fk_ano, congstart, congend, congdates)
 					values (seq_tbl_congoff.nextval, 4, #{ano}, #{congstart} , #{congend}, 
-					(select (to_date(#{congend},'yyyy-mm-dd') - to_date(#{congstart},'yyyy-mm-dd')) as congdates from dual))
+					(select (to_date(#{congend},'yyyy-mm-dd') - to_date(#{congstart},'yyyy-mm-dd')+1) as congdates from dual))
 				</if>
 				<if test="vcatname eq'출장'">
 					insert into tbl_businesstrip (buno, fk_vno, fk_ano, bustart, buend, budates , buplace , bupeople)
 					values (seq_tbl_businesstrip.nextval, 5 , #{ano}, #{bustart}, #{buend}, 
-					(select (to_date(#{buend},'yyyy-mm-dd') - to_date(#{bustart},'yyyy-mm-dd')) as congdates from dual) ,
+					(select (to_date(#{buend},'yyyy-mm-dd') - to_date(#{bustart},'yyyy-mm-dd')+1) as congdates from dual) ,
 					#{buplace} , #{bupeople})
 				</if>
 				<if test="vcatname eq'추가근무'">
