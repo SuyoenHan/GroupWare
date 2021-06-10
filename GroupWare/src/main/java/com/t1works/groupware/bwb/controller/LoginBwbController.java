@@ -48,8 +48,8 @@ public class LoginBwbController {
         	// 이용자의 사용연차수 가지고 오기
         	String useOffCnt = service.selectUseoffCnt(fk_employeeid);
         	
-        	int itotalOffCnt = Integer.parseInt(totalOffCnt);
-        	int iuseOffCnt = Integer.parseInt(useOffCnt);
+        	Double itotalOffCnt = Double.parseDouble(totalOffCnt);
+        	Double iuseOffCnt = Double.parseDouble(useOffCnt);
         	
         	// 이용자의 남은연차수
         	String leftOffCnt = String.valueOf(itotalOffCnt-iuseOffCnt);
