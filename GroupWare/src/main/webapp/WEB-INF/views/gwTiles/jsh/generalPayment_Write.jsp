@@ -252,7 +252,7 @@ hr.hr{
 	         var frm = document.writeGFrm;
 	         frm.method = "POST";
 	         frm.action = "<%= ctxPath%>/t1/generalPayment_WriteEnd.tw";
-	      //   frm.submit();   
+	         frm.submit();   
 	         
 		  }
 		  else{

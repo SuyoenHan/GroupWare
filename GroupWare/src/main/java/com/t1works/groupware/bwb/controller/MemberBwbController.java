@@ -30,10 +30,13 @@ import com.t1works.groupware.bwb.service.InterMemberBwbService;
 import com.t1works.groupware.bwb.service.InterProductBwbService;
 import com.t1works.groupware.common.AES256;
 import com.t1works.groupware.common.FileManager;
+import com.t1works.groupware.common.GoogleMail;
 import com.t1works.groupware.common.Sha256;
+import com.t1works.groupware.hsy.model.ClientHsyVO;
 import com.t1works.groupware.hsy.model.DepartmentHsyVO;
 import com.t1works.groupware.hsy.model.MemberHsyVO;
 import com.t1works.groupware.hsy.service.InterMemberHsyService;
+import com.t1works.groupware.hsy.service.InterTodoHsyService;
 
 @Controller
 public class MemberBwbController {
@@ -52,9 +55,15 @@ public class MemberBwbController {
 	
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private InterProductBwbService service4;
-	 
+	
+	@Autowired 
+	private InterTodoHsyService service5;
+	
 	@Autowired
 	private FileManager fileManager;
+	
+	@Autowired
+	private GoogleMail mail;
 	
 	// 인사부장- 업무관리(인사관리) 매핑 주소
 	@RequestMapping(value="/t1/personnelManage.tw")        // 로그인이 필요한 url
@@ -1370,5 +1379,34 @@ public class MemberBwbController {
 		
 	}// end of public String updateCarRental(HttpServletRequest request) {
 	
+	
+	// CS부서장이 부서업무현황에서 진행완료된 업무에서 메일보내기를 클릭 할시
+	@ResponseBody
+	@RequestMapping(value="/t1/sendEmailIngDone.tw")
+	public String sendEmailIngDone(HttpServletRequest request) {
+		
+		String clientmobile = request.getParameter("clientmobile");
+		String fk_pNo = request.getParameter("fk_pNo");
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("clientmobile", clientmobile);
+		paraMap.put("fk_pNo", fk_pNo);
+		
+		ClientHsyVO cvo= service5.getInfoForSendEmailIngTodo(paraMap);
+		
+		int n=0;
+		try {
+			mail.sendmail_done(cvo);
+			
+		} catch(Exception e) { // 메일 전송이 실패한 경우
+			e.printStackTrace();
+			n=1;
+		}
+		
+		JSONObject jsonObj= new JSONObject();
+		jsonObj.put("n", n); 
+		
+		return jsonObj.toString();
+	}// end of public String sendEmailIngDone() {
 	
 }

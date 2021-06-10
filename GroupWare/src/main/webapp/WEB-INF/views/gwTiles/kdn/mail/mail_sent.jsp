@@ -44,12 +44,15 @@ $(document).ready(function(){
 		console.log(arrEmailSeq);
 	});
 	
+	var gobackURL = "${requestScope.gobackURL}";
+	gobackURL = gobackURL.replaceAll('&', ' ');
+	
 	$("button#delImmed").click(function(){
 		
 		str_arrEmailSeq = arrEmailSeq.toString();
 		/* console.log("최종 배열 :"+str_arrEmailSeq); */
 		
-		location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=2&str_arrEmailSeq="+str_arrEmailSeq;
+		location.href="<%=ctxPath%>/t1/delImmed.tw?mailBoxNo=2&str_arrEmailSeq="+str_arrEmailSeq+"&gobackURL="+gobackURL;
 		
 	});
 	
@@ -94,7 +97,7 @@ function goView(seq){
 <div id="mail-header" style="background-color: #e6f2ff; width: 100%; height: 120px; padding: 20px;">
 	 <h4 style="margin-bottom: 20px; font-weight: bold;">보낸메일함</h4>
 	 <div id="left-header">
-		 <button id="delImmed" type="button">삭제</button>
+		 <button id="delImmed" type="button" class="btn-style"><i class="fas fa-times fa-lg"></i>&nbsp;완전삭제</button>
 		 <select name="readMark">
 		 	<option value="">읽음표시</option>
 		 	<option value="read">읽음</option>
@@ -108,7 +111,7 @@ function goView(seq){
 		 	<option value="content">내용</option>
 		 </select>
 		<input type="text" />
-	 	<button type="submit">검색</button>
+	 	<button type="submit" class="btn-style">검색</button>
 	 	<select name="numberOfEmails">
 		 	<option value="10">10개보기</option>
 		 	<option value="20">20개보기</option>

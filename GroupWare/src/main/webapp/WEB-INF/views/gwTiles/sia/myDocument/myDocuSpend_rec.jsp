@@ -260,9 +260,16 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
+						var image = "<%= ctxPath%>/resources/images/sia/disk.gif";
+						
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
-						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						if(item.fileName != null){
+							html += "<td>&nbsp;"+ item.atitle +"&nbsp;<img src='"+ image +"'/></td>";
+						}
+						else if(item.fileName == null){
+							html += "<td>&nbsp;"+ item.atitle +"</td>";
+						}
 						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
@@ -322,9 +329,16 @@ $(document).ready(function(){
 							status = "승인완료";
 						}
 						
+						var image = "<%= ctxPath%>/resources/images/sia/disk.gif";
+						
 						html += "<tr class='tr_hover docuInfo'>";
 						html += "<td align='center' style='padding: 5px;'>"+ item.rno +"</td>";
-						html += "<td>&nbsp;"+ item.atitle +"</td>";
+						if(item.fileName != null){
+							html += "<td>&nbsp;"+ item.atitle +"&nbsp;<img src='"+ image +"'/></td>";
+						}
+						else if(item.fileName == null){
+							html += "<td>&nbsp;"+ item.atitle +"</td>";
+						}
 						html += "<td class='scatname' align='center'>"+ item.scatname +"</td>";
 						html += "<td class='ano' align='center'>"+ item.ano +"</td>";						
 						html += "<td align='center'>"+ status +"</td>";
