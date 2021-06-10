@@ -52,8 +52,7 @@ button.btn_r{
 	var curDate = new Date();
 	
 	var curHour=curDate.getHours();
-	
-	var currtime = curDate.getHours();
+
 	var curDay = curDate.getDate();
 	var curMonth = curDate.getMonth() + 1;
 	if(curMonth.toString().length < 2){
