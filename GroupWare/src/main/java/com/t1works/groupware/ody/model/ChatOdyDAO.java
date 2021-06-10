@@ -1,6 +1,7 @@
 package com.t1works.groupware.ody.model;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -26,6 +27,13 @@ public class ChatOdyDAO implements InterChatOdyDAO {
 	public List<MemberOdyVO> getEmployeeList(String employeeid) {
 		List<MemberOdyVO> employeeList = sqlsession5.selectList("chatting_ody.getEmployeeList",employeeid);
 		return employeeList;
+	}
+
+	// 이름 가져오기
+	@Override
+	public Map<String,String> findChatName(String empId) {
+		Map<String,String> paraMap = sqlsession5.selectOne("chatting_ody.findChatName",empId);
+		return paraMap;
 	}
 
 }

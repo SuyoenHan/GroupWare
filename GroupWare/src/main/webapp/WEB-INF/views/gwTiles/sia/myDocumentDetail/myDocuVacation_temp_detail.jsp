@@ -52,6 +52,9 @@ input.btn {
 	border-radius: 0;
 	font-weight: bold;
 }
+input:invalid {
+	border: 3px solid red;	
+}
 </style>
 
 <script type="text/javascript">
@@ -147,14 +150,69 @@ input.btn {
 		<%-- === 스마트 에디터 구현 끝 === --%>
 		
 		// 유효성 검사
-		var subjectVal = $("input#atitle").val().trim();
-		if(subjectVal == "") {
-			alert("글제목을 입력하세요!!");
+		var atitle = $("input#atitle").val().trim();
+		if(atitle == ""){
+			alert("문서제목을 입력하세요!");
 			return;
 		}
+			
+		if(${requestScope.avo.vno == '1'}){
+			var slstart = $("input#slstart").val();			
+			var slend = $("input#slend").val().trim();
+			
+			if(slstart == "" || slend == ""){
+				alert("요청일자를 입력하세요!");
+				return;
+			}
+		}
 		
+		if(${requestScope.avo.vno == '2'}){
+			var afdate = $("input#afdate").val();
+			
+			if(afdate == ""){
+				alert("요청일자를 입력하세요!");
+				return;
+			}			
+		}
 		
+		if(${requestScope.avo.vno == '3'}){
+			var daystart = $("input#daystart").val();
+			var dayend = $("input#dayend").val();
+			
+			if(daystart == "" || dayend == ""){
+				alert("요청일자를 입력하세요!");
+				return;
+			}
+		}
 		
+		if(${requestScope.avo.vno == '4'}){
+			var congstart = $("input#congstart").val();
+			var congend = $("input#congend").val();
+			
+			if(congstart == "" || congend == ""){
+				alert("요청일자를 입력하세요!");
+				return;
+			}
+		}
+		
+		if(${requestScope.avo.vno == '5'}){
+			var bustart = $("input#bustart").val();
+			var dayend = $("input#buend").val();
+			
+			if(bustart == "" || buend == ""){
+				alert("출장기간을 입력하세요!");
+				return;
+			}
+		}
+		
+		if(${requestScope.avo.vno == '6'}){
+			var ewdate = $("input#ewdate").val();
+			
+			if(daystart == "" || dayend == ""){
+				alert("요청일자를 입력하세요!");
+				return;
+			}
+		}		
 		
 		<%-- === 스마트 에디터 구현 시작 === --%>
 		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
@@ -294,7 +352,7 @@ input.btn {
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '2'}">
 					<tr>
-						<th>요청기간</th>
+						<th>요청일자</th>
 						<td colspan="3"><input type="date" name="afdate" id="afdate" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
 						<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
 						</td>
@@ -321,7 +379,7 @@ input.btn {
 						<th>출장지</th>
 						<td><input type="text" style="width: 300px;" name="buplace" id="buplace" value="${requestScope.avo.buplace}"/></td>				
 						<th>출장인원</th>
-						<td><input type="text" style="width: 300px;" name="bupeople" id="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
+						<td><input type="number" style="width: 300px;" name="bupeople" id="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '6'}">

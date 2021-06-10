@@ -96,7 +96,7 @@ tr.selectEmp td{
 
 
 
-<div style="width: 500px; height: 700px; border: solid 1px gray; padding-left: 40px;">
+<div>
 <h2>T1works Talk</h2>
 
 

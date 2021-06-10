@@ -169,6 +169,71 @@
 			
 		}); // end of $("div#btn").click(function(){
 		
+			
+			
+		// 업무상태값이 진행중일때 메일보내기
+		$(document).on("click",("span.producting"),function(){
+			var clientmobile1 = $(this).parent().prev().prop("id");
+			var clientmobile = clientmobile1.split("-").join("");
+			var clientname = $(this).parent().prev().prev().prev().text();
+			
+			var fk_pNo =  $(this).parent().prev().find("input.fk_pNo").val();
+			
+			$.ajax({
+				url:"<%= ctxPath%>/t1/sendEmailIngTodo.tw",
+				data:{"clientmobile":clientmobile,
+					  "fk_pNo":fk_pNo},
+				type:"post",
+				dataType:"json",
+				success:function(json){
+					
+					if(json.n==0){
+						alert(clientname+" 님에게 성공적으로 [여행준비물]메일을 전송했습니다.");
+					}
+					else{
+						alert("메일전송이 실패했습니다.");
+					}
+				},
+		    	error: function(request, status, error){
+		            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		        }
+				
+			}); // end of ajax
+			
+			
+		});// end of $(document).on("click",("span.producting"),function(){
+			
+		// 업무상태값이 완료일때 메일보내기
+		$(document).on("click",("span.productCompleted"),function(){
+			var clientmobile1 = $(this).parent().prev().prop("id");
+			var clientmobile = clientmobile1.split("-").join("");
+			var clientname = $(this).parent().prev().prev().prev().text();
+			var fk_pNo =  $(this).parent().prev().find("input.fk_pNo").val();
+			
+			$.ajax({
+				url:"<%= ctxPath%>/t1/sendEmailIngDone.tw",
+				data:{"clientmobile":clientmobile,
+					  "fk_pNo":fk_pNo},
+				type:"post",
+				dataType:"json",
+				success:function(json){
+					if(json.n==0){
+						alert(clientname+" 님에게 성공적으로 홍보메일을 전송했습니다.");
+					}
+					else{
+						alert("메일전송이 실패했습니다.");
+					}
+				},
+		    	error: function(request, status, error){
+		            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+		        }
+			});
+			
+			
+			
+		}); // end of $(document).on("click",("span.productCompleted"),function(){
+		
+			
 	})// end of $(document).ready(function(){
 		
 	// Function Declaration
@@ -244,7 +309,7 @@
 					html +="<tr>";
 					html +="<td>"+item.clientname+"</td>";
 					html +="<td>"+item.cnumber+"</td>";
-					html +="<td>"+item.clientmobile+"</td>";
+					html +="<td id='"+item.clientmobile+"'>"+item.clientmobile+"<input class='fk_pNo' type='hidden' value='"+pNo+"'></td>";
 					if(endDate == '-'){
 						html +="<td><span class='producting'>메일보내기</span></td>";
 					}

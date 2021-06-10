@@ -153,12 +153,12 @@
    <form style="margin-bottom: 10px;" action="<%= ctxPath%>/t1/vacation_List.tw">
       <select name="searchCategory" id="searchCategory" style="height: 26px;">
          <option value="">::근태결재문서종류::</option>
-         <option value="1">병가</option>
-         <option value="2">반차</option>
-         <option value="3">연차</option>
-         <option value="4">경조휴가</option>
-         <option value="5">출장</option>
-         <option value="6">추가근무</option>
+         <option value="병가">병가</option>
+         <option value="반차">반차</option>
+         <option value="연차">연차</option>
+         <option value="경조휴가">경조휴가</option>
+         <option value="출장">출장</option>
+         <option value="추가근무">추가근무</option>
       </select>
        <select name="searchType" id="searchType" style="height: 26px;">
          <option value="atitle">글제목</option>
@@ -203,10 +203,10 @@
 	         <td align="center">
 	          <%-- 첨부파일이 있는 경우 시작 --%>
              	<c:if test="${not empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vno}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+	         			<span class="subject" onclick="goView('${evo.fk_ano}','${evo.vcatname}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
         		</c:if>
         		<c:if test="${empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vno}')">${evo.atitle}</span>&nbsp;
+	         			<span class="subject" onclick="goView('${evo.fk_ano}','${evo.vcatname}')">${evo.atitle}</span>&nbsp;
         		</c:if>
         	   <%-- 첨부파일이 있는 경우 끝 --%>
      	     </td>

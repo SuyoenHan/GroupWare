@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 import com.t1works.groupware.bwb.model.MemberBwbVO;
+import com.t1works.groupware.bwb.service.InterHomepageBwbService;
 import com.t1works.groupware.common.FileManager;
 import com.t1works.groupware.common.MyUtil;
 import com.t1works.groupware.jsh.model.ElectronPayJshVO;
@@ -41,6 +42,8 @@ public class PaymentJshController {
 	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
 	private FileManager fileManager;
 	
+	@Autowired // Type에 따라 알아서 Bean 을 주입해준다.
+	private InterHomepageBwbService service2;
 	
 	
 	
@@ -1564,13 +1567,15 @@ public class PaymentJshController {
 	   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	   // 근태결재
+		
+			
 			// 글목록 보여주기
 			@RequestMapping(value = "/t1/vacation_List.tw")
 			public ModelAndView vacation_List(ModelAndView mav, HttpServletRequest request) {
 				
 				List<ElectronPayJshVO> vacList = null;
 
-		
+				
 				// ====일반결재내역 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 시작== //
 				String searchType = request.getParameter("searchType");
 				String searchCategory = request.getParameter("searchCategory");
@@ -1581,8 +1586,8 @@ public class PaymentJshController {
 					searchType = "";
 				}
 				// System.out.println(searchType);
-				if (searchCategory == "" || (!"1".equals(searchCategory) && !"2".equals(searchCategory)
-						&& !"3".equals(searchCategory) && !"4".equals(searchCategory) && !"5".equals(searchCategory) && !"6".equals(searchCategory) )) {
+				if (searchCategory == "" || !"병가".equals(searchCategory) && !"반차".equals(searchCategory)
+						&& !"연차".equals(searchCategory) && !"경조휴가".equals(searchCategory) && !"출장".equals(searchCategory) && !"추가근무".equals(searchCategory) ) {
 					searchCategory = "";
 				}
 
@@ -1762,6 +1767,414 @@ public class PaymentJshController {
 			}  
 		
 		
+			
+			
+			// 근태결재문서 작성페이지 호출
+			@RequestMapping(value = "/t1/vacation_Write.tw")
+			public ModelAndView requiredLogin_vacation_Write(HttpServletRequest request, HttpServletResponse response,
+					ModelAndView mav) {
+
+				String userid = "";
+				
+				try {
+					HttpSession session = request.getSession();
+
+					MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");
+					// System.out.println("loginuser=>"+loginuser);
+					if (loginuser != null) {
+						userid = loginuser.getEmployeeid();
+						String pcode = loginuser.getFk_pcode();
+
+						HashMap<String, String> paraMap = new HashMap<String, String>();
+						paraMap.put("userid", userid);
+
+						ElectronPayJshVO write_view = service.WriteJsh(paraMap);
+						//System.out.println(write_view.getManagerid());
+						ElectronPayJshVO write_mview = service.mWriteJsh(paraMap); // 수신자 정보 select해오기
+						
+						String totalOffCnt = service2.selectTotaloffCnt(pcode);
+						// 이용자의 사용연차수 가지고 오기
+			        	String useOffCnt = service2.selectUseoffCnt(userid);
+			        	
+			        	int itotalOffCnt = Integer.parseInt(totalOffCnt);
+			        	int iuseOffCnt = Integer.parseInt(useOffCnt);
+			        	
+			        	// 이용자의 남은연차수
+			        	String leftOffCnt = String.valueOf(itotalOffCnt-iuseOffCnt);
+						
+						mav.addObject("leftOffCnt", leftOffCnt);
+						mav.addObject("write_view", write_view);
+						mav.addObject("write_mview", write_mview);
+
+					}
+
+				} catch (NumberFormatException e) {
+
+				}
+
+				mav.setViewName("jsh/vacation_Write.gwTiles");
+				return mav;
+			}
+
+			
+			
+				
+			
+			//전자결재문 제출하기 insert시키기
+			@RequestMapping(value = "/t1/vacation_WriteEnd.tw", method= {RequestMethod.POST})
+			 public ModelAndView vacWriteEnd(Map<String,String> paraMap, ModelAndView mav, ElectronPayJshVO epvo, MultipartHttpServletRequest mrequest) {
+				 
+				
+				// === 사용자가 쓴 글에 파일이 첨부되어 있는 것인지, 아니면 파일첨부가 안된것인지 구분을 지어주어야 한다. === 
+				//  !!! 첨부파일이 있는 경우 작업 시작 !!! ===
+				   
+				   MultipartFile attach = epvo.getAttach();
+				   
+				   if(!attach.isEmpty()) { // 첨부파일이 있다라면
+					// attach(첨부파일)가 비어있지 않으면(즉, 첨부파일이 있는 경우라면) 
+					 //  System.out.println("파일이 존재합니다~");
+					/*
+			           1. 사용자가 보낸 첨부파일을 WAS(톰캣)의 특정 폴더에 저장해주어야 한다. 
+			           >>> 파일이 업로드 되어질 특정 경로(폴더)지정해주기
+			                                   우리는 WAS의 webapp/resources/files 라는 폴더로 지정해준다.
+			                                   조심할 것은  Package Explorer 에서  files 라는 폴더를 만드는 것이 아니다.       
+			        */     
+				   // WAS의 webapp 의 절대경로를 알아와야 한다.
+					  HttpSession session = mrequest.getSession();
+					  String root = session.getServletContext().getRealPath("/");
+					   
+				  //  System.out.println("~~~~~~ webapp의 절대경로 =>" + root);
+					  //~~~~~~ webapp의 절대경로 =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\
+					  
+					  String path = root+"resources"+File.separator +"files";
+					  /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
+					           운영체제가 Windows 이라면 File.separator 는  "\" 이고,
+					           운영체제가 UNIX, Linux 이라면  File.separator 는 "/" 이다. 
+					  */
+					  
+					  // path 가 첨부파일이 저장될 WAS(톰캣)의 폴더가 된다.
+				//	  System.out.println("~~~~~~ path =>" + path);
+					  //~~~~~~ path =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
+				   
+					/*
+					   2.파일첨부를 위한 변수의 설정 및 값을 초기화 한 후 파일 올리기 
+					*/
+					  String newFileName = "";
+					  // WAS(톰캣)의 디스크에 저장될 파일명   
+				   
+					  byte[] bytes = null;
+					  //첨부파일의 내용을 담는 것
+					  
+					  long fileSize =0;
+					  
+					  try {
+						bytes = attach.getBytes();
+						// 첨부파일의 내용물을 읽어오는 것
+						
+						String originalFilename = attach.getOriginalFilename();
+						//originalFilename ==> "강아지.png"
+						
+						
+						newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+						 
+					//	System.out.println(">> 확인용 newFileName=> " + newFileName);
+						//>> 확인용 newFileName=> 202106031651411150647615171500.png
+
+						
+				     /*
+			            3. ElectronPayJshVO epvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기   
+			         */
+						epvo.setFileName(newFileName);
+						// WAS(톰캣)에 저장될 파일명  (202106031651411150647615171500.png)
+						epvo.setOrgFilename(originalFilename);
+						// 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+			            // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+						
+						fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+						epvo.setFileSize(String.valueOf(fileSize));
+						
+						
+						
+					} catch (Exception e) {
+						
+						e.printStackTrace();
+					}
+				   
+				   }
+				   // === !!! 첨부파일이 있는 경우 작업 끝 !!! ===
+				
+				
+				
+				  // int n = service.addPayment(epvo); // <== 파일첨부가 없는 글쓰기
+				
+				
+				 // === 파일첨부가 있는 글쓰기 또는 파일첨부가 없는 글쓰기로 나뉘어서 service호출하기
+				    
+				  int n = 0;
+				   
+				  try {
+					  
+					   //첨부파일이 없는 경우라면
+					   if(attach.isEmpty()) {
+						  
+							n = service.addVacPayment(epvo); //insert(트랜잭션처리) <== 파일첨부가 없는 글쓰기
+					   }
+					   else {// 첨부파일 있는 경우 글쓰기
+						    n= service.addVacPayment_withFile(epvo);
+					   }
+				   
+				  
+				   
+				  } catch (Throwable e) {
+					
+					 e.printStackTrace();
+				   }
+				  
+				   if(n==1) {
+					   mav.setViewName("redirect:/t1/vacation_List.tw");
+				   }
+				  
+			
+			   return mav;
+			}
+			
+			
+			
+			   
+			 //임시저장함에 insert 시켜주기
+				@RequestMapping(value = "/t1/vacation_saveWrite.tw", method= {RequestMethod.POST})
+				 public ModelAndView saveVacWrite(Map<String,String> paraMap, ModelAndView mav, ElectronPayJshVO epvo, MultipartHttpServletRequest mrequest) {
+					
+					
+					
+					// === 사용자가 쓴 글에 파일이 첨부되어 있는 것인지, 아니면 파일첨부가 안된것인지 구분을 지어주어야 한다. === 
+					//  !!! 첨부파일이 있는 경우 작업 시작 !!! ===
+					   
+					   MultipartFile attach = epvo.getAttach();
+					   
+					   if(!attach.isEmpty()) { // 첨부파일이 있다라면
+						// attach(첨부파일)가 비어있지 않으면(즉, 첨부파일이 있는 경우라면) 
+						 //  System.out.println("파일이 존재합니다~");
+						/*
+				           1. 사용자가 보낸 첨부파일을 WAS(톰캣)의 특정 폴더에 저장해주어야 한다. 
+				           >>> 파일이 업로드 되어질 특정 경로(폴더)지정해주기
+				                                   우리는 WAS의 webapp/resources/files 라는 폴더로 지정해준다.
+				                                   조심할 것은  Package Explorer 에서  files 라는 폴더를 만드는 것이 아니다.       
+				        */     
+					   // WAS의 webapp 의 절대경로를 알아와야 한다.
+						  HttpSession session = mrequest.getSession();
+						  String root = session.getServletContext().getRealPath("/");
+						   
+					  //  System.out.println("~~~~~~ webapp의 절대경로 =>" + root);
+						  //~~~~~~ webapp의 절대경로 =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\
+						  
+						  String path = root+"resources"+File.separator +"files";
+						  /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
+						           운영체제가 Windows 이라면 File.separator 는  "\" 이고,
+						           운영체제가 UNIX, Linux 이라면  File.separator 는 "/" 이다. 
+						  */
+						  
+						  // path 가 첨부파일이 저장될 WAS(톰캣)의 폴더가 된다.
+					//	  System.out.println("~~~~~~ path =>" + path);
+						  //~~~~~~ path =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
+					   
+						/*
+						   2.파일첨부를 위한 변수의 설정 및 값을 초기화 한 후 파일 올리기 
+						*/
+						  String newFileName = "";
+						  // WAS(톰캣)의 디스크에 저장될 파일명   
+					   
+						  byte[] bytes = null;
+						  //첨부파일의 내용을 담는 것
+						  
+						  long fileSize =0;
+						  
+						  try {
+							bytes = attach.getBytes();
+							// 첨부파일의 내용물을 읽어오는 것
+							
+							String originalFilename = attach.getOriginalFilename();
+							//originalFilename ==> "강아지.png"
+							
+							
+							newFileName = fileManager.doFileUpload(bytes, originalFilename, path);
+							 
+						//	System.out.println(">> 확인용 newFileName=> " + newFileName);
+							//>> 확인용 newFileName=> 202106031651411150647615171500.png
+
+							
+					     /*
+				            3. ElectronPayJshVO epvo 에 fileName 값과 orgFilename 값과 fileSize 값을 넣어주기   
+				         */
+							epvo.setFileName(newFileName);
+							// WAS(톰캣)에 저장될 파일명  (202106031651411150647615171500.png)
+							epvo.setOrgFilename(originalFilename);
+							// 게시판 페이지에서 첨부된 파일(강아지.png)을 보여줄 때 사용.
+				            // 또한 사용자가 파일을 다운로드 할때 사용되어지는 파일명으로 사용.
+							
+							fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
+							epvo.setFileSize(String.valueOf(fileSize));
+							
+							
+							
+						} catch (Exception e) {
+							
+							e.printStackTrace();
+						}
+					   
+					   }
+					   // === !!! 첨부파일이 있는 경우 작업 끝 !!! ===
+					
+				
+					 // === 파일첨부가 있는 글쓰기 또는 파일첨부가 없는 임시보관으로 나뉘어서 service호출하기
+					    
+					  int n = 0;
+					   
+					  try {
+						  
+						   //첨부파일이 없는 경우라면
+						   if(attach.isEmpty()) {
+							  
+								n = service.saveVacPayment(epvo); //insert(트랜잭션처리) <== 파일첨부가 없는 글쓰기
+						   }
+						   else {// 첨부파일 있는 경우 글쓰기
+							    n= service.saveVacPayment_withFile(epvo);
+						   }
+					   
+					  
+					   
+					  } catch (Throwable e) {
+						
+						 e.printStackTrace();
+					   }
+					  
+					   if(n==1) {
+						   mav.setViewName("redirect:/t1/vacation_Write.tw");
+					   }
+					  
+					
+					return mav;
+				}
+				
+			
+			
+			/*
+				// ===  첨부파일 다운로드 받기
+				   @RequestMapping(value="/download1.tw")
+				   public void vacdownload(HttpServletRequest request,HttpServletResponse response) {
+					   
+					   
+					  String ano = request.getParameter("ano");
+					  // 첨부파일이 있는 글번호
+					  
+					  Map<String,String> paraMap = new HashMap<>();
+					  paraMap.put("ano", ano);
+					  paraMap.put("searchType", "");
+					  paraMap.put("searchWord", "");
+					  paraMap.put("searchCategory", "");
+		*/			  
+					  
+					  /*
+				     	첨부파일이 있는 글 번호에서
+				        202106041000281212384472386100.jpg 처럼
+				                   이러한 fileName값을 DB에서 가져와야 한다.
+				                   또한 orgFilename 값도 DB에서 가져와야 한다. 
+					  */
+			/*		  
+					  response.setContentType("text/html; charset=UTF-8");
+					  PrintWriter out = null;
+					  
+					  
+					  try {
+						  Integer.parseInt(ano);
+						  
+						  ElectronPayJshVO epvo = service.vacOneView(paraMap);
+						  
+						  
+						  if(epvo == null ||(epvo != null &&  epvo.getFileName() == null) ) {
+							  //글이 없던지, 글이 존재하지만 첨부파일이 없는 경우.
+							  
+							  out = response.getWriter();
+								// 웹브라우저 상에 메세지를 쓰기 위한 객체 생성
+								
+							  out.println("<script type='text/javascript'>alert('존재하지 않는 글 번호 이거나 첨부파일이 존재하지 않아서 파일 다운로드가 불가합니다!!'); history.back();</script>");
+							  return; //종료
+						  }
+						  else {
+							 String fileName = epvo.getFileName();
+							 // 2020120809271535243254235235234.png 이것이 바로 WAS(톰캣) 디스크에 저장된 파일명이다. 
+							 
+							 String orgFilename= epvo.getOrgFilename();
+							 // 강아지.png  다운로드시 보여줄 파일명
+							 
+							 
+							 // 첨부파일이 저장되어 있는 WAS(톰캣)의 디스크 경로명을 알아와야만 다운로드를 해줄수 있다. 
+					         // 이 경로는 우리가 파일첨부를 위해서 /addEnd.action 에서 설정해두었던 경로와 똑같아야 한다.
+					         // WAS 의 webapp 의 절대경로를 알아와야 한다.
+							
+							  HttpSession session = request.getSession();
+							  String root = session.getServletContext().getRealPath("/");
+							   
+						  //  System.out.println("~~~~~~ webapp의 절대경로 =>" + root);
+							  //~~~~~~ webapp의 절대경로 =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\GroupWare\
+							  
+							  String path = root+"resources"+File.separator +"files";
+							  /* File.separator 는 운영체제에서 사용하는 폴더와 파일의 구분자이다.
+							           운영체제가 Windows 이라면 File.separator 는  "\" 이고,
+							           운영체제가 UNIX, Linux 이라면  File.separator 는 "/" 이다. 
+							  */
+							  
+							  // path 가 첨부파일이 저장될 WAS(톰캣)의 폴더가 된다.
+						//	  System.out.println("~~~~~~ path =>" + path);
+							  //~~~~~~ path =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
+						   
+			/*				  
+							  // **** file 다운로드 하기 **** // 
+							  boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도 
+							  flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
+					          // file 다운로드 성공시 flag 는 true, 
+					          // file 다운로드 실패시 flag 는 false 를 가진다.
+							  
+							  if(!flag) {
+								// 다운로드가 실패할 경우 메시지를 띄워준다.
+						          
+					               out = response.getWriter();
+					               // 웹브라우저상에 메시지를 쓰기 위한 객체생성.
+					               
+					               out.println("<script type='text/javascript'>alert('파일 다운로드가 실패되었습니다!!'); history.back();</script>"); 
+						           
+							  }
+							  
+						  }
+						  
+					  }catch(NumberFormatException e) {
+						  
+						  try {
+							out = response.getWriter();
+							// 웹브라우저 상에 메세지를 쓰기 위한 객체 생성
+							
+							out.println("<script type='text/javascript'>alert('파일 다운로드가 불가합니다!!'); history.back();</script>");
+						  } catch (IOException e1) {
+							
+							
+						  }
+						  
+						  
+						  
+					  }catch(IOException e2) {
+						  
+					  }
+					  
+				   }
+			*/
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			

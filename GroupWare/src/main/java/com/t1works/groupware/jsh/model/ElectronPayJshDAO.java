@@ -278,6 +278,55 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 		}
 
 
+		//2 ) 전자결재 테이블에 insert 
+		@Override
+		public int ElectricVacadd(ElectronPayJshVO epvo) {
+			int n1 = sqlsession6.insert("payment_Jsh.ElectricVacadd",epvo);
+			return n1;
+		}
+			
+			
+			
+		// 3) scatname 조건에 따라 insert 시켜줌 전자결재테이블에 insert  
+		@Override
+		public int vacAdd(ElectronPayJshVO epvo) {
+			int n2 = sqlsession6.insert("payment_Jsh.vacAdd",epvo);
+			return n2;
+			
+		}
+
+
+		// 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
+		@Override
+		public int selectVacadd(ElectronPayJshVO epvo) {
+			int n3 = sqlsession6.insert("payment_Jsh.selectVacadd",epvo);
+			return n3;
+		}
+
+
+		// 파일첨부가 있는 전자결재 문서 글쓰기 insert
+		@Override
+		public int ElectricVacadd_withFile(ElectronPayJshVO epvo) {
+			int n1 = sqlsession6.insert("payment_Jsh.ElectricVacadd_withFile",epvo);
+			return n1;
+		}
+
+
+		//임시저장함 insert-첨부파일X
+		@Override
+		public int saveVacadd(ElectronPayJshVO epvo) {
+			int n1 = sqlsession6.insert("payment_Jsh.saveVacadd",epvo);
+			return n1;
+		}
+
+
+		//임시저장함 insert-첨부파일o
+		@Override
+		public int saveVacadd_withFile(ElectronPayJshVO epvo) {
+			int n1 = sqlsession6.insert("payment_Jsh.saveVacadd_withFile",epvo);
+			return n1;
+		}
+
 
 
 	
