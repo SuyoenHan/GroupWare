@@ -40,7 +40,6 @@ public class ChattingOdyController {
 		// 사원정보
 		List<MemberOdyVO> employeeList = service.getEmployeeList(employeeid);
 		
-		
 		request.setAttribute("departmentList", departmentList);
 		request.setAttribute("employeeList", employeeList);
 		return "ody/chatmain";
