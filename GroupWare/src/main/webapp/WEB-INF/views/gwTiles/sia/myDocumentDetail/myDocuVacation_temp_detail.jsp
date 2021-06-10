@@ -52,12 +52,10 @@ input.btn {
 	border-radius: 0;
 	font-weight: bold;
 }
-input:invalid {
-	border: 3px solid red;	
-}
 </style>
 
 <script type="text/javascript">
+	
 	// 전역변수
 	var obj = [];
 	
@@ -81,7 +79,17 @@ input:invalid {
 				bUseModeChanger : true,
 			}
 		});
-		<%-- === 스마트 에디터 구현 끝 === --%>	
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		$('.numOnly').keyup(function(e){ 
+			regNumber = /^[0-9]*$/;
+
+			var str = $(this).val(); 
+			if(!regNumber.test(str)) { 
+				var res = str.substring(0, str.length-1); 
+				$(this).val(res);
+			} 
+		});
 		
 	});
 	
@@ -144,6 +152,42 @@ input:invalid {
 	
 	// 저장
 	function goSave(){
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// id가 content인 textarea에 에디터에서 대입
+		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
+		<%-- === 스마트 에디터 구현 끝 === --%>	
+		
+		<%-- === 스마트 에디터 구현 시작 === --%>
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+		var contentval = $("textarea#acontent").val();
+		
+		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
+		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
+		
+		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
+		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
+		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
+		
+		$("textarea#acontent").val(contentval);
+		
+		<%-- === 스마트 에디터 구현 끝 === --%>		
+		
+		var bool = confirm("저장하시겠습니까?");
+		
+		if(bool){
+			
+			var frm = document.docuFrm;
+			frm.method = "POST";
+			frm.action = "<%=ctxPath%>/t1/saveVacation.tw";
+			frm.submit();
+			
+			alert("저장되었습니다");
+		}
+	}
+	
+	// 제출
+	function goSubmit(){		
 		<%-- === 스마트 에디터 구현 시작 === --%>
 		// id가 content인 textarea에 에디터에서 대입
 		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
@@ -225,42 +269,8 @@ input:invalid {
 		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
 		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
 		
-		$("textarea#acontent").val(contentval);
-		
-		<%-- === 스마트 에디터 구현 끝 === --%>		
-		
-		var bool = confirm("저장하시겠습니까?");
-		
-		if(bool){
-			
-			var frm = document.docuFrm;
-			frm.method = "POST";
-			frm.action = "<%=ctxPath%>/t1/saveVacation.tw";
-			frm.submit();
-			
-			alert("저장되었습니다");
-		}
-	}
-	
-	// 제출
-	function goSubmit(){		
-		<%-- === 스마트 에디터 구현 시작 === --%>
-		// id가 content인 textarea에 에디터에서 대입
-		obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
-		
-		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거
-		var contentval = $("textarea#acontent").val();
-		
-		// 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-		contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
-		
-		contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
-		contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
-		contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
-		
-		$("textarea#acontent").val(contentval);
-		
-		<%-- === 스마트 에디터 구현 끝 === --%>
+		$("textarea#acontent").val(contentval);		
+		<%-- === 스마트 에디터 구현 끝 === --%>	
 		
 		var bool = confirm("제출하시겠습니까?");
 		
@@ -318,15 +328,9 @@ input:invalid {
 				<th>사장</th>
 			</tr>			
 			<tr>
-				<td id="img_approval_1" style="height:70px;">
-				</td>
-				
-				<td id="img_approval_2" style="height:70px;">
-					
-				</td>
-				<td id="img_approval_3" style="height:70px;">
-					
-				</td>
+				<td style="height:70px;"></td>
+				<td></td>
+				<td></td>
 			</tr>
 		</table>
 		
@@ -335,9 +339,9 @@ input:invalid {
 			<table id="table2">
 				<tr>
 					<th>수신자</th>
-					<td style="width: 35%;"></td>
+					<td style="width: 35%;">${requestScope.mng.name} ${requestScope.mng.pname} (${requestScope.mng.dname})</td>
 					<th>문서번호</th>
-					<td>${requestScope.avo.ano}</td>
+					<td><input type="hidden" name="ano" value="${requestScope.avo.ano}"/>${requestScope.avo.ano}</td>
 				</tr>
 				<tr>
 					<th>제목</th>
@@ -354,7 +358,16 @@ input:invalid {
 					<tr>
 						<th>요청일자</th>
 						<td colspan="3"><input type="date" name="afdate" id="afdate" value="${requestScope.avo.afdate}">&nbsp;&nbsp;
-						<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.avo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.avo.afdan eq '2'}">오후</c:if></span>반차
+							<select name="afdan" id="afdan" style="height: 25.3px;">
+								<c:if test="${requestScope.avo.afdan == 1}">
+									<option value="1" selected>오전</option>
+									<option value="2">오후</option>						
+								</c:if>
+								<c:if test="${requestScope.avo.afdan == 2}">
+									<option value="1">오전</option>
+									<option value="2" selected>오후</option>															
+								</c:if>
+							</select>
 						</td>
 					</tr>
 				</c:if>
@@ -379,7 +392,7 @@ input:invalid {
 						<th>출장지</th>
 						<td><input type="text" style="width: 300px;" name="buplace" id="buplace" value="${requestScope.avo.buplace}"/></td>				
 						<th>출장인원</th>
-						<td><input type="number" style="width: 300px;" name="bupeople" id="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
+						<td><input type="number" class="numOnly" style="width: 70px;" name="bupeople" id="bupeople" value="${requestScope.avo.bupeople}"/>명</td>
 					</tr>
 				</c:if>
 				<c:if test="${requestScope.avo.vno eq '6'}">
@@ -420,7 +433,7 @@ input:invalid {
 			<span style="margin-left: 50%;">				
 				<input type="button" class="btn btn-danger" onclick="goRemove();" value="삭제"/>
 				<input type="button" class="btn btn-warning" onclick="goSave();" value="저장"/>
-				<input type="button" class="btn btn-primary" onclick="goSumit();" value="제출"/>
+				<input type="button" class="btn btn-primary" onclick="goSubmit();" value="제출"/>
 			</span>
 		</div>
 		

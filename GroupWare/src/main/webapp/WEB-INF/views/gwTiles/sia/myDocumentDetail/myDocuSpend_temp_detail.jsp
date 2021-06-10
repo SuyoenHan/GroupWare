@@ -52,9 +52,6 @@ input.btn {
 	border-radius: 0;
 	font-weight: bold;
 }
-input:invalid {
-	border: 3px solid red;	
-}
 </style>
 
 <script type="text/javascript">
@@ -81,7 +78,19 @@ input:invalid {
 				bUseModeChanger : true,
 			}
 		});
-		<%-- === 스마트 에디터 구현 끝 === --%>		
+		<%-- === 스마트 에디터 구현 끝 === --%>
+		
+		
+		$('.numOnly').keyup(function(e){ 
+			regNumber = /^[0-9]*$/;
+
+			var str = $(this).val(); 
+			if(!regNumber.test(str)) { 
+				var res = str.substring(0, str.length-1); 
+				$(this).val(res);
+			} 
+		}		
+		
 	});
 	
 	// Function Declaration	
@@ -294,14 +303,11 @@ input:invalid {
 				<th>사장</th>
 			</tr>
 			<tr>
-				<td id="img_approval_1" style="height:70px;">
+				<td style="height:70px;">
+				</td>				
+				<td>					
 				</td>
-				
-				<td id="img_approval_2" style="height:70px;">
-					
-				</td>
-				<td id="img_approval_3" style="height:70px;">
-					
+				<td>					
 				</td>
 			</tr>
 		</table>
@@ -324,11 +330,11 @@ input:invalid {
 			<c:if test="${requestScope.avo.scat eq '1'}">
 				<tr>
 					<th>지출일자</th>
-					<td colspan="3"><input type="date" name="exdate" id="exdate" value="${requestScope.avo.exdate}"/></td>
+					<td colspan="3"><input type="date" name="exdate" id="exdate"  value="${requestScope.avo.exdate}"/></td>
 				</tr>
 				<tr>
 					<th>지출금액</th>
-					<td colspan="3"><input type="number" name="exprice" id="exprice" style="width: 370px;" value="${requestScope.avo.exprice}"/></td>
+					<td colspan="3"><input type="number" class="numOnly" name="exprice" id="exprice" style="width: 370px;" value="${requestScope.avo.exprice}"/></td>
 				</tr>
 			</c:if>
 			<c:if test="${requestScope.avo.scat eq '2'}">
@@ -342,7 +348,7 @@ input:invalid {
 				</tr>
 				<tr>
 					<th>예상금액</th>
-					<td><input type="number" style="width: 370px;" name="coprice" id="coprice" value="${requestScope.avo.coprice}"/></td>					
+					<td><input type="number" class="numOnly" style="width: 370px;" name="coprice" id="coprice" value="${requestScope.avo.coprice}"/></td>					
 					<th>지출목적</th>
 					<td>												
 						<select name="copurpose" id="copurpose">

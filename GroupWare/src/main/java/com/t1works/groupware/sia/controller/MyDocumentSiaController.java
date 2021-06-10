@@ -2713,7 +2713,7 @@ public class MyDocumentSiaController {
 		}
 		
 		if(n==1) {
-			mav.setViewName("redirect:/t1/myDocuVacation_send.tw");
+			mav.setViewName("redirect:/t1/myDocuVacation_temp.tw");
 		}
 		else {
 			System.out.println("실패!");

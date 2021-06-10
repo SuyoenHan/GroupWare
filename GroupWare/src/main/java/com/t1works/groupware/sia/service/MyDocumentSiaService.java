@@ -294,9 +294,6 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 			String fileName = paraMap.get("fileName");
 			String path = paraMap.get("path");
 			
-			System.out.println("확인용 fileName" + fileName);
-			System.out.println("확인용 path" + path);
-			
 			if(fileName != null && !"".equals(fileName)) {
 				try {
 					fileManager.doFileDelete(fileName, path);
@@ -317,9 +314,6 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 		if(n == 1) {
 			String fileName = paraMap.get("fileName");
 			String path = paraMap.get("path");
-			
-			System.out.println("확인용 fileName" + fileName);
-			System.out.println("확인용 path" + path);
 			
 			if(fileName != null && !"".equals(fileName)) {
 				try {

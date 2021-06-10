@@ -1119,19 +1119,19 @@
 		select vcatname, arecipient1, atitle, name, dname, apaper, a.ano, acontent, fileName, orgFilename, fileSize, astatus, vno, pname 
 		<choose>
 			<when test="vcatname eq '병가'">
-				, to_char(slstart, 'yyyy/mm/dd') AS slstart, to_char(slend, 'yyyy/mm/dd') AS slend, sldates
+				, to_char(slstart, 'yyyy-mm-dd') AS slstart, to_char(slend, 'yyyy-mm-dd') AS slend, sldates
 			</when>
 			<when test="vcatname eq '반차'">
-				, to_char(afdate, 'yyyy/mm/dd') AS afdate, afdan, afdates
+				, to_char(afdate, 'yyyy-mm-dd') AS afdate, afdan, afdates
 			</when>
 			<when test="vcatname eq '연차'">
-				, to_char(daystart, 'yyyy/mm/dd') AS daystart, to_char(dayend, 'yyyy/mm/dd') AS dayend, daydates
+				, to_char(daystart, 'yyyy-mm-dd') AS daystart, to_char(dayend, 'yyyy-mm-dd') AS dayend, daydates
 			</when>
 			<when test="vcatname eq '경조휴가'">
-				, to_char(congstart, 'yyyy/mm/dd') AS congstart, to_char(congend, 'yyyy/mm/dd') AS congend, congdates
+				, to_char(congstart, 'yyyy-mm-dd') AS congstart, to_char(congend, 'yyyy-mm-dd') AS congend, congdates
 			</when>
 			<when test="vcatname eq '출장'">
-				, to_char(bustart, 'yyyy/mm/dd') AS bustart, to_char(buend, 'yyyy/mm/dd') AS buend, budates, buplace, bupeople
+				, to_char(bustart, 'yyyy-mm-dd') AS bustart, to_char(buend, 'yyyy-mm-dd') AS buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq '추가근무'">
 				, ewdate, ewhours

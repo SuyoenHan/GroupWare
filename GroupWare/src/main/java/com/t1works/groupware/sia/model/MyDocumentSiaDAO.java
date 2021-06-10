@@ -296,7 +296,7 @@ public class MyDocumentSiaDAO implements InterMyDocumentSiaDAO {
 		return avo;
 	}
 	
-	// 내문서함 - 임시저장함 - 일반결재 - 저장버튼 클릭		
+	// 내문서함 - 임시저장함 - 저장버튼 클릭		
 	// 전자결재 테이블 update 첨부파일 없는 경우 - 임시저장 상태
 	@Override
 	public int approvalSave(ApprovalSiaVO avo) {
