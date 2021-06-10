@@ -10,6 +10,7 @@
 		margin: 0 auto;
 		position: relative;
 		left: -80px;
+		margin-bottom: 200px;
 	}
 
 	div#salaryDetailTitle{
