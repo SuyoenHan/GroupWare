@@ -7,48 +7,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <style type="text/css">
-span.email-ids {
-    float: left;
-    /* padding: 4px; */
-    border: 1px solid #ccc;
-    margin: 2px 5px 0 2px;
-    padding-left: 7px;
-    padding-right: 7px;
-    margin-bottom: 5px;
-    background: #f5f5f5;
-    padding-top: 1px;
-    padding-bottom: 1px;
-    border-radius: 2px;
-    font-size: 9pt;
-}
-span.cancel-email {
-    /* border: 1px solid #ccc; */
-    width: 15px;
-    display: block;
-    float: right;
-    text-align: center;
-    margin-left: 8px;
-    /* border-radius: 49%; */
-    height: 13px;
-    line-height: 15px;
-    margin-top: 1px;    cursor: pointer;
-}
-.col-sm-12.email-id-row {
-    border: 1px solid #ccc;
-}
-.col-sm-12.email-id-row input {
-    border: 0px; outline:0px;
-}
-span.to-input {
-    display: block;
-    float: left;
-    padding-right: 11px;
-}
-.col-sm-12.email-id-row {
-    padding-top: 6px;
-    padding-bottom: 7px;
-    margin-top: 23px;
-}
+
 </style>
 
 <script type="text/javascript">
@@ -56,16 +15,14 @@ $(document).ready(function(){
 	
 	// 주소록 페이지에서 받는사람 이메일 주소 넘겨받은경우
 	var arrReceiverEmail = [];
-	/*
-	var preInputEmail = "${requestScope.receiverEmail}";
-	console.log(preInputEmail);
-	if(preInputEmail != null && preInputEmail != ""){
-		// alert ('주소록에서 이메일 가져왓다');
-	  $('#receiver').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-	  arrReceiverEmail.push(preInputEmail);
-	  console.log("주소록에서 메일받아온 후 배열:"+arrReceiverEmail);
+	var addrsBookEmail = "${requestScope.addrsBookEmail}";
+	console.log(addrsBookEmail);
+	if(addrsBookEmail != null && addrsBookEmail != ""){
+	 // alert ('주소록에서 이메일 가져왓다');
+	  $('#receiver').append('<span class="email-ids">'+ addrsBookEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	  arrReceiverEmail.push(addrsBookEmail);
+	  // console.log("주소록에서 메일받아온 후 배열:"+addrsBookEmail);
 	}
-	*/
 	
 	// 회신메일 쓰는 경우
 	var replySubject = "${requestScope.subject}";
@@ -73,12 +30,12 @@ $(document).ready(function(){
 	var preInputRplEmail = "${requestScope.replyEmail}";
 	var preInputRplName = "${requestScope.replyToName}";
 	if(replySubject != null && replySubject != ""){
-		alert ('회신메일 페이지입니다');
+		//alert ('회신메일 페이지입니다');
 		$('#receiver').append('<span class="email-ids">'+preInputRplName+'&lt;'+preInputRplEmail+'&gt;'+' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-		console.log('회신메일 preinput Email : '+preInputRplEmail);
+		//console.log('회신메일 preinput Email : '+preInputRplEmail);
 		$("input#subject").val("RE: "+replySubject);
 		arrReceiverEmail.push(preInputRplEmail);		
-		console.log("회신이메일 넣은 배열 값: "+arrReceiverEmail);
+		//console.log("회신이메일 넣은 배열 값: "+arrReceiverEmail);
 	}
 	
 	
@@ -156,6 +113,7 @@ $(document).ready(function(){
 	      $("input[name=receiver]").val("");
 	      
 	      console.log("이 취소버튼의 인덱스 번호 :"+$(this).index());
+	      console.log("취소 후 배열값: "+arrReceiverEmail);
 	      
 	      /* 
 	      for(let i = 0; i < arr.length; i++) {

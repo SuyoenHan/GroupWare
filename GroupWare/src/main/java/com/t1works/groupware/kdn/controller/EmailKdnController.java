@@ -65,8 +65,8 @@ public class EmailKdnController {
 	public ModelAndView requiredLogin_new_Email(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
 		// 주소록에서 메일 넘겨받은 경우
-		//String addrsBookEmail = request.getParameter("addrsBookEmail");
-		//mav.addObject("addrsBookEmail", addrsBookEmail);
+		String addrsBookEmail = request.getParameter("addrsBookEmail");
+		mav.addObject("addrsBookEmail", addrsBookEmail);
 		
 		// === 회신메일쓰기용 ===
 		String replyEmail = request.getParameter("replyEmail");
