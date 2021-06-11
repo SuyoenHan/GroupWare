@@ -38,7 +38,7 @@ th{
 <script type="text/javascript">
 		$(document).ready(function(){
 			//사이드바 세부메뉴 나타내기 
-		//	$("div#submenu3").show();
+			$("div#submenu3").show();
 			
 			
 			
@@ -60,9 +60,51 @@ th{
 			</tr>
 			
 			<tr>
-				<td style="height:70px;">d</td>
-				<td>d</td>
-				<td>d</td>
+				<td style="height:70px;">
+					<c:if test="${not empty requestScope.alogList}">
+						<c:forEach var="lvo" items="${requestScope.alogList}">
+							<c:if test="${lvo.pcode == '2' && lvo.logstatus == '0'}">
+								미결재
+							</c:if>
+							<c:if test="${lvo.pcode == '2' && lvo.logstatus == '1'}">
+								승인
+							</c:if>
+							<c:if test="${lvo.pcode == '2' && lvo.logstatus == '2'}">
+								반려
+							</c:if>
+						</c:forEach>
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${not empty requestScope.alogList}">
+						<c:forEach var="lvo" items="${requestScope.alogList}">
+							<c:if test="${lvo.pcode == '3' && lvo.logstatus == '0'}">
+								미결재
+							</c:if>
+							<c:if test="${lvo.pcode == '3' && lvo.logstatus == '1'}">
+								승인
+							</c:if>
+							<c:if test="${lvo.pcode == '3' && lvo.logstatus == '2'}">
+								반려
+							</c:if>
+						</c:forEach>
+					</c:if>
+				</td>
+				<td>
+					<c:if test="${not empty requestScope.alogList}">
+						<c:forEach var="lvo" items="${requestScope.alogList}">
+							<c:if test="${lvo.pcode == '4' && lvo.logstatus == '0'}">
+								미결재
+							</c:if>
+							<c:if test="${lvo.pcode == '4' && lvo.logstatus == '1'}">
+								승인
+							</c:if>
+							<c:if test="${lvo.pcode == '4' && lvo.logstatus == '2'}">
+								반려
+							</c:if>
+						</c:forEach>
+					</c:if>
+				</td>
 			</tr>
 		</table>
 		
@@ -70,8 +112,8 @@ th{
 		<table id="table2">
 			<tr>
 				<th style="width:200px;">수신참조</th>
-				<td>${requestScope.epvo.arecipient1}</td>
-				<th>문서번호</th>
+				<td><span style="font-weight: bold;">${requestScope.receiver.name}&nbsp; ${requestScope.receiver.pname}</span><span style="color: blue;">${requestScope.receiver.dname}</span> </td>
+			    <th>문서번호</th>
 				<td>${epvo.ano}</td>
 			</tr>
 			
@@ -162,8 +204,23 @@ th{
 			<tr>
 				<th style="width:20%;">결재로그</th>
 				<td>
-				
-				
+					<c:if test="${not empty requestScope.alogList}">
+						<c:forEach var="lvo" items="${requestScope.alogList}">
+							<c:if test="${lvo.logstatus == '0'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [제출]</span></div>
+							  </c:if>
+							  <c:if test="${lvo.logstatus == '1'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [승인]</span></div>
+							  </c:if>
+							  <c:if test="${lvo.logstatus == '2'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [반려]</span></div>
+							  </c:if>
+						  
+						</c:forEach>
+					</c:if>
+					<c:if test="${empty requestScope.alogList}">
+					  <div> 결재 로그가 존재하지 않습니다. </div>
+					</c:if>
 				</td>
 			</tr>
 		</table>
