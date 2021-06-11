@@ -295,9 +295,27 @@ public class EmailKdnService implements InterEmailKdnService {
 		return n;
 	}
 
-	
+	// 해당 seq의 수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다)
+	@Override
+	public String receiverEmail(String seq) {
+		
+		String receiverEmail= dao.receiverEmail(seq);
+		return receiverEmail;
+	}
 
-	
+	// 한개의 email에 해당하는 사원명 가져오기
+	@Override
+	public String getName(String receiverEmail) {
+		String receiverName= dao.getName(receiverEmail);
+		return receiverName;
+	}
+
+	// 해당 seq의 수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다 + null 일 수도 있다)
+	@Override
+	public String ccEmail(String seq) { 
+		String ccEmail= dao.ccEmail(seq);
+		return ccEmail;
+	}
 
 
 }
