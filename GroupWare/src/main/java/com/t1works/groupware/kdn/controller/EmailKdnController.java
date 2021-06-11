@@ -169,8 +169,9 @@ public class EmailKdnController {
 		String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		String str_sizePerPage = request.getParameter("sizePerPage");
 		
-		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType))) {
+		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType) && !"content".equals(searchType))) {
 			searchType = "";
 		}
 		
@@ -178,22 +179,26 @@ public class EmailKdnController {
 			searchWord = "";
 		}
 		
+		if(str_sizePerPage == null || !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage)) ) {
+			str_sizePerPage = "10";
+		}
+		
 		Map<String, String> paraMap = new HashMap <>();
 		paraMap.put("searchType", searchType);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("email", loginuser.getEmail());
-		paraMap.put("moveToTrash", "0");
+		paraMap.put("currentShowPageNo", str_currentShowPageNo);
+		paraMap.put("sizePerPage", str_sizePerPage);
 		
 		// 먼저 총 게시물 건수(totalCount)를 구해와야 한다.
 	    // 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 총 게시물 건수
-		int sizePerPage = 10;       // 한 페이지당 보여줄 게시물 건수
+		int sizePerPage = Integer.parseInt(str_sizePerPage); // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함
 		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
-		
 		int startRno = 0;           // 시작 행번호
 	    int endRno = 0;             // 끝 행번호 
-		
+	    
 	    // 총 게시물 건수(totalCount)
 	    totalCount = service.getTotalCount(paraMap);
 	    //System.out.println("~~ 확인용 : "+totalCount);
@@ -224,7 +229,7 @@ public class EmailKdnController {
 		// 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것)
 		
 		// 아래는 검색대상 컬럼과 검색어를 유지시키기 위한 것임.
-		if(!"".equals(searchType) && !"".equals(searchWord)) {
+		if(!"".equals(searchType) && !"".equals(searchWord) && !"".equals(str_sizePerPage)) {
 			mav.addObject("paraMap", paraMap);
 		}
 		
@@ -357,11 +362,12 @@ public class EmailKdnController {
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
-		String searchType = request.getParameter("searchType");
+	    String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		String str_sizePerPage = request.getParameter("sizePerPage");
 		
-		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType))) {
+		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType) && !"content".equals(searchType))) {
 			searchType = "";
 		}
 		
@@ -369,21 +375,26 @@ public class EmailKdnController {
 			searchWord = "";
 		}
 		
+		if(str_sizePerPage == null || !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage)) ) {
+			str_sizePerPage = "10";
+		}
+		
 		Map<String, String> paraMap = new HashMap <>();
 		paraMap.put("searchType", searchType);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("email", loginuser.getEmail());
+		paraMap.put("currentShowPageNo", str_currentShowPageNo);
+		paraMap.put("sizePerPage", str_sizePerPage);
 		
 		// 먼저 총 게시물 건수(totalCount)를 구해와야 한다.
 	    // 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 총 게시물 건수
-		int sizePerPage = 10;       // 한 페이지당 보여줄 게시물 건수
+		int sizePerPage = Integer.parseInt(str_sizePerPage); // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함
 		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
-		
 		int startRno = 0;           // 시작 행번호
-	    int endRno = 0;             // 끝 행번호 
-		
+	    int endRno = 0;             // 끝 행번호
+	    
 	    // 총 게시물 건수(totalCount)
 	    totalCount = service.getMailSentTotalCount(paraMap);
 	    //System.out.println("~~ 확인용 : "+totalCount);
@@ -484,8 +495,9 @@ public class EmailKdnController {
 		String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		String str_sizePerPage = request.getParameter("sizePerPage");
 		
-		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType))) {
+		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType) && !"content".equals(searchType))) {
 			searchType = "";
 		}
 		
@@ -493,22 +505,26 @@ public class EmailKdnController {
 			searchWord = "";
 		}
 		
+		if(str_sizePerPage == null || !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage)) ) {
+			str_sizePerPage = "10";
+		}
+		
 		Map<String, String> paraMap = new HashMap <>();
 		paraMap.put("searchType", searchType);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("email", loginuser.getEmail());
+		paraMap.put("currentShowPageNo", str_currentShowPageNo);
+		paraMap.put("sizePerPage", str_sizePerPage);
 		paraMap.put("checkImportant", "1");
-		paraMap.put("moveToTrash", "0");
 		
 		// 먼저 총 게시물 건수(totalCount)를 구해와야 한다.
 	    // 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 총 게시물 건수
-		int sizePerPage = 10;       // 한 페이지당 보여줄 게시물 건수
+		int sizePerPage = Integer.parseInt(str_sizePerPage); // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함
 		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
-		
 		int startRno = 0;           // 시작 행번호
-	    int endRno = 0;             // 끝 행번호 
+	    int endRno = 0;             // 끝 행번호
 		
 	    // 총 게시물 건수(totalCount)
 	    totalCount = service.getMailImportantTotalCount(paraMap);
@@ -553,7 +569,7 @@ public class EmailKdnController {
 		int pageNo = ((currentShowPageNo - 1)/blockSize) * blockSize + 1;
 
 		String pageBar = "<ul style='list-style: none;'>";
-		String url = "mail_sent.tw";
+		String url = "mail_important.tw";
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo != 1) {
@@ -609,8 +625,9 @@ public class EmailKdnController {
 		String searchType = request.getParameter("searchType");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
+		String str_sizePerPage = request.getParameter("sizePerPage");
 		
-		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType))) {
+		if(searchType == null || (!"subject".equals(searchType) && !"name".equals(searchType) && !"content".equals(searchType))) {
 			searchType = "";
 		}
 		
@@ -618,21 +635,25 @@ public class EmailKdnController {
 			searchWord = "";
 		}
 		
+		if(str_sizePerPage == null || !("10".equals(str_sizePerPage) || "15".equals(str_sizePerPage) || "20".equals(str_sizePerPage)) ) {
+			str_sizePerPage = "10";
+		}
+		
 		Map<String, String> paraMap = new HashMap <>();
 		paraMap.put("searchType", searchType);
 		paraMap.put("searchWord", searchWord);
 		paraMap.put("email", loginuser.getEmail());
-		paraMap.put("moveToTrash", "1");
+		paraMap.put("currentShowPageNo", str_currentShowPageNo);
+		paraMap.put("sizePerPage", str_sizePerPage);
 		
 		// 먼저 총 게시물 건수(totalCount)를 구해와야 한다.
 	    // 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 총 게시물 건수
-		int sizePerPage = 10;       // 한 페이지당 보여줄 게시물 건수
+		int sizePerPage = Integer.parseInt(str_sizePerPage); // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0; // 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함
 		int totalPage = 0;          // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)  
-		
 		int startRno = 0;           // 시작 행번호
-	    int endRno = 0;             // 끝 행번호 
+	    int endRno = 0;             // 끝 행번호
 		
 	    // 총 게시물 건수(totalCount)
 	    totalCount = service.getTrashTotalCount(paraMap);
