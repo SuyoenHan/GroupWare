@@ -306,24 +306,24 @@ public class EmailKdnController {
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
 		// 글목록에서 검색되어진 글내용일 경우 이전글제목, 다음글제목은 검색되어진 결과물내의 이전글과 다음글이 나오도록 하기 위한 것이다.  
-	      String searchType = request.getParameter("searchType");
-	      String searchWord = request.getParameter("searchWord");
-	      
-	      if(searchType == null) { searchType = ""; }
-	      if(searchWord == null) { searchWord = ""; }
-	      
-	      Map<String,String> paraMap = new HashMap<>();
-	      paraMap.put("seq", seq);
-	      paraMap.put("searchType", searchType);
-	      paraMap.put("searchWord", searchWord);
-	      paraMap.put("mailBoxNo", mailBoxNo);
-	      paraMap.put("email", loginuser.getEmail());
-	      
-	      
-	      mav.addObject("mailBoxNo", mailBoxNo);
-	      mav.addObject("searchType", searchType);
-	      mav.addObject("searchWord", searchWord);
-	      /////////////////////////////////////////////////////////////////////////////
+        String searchType = request.getParameter("searchType");
+        String searchWord = request.getParameter("searchWord");
+      
+        if(searchType == null) { searchType = ""; }
+        if(searchWord == null) { searchWord = ""; }
+      
+        Map<String,String> paraMap = new HashMap<>();
+        paraMap.put("seq", seq);
+        paraMap.put("searchType", searchType);
+        paraMap.put("searchWord", searchWord);
+        paraMap.put("mailBoxNo", mailBoxNo);
+        paraMap.put("email", loginuser.getEmail());
+      
+      
+        mav.addObject("mailBoxNo", mailBoxNo);
+        mav.addObject("searchType", searchType);
+        mav.addObject("searchWord", searchWord);
+      /////////////////////////////////////////////////////////////////////////////
 		
 		// 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해 현재 페이지 주소를 뷰단으로 넘겨준다.
 		String gobackURL = request.getParameter("gobackURL");
@@ -339,9 +339,6 @@ public class EmailKdnController {
 		// String parentSeq = request.getParameter("parentSeq");
 		
 		// int m = service.getPreviousMail();
-		
-		
-		
 		
 		
 		try {
@@ -367,6 +364,86 @@ public class EmailKdnController {
 		
 		mav.setViewName("kdn/mail/viewMail.gwTiles");
 		
+		
+		// ============= 받는 사람이 여러명인 경우 고려 => 받는사람 이름과 이메일 주소 메소드 따로 생성 시작 (받는사람이 null일 수는 없다)
+
+		String receiverEmail= service.receiverEmail(seq);
+		
+		List<Map<String,String>> receiverList= new ArrayList<>();
+		
+		if(receiverEmail.indexOf(",")!=-1) { // 수신자가 여러명인 경우
+			
+			String[] receiverEmailArr= receiverEmail.split(",");
+			for(int i=0;i<receiverEmailArr.length;i++) {
+				
+				Map<String,String> receiverMap= new HashMap<>(); 
+				String receiverName= service.getName(receiverEmailArr[i]);
+				
+				receiverMap.put("receiverEmail", receiverEmailArr[i]);
+				receiverMap.put("receiverName", receiverName);
+				
+				// 로그인한 유저의 이메일에 색깔처리 해주기 위한 작업
+				receiverMap.put("idEmail", receiverEmailArr[i].split("\\@")[0]);
+				
+				receiverList.add(receiverMap);
+			} // end of for-------------------------------
+		}
+		else { // 수신자가 한명인 경우
+			Map<String,String> receiverMap= new HashMap<>(); 
+			String receiverName= service.getName(receiverEmail);
+			receiverMap.put("receiverEmail",receiverEmail);
+			receiverMap.put("receiverName", receiverName);
+			
+			// 로그인한 유저의 이메일에 색깔처리 해주기 위한 작업
+			receiverMap.put("idEmail", receiverEmail.split("\\@")[0]);
+			
+			receiverList.add(receiverMap);
+		}
+		
+		mav.addObject("receiverList", receiverList);
+		
+		// ============= 받는 사람이 여러명인 경우 고려 => 받는사람 이름과 이메일 주소 메소드 따로 생성 끝
+		
+		
+		// ============= 참조 사람이 여러명인 경우 고려 => 참조사람 이름과 이메일 주소 메소드 따로 생성 시작 (참조사람이 null일 수 있다)
+
+		String ccEmail= service.ccEmail(seq);
+		
+		List<Map<String,String>> ccList= new ArrayList<>();
+		
+		if(ccEmail!=null && ccEmail.indexOf(",")!=-1) { // 참조수신자가 여러명인 경우
+			
+			String[] ccEmailArr= ccEmail.split(",");
+			for(int i=0;i<ccEmailArr.length;i++) {
+				
+				Map<String,String> ccMap= new HashMap<>(); 
+				String ccName= service.getName(ccEmailArr[i]);
+				
+				ccMap.put("ccEmail", ccEmailArr[i]);
+				ccMap.put("ccName", ccName);
+				
+				// 로그인한 유저의 이메일에 색깔처리 해주기 위한 작업
+				ccMap.put("idEmail", ccEmailArr[i].split("\\@")[0]);
+				
+				ccList.add(ccMap);
+			}
+		}
+		else if(ccEmail!=null) { // 참조수신자가 한명인 경우
+			Map<String,String> ccMap= new HashMap<>(); 
+			String ccName= service.getName(ccEmail);
+			ccMap.put("ccEmail",ccEmail);
+			ccMap.put("ccName", ccName);
+			
+			// 로그인한 유저의 이메일에 색깔처리 해주기 위한 작업
+			ccMap.put("idEmail", ccEmail.split("\\@")[0]);
+			
+			ccList.add(ccMap);
+		}
+		
+		mav.addObject("ccList", ccList);  // 참조수신자가 없는 경우 ccList는 empty가 된다
+		
+		// ============= 참조 사람이 여러명인 경우 고려 => 참조사람 이름과 이메일 주소 메소드 따로 생성 끝
+
 		return mav;
 	}
 	

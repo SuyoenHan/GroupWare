@@ -103,7 +103,7 @@
 		               to_char(sendingDate, 'yyyy-mm-dd hh24:mi:ss') as sendingDate,
 		               groupno, parentSeq, depthno, readStatus 
 		        from tbl_mailinbox M, tbl_employee E
-		        where M.senderEmail = E.email and receiverEmail like '%'|| #{email} ||'%' and moveToTrash = '0'
+		        where M.senderEmail = E.email and moveToTrash = '0' and (receiverEmail like '%'|| #{email} ||'%' or ccEmail like '%'|| #{email} ||'%')
 		        <if test='checkImportant == "1"'> <!-- 중요메일함 목록 -->
 		        	and checkImportant = '1'
 		        </if>
@@ -118,8 +118,8 @@
 	
 	<!-- 받은메일함 이메일 1개 열람하기 -->
 	<select id="getView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
-		select previousseq, previoussubject, seq, senderName, receiverName, subject, content, saveSentMail, readStatus, sendingDate, nextseq,nextsubject,
-				ccEmail, receiverEmail, senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize, moveToTrash 
+		select previousseq, previoussubject, seq, senderName, subject, content, saveSentMail, readStatus, sendingDate, nextseq,nextsubject,
+				ccEmail,senderEmail,groupno, parentSeq, depthno, fileName, orgFilename, fileSize, moveToTrash 
 		from
 		(
 		select lag(seq,1) over(order by seq desc) as previousseq
@@ -131,15 +131,30 @@
 		     ,lead(seq,1) over(order by seq desc) as nextseq
 		     ,lead(subject,1) over(order by seq desc) as nextsubject
 		     
-		     ,ccEmail, receiverEmail, E.name as receiverName, senderEmail, E2.name as senderName, groupno, parentSeq, depthno, M.fileName as fileName, M.orgFilename as orgFilename, M.fileSize as fileSize
-		from tbl_employee E, tbl_mailinbox M, tbl_employee E2
-		where M.receiverEmail = E.email and M.senderEmail = E2.email and receiverEmail like '%' || #{email} || '%'
+		     ,ccEmail, senderEmail, E2.name as senderName, groupno, parentSeq, depthno, M.fileName as fileName, M.orgFilename as orgFilename, M.fileSize as fileSize
+		from tbl_mailinbox M, tbl_employee E2
+		where M.senderEmail = E2.email and (receiverEmail like '%'|| #{email} ||'%' or ccEmail like '%'|| #{email} ||'%')
 		<if test='searchType != "" and searchWord != ""'>
 		 and lower(#{searchType}) like '%'||lower(#{searchWord})||'%'
 		 </if>
 		) V
 		where V.seq = #{seq}
 	</select>
+	
+	<!-- 해당 seq의 수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다) -->
+	<select id="receiverEmail" parameterType="String" resultType="String">
+		select receiverEmail from tbl_mailinbox where seq= #{seq}
+	</select>
+	
+	<!-- 한개의 email에 해당하는 사원명 가져오기 -->
+	<select id="getName" parameterType="String" resultType="String">
+		select name from tbl_employee where email=#{receiverEmail}
+	</select>
+	
+	<!-- 해당 seq의 참조이메일 가져오기 (여러명일수도 있고 한명일 수도 있고 null일 수도 있다) -->
+	<select id="ccEmail" parameterType="String" resultType="String">
+		select ccEmail from tbl_mailinbox where seq= #{seq}
+	</select>	
 	
 	<!-- 중요메일함 이메일 1개 열람하기 -->
 	<select id="getImportantMailView" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">

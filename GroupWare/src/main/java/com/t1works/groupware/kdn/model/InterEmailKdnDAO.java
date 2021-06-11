@@ -68,6 +68,12 @@ public interface InterEmailKdnDAO {
 
 	int emptyTrash(String email); //휴지통 비우기
 
+	String receiverEmail(String seq); // 해당 seq의 수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다)
+ 
+	String getName(String receiverEmail); // 한개의 email에 해당하는 사원명 가져오기
+
+	String ccEmail(String seq); // 해당 seq의 참조수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다 + null 일 수도 있다)
+
 	
 
 	
