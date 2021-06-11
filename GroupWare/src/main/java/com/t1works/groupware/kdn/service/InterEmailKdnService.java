@@ -62,7 +62,7 @@ public interface InterEmailKdnService {
 
 	int emptyTrash(String email); // 휴지통 비우기
 
-	int getPreviousMail(); // 회신한 이전 메일 가져오기
+	// int getPreviousMail(); // 회신한 이전 메일 가져오기
 	
 	
 
