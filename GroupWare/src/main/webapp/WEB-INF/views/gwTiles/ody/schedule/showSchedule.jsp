@@ -324,7 +324,7 @@ $(document).ready(function(){
 	      	    $("input[name=chooseDate]").val(date);
 	      	    
 	      	    var frm = document.dateFrm;
-	      	    frm.method="POST";
+	      	    frm.method="GET";
 	      	    frm.action="<%= ctxPath%>/t1/insertSchedule.tw";
 	      	    frm.submit();
 	      	    

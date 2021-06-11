@@ -36,7 +36,7 @@
 		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
 		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
 		   			<td class="notice"><i class="fas fa-bullhorn fa-2x"></i></td>
-		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=500px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
+		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=750px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
 				   	<input type="text"/>
