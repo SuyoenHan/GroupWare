@@ -84,8 +84,8 @@ height: 100%;
 			$("div#containerview").hide();
 			var obj = []; //전역변수 
 					
-	var a= "${requestScope.leftOffCnt}";
-	console.log("a: "+a);
+			//var a= "${requestScope.leftOffCnt}";
+			//console.log("a: "+a);
 			
 			//일반결재내역 문서 카테고리 라디오 클릭 이벤트
 			$("input[name=vcatname]").click(function(){

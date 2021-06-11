@@ -24,6 +24,34 @@ public class PaymentJshService implements InterPaymentJshService {
 	@Autowired
 	private InterElectronPayJshDAO dao;
 
+	
+	
+	//공통/////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	
+	// 하나의 문서보기에서 결재로그 보여주기
+	@Override
+	public List<ElectronPayJshVO> oneLogList(Map<String, String> paraMap) {
+		 List<ElectronPayJshVO> alogList = dao.oneLogList(paraMap);
+		return alogList;
+	}
+	
+	
+	// 하나의 문서 수신자정보 받아오기
+	@Override
+	public ElectronPayJshVO receiver(Map<String, String> paraMap) {
+		ElectronPayJshVO receiver = dao.receiver(paraMap);
+		return receiver;
+	}
+
+	
+	
+	
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
 	// 일반결재내역 목록 보여주기 검색어가 없는
 	@Override
 	public List<ElectronPayJshVO> generalPayment_List() {
@@ -461,6 +489,21 @@ public class PaymentJshService implements InterPaymentJshService {
 			}
 			return n3;
 		}
+
+		// 하나의 근태결재내역 문서 보여주기
+		@Override
+		public ElectronPayJshVO vacOneView(Map<String, String> paraMap) {
+			ElectronPayJshVO epvo = dao.vacOneView(paraMap);
+			return epvo;
+		}
+
+
+
+
+
+
+		
+		
 		
 	
 	

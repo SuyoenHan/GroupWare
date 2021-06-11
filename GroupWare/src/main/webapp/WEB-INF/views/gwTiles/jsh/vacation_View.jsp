@@ -331,95 +331,207 @@ hr.hr{
 		
 </script>
 
-<form name="writeGFrm"  enctype="multipart/form-data">
-
-<div id="containerall">
-	<div id=radio>
- 		<span style="border:solid 2px gray; width:400px; height:100px; font-size:20px; padding:10px 10px;">전자결재문서작성</span>
-				<span style="margin-left:20px;">&nbsp;&nbsp;
-					<label for="expense"><input type="radio" name="scatname" id="expense" value="지출결의서"> 지출결의서</label>&nbsp;&nbsp;
-					<label for="cocard"><input  type="radio" name="scatname" id="cocard" value="법인카드사용신청서"> 법인카드사용신청서</label>&nbsp;&nbsp;
-					<label for="ex1"><input type="radio" name="scatname" id="ex1" value="출장명세서"> 출장명세서(EX)</label>&nbsp;&nbsp;
-					<label for="ex2"><input type="radio" name="scatname" id="ex2" value="퇴직금정산신청서"> 퇴직금정산신청서(EX)</label>&nbsp;&nbsp;
-				</span>
- 	</div>
-	<div id="containerview">
- 	
-	<hr class="hr">
-		<h3 id="scat" align="center"></h3>
-	<hr class="hr">
-	<br>
-	<div id="astatus" >
-		<table id="table1">
-		
-			<tr>
-				<th style="width:100px; height:70px; ">대리</th>
-				<th>부장</th>
-				<th>사장</th>
-			</tr>
-			
-			<tr>
-				<td style="height:70px;"></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</table>
-		
-		
-		<table id="table2">
-			<tr>
-				<th style="width:200px;">수신참조</th>
-				<td colspan="3"><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
-			</tr>
-			
-			<tr>
-				<th>제목</th>
-				<td colspan="3"><input type="text" width="80%"name="atitle" id="atitle"></td>
-			</tr>
-			<tr>
-				<th>작성자</th>
-				<td colspan='3'><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
-			</tr>
-			<tr class="changeScat" id="changeScat1">
-			
-			</tr>
-			<tr class="changeScat" id="changeScat2">
-			
-			</tr>
-			<tr class="changeScat" id="changeScat3">
-			
-			</tr>
-			
-			
-			<tr>
-				<th>문서상태</th>
-				<td colspan='3'><input type="hidden" name="astatus" value="0"/>작성중..</td>
-			</tr>
-			
-			
-			<tr>
-				<th style="height:350px;">지출내용</th>
-				<td colspan='3' id="smarteditor"> 
-				</td>
-			</tr>
-			
-			<tr>
-				<th>첨부파일</th>
-				<td colspan='3'>
-					<input type="file" name="attach"/>
-				</td>
-			</tr>
-			
+<div id="containerview">
+	<hr style="border: 2px gray;">
+	<h3 align="center">${requestScope.vcatname}</h3>
+<hr>
+<br>
+<div id="astatus" >
+	<table id="table1">
 	
+		<tr>
+			<th style="width:100px; height:70px; ">대리</th>
+			<th>부장</th>
+			<th>사장</th>
+		</tr>
+		
+		<tr>
+			<td style="height:70px;">
+				<c:if test="${not empty requestScope.alogList}">
+					<c:forEach var="lvo" items="${requestScope.alogList}">
+						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '0'}">
+							미결재
+						</c:if>
+						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '1'}">
+							승인
+						</c:if>
+						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '2'}">
+							반려
+						</c:if>
+					</c:forEach>
+				</c:if>
+			</td>
+			<td>
+				<c:if test="${not empty requestScope.alogList}">
+					<c:forEach var="lvo" items="${requestScope.alogList}">
+						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '0'}">
+							미결재
+						</c:if>
+						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '1'}">
+							승인
+						</c:if>
+						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '2'}">
+							반려
+						</c:if>
+					</c:forEach>
+				</c:if>
+			</td>
+			<td>
+				<c:if test="${not empty requestScope.alogList}">
+					<c:forEach var="lvo" items="${requestScope.alogList}">
+						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '0'}">
+							미결재
+						</c:if>
+						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '1'}">
+							승인
+						</c:if>
+						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '2'}">
+							반려
+						</c:if>
+					</c:forEach>
+				</c:if>
+			</td>
+		</tr>
+	</table>
+		
+	<table id="table2">
+		<tr>
+			<th>문서상태</th>
+			<td style="width: 35%;">
+				<c:if test="${requestScope.epvo.astatus eq '0'}">제출</c:if>
+				<c:if test="${requestScope.epvo.astatus eq '1'}">결재진행중</c:if>
+				<c:if test="${requestScope.epvo.astatus eq '2'}">반려</c:if>
+				<c:if test="${requestScope.epvo.astatus eq '3'}">승인완료</c:if>					
+			</td>
+			<th>문서번호</th>
+			<td>${requestScope.epvo.ano}</td>
+		</tr>
+		<tr>
+			<th>제목</th>
+			<td colspan="3">${requestScope.epvo.atitle}</td>
+		</tr>
+		
+		<c:if test="${requestScope.epvo.vcatname eq '병가'}"> 
+			<tr>
+				<th>요청기간</th>
+				<td colspan="3">${requestScope.epvo.slstart} - ${requestScope.epvo.slend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.epvo.sldates}</span>일]</td>
+			</tr>				
+		</c:if>
+		<c:if test="${requestScope.epvo.vcatname eq '반차'}">
+			<tr>
+				<th>요청기간</th>
+				<td colspan="3">${requestScope.avo.afdate}&nbsp;&nbsp;
+				<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.epvo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.epvo.afdan eq '2'}">오후</c:if></span>반차
+				</td>
+			</tr>
+		</c:if>
+		<c:if test="${requestScope.epvo.vcatname eq '연차'}">
+			<tr>
+				<th>요청기간</th>
+				<td colspan="3">${requestScope.epvo.daystart} - ${requestScope.epvo.dayend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.epvo.daydates}</span>일]</td>
+			</tr>
+		</c:if>
+		<c:if test="${requestScope.epvo.vcatname eq '경조휴가'}">
+			<tr>
+				<th>요청기간</th>
+				<td colspan="3">${requestScope.epvo.congstart} - ${requestScope.epvo.congend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.epvo.congdates}</span>일]</td>
+			</tr>
+		</c:if>
+		<c:if test="${requestScope.epvo.vcatname eq '출장'}">
+			<tr>
+				<th>출장기간</th>
+				<td colspan="3">${requestScope.epvo.bustart} - ${requestScope.epvo.buend}</td>
+			</tr>
+			<tr>
+				<th>출장지</th>
+				<td>${requestScope.epvo.buplace}</td>				
+				<th>출장인원</th>
+				<td>${requestScope.epvo.bupeople}</td>
+			</tr>
+		</c:if>
+		<c:if test="${requestScope.epvo.vcatname eq '추가근무'}">
+			<tr>
+				<th>요청시간</th>
+				<td colspan="3">${requestScope.epvo.ewdate}시간</td>
+			</tr>
+		</c:if>	
+		
+		<tr>
+			<th style="height:250px;">글내용</th>
+			<td colspan="3">${requestScope.epvo.acontent}</td>
+		</tr>
+			
+		<tr>
+		<th>첨부파일</th>
+			<td colspan="3">
+				<c:if test="${not empty epvo.orgFilename}">
+				   <a href ="<%= ctxPath%>/download1.tw?ano=${requestScope.epvo.ano}">${requestScope.epvo.orgFilename}</a>
+				   
+				</c:if>
+				<c:if test="${empty epvo.orgFilename}">
+				   <div align="center">첨부파일이 존재하지 않습니다.</div>
+				</c:if>
+			</td>
+	    </tr>
+    </table>
+			
+	<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.epvo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
+	<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.epvo.asdate}</div>
+	<div align="right" style="margin-right: 15%;">신청자: ${requestScope.epvo.dname} ${requestScope.epvo.name} ${requestScope.epvo.pname}</div>
+		
+		
+		
+	
+	
+	</table>
+		
+	<table class="log">
+			<tr>
+				<th style="width:20%;">결재로그</th>
+				<td>
+					<c:if test="${not empty requestScope.alogList}">
+						<c:forEach var="lvo" items="${requestScope.alogList}">
+							<c:if test="${lvo.logstatus == '0'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [제출]</span></div>
+							  </c:if>
+							  <c:if test="${lvo.logstatus == '1'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [승인]</span></div>
+							  </c:if>
+							  <c:if test="${lvo.logstatus == '2'}">
+							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [반려]</span></div>
+							  </c:if>
+						  
+						</c:forEach>
+					</c:if>
+					<c:if test="${empty requestScope.alogList}">
+					  <div> 결재 로그가 존재하지 않습니다. </div>
+					</c:if>
+				</td>
+			</tr>
+		</table>
+		<table class="log">
+			<tr>
+				<th style="width:20%;">결재의견</th>
+				<td>
+					<c:if test="${not empty requestScope.opinionList}">
+						<c:forEach var="ovo" items="${requestScope.opinionList}">
+						  <div>${ovo.dname}&nbsp;${ovo.name}&nbsp;${ovo.pname}<span>[</span>${ovo.odate}<span>]</span></div>
+						  <div>${ovo.ocontent}</div>
+						</c:forEach>
+					</c:if>
+					
+					<c:if test="${empty requestScope.opinionList}">
+					  <div> 의견이 존재하지 않습니다. </div>
+					</c:if>
+				</td>
+			</tr>
 		</table>
 		
-		<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/expApproval_Write.tw'" >취소</button>
-    	<button type="button" id="insertWrite" >제출하기</button>
-    	<button type="button" id="saveWrite" >저장하기</button>
 	</div>
-</div>
-</div>
 
+  
+	<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/expApproval_List.tw'" >전체목록보기</button>
+     <button type="button" onclick="javascript:location.href='<%=ctxPath %>/${requestScope.gobackURL}'" >검색결과목록보기</button>
 
-</form>
+</div>
 		

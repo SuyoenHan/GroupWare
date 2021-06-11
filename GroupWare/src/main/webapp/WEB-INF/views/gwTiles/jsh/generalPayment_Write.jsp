@@ -408,7 +408,6 @@ hr.hr{
 			<tr>
 				<th style="height:350px;">글내용</th>
 				<td id="smarteditor"> 
-				<%--   <textarea rows="30" cols="160" name="acontent" id="acontent"></textarea> --%>
 				</td>
 			</tr>
 			
