@@ -217,4 +217,52 @@
 		from tbl_product
    </select>
    
+   
+   <!-- 이용자의 1주일치 날짜 가져오기 -->
+   
+   <resultMap type="HashMap" id="weekMap">
+   		<result property="pday"        column="pday"       javaType="String" /> 
+		<result property="ppday"       column="ppday"      javaType="String" />
+		<result property="pppday"      column="pppday"     javaType="String" />
+   		<result property="ppppday"     column="ppppday"    javaType="String" />
+   		<result property="pppppday"    column="pppppday"   javaType="String" />
+   		<result property="ppppppday"   column="ppppppday"  javaType="String" />
+   		<result property="pppppppday"  column="pppppppday" javaType="String" />
+   </resultMap>
+   
+   <select id="selectWeekDay" parameterType="String" resultMap="weekMap">
+   	   select to_char(to_date(#{today},'yyyy-mm-dd')-1,'yyyy-mm-dd') as pday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-2,'yyyy-mm-dd') as ppday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-3,'yyyy-mm-dd') as pppday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-4,'yyyy-mm-dd') as ppppday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-5,'yyyy-mm-dd') as pppppday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-6,'yyyy-mm-dd') as ppppppday,
+       		  to_char(to_date(#{today},'yyyy-mm-dd')-7,'yyyy-mm-dd') as pppppppday
+	   from dual
+   </select>
+   
+   
+   
+   <!-- 이용자의 1주일치 근로시간 가지고오기 -->
+   <resultMap type="HashMap" id="hourListMap">
+		<result property="intime"       column="intime"     javaType="String" />
+		<result property="outtime"      column="outtime"    javaType="String" />
+   </resultMap>
+   
+   <select id="selecthourMap" parameterType="HashMap" resultMap="hourListMap">
+   		select 
+        	  to_char(intime,'hh24:mi:ss') as intime,
+        	  to_char(outtime,'hh24:mi:ss') as outtime
+		from tbl_inout
+		where fk_employeeid = #{fk_employeeid} and to_char(gooutdate,'yyyy-mm-dd') = #{doneDay}
+   </select>
+   
+   
+   <!-- word-cloud 차트를 위해 데이터 뽑아오기 -->
+   <select id="selectWordList" resultType="String">
+   		select searchword
+		from tbl_word
+   </select>
+   
+
 </mapper>

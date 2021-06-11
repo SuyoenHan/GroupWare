@@ -94,11 +94,11 @@
 </script>
 
 
-<div id="indolenceMenu" style="margin-left:610px; margin-top:30px; font-size:20pt; font-weight:bolder;">
+<div id="indolenceMenu" style="margin-left:800px; margin-top:30px; font-size:20pt; font-weight:bolder;">
 	<span>T1여행사의 상품일정</span>
 </div>
 
 
 
-<div id="calendar" style="width:70%; margin-left:100px; margin-top:50px;">
+<div id="calendar" style="width:80%; margin-left:200px; margin-top:50px;">
 </div>
