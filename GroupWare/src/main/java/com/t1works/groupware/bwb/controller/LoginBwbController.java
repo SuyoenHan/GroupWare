@@ -114,7 +114,6 @@ public class LoginBwbController {
             // word-cloud 차트를 위해 데이터 뽑아오기
         	List<String> wordList = service.selectWordList();
         	String word = "";
-
         	
         	for(int i=0; i<wordList.size(); i++) {
 
@@ -125,6 +124,7 @@ public class LoginBwbController {
         			word+=wordList.get(i);
         		}
         	}// end of for ---
+        	
         	
         	mav.addObject("word", word);
         	

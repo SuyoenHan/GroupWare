@@ -266,7 +266,39 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 	@Override
 	public List<String> selectWordList() {
 		List<String> wordList = sqlsession.selectList("memberBwb.selectWordList");
+		
 		return wordList;
+	}
+
+	
+	// 검색어 입력 시 자동검색기능(ajax처리)
+	@Override
+	public List<String> wordSearch(String searchWord) {
+		
+		List<String> wordList = sqlsession.selectList("memberBwb.wordSearch", searchWord);
+		return wordList;
+	}
+
+	// 검색어 입력 후 URL주소 뽑아오기
+	@Override
+	public String goSebuMenu(String searchWord) {
+		String sebuAddress = sqlsession.selectOne("memberBwb.goSebuMenu", searchWord);
+		return sebuAddress;
+	}
+
+	
+	// 해당 검색어 tbl_word에 insert시켜주기
+	@Override
+	public void insertWord(String searchWord) {
+		sqlsession.insert("memberBwb.insertWord", searchWord);
+	}
+
+	
+	// 고객여행일정 가지고오기
+	@Override
+	public List<Map<String, String>> selectScheduleList(String clientname) {
+		List<Map<String, String>> scheduleList = sqlsession.selectList("memberBwb.selectScheduleList", clientname);
+		return scheduleList;
 	}
 	
 	

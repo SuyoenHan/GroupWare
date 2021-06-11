@@ -500,7 +500,7 @@ public class MemberBwbController {
 	}
 	
 	
-	// CS팀장 로그인시 업무관리 => 나의업무현황 => 미배정업무 보여주기
+	// CS부장 로그인시 업무관리 => 나의업무현황 => 미배정업무 보여주기
 	@RequestMapping(value="/t1/leaderTodo.tw")
 	public ModelAndView requiredLogin_leaderTodo_1(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		

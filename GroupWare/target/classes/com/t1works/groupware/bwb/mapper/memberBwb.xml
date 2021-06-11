@@ -264,5 +264,43 @@
 		from tbl_word
    </select>
    
-
+   <select id="wordSearch" resultType="String">
+   		select sebuName
+		from   tbl_sebuMenu
+		where  sebuName like '%'||#{searchword}||'%'
+   </select>
+   
+   <!-- 검색어 입력 후 URL주소 뽑아오기 -->
+   <select id="goSebuMenu" parameterType="String" resultType="String">
+   		select sebuAddress
+		from tbl_sebuMenu
+		where sebuName = #{searchWord}
+   </select>
+	
+	
+   <!-- 해당 검색어 tbl_word에 insert시켜주기 -->
+   <insert id="insertWord" parameterType="String">
+   		insert into tbl_word(seq,searchword)
+	    values(tbl_word_seq.nextval,#{searchWord})
+   </insert>
+   
+   <!-- 고객 여행일정 가지고 오기 -->
+   
+   <resultMap type="HashMap" id="scheduleMap">
+   		<result property="pname"         column="pname"       javaType="String" />
+   		<result property="cnumber"       column="cnumber"     javaType="String" />
+   		<result property="clientname"    column="clientname"  javaType="String" />
+   		<result property="startdate"     column="startdate"   javaType="String" />
+   		<result property="enddate"       column="enddate"     javaType="String" />
+   		<result property="price"         column="price"       javaType="String" />
+   </resultMap>
+   
+   <select id="selectScheduleList" parameterType="String" resultMap="scheduleMap">
+   		select pname, cnumber, clientname, to_char(startdate,'yyyy-mm-dd') as startdate,
+        to_char(enddate,'yyyy-mm-dd') as enddate, (to_number(price)*to_number(cnumber)) as price
+		from tbl_client C
+		join tbl_product P
+		on C.fk_pno = P.pno
+		where clientname =#{clientname} and startdate > sysdate
+   </select>	
 </mapper>

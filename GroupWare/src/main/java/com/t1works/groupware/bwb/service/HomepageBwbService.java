@@ -319,5 +319,103 @@ public class HomepageBwbService implements InterHomepageBwbService {
 	}
 
 
+	// 검색어 입력 시 자동검색기능(ajax처리)
+	@Override
+	public List<String> wordSearch(Map<String, String> paraMap) {
+		
+		String pcode= paraMap.get("pcode");
+		String dcode= paraMap.get("dcode");
+		String searchWord = paraMap.get("searchWord");
+		List<String> wordList = dao.wordSearch(searchWord);
+		
+		
+		if("1".equalsIgnoreCase(pcode)||"2".equalsIgnoreCase(pcode)) { // 사원 + 대리
+			
+			// 부서업무현황, 부서실적현황, 부서별 실적현황,회사실적현황,인사관리,대여관리,신입사원등록 제거
+			wordList.remove("부서업무현황");
+			wordList.remove("부서실적현황");
+			wordList.remove("부서별 실적현황");
+			wordList.remove("회사실적현황");
+			wordList.remove("인사관리");
+			wordList.remove("신입사원등록");
+			wordList.remove("대여관리");
+			
+			if("4".equalsIgnoreCase(dcode)||"5".equalsIgnoreCase(dcode)) { // 총무팀,인사팀인경우
+				// 나의업무현황,나의실적현황 제거
+				wordList.remove("나의업무현황");
+				wordList.remove("나의실적현황");
+			}
+			
+		}
+		else if("3".equalsIgnoreCase(pcode)) { // 부장로그인 시
+			
+			// 부서별 실적현황, 회사실적현황,나의실적현황,인사관리,대여관리,신입사원등록 제거
+			
+			wordList.remove("부서별 실적현황");
+			wordList.remove("회사실적현황");
+			wordList.remove("나의실적현황");
+			wordList.remove("인사관리");
+			wordList.remove("대여관리");
+			wordList.remove("신입사원등록");
+			
+			if("4".equalsIgnoreCase(dcode)) {
+				wordList.add("인사관리");
+				wordList.add("신입사원등록");
+			}
+			else if("5".equalsIgnoreCase(dcode)) {
+				wordList.add("대여관리");
+			}
+			
+		}
+		else {
+			
+			// 나의업무현황, 부서업무현황, 부서실적현황, 대여관리, 인사관리, 신입사원등록, 나의업무현황,나의실적현황
+			wordList.remove("나의업무현황");
+			wordList.remove("부서업무현황");
+			wordList.remove("부서실적현황");
+			wordList.remove("대여관리");
+			wordList.remove("인사관리");
+			wordList.remove("신입사원등록");
+			wordList.remove("나의실적현황");
+		}
+		
+		
+		return wordList;
+	}
+
+
+	// 검색어 입력 후 URL주소 뽑아오기
+	@Override
+	public String goSebuMenu(Map<String, String> paraMap) {
+		
+		String pcode= paraMap.get("pcode");
+		String searchWord = paraMap.get("searchWord"); // cs부장
+		
+		String sebuAddress = dao.goSebuMenu(searchWord);
+		
+		// cs부장이 로그인을 했을 경우
+		if("3".equalsIgnoreCase(pcode)&&searchWord.equalsIgnoreCase("나의업무현황")) {
+			sebuAddress = "/t1/leaderTodo.tw";
+		}
+		
+		return sebuAddress;
+	}
+
+
+	// 해당 검색어 tbl_word에 insert시켜주기
+	@Override
+	public void insertWord(String searchWord) {
+		dao.insertWord(searchWord);
+	}
+
+
+	// 고객여행일정 가지고오기
+	@Override
+	public List<Map<String, String>> selectScheduleList(String clientname) {
+		List<Map<String, String>> scheduleList = dao.selectScheduleList(clientname);
+		return scheduleList;
+	}
+
+
    
 }

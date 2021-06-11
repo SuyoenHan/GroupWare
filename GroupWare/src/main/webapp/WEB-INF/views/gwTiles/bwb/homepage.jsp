@@ -216,6 +216,7 @@
 	.highcharts-data-table tr:hover {
 	    background: #f1f7ff;
 	}
+
 	<%-- word cloud 백원빈 끝 --%>
 	
 </style>
@@ -248,7 +249,6 @@
       
       // 시계 보여주기
       func_loopDate();
-      
       
       $("div#vacation").hide();
       
@@ -588,6 +588,7 @@
     	
         <%-- 백원빈 word-cloud 작업 시작 --%>
         var text = '${word}';
+        console.log("${word}");
         var lines = text.split(/[,\. ]+/g),
             data = Highcharts.reduce(lines, function (arr, word) {
                 var obj = Highcharts.find(arr, function (obj) {
@@ -620,7 +621,7 @@
                 name: 'Occurrences'
             }],
             title: {
-                text: 'T1works 검색어 현황'
+                text: '<span style=font-size:10pt;>T1works 검색어 현황</span>'
             }
         });
         	
@@ -697,7 +698,7 @@
 
       }
    
-      var today = year+"-"+month+"-"+date+" "+dayName+" "+hours+":"+minutes+":"+seconds;
+      var today = year+"-"+month+"-"+date+"&nbsp;&nbsp;&nbsp;"+dayName+"&nbsp;&nbsp;&nbsp;"+hours+":"+minutes+":"+seconds;
       
       return today;
    }// end of function func_currentDate(){
@@ -811,18 +812,20 @@
      <div id="indolence">
         <div style="margin-top:10px; margin-left:7px;">출퇴근시간</div>
         <div id="buttonDiv" style="margin-top:15px; border:solid 1px black; height:50px; font-size:16pt; padding-top:10px;">
-	        <span id="intimeButton" style="background-color: #cce6ff;">출근</span> <span id="intime" style="margin-right:60px; font-size:12pt;"></span>
+	        <span id="intimeButton" style="background-color: #cce6ff; margin-left:15px;">출근</span> <span id="intime" style="margin-right:60px; font-size:12pt;"></span>
 	        <span id="outtimeButton" style="background-color: #cce6ff;">퇴근</span> <span id="outtime" style="font-size:12pt;"></span>
         </div>
-        <div style="margin-top:20px; border-top:solid 1px black;">
+        <div style="margin-top:20px; border-top:solid 1px black; border-bottom:solid 1px black; padding-top:10px;">
            <span style="margin-left:15px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
            <c:if test="${loginuser.fk_pcode eq 3}">
             <span style="margin-left:65px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
            </c:if>
         </div>
+        <%-- word-cloud 차트  시작(백원빈) --%>
        	<figure class="highcharts-figure">
-    	<div id="container2" style="width:330px; height:300px; overflow:hidden;"></div>
+    	<div id="container2" style="width:360px; height:330px; overflow:hidden;"></div>
 		</figure>
+		<%-- word-cloud 차트 끝(백원빈) --%>
      </div>
      <div id="vacation" style="margin-top:5px;">
      	<ul id="vacationUl">
@@ -837,7 +840,7 @@
   
   
   
-  <%-- =================== 백원빈 내통계+word-cloud 시작 =================== --%>
+  <%-- =================== 백원빈 내통계 시작 =================== --%>
   <div id="myStatic" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 450px; height: 280px; ">
   	<figure class="highcharts-figure">
     <div id="container" style="height:250px"></div>
@@ -859,7 +862,7 @@
 	</figure>
 
   </div>
-  <%-- =================== 백원빈 내통계+word-cloud 끝 =================== --%>
+  <%-- =================== 백원빈 내통계 끝 =================== --%>
   
   
   <%-- =================== 한수연 시작 =================== --%>

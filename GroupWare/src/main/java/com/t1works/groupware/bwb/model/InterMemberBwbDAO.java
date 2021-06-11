@@ -95,6 +95,18 @@ public interface InterMemberBwbDAO {
 	
 	// word-cloud 차트를 위해 데이터 뽑아오기
 	List<String> selectWordList();
+	
+	// 검색어 입력 시 자동검색기능(ajax처리)
+	List<String> wordSearch(String searchWord);
+	
+	// 검색어 입력 후 URL주소 뽑아오기
+	String goSebuMenu(String searchWord);
+	
+	// 해당 검색어 tbl_word에 insert시켜주기
+	void insertWord(String searchWord);
+	
+	// 고객여행일정 가지고오기
+	List<Map<String, String>> selectScheduleList(String clientname);
 
 
 }
