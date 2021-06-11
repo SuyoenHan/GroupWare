@@ -97,6 +97,10 @@
       font-size:12pt;
   }
   
+  span.sebuInfo{
+  	display:inline-block;
+  }
+  
   span.sebuInfo:hover{
   	  cursor:pointer;
   	  color:blue;
@@ -129,6 +133,91 @@
   
   <%-- quickMenu css 한수연 끝 --%>
   
+  <%-- 내통계 css 백원빈 시작 --%>
+	#container {
+	    height: 400px;
+	}
+	
+	.highcharts-figure, .highcharts-data-table table {
+	    min-width: 310px;
+	    max-width: 800px;
+	    margin: 1em auto;
+	}
+	
+	#datatable {
+	    font-family: Verdana, sans-serif;
+	    border-collapse: collapse;
+	    border: 1px solid #EBEBEB;
+	    margin: 10px auto;
+	    text-align: center;
+	    width: 100%;
+	    max-width: 500px;
+	}
+	#datatable caption {
+	    padding: 1em 0;
+	    font-size: 1.2em;
+	    color: #555;
+	}
+	#datatable th {
+		font-weight: 600;
+	    padding: 0.5em;
+	}
+	#datatable td, #datatable th, #datatable caption {
+	    padding: 0.5em;
+	}
+	#datatable thead tr, #datatable tr:nth-child(even) {
+	    background: #f8f8f8;
+	}
+	#datatable tr:hover {
+	    background: #f1f7ff;
+	}
+    
+    span#spanData{
+    	background-color:#b3ecff;
+    }
+    
+    ul#vacationUl li{
+    	line-height: 40px;
+    	font-size:12pt;
+    }
+  <%-- 내통계 css 백원빈 끝 --%>
+  
+  <%-- word cloud 백원빈 시작 --%>
+  .highcharts-figure, .highcharts-data-table table {
+    min-width: 320px; 
+    max-width: 800px;
+    margin: 1em auto;
+	}
+	
+	.highcharts-data-table table {
+		font-family: Verdana, sans-serif;
+		border-collapse: collapse;
+		border: 1px solid #EBEBEB;
+		margin: 10px auto;
+		text-align: center;
+		width: 100%;
+		max-width: 500px;
+	}
+	.highcharts-data-table caption {
+	    padding: 1em 0;
+	    font-size: 1.2em;
+	    color: #555;
+	}
+	.highcharts-data-table th {
+		font-weight: 600;
+	    padding: 0.5em;
+	}
+	.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+	    padding: 0.5em;
+	}
+	.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+	    background: #f8f8f8;
+	}
+	.highcharts-data-table tr:hover {
+	    background: #f1f7ff;
+	}
+	<%-- word cloud 백원빈 끝 --%>
+	
 </style>
 
 <!-- full calendar에 관련된 script -->
@@ -139,7 +228,18 @@
 
 <!-- 퀵메뉴에 쓰이는 차트 script -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<%-- 내통계에 쓰이는 차트 script --%>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
  
+<%-- word Cloud 차트 script --%>
+<script src="https://code.highcharts.com/modules/wordcloud.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+
 <script type="text/javascript">
    $(document).ready(function(){
       
@@ -456,8 +556,76 @@
          
         <%-- 퀵메뉴에 쓰이는 차트 script 끝 한수연 ---%> 
     	 
-    	  
-    	  
+    	<%-- 백원빈 내통계 작업시작 --%>
+    	$("table#datatable").hide();
+	
+        Highcharts.chart('container', {
+            data: {
+                table: 'datatable'
+            },
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '<div style=color:red;><span id=spanData style=font-size:10pt;>내 근로시간 : 주 ${totalhour}/52시간</span></div>'
+            },
+            yAxis: {
+                allowDecimals: false,
+                title: {
+                    text: '시간'
+                },
+                max:14,
+                min:0
+            },
+            tooltip: {
+                formatter: function () {
+                    return '<b></b><br/>' +
+                        this.point.y + '시간 ';
+                }
+            }
+        });
+        <%-- 백원빈 내통계 작업 끝 --%>
+    	
+        <%-- 백원빈 word-cloud 작업 시작 --%>
+        var text = '${word}';
+        var lines = text.split(/[,\. ]+/g),
+            data = Highcharts.reduce(lines, function (arr, word) {
+                var obj = Highcharts.find(arr, function (obj) {
+                    return obj.name === word;
+                });
+                if (obj) {
+                    obj.weight += 1;
+                } else {
+                    obj = {
+                        name: word,
+                        weight: 1
+                    };
+                    arr.push(obj);
+                }
+                return arr;
+            }, []);
+
+        Highcharts.chart('container2', {
+            accessibility: {
+                screenReaderSection: {
+                    beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                        '<div>{chartSubtitle}</div>' +
+                        '<div>{chartLongdesc}</div>' +
+                        '<div>{viewTableButton}</div>'
+                }
+            },
+            series: [{
+                type: 'wordcloud',
+                data: data,
+                name: 'Occurrences'
+            }],
+            title: {
+                text: 'T1works 검색어 현황'
+            }
+        });
+        	
+        <%-- 백원빈 word-cloud 작업 끝 --%>
+        
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -598,8 +766,8 @@
 <div id="content" style="width: 1580px;">
   
   <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
-  	 <img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:90px; height:90px; margin-left:80px;">
-     <div id="nameDep" style="border-bottom:solid 1px black; text-align:center; margin-top:10px;">
+  	 <div style="padding-left:130px;"><img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:120px; height:120px;"></div>
+     <div id="nameDep" style="border-bottom:solid 1px black; text-align:center; margin-top:10px; margin-bottom:10px;">
      <span id="name">${loginuser.name}
        <c:if test="${loginuser.fk_pcode eq 1}">
             사원님
@@ -632,31 +800,33 @@
        </c:if>
      </span>
      </div>
-     <div id="loginIp" style="font-size:10pt; text-align:center; margin-top:3px;">
-        IP:${loginip}
+     <div id="loginIp" style="font-size:10pt; text-align:center; margin-top:10px;">
+        	접속IP : ${loginip}
      </div>
-     <div id="timer" style="text-align:center;"></div>
-     <div id="sebuMenu" style="text-align:center; border-bottom:solid 1px black; border-top:solid 1px black;">
-	     <span id="indolenceInfo" class="sebuInfo" style="border-bottom:solid 1px black; font-size:13pt">근태정보</span>
-	     <span id="vacationInfo" class="sebuInfo" style="border-bottom:solid 1px black; font-size:13pt;">휴가정보</span>
+     <div id="timer" style="text-align:center; margin-top:15px;"></div>
+     <div id="sebuMenu" style="border-bottom:solid 1px black; border-top:solid 1px black; height:50px; margin-top:20px; padding-top:10px;">
+	     <span id="indolenceInfo" style="border-bottom:solid 1px black; font-size:15pt; margin-right:90px; margin-left:15px; ">근태정보</span>
+	     <span id="vacationInfo"  style="border-bottom:solid 1px black; font-size:15pt;">휴가정보</span>
      </div>
      <div id="indolence">
-        <div style="margin-top:5px; text-align:center;">출퇴근시간</div>
-        <div id="buttonDiv" style="text-align:center; margin-top:5px;">
-        <span id="intimeButton" class="sebuInfo">출근</span> <span id="intime"></span>
-        <span id="outtimeButton" class="sebuInfo">퇴근</span> <span id="outtime"></span>
+        <div style="margin-top:10px; margin-left:7px;">출퇴근시간</div>
+        <div id="buttonDiv" style="margin-top:15px; border:solid 1px black; height:50px; font-size:16pt; padding-top:10px;">
+	        <span id="intimeButton" style="background-color: #cce6ff;">출근</span> <span id="intime" style="margin-right:60px; font-size:12pt;"></span>
+	        <span id="outtimeButton" style="background-color: #cce6ff;">퇴근</span> <span id="outtime" style="font-size:12pt;"></span>
         </div>
-        <div style="margin-top:10px; border-top:solid 1px black; text-align:center;">
-           <span onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
+        <div style="margin-top:20px; border-top:solid 1px black;">
+           <span style="margin-left:15px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
            <c:if test="${loginuser.fk_pcode eq 3}">
-            <span onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
+            <span style="margin-left:65px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
            </c:if>
         </div>
-        
+       	<figure class="highcharts-figure">
+    	<div id="container2" style="width:330px; height:300px; overflow:hidden;"></div>
+		</figure>
      </div>
      <div id="vacation" style="margin-top:5px;">
-     	<ul>
-     		<li>입사일자 : ${fn:substring(loginuser.hiredate,0,10)}</li>
+     	<ul id="vacationUl">
+     		<li>입사일자 : ${fn:substring(loginuser.hiredate,0,4)}년 ${fn:substring(loginuser.hiredate,5,7)}월 ${fn:substring(loginuser.hiredate,8,10)}일</li>
      		<li>총 연차일수 : ${offMap.totalOffCnt}일</li>
      		<li>사용 연차 일수 : ${offMap.useOffCnt}일</li>
      		<li>남은 연차 일수 : ${offMap.leftOffCnt}일</li>
@@ -667,11 +837,29 @@
   
   
   
-  <%-- =================== 백원빈 시작 =================== --%>
+  <%-- =================== 백원빈 내통계+word-cloud 시작 =================== --%>
   <div id="myStatic" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 450px; height: 280px; ">
-  	백원빈 파트 (내통계)
+  	<figure class="highcharts-figure">
+    <div id="container" style="height:250px"></div>
+
+    <table id="datatable">
+        <tbody>
+            <tr>
+                <th></th>
+                <td>근무시간</td>
+            </tr>
+            <c:forEach var="hourMap" items="${hourList}">
+            	<tr>
+	                <th>${hourMap.gooutdate}</th>
+	                <td>${hourMap.doneHour}</td>
+           		</tr>	
+            </c:forEach>  
+        </tbody>
+	    </table>
+	</figure>
+
   </div>
-  <%-- =================== 백원빈 시작 =================== --%>
+  <%-- =================== 백원빈 내통계+word-cloud 끝 =================== --%>
   
   
   <%-- =================== 한수연 시작 =================== --%>

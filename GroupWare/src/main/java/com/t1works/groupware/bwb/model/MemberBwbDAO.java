@@ -244,6 +244,30 @@ public class MemberBwbDAO implements InterMemberBwbDAO {
 		List<Map<String, String>> productList = sqlsession.selectList("memberBwb.productSchedule");
 		return productList;
 	}
+
+	
+	// 이용자의 최근1주일 근로시간 가지고오기
+	@Override
+	public Map<String, String> selecthourMap(Map<String, String> searchMap) {
+		
+		Map<String, String> hourMap = sqlsession.selectOne("memberBwb.selecthourMap", searchMap);
+		return hourMap;
+	}
+	
+	
+	// 일주일치 날짜 가지고오기
+	@Override
+	public Map<String, String> selectWeekDay(String today) {
+		Map<String, String> weekMap = sqlsession.selectOne("memberBwb.selectWeekDay", today);
+		return weekMap;
+	}
+
+	// word-cloud 차트를 위해 데이터 뽑아오기
+	@Override
+	public List<String> selectWordList() {
+		List<String> wordList = sqlsession.selectList("memberBwb.selectWordList");
+		return wordList;
+	}
 	
 	
    

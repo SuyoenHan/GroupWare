@@ -2,6 +2,7 @@ package com.t1works.groupware.bwb.service;
 
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -220,5 +221,103 @@ public class HomepageBwbService implements InterHomepageBwbService {
 		List<Map<String, String>> productList = dao.productSchedule();
 		return productList;
 	}
+
+
+	// 이용자의 최근1주일 근로시간 가지고오기
+	@Override
+	public Map<String, String> selecthourMap(Map<String, String> searchMap) {
+		
+		Map<String, String> hourMap = dao.selecthourMap(searchMap);
+		
+		// 넘어온 Map파라미터에서 날짜 뽑아와서 format후 다시 또 새로운 MAP에 넣어주기
+		String gooutdate = searchMap.get("doneDay"); // 2021-05-05
+		String mm = gooutdate.substring(5, 7);
+		String dd = gooutdate.substring(8);
+		gooutdate = mm+"월"+dd+"일";
+		
+		String doneHour=""; // 근무시간
+		
+		if(hourMap==null) {
+			hourMap = new HashMap<>();
+			doneHour="0";
+			hourMap.put("doneHour", doneHour);
+			hourMap.put("gooutdate", gooutdate);
+		}
+		else {
+			String intime = hourMap.get("intime");
+			String outtime = hourMap.get("outtime");
+			
+			hourMap.put("gooutdate", gooutdate);
+			
+    		int intimeHH = Integer.parseInt(intime.substring(0, 2)); // 09
+    		int intimeMM = Integer.parseInt(intime.substring(3, 5)); // 15
+    		
+    		int outtimeHH = Integer.parseInt(outtime.substring(0, 2));
+    		int outtimeMM = Integer.parseInt(outtime.substring(3, 5));
+    		
+    		
+    		if(outtimeMM>=intimeMM) { // 09:15 ~ 17:30
+    			doneHour = String.valueOf(outtimeHH-intimeHH);
+    		}
+    		else {// 09:15 ~ 17:05
+    			doneHour = String.valueOf(outtimeHH-intimeHH-1);
+    		}
+			
+    		hourMap.put("doneHour", doneHour);
+		}
+		
+		
+		return hourMap;
+
+		
+		/*
+    	for(Map<String,String> resultMap:hourList) {
+    		
+
+    		String intime = resultMap.get("intime"); // 09:15
+    		int intimeHH = Integer.parseInt(intime.substring(0, 2)); // 09
+    		int intimeMM = Integer.parseInt(intime.substring(3, 5)); // 15
+    		
+    		String outtime = resultMap.get("outtime");
+    		int outtimeHH = Integer.parseInt(outtime.substring(0, 2));
+    		int outtimeMM = Integer.parseInt(outtime.substring(3, 5));
+    		
+    		String doneHour="";
+    		if(outtimeMM>intimeMM) { // 09:15 ~ 17:30
+    			doneHour = String.valueOf(outtimeHH-intimeHH);
+    			totalhour += outtimeHH-intimeHH;
+    			resultMap.put("totalhour", String.valueOf(totalhour));
+    		}
+    		else {// 09:15 ~ 17:05
+    			doneHour = String.valueOf(outtimeHH-intimeHH-1);
+    			totalhour += outtimeHH-intimeHH;
+    			resultMap.put("totalhour", String.valueOf(totalhour));
+    		}
+	
+    		resultMap.put("doneHour", doneHour);
+    	}
+    	*/
+		
+	} // end of 
+
+
+	 // 일주일치 날짜 가지고오기
+	@Override
+	public Map<String, String> selectWeekDay(String today) {
+		
+		Map<String, String> weekMap = dao.selectWeekDay(today);
+		return weekMap;
+	}
+
+
+	// word-cloud 차트를 위해 데이터 뽑아오기
+	@Override
+	public List<String> selectWordList() {
+		
+		List<String> wordList = dao.selectWordList();
+		return wordList;
+	}
+
+
    
 }
