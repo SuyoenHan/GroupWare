@@ -61,6 +61,8 @@ public interface InterEmailKdnService {
 	int markAsReadSentMail(List<String> emailSeqList); // 보낸메일함 메일 읽음으로 변경
 
 	int emptyTrash(String email); // 휴지통 비우기
+
+	// int getPreviousMail(); // 회신한 이전 메일 가져오기
 	
 	
 

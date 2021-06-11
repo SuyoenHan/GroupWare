@@ -110,9 +110,7 @@
 		        <if test='searchWord != ""'>
 					and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 				</if>
-		        start with parentSeq = 0
-		        connect by prior seq = parentSeq
-		        order siblings by groupno desc, seq asc
+				order by sendingdate desc
 		    ) V
 		) T
 		where rno between #{startRno} and #{endRno}

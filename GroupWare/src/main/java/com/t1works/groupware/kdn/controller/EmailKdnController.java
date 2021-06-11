@@ -64,17 +64,24 @@ public class EmailKdnController {
 	@RequestMapping(value="/t1/new_mail.tw")
 	public ModelAndView requiredLogin_new_Email(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		
-		String receiverEmail = request.getParameter("receiverEmail");
-		mav.addObject("receiverEmail", receiverEmail);
+		// 주소록에서 메일 넘겨받은 경우
+		//String addrsBookEmail = request.getParameter("addrsBookEmail");
+		//mav.addObject("addrsBookEmail", addrsBookEmail);
 		
-		// === #142. 답변글쓰기가 추가된 경우 ===
+		// === 회신메일쓰기용 ===
+		String replyEmail = request.getParameter("replyEmail");
+		String replyToName = request.getParameter("replyToName");
 		String parentSeq = request.getParameter("parentSeq");
 		String groupno = request.getParameter("groupno");
 		String depthno = request.getParameter("depthno");
+		String subject = request.getParameter("subject");
 		
+		mav.addObject("replyEmail", replyEmail);
 		mav.addObject("parentSeq", parentSeq);
 		mav.addObject("groupno", groupno);
 		mav.addObject("depthno", depthno);
+		mav.addObject("subject", subject);
+		mav.addObject("replyToName", replyToName);
 		
 		// 이메일주소 자동완성을 위한 주소록 가져오기
 		List<String> emailList = service.getEmailList();
@@ -294,6 +301,7 @@ public class EmailKdnController {
 		// 조회하고자 하는 글번호 받아오기
 		String seq = request.getParameter("seq");
 		
+		
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
 		
@@ -325,6 +333,15 @@ public class EmailKdnController {
 			gobackURL = gobackURL.replaceAll(" ", "&");
 		}
 		mav.addObject("gobackURL", gobackURL);
+		
+		// 회신한 이전 메일 상세 가져오기
+		
+		// String parentSeq = request.getParameter("parentSeq");
+		
+		// int m = service.getPreviousMail();
+		
+		
+		
 		
 		
 		try {
