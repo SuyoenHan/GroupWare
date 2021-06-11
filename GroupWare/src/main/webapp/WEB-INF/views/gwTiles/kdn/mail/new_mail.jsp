@@ -55,13 +55,32 @@ span.to-input {
 $(document).ready(function(){
 	
 	// 주소록 페이지에서 받는사람 이메일 주소 넘겨받은경우
+	var arrReceiverEmail = [];
+	/*
 	var preInputEmail = "${requestScope.receiverEmail}";
 	console.log(preInputEmail);
 	if(preInputEmail != null && preInputEmail != ""){
-		console.log ('주소록에서 이메일 가져왓다');
+		// alert ('주소록에서 이메일 가져왓다');
 	  $('#receiver').append('<span class="email-ids">'+ preInputEmail +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
-	  $('#receiver-email').append('<input type="text" name="receiverEmail" value="'+preInputEmail+'" />');
-	}	
+	  arrReceiverEmail.push(preInputEmail);
+	  console.log("주소록에서 메일받아온 후 배열:"+arrReceiverEmail);
+	}
+	*/
+	
+	// 회신메일 쓰는 경우
+	var replySubject = "${requestScope.subject}";
+	// console.log("회신용 메일제목: "+replySubject);
+	var preInputRplEmail = "${requestScope.replyEmail}";
+	var preInputRplName = "${requestScope.replyToName}";
+	if(replySubject != null && replySubject != ""){
+		alert ('회신메일 페이지입니다');
+		$('#receiver').append('<span class="email-ids">'+preInputRplName+'&lt;'+preInputRplEmail+'&gt;'+' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+		console.log('회신메일 preinput Email : '+preInputRplEmail);
+		$("input#subject").val("RE: "+replySubject);
+		arrReceiverEmail.push(preInputRplEmail);		
+		console.log("회신이메일 넣은 배열 값: "+arrReceiverEmail);
+	}
+	
 	
 	//보낸메일함 저장여부
     $("input[name=saveSentMail]").val("0");
@@ -83,7 +102,7 @@ $(document).ready(function(){
     });
  	
  	// 받는사람 이메일 입력
- 	var arrReceiverEmail = [];
+ 	
     $("#to-input").keydown(function (e) {
    	  if (e.keyCode == 13 || e.keyCode == 32) {
    		 var getValue = $(this).val();
@@ -200,14 +219,16 @@ $(document).ready(function(){
           alert("받는사람 이메일주소를 입력하세요");
           return;
        }
-    	   
-       var str_arrReceiverEmail = arrReceiverEmail.join();
+       
+       var str_arrReceiverEmail = arrReceiverEmail.join(',');
        console.log("str_arrReceiverEmail: "+str_arrReceiverEmail);
        
        if(arrCcEmail != null){
     	   var str_arrCcEmail = arrCcEmail.join();
 	       console.log("str_arrCcEmail: "+str_arrCcEmail);
        }
+       
+       
        
         // 글제목 유효성 검사
        var subjectVal = $("input#subject").val().trim();
