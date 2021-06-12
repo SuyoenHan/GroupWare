@@ -7,52 +7,81 @@
 
 <style>
 
-table, th, td {border: solid 1px gray;}
+div#radio{
+margin: 50px 50px;
+font-size: 16px;
+}
 
-#containerall{
-color:#666;
+h3{
+	font-weight:bold;
 }
+div#containerview{
+	margin: 30px 0px 30px 50px;
+	width: 80%;
+}
+div.section table, div.section th, div.section td{
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
+
 #table1 {
-    float:right; 
-    width: 300px; 
-    border-collapse: collapse;
-    margin-right: 200px;
-    margin-bottom: 80px;
+	float: right; 
+	width: 300px; 
+	border-collapse: collapse;
+	margin-right: 200px;
+	margin-bottom: 50px;
 }
-    
+
+#table1 th, #table1 td{
+	text-align: center;
+}
+#table1 th {
+	background-color: #395673; 
+	color: #ffffff;
+}
+#table2 th, #table3 th, #table4 th, #table5 th {
+	width: 150px;
+}
+
 th{
-    background-color: #DDD;
+	background-color: #ccd9e6;
+	padding: 7px;
+}
+td{
+	padding: 7px;
 }
 
 #table2 {
-	width: 80%;
-	height: 900px;
+	width: 70%;
 	margin: 50px auto;
 }
-
-.log {
-	width: 80%;
-	height: 100px;
-	margin: 50px auto;
+#table3 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table4 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table5 {
+	width: 70%;
+	margin: 10px auto;
+}
+input.btn {
+	width: 70px;
+	border-radius: 0;
+	font-weight: bold;
 }
 
-#radio{
-	width: 80%;
-	height: 150px;
-	margin-top:30px;
-	margin: 50px auto;
-	font-size: 20px;
-
+td.opinion{
+	border: solid 1px white;
 }
-
-
-hr.hr{
-   border: solid 2px gray;
-   width:80%;
+textarea{
+width:99%;
+height:350px;
 }
-
-#containerall{
-	padding:50px 50px;
+button.btn1:hover{
+ background-color: #c3c6c9;
 }
 </style>
 
@@ -73,7 +102,21 @@ hr.hr{
 			$("td#smarteditor").empty();
 			$("td#smarteditor").html('<textarea rows="30" cols="160" name="acontent" id="acontent"></textarea>');
 			
-			
+			//오늘날짜 알아오기
+		   	var date = new Date();
+		   	var year = date.getFullYear();
+		   	var month = date.getMonth()+1;
+		   	var day = date.getDay();
+		   	if(month <10){
+		   		month = '0'+month;
+		   	}
+		   	if(day <10){
+		   		day = '0'+day;
+		   	}
+		   	
+		   	
+		   	 var today = (year+"년 "+month+"월 "+day+"일");
+		     //	console.log(today);
 			 var scatname;
 			 var html1;
 			 var html2;
@@ -129,7 +172,7 @@ hr.hr{
 						  
 						  
 					html2+= "<th>카드번호</th>"+
-						    "<td colspan='3'><input type='hidden' name='cocardnum' value='[경영]111-222-333'/>[경영]111-222-333</td>";
+						    "<td colspan='3'><input type='hidden' name='cocardnum' value=' [경영] 111-222-333'/>[경영]111-222-333</td>";
 						  
 						  
 				    html3+= 
@@ -158,7 +201,11 @@ hr.hr{
 					$("tr#changeScat2").html(html2);
 					$("tr#changeScat3").html(html3);
 				}
-				$("h3#scat").html(scat);
+				
+				
+				$("div#today").html(today);
+				$("span#scat").html(scatname);
+				$("h3#scat").html(scatname);
 				$("div#containerview").show();
 				
 			}); //$("input[name=ncat]").click(function(){})------------------------------------
@@ -263,7 +310,7 @@ hr.hr{
 				}	
 				  else{
 					  alert(scatname+" 제출을 취소하셨습니다.");
-					  location.href="javascript:history.back()";
+					  location.href="<%=ctxPath %>/t1/expApproval_Write.tw";
 				  }
 		  });	// 문서제출 -----------------------------
 			
@@ -321,7 +368,7 @@ hr.hr{
 			  }
 			  else{
 				  alert(scatname+" 저장을 취소하셨습니다.");
-				  location.href="javascript:history.back()";
+				  location.href="<%=ctxPath %>/t1/expApproval_Write.tw";
 			  }
 		          
 		});	//임시보관함 ------------------------------------------
@@ -349,7 +396,7 @@ hr.hr{
 		<h3 id="scat" align="center"></h3>
 	<hr class="hr">
 	<br>
-	<div id="astatus" >
+	<div class="section" >
 		<table id="table1">
 		
 			<tr>
@@ -409,17 +456,32 @@ hr.hr{
 					<input type="file" name="attach"/>
 				</td>
 			</tr>
-			
-	
 		</table>
 		
-		<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/expApproval_Write.tw'" >취소</button>
-    	<button type="button" id="insertWrite" >제출하기</button>
-    	<button type="button" id="saveWrite" >저장하기</button>
-	</div>
-</div>
-</div>
+		<div align="center">상기와 같은 내용으로 <span id="scat" style="font-weight: bold;"></span>을(를) 제출하오니 재가바랍니다.</div>
+		<div align="right" id="today" style="margin: 4px 0; margin-right: 15%;">기안일:</div>
+		<div align="right" style="margin-right: 15%;">신청자: <span style="font-weight:bold;">${sessionScope.loginuser.name} </span> ${requestScope.write_view.pname} (${requestScope.write_view.dname})</div>
+		
+		
+		
+		
+		<div style="margin-top: 20px;">
+			<span style="margin-left: 15%">
+			    <button type="button"  class="btn btn1" onclick="javascript:location.href='<%=ctxPath %>/t1/expApproval_Write.tw'" >취소</button>
+				
+			</span>
+			<span style="margin-left: 55%;">
+				<button type="button" class="btn btn-primary" id="insertWrite" >제출하기</button>
+    			<button type="button" class="btn btn-danger" id="saveWrite" >저장하기</button>
+			</span>
+		</div>
+		
+		<br><br>
 
+     </div>
+  </div>
+ </div>
 
 </form>
+		
 		

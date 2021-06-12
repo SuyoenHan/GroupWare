@@ -558,7 +558,7 @@
     	 
     	<%-- 백원빈 내통계 작업시작 --%>
     	$("table#datatable").hide();
-	
+    	
         Highcharts.chart('container', {
             data: {
                 table: 'datatable'
@@ -584,6 +584,7 @@
                 }
             }
         });
+        
         <%-- 백원빈 내통계 작업 끝 --%>
     	
         <%-- 백원빈 word-cloud 작업 시작 --%>
@@ -624,7 +625,8 @@
                 text: '<span style=font-size:10pt;>T1works 검색어 현황</span>'
             }
         });
-        	
+        
+        
         <%-- 백원빈 word-cloud 작업 끝 --%>
         
    }); // end of $(document).ready(function(){
@@ -811,7 +813,7 @@
      </div>
      <div id="indolence">
         <div style="margin-top:10px; margin-left:7px;">출퇴근시간</div>
-        <div id="buttonDiv" style="margin-top:15px; border:solid 1px black; height:50px; font-size:16pt; padding-top:10px;">
+        <div id="buttonDiv" style="margin-top:15px; border-top:solid 1px black; border-bottom:solid 1px black; height:50px; font-size:16pt; padding-top:10px;">
 	        <span id="intimeButton" style="background-color: #cce6ff; margin-left:15px;">출근</span> <span id="intime" style="margin-right:60px; font-size:12pt;"></span>
 	        <span id="outtimeButton" style="background-color: #cce6ff;">퇴근</span> <span id="outtime" style="font-size:12pt;"></span>
         </div>
@@ -821,13 +823,9 @@
             <span style="margin-left:65px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
            </c:if>
         </div>
-        <%-- word-cloud 차트  시작(백원빈) --%>
-       	<figure class="highcharts-figure">
-    	<div id="container2" style="width:360px; height:330px; overflow:hidden;"></div>
-		</figure>
-		<%-- word-cloud 차트 끝(백원빈) --%>
+
      </div>
-     <div id="vacation" style="margin-top:5px;">
+     <div id="vacation" style="margin-top:5px; border-bottom:solid 1px black;">
      	<ul id="vacationUl">
      		<li>입사일자 : ${fn:substring(loginuser.hiredate,0,4)}년 ${fn:substring(loginuser.hiredate,5,7)}월 ${fn:substring(loginuser.hiredate,8,10)}일</li>
      		<li>총 연차일수 : ${offMap.totalOffCnt}일</li>
@@ -835,7 +833,11 @@
      		<li>남은 연차 일수 : ${offMap.leftOffCnt}일</li>
      	</ul>
      </div>
-     
+             <%-- word-cloud 차트  시작(백원빈) --%>
+       	<figure class="highcharts-figure">
+    	<div id="container2" style="width:360px; height:330px; overflow:hidden;"></div>
+		</figure>
+		<%-- word-cloud 차트 끝(백원빈) --%>
   </div><%-- end of div(myInfo) 백원빈 --%>
   
   
