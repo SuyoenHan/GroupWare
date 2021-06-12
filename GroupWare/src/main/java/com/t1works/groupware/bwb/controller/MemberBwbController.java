@@ -404,11 +404,21 @@ public class MemberBwbController {
 		String dcode = loginuser.getFk_dcode();
 		String pcode = loginuser.getFk_pcode();
 		
-		// 부서명 가져오기
-		String dname = service2.selectdname(dcode);
+		String dname="";
+		String duty =""; 
 		
-		// 직무 가져오기
-		String duty = service2.selectDuty(dname);
+		if(dcode==null) {
+			dcode="-";
+			dname="-";
+			duty="-";
+		}
+		else {
+			// 부서명 가져오기
+			dname = service2.selectdname(dcode);
+			// 직무 가져오기
+			duty = service2.selectDuty(dname);
+		}
+		
 		
 		// 직위 가져오기
 		String pname = service2.selectpname(pcode);

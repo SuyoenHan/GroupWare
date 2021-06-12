@@ -167,13 +167,13 @@ public class BoardKdnService implements InterBoardKdnService {
 		int n=0, result=0;
 	      
 	    n = dao.addSuggComment(commentvo); // 댓글쓰기(tbl_comment 테이블에 insert)
-	    //  n <== 1 
-	      
+      // System.out.println("댓글추가여부: "+n);
 	    if(n==1) {
 	       result = dao.updateSuggCmntCount(commentvo.getFk_seq()); // tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) 
-	    //  m <== 1     
+	       // System.out.println("댓글수 업데이트유무 : "+result);
+	    } else {
+	    	result = 0;
 	    }
-	      
 		return result;
 		
 	}
@@ -194,15 +194,26 @@ public class BoardKdnService implements InterBoardKdnService {
 	
 	// 건의사항 댓글 삭제하기
 	@Override
-	public int delSuggComment(String seq) {
-		int n = dao.delSuggComment(seq);
+	public int delSuggComment(CommentKdnVO commentvo) {
+		
+		int n = dao.delSuggComment(commentvo);
+		if(n == 1) {
+			int m = dao.updateSuggCmntCountOneDown(commentvo.getFk_seq());
+			if(m == 0) { // 댓글수 업데이트 실패시
+				n = 0;
+			}
+		}
 		return n;
 	}
 	
 	// (건의사항) 댓글 수정하기
 	@Override
-	public int editSuggComment(String seq) {
-		int n = dao.editSuggComment(seq);
+	public int editSuggComment(CommentKdnVO commentvo) {
+		//System.out.println("댓글수정 메소드 호출됨");
+		//System.out.println(commentvo.getSeq());
+		//System.out.println(commentvo.getContent());
+		int n = dao.editSuggComment(commentvo);
+		//System.out.println("댓글수정성공여부 Service : "+n);
 		return n;
 	}
 	
@@ -218,6 +229,13 @@ public class BoardKdnService implements InterBoardKdnService {
 		int n = dao.suggUploadWithFile(boardvo);
 		return n;
 		
+	}
+	
+	// 건의사항 특정 글 1개의 총 댓글 수 구해오기
+	@Override
+	public int getSuggCmntTotalCnt(String seq) {
+		int n = dao.getSuggCmntTotalCnt(seq);
+		return n;
 	}
 	
 	// ========== 자유게시판 ===========
@@ -283,14 +301,14 @@ public class BoardKdnService implements InterBoardKdnService {
 	public int addComment(CommentKdnVO commentvo) {
 		int n=0, result=0;
 	      
-	      n = dao.addComment(commentvo); // 댓글쓰기(tbl_comment 테이블에 insert)
-	      //  n <== 1 
-	      
-	      if(n==1) {
-	         result = dao.updateCommentCount(commentvo.getFk_seq()); // tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) 
-	      //  m <== 1     
-	      }
-	      
+      n = dao.addComment(commentvo); // 댓글쓰기(tbl_comment 테이블에 insert)
+      //  n <== 1 
+      
+      if(n==1) {
+         result = dao.updateGenCmntCount(commentvo.getFk_seq()); // tbl_generalboard 테이블에 commentCount 컬럼의 값을 1증가(update) 
+      } else {
+    	  result=0;
+      }
 		return result;
 	}
 
@@ -308,13 +326,6 @@ public class BoardKdnService implements InterBoardKdnService {
 		return totalPage;
 	}
 
-	// 자유게시판 댓글 삭제
-	@Override
-	public int delGenComment(String seq) {
-		int n = dao.delGenComment(seq);
-		return n;
-	}
-
 	// (자유게시판) 파일첨부가 있는 글쓰기
 	@Override
 	public int genUploadWithFile(BoardKdnVO boardvo) {
@@ -328,6 +339,35 @@ public class BoardKdnService implements InterBoardKdnService {
 		int n = dao.generalEditNewAttach(boardvo);
 		return n;
 	}
+
+	// 자유게시판 댓글 삭제하기
+	@Override
+	public int delGenComment(CommentKdnVO commentvo) {
+		int n = dao.delGenComment(commentvo);
+		if(n == 1) {
+			int m = dao.updateGenCmntCountOneDown(commentvo.getFk_seq());
+			if(m == 0) { // 댓글수 업데이트 실패시
+				n = 0;
+			}
+		}
+		return n;
+	}
+
+	// 자유게시판 댓글 수정하기
+	@Override
+	public int editGenComment(CommentKdnVO commentvo) {
+		int n = dao.editGenComment(commentvo);
+		return n;
+	}
+
+	// 자유게시판 특정 글 1개의 총 댓글 수 구해오기
+	@Override
+	public int getGenCmntTotalCnt(String seq) {
+		int n = dao.getGenCmntTotalCnt(seq);
+		return n;
+	}
+
+	
 
 	
 
