@@ -89,7 +89,7 @@ public class ChattingOdyController {
 	        return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
 	    }
 	    
- 
+	    // 현재 1시간 기온 알아보기
 	    @ResponseBody
 		@RequestMapping(value="/t1/weathercurrent.tw")
 		public String restApiGetWeathercurrent(HttpServletRequest request, HttpServletResponse response) throws Exception{

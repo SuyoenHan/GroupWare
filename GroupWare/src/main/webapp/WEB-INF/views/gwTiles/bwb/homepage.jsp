@@ -716,11 +716,24 @@
             dataType : "json",
             success : function(data, status, xhr) {
                 let dataHeader = data.result.response.header.resultCode;
+                let data1 = data.result.response.body.items.item;
+                
                 if (dataHeader == "00") {
-				
-                   var pop =  data.result.response.body.items.item[0].fcstValue;
-                   var pty=  data.result.response.body.items.item[1].fcstValue;
-                  var sky = data.result.response.body.items.item[5].fcstValue;
+                	for (var i = 0; i < data1.length; i++) {
+                        var item = data1[i];
+                        switch (item.category) {
+                            case "SKY":
+                                var sky = parseInt(item.fcstValue);
+                                console.log("하늘:"+sky);
+                                break;
+                            case "POP":
+                            	var pop =parseInt(item.fcstValue);
+                                break;
+                            case "PTY":
+                            	var pty =parseInt(item.fcstValue);
+                                break;
+                        }
+                	}
      			
                    console.log("강수확률:"+pop);
                    console.log("강수형태:"+pty);
@@ -786,9 +799,10 @@
                 
                 if (dataHeader == "00") {
 
-                   var t1h = data.result.response.body.items.item[3].obsrValue;
+                	var t1h = data.result.response.body.items.item[3].obsrValue;
         
                    $("#t1h").html(t1h);
+                   $("input#mt1h").val(t1h);
                 }
             },
             error : function(e, status, xhr, data) {
@@ -811,10 +825,10 @@
                 
                 if (dataHeader == "00") {
 
-                   var y1h = data.result.response.body.items.item[3].obsrValue;
+                   var y1h =parseInt(data.result.response.body.items.item[3].obsrValue);
         			console.log("어제온도:"+y1h);
 
-					var t1h = $("#t1h").text(); 
+					var t1h = parseInt($("input#mt1h").val()); 
 					console.log("현재시간"+t1h);
 					var gap = Math.abs(parseInt(t1h)-parseInt(y1h));
 					console.log("gap"+gap);
@@ -1183,7 +1197,7 @@
  	<span style="font-weight: bold;">오늘의 날씨</span><br><br>
  	<span  id="sky"></span>
  	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
- 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
+ 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span><input type="hidden" id="mt1h"/></div>
  	</div>
  	<div style="float: right; width: 50%; height: 100%; " >
  		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
