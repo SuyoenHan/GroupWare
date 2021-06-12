@@ -140,9 +140,9 @@ button.btn_normal{
 		
 		
 		// 공유자 추가하기
-		$("input#joinEmp").bind("keyup",function(){
+		$("input#joinEmp").keyup(function(){
 				var joinEmp = $(this).val();
-				console.log(joinEmp);
+			
 				$.ajax({
 					url:"<%= ctxPath%>/t1/insertSchedule/searchJoinEmpList.tw",
 					data:{"joinEmp":joinEmp},

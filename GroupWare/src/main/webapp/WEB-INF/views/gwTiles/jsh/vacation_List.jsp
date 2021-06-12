@@ -121,7 +121,7 @@
 		 
 		  function goView(ano,vcatname,employeeid){
 		      
-			  <%-- location.href="<%= ctxPath%>/t1/view.tw?ano="+ano+"&ncatname="+ncatname; --%>
+			 
 			// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
 			    //           사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
 			    //           현재 페이지 주소를 뷰단으로 넘겨준다.
@@ -196,7 +196,7 @@
              <%-- 첨부파일이 있는 경우 끝 --%>
 	         
 	         
-	         
+	        
 	         
 	         </td>
 	         
@@ -204,10 +204,10 @@
 	         <td align="center">
 	          <%-- 첨부파일이 있는 경우 시작 --%>
              	<c:if test="${not empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.fk_ano}','${evo.vcatname}' ,'${evo.employeeid}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vcatname}' ,'${evo.employeeid}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
         		</c:if>
         		<c:if test="${empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.fk_ano}','${evo.vcatname}','${evo.employeeid}')">${evo.atitle}</span>&nbsp;
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.vcatname}','${evo.employeeid}')">${evo.atitle}</span>&nbsp;
         		</c:if>
         	   <%-- 첨부파일이 있는 경우 끝 --%>
      	     </td>

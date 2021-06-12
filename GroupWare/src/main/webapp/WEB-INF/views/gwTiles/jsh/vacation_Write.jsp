@@ -6,9 +6,14 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <style>
+div#radio{
+margin: 50px 50px;
+font-size: 16px;
+}
 
-table, th, td {border: solid 1px gray;}
-
+h3{
+	font-weight:bold;
+}
 div#containerview{
 	margin: 30px 0px 30px 50px;
 	width: 80%;
@@ -71,8 +76,11 @@ td.opinion{
 	border: solid 1px white;
 }
 textarea{
-width:98%;
-height: 100%;
+width:99%;
+height:350px;
+}
+button.btn1:hover{
+ background-color: #c3c6c9;
 }
 </style>
 
@@ -84,8 +92,7 @@ height: 100%;
 			$("div#containerview").hide();
 			var obj = []; //전역변수 
 					
-			//var a= "${requestScope.leftOffCnt}";
-			//console.log("a: "+a);
+			
 			
 			//일반결재내역 문서 카테고리 라디오 클릭 이벤트
 			$("input[name=vcatname]").click(function(){
@@ -93,7 +100,23 @@ height: 100%;
 				$("td#smarteditor").empty();
 				$("td#smarteditor").html('<textarea name="acontent" id="acontent"></textarea>');
 				
-				
+					   	
+				//오늘날짜 알아오기
+			   	var date = new Date();
+			   	var year = date.getFullYear();
+			   	var month = date.getMonth()+1;
+			   	var day = date.getDay();
+			   	if(month <10){
+			   		month = '0'+month;
+			   	}
+			   	if(day <10){
+			   		day = '0'+day;
+			   	}
+			   	
+			   	
+			   	
+			   	 var today = (year+"년 "+month+"월 "+day+"일");
+			     //	console.log(today);
 				 var vcatname;
 				 var html;
 				 var html1;
@@ -107,23 +130,20 @@ height: 100%;
 				
 				
 				<%-- ===  스마트 에디터 구현 시작 ===  --%>
-			       
-			       
-			       
-			       //스마트에디터 프레임생성
-			       nhn.husky.EZCreator.createInIFrame({
-			           oAppRef: obj,
-			           elPlaceHolder: "acontent",
-			           sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
-			           htParams : {
-			               // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
-			               bUseToolbar : true,            
-			               // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
-			               bUseVerticalResizer : true,    
-			               // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
-			               bUseModeChanger : true,
-			           }
-			       });
+		       //스마트에디터 프레임생성
+		       nhn.husky.EZCreator.createInIFrame({
+		           oAppRef: obj,
+		           elPlaceHolder: "acontent",
+		           sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
+		           htParams : {
+		               // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+		               bUseToolbar : true,            
+		               // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+		               bUseVerticalResizer : true,    
+		               // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+		               bUseModeChanger : true,
+		           }
+		       });
 			     <%-- === 스마트 에디터 구현 끝 === --%>
 				
 			    
@@ -140,19 +160,19 @@ height: 100%;
 				else if(vcatname =="반차"){
 					$("tr#changeVcat").show();
 					html+="<th>요청기간</th>"+
-						  "<td colspan='3'><input type='date' name='afdate' id='afdate'/>&nbsp;"+
+						  "<td colspan='3'><input type='date' name='afdate' id='afdate'/>&nbsp;&nbsp"+
 						   "<select name='afdan' id='afdan'>"+
 						   "<option value='1'>오전</option>"+
 						   "<option value='2'>오후</option>"+
 						   "</select>"+
-						   "<span>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
+						   "&nbsp&nbsp<span style='font-weight:bold; color:red;'>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
 						
 				}
 				else if(vcatname =="연차"){
 					$("tr#changeVcat").show();
 					html+="<th>요청기간</th>"+
 					  "<td colspan='3'><input type='date' name='daystart' id='daystart'/>"+"&nbsp;~&nbsp;"+"<input type='date' name='dayend' id='dayend'/>"+
-					  "<span>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
+					  "&nbsp&nbsp<span style='font-weight:bold; color:red;'>[남은일수:"+${requestScope.leftOffCnt}+"]</span></td>";
 					
 						
 				}
@@ -198,7 +218,8 @@ height: 100%;
 					$("tr#changeVcat").html(html);
 				}
 				
-				
+				$("div#today").html(today);
+				$("span#vcat").html(vcatname);
 				$("h3#vcat").html(vcatname);
 				$("div#containerview").show();
 				
@@ -217,21 +238,7 @@ height: 100%;
 	   	var i =1;
 	   	var afdates = 0; //반차사용일자변수
 	   	var daydates = 0;  //연차사용일자변수
-/*	   	
-	   	var date = new Date();
-	   	var year = date.getFullYear();
-	   	var month = date.getMonth()+1;
-	   	var day = date.getDay();
-	   	if(month <10){
-	   		month = '0'+month;
-	   	}
-	   	if(day <10){
-	   		day = '0'+day;
-	   	}
-	   	var today = (year+"-"+month+"-"+day);
-*/	   	
-	   //	console.log(today);
-	 
+
 			
 		    var vcatname ;
 			$("input[name=vcatname]:checked").each(function(index,item){			
@@ -376,7 +383,7 @@ height: 100%;
 		 
 		   <%-- === 스마트 에디터 구현 시작 === --%>
  		   
-        //id가 content인 textarea에 에디터에서 대입
+           //id가 content인 textarea에 에디터에서 대입
 	         obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
 	         
 	       <%-- === 스마트 에디터 구현 끝 === --%>
@@ -384,8 +391,8 @@ height: 100%;
 	          
 	
 	         
-		       <%-- === 스마트에디터 구현 시작 === --%>
-	    // 스마트에디터 사용시 무의미하게 생기는 p태그 제거
+	       <%-- === 스마트에디터 구현 시작 === --%>
+	        // 스마트에디터 사용시 무의미하게 생기는 p태그 제거
 		       var contentval = $("textarea#acontent").val();
 	              
 		       // === 확인용 ===
@@ -427,7 +434,7 @@ height: 100%;
 		  }
 		  else{
 			  alert(vcatname+" 제출을 취소하셨습니다.");
-			  location.href="javascript:history.back()";
+			  location.href="<%=ctxPath %>/t1/vacation_Write.tw";
 		  }
 	  });	
 		
@@ -497,7 +504,8 @@ height: 100%;
 			  }
 			  else{
 				  alert(vcatname+" 저장을 취소하셨습니다.");
-				  location.href="javascript:history.back()";
+				  location.href="<%=ctxPath %>/t1/vacation_Write.tw";
+				  
 			  }
 	         
 	          
@@ -527,7 +535,7 @@ height: 100%;
 	<div id="containerview">
  	
 	<hr class="hr">
-		<h3 id="vcat" align="center"></h3>
+		<h3 id="vcat" align="center" ></h3>
 	<hr class="hr">
 	<br>
 	
@@ -539,27 +547,21 @@ height: 100%;
 				<th>사장</th>
 			</tr>			
 			<tr>
-				<td id="img_approval_1" style="height:70px;">
-				</td>
-				
-				<td id="img_approval_2" style="height:70px;">
-					
-				</td>
-				<td id="img_approval_3" style="height:70px;">
-					
-				</td>
+				<td style="height:70px;"></td>
+				<td></td>
+				<td></td>
 			</tr>
 		</table>
 		
 		<table id="table2">
 			<tr>
 				<th>작성자</th>
-				<td><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
+				<td colspan="3"><input type="hidden" name="fk_employeeid" value="${sessionScope.loginuser.employeeid}" />${sessionScope.loginuser.name}</td>
 				
 			</tr>
 			<tr>
 				<th style="width:200px;">수신참조</th>
-				<td><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
+				<td colspan="3"><input type="hidden" name="arecipient1" value="${requestScope.write_view.managerid}"/>${requestScope.write_mview.name} ${requestScope.write_mview.pname} (${requestScope.write_view.dname})</td>
 			</tr>
 			<tr>
 				<th>문서상태</th>
@@ -581,7 +583,7 @@ height: 100%;
 			</tr>
 			
 			<tr>
-				<th style="height:250px;">글내용</th>
+				<th style="height:350px;">글내용</th>
 				<td colspan="3" id="smarteditor">
 				
 				</td>
@@ -594,17 +596,17 @@ height: 100%;
 				</td>
 			</tr>
 		</table>
-<%-- 			
-		<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.avo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
-		<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.avo.asdate}</div>
-		<div align="right" style="margin-right: 15%;">신청자: ${requestScope.avo.dname} ${requestScope.avo.name} ${requestScope.avo.pname}</div>
---%>		
+ 			
+		<div align="center">상기와 같은 내용으로 <span id="vcat" style="font-weight: bold;"></span>계 을(를) 제출하오니 재가바랍니다.</div>
+		<div align="right" id="today" style="margin: 4px 0; margin-right: 15%;">기안일:</div>
+		<div align="right" style="margin-right: 15%;">신청자: <span style="font-weight:bold;">${sessionScope.loginuser.name} </span> ${requestScope.write_view.pname} (${requestScope.write_view.dname})</div>
+		
 		
 		
 		
 		<div style="margin-top: 20px;">
 			<span style="margin-left: 15%">
-			    <button type="button"  class="btn" onclick="javascript:location.href='<%=ctxPath %>/t1/vacation_Write.tw'" >취소</button>
+			    <button type="button"  class="btn btn1"  onclick="javascript:location.href='<%=ctxPath %>/t1/vacation_Write.tw'" >취소</button>
 				
 			</span>
 			<span style="margin-left: 55%;">

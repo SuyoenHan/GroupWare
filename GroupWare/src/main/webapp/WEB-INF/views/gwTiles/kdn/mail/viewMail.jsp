@@ -4,6 +4,11 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <% String ctxPath = request.getContextPath(); %>
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
+
+<style type="text/css">
+	span.myEmail{font-weight: bold;}
+</style>
+
 <script type="text/javascript">
 $(document).ready(function(){
 	
@@ -13,6 +18,10 @@ $(document).ready(function(){
 	}, function(){
 		$(this).children().css("color", "#999999");
 	});
+	
+	// 로그인한 유저의 이메일이 받는사람에 있는지 참조에 있는지 한눈에 알아보기 위해 빨간색으로 표시
+	var employeeid= "${loginuser.employeeid}";
+	$("span#"+employeeid).addClass("myEmail");
 	
 });
 
@@ -118,10 +127,32 @@ function goReply(seq){
 	<h3>${requestScope.evo.subject}</h3>
 	<h4>${requestScope.evo.senderName}&lt;${requestScope.evo.senderEmail}&gt;</h4>
 	<span style="color: #999999;">보낸날짜: </span><span>${requestScope.evo.sendingDate}</span><br>
-	<span style="color: #999999;">받는사람: </span><span>${requestScope.evo.receiverName}&lt;${requestScope.evo.receiverEmail}&gt;</span><br>
-	<c:if test="${not empty requestScope.evo.ccEmail}">
-		<span style="color: #999999;">참조메일: </span><span>${requestScope.evo.ccEmail}</span><br>
-	</c:if>
+	<span style="color: #999999;">받는사람: </span>
+	<span>
+		<c:forEach var="receiverMap" items="${receiverList}" varStatus="status">
+			<c:if test="${!status.last}">
+				<span id='${receiverMap.idEmail}'>${receiverMap.receiverName}&lt;${receiverMap.receiverEmail}&gt;</span>&nbsp;,&nbsp;
+			</c:if>
+			<c:if test="${status.last}">
+				<span id='${receiverMap.idEmail}'>${receiverMap.receiverName}&lt;${receiverMap.receiverEmail}&gt;</span>&nbsp;
+			</c:if>
+		</c:forEach>
+	</span><br>
+	
+	<c:if test="${not empty ccList}">
+	<span style="color: #999999;">참조메일:</span>
+		<span>
+			<c:forEach var="ccMap" items="${ccList}" varStatus="status">
+				<c:if test="${!status.last}">
+					<span  id='${ccMap.idEmail}'>${ccMap.ccName}&lt;${ccMap.ccEmail}&gt;</span>&nbsp;,&nbsp;
+				</c:if>
+				<c:if test="${status.last}">
+					<span id='${ccMap.idEmail}'>${ccMap.ccName}&lt;${ccMap.ccEmail}&gt;</span>&nbsp;
+				</c:if>
+			</c:forEach>
+		</span><br>
+	</c:if>	
+	
 	<hr>
 	<p>${requestScope.evo.content}</p>
 	
@@ -153,7 +184,7 @@ function goReply(seq){
 		<p>${requestScope.evo.content}</p>
 		
 		<c:if test="${not empty requestScope.evo.fileName}">
-		<hr style="border-top: double 3px #eee; margin-top: 50px;">
+			<hr style="border-top: double 3px #eee; margin-top: 50px;">
 			<span style="color: #999999;">첨부파일: </span>
 			<span>
 				<c:choose>
@@ -168,11 +199,6 @@ function goReply(seq){
 	</c:if>
 		
 	</c:if>
-	
-	
-	
-	
-	
 	
 	
 </c:if>	

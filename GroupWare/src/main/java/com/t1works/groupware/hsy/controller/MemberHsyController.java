@@ -1474,4 +1474,24 @@ public class MemberHsyController {
 	    
 	} // end of public String downloadExcelFile(HttpServletRequest request, Model model) {---
 	
+	
+	// 이메일 주소록 매핑 url (팝업창)
+	@RequestMapping(value="/t1/emailEmployeeMap.tw")        // 로그인이 필요한 url
+	public ModelAndView requiredLogin_emailEmployeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+		
+		// 주소록표기
+		// 1) 모든 부서에 대한 정보 가져오기
+		List<DepartmentHsyVO> departmentList= service.selectAllDepartment();
+		mav.addObject("departmentList", departmentList);
+		
+		// 2) 모든 직원 정보 가져오기
+		List<MemberHsyVO> employeeList= service.selectAllMember();
+		
+		mav.addObject("employeeList",employeeList);
+		mav.setViewName("hsy/emailEmployeeMap");
+		return mav;
+	} // end of public ModelAndView requiredLogin_emailEmployeeMap(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {---
+		
+		
+		
 }

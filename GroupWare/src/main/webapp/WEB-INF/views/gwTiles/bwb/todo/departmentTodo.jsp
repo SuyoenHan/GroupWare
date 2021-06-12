@@ -121,6 +121,10 @@
 		font-weight: bolder;
 		font-size: 15pt;
 	}
+	
+	div#infoMenu{
+		background-color: #94b8b8 !important;
+	}
 </style>
 
 <script type="text/javascript">
@@ -444,7 +448,7 @@
 	
 	
 	<div id="DepartmentInfo">
-		<div id="infoMenu" style="margin-left:10px; margin-bottom:6px; border-bottom:solid 1px #ccc;">
+		<div id="infoMenu" style="padding-left:9px; margin-bottom:6px; border-bottom:solid 1px #ccc;">
 			<span class="sInfo sheader" style="width:50px;">순번</span>
 			<span class="sInfo sheader" style="width:240px;">프로젝트명</span>
 			<span class="sInfo sheader" style="width:100px;">배정자</span>
