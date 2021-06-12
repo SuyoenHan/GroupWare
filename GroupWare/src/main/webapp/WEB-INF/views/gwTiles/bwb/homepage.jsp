@@ -629,6 +629,211 @@
         
         <%-- 백원빈 word-cloud 작업 끝 --%>
         
+        
+        <%-- 오다윤 날씨 구현 시작 --%>
+        var todayw = new Date();
+        var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
+        console.log("어제:"+yesterday);
+        
+        // 오늘 정보
+    	var wyear = todayw.getFullYear();
+    	var wmonth = todayw.getMonth()+1;
+    	var wday = todayw.getDate();
+    	var whour = todayw.getHours();
+    	var wminutes = todayw.getMinutes();
+    	
+    	// 어제 정보
+    	var ydyear = yesterday.getFullYear();
+    	var ydmonth = yesterday.getMonth()+1;
+    	var ydday = yesterday.getDate();
+    
+    	if(whour<10){
+    		whour='0'+whour;
+    	}
+    	if(wmonth<10){
+    		wmonth='0'+wmonth;
+    	}
+    	if(wday<10){
+    		wday='0'+wday;
+    	}
+    
+    	if(ydmonth<10){
+    		ydmonth='0'+ydmonth;
+    	}
+    	if(ydday<10){
+    		ydday='0'+ydday;
+    	}
+    	
+    	var arr =[];
+    	var harr = new Array('02','05','08','11','14','17','20','23');
+    	
+    	for(var i=0;i<harr.length;i++){
+    		var h=harr[i]-whour;
+    		console.log("지금h"+h);
+    		console.log(h);
+    		if(whour!='00' || whour=='01'){
+	    		if(h==-1 || h==0 || h==-2){
+	    			var wnow=harr[i]+"00";
+	    			wtoday = wyear+""+wmonth+""+wday;
+	    			console.log("지금"+wnow);
+	    		}
+    		}
+    		else if(whour=='00' || h==1){
+    			wtoday = ydyear+""+ydmonth+""+ydday;
+    			var wnow=harr[7]+"00";
+    		}
+    	}
+    	
+    
+    	for(var i=0;i<harr.length;i++){
+    		var hy=harr[i]-whour;
+    		console.log("hy"+hy);
+    		if(whour!='00' && whour!='23'){
+	    		if(hy==-1 || hy==0 || hy==-2){
+	    			yesterday = ydyear+""+ydmonth+""+ydday;
+	    			var ytime=harr[(i+1)]+"00";
+	    			console.log("시간"+ytime);
+	    		}
+    		}	
+    		else if(whour=='23' || whour=='00'|| h>0){
+    			var ytime=harr[0]+"00";
+    			yesterday = ydyear+""+ydmonth+""+ydday;
+    			console.log("시간00"+ytime);
+    		}
+    	}
+    	console.log("오늘:"+wtoday);
+    	console.log("진짜어제:"+yesterday);
+    	
+    	// 동네예보
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weatherhome.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"today":wtoday, "now":wnow},
+            dataType : "json",
+            success : function(data, status, xhr) {
+                let dataHeader = data.result.response.header.resultCode;
+                if (dataHeader == "00") {
+				
+                   var pop =  data.result.response.body.items.item[0].fcstValue;
+                   var pty=  data.result.response.body.items.item[1].fcstValue;
+                  var sky = data.result.response.body.items.item[5].fcstValue;
+     			
+                   console.log("강수확률:"+pop);
+                   console.log("강수형태:"+pty);
+                   console.log("하늘:"+sky);
+                   $("#pop").html("강수확률:"+pop+"%");
+                   
+                   $("#pty").html(pty);
+    				
+                   if(pty==0){
+	                   if(sky==1){
+	                	   var image = "<%= ctxPath%>/resources/images/ody/pop1.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+	                   else if(sky==3){
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+	                   else if(sky==4){
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+                   }
+                   else{
+                	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
+                		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+                	   }
+                	   else{
+                		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+                	   }
+                   }
+                   // TMN : 아침최저기온
+                   // TMX : 낮 최고기온
+                   // T3H: 3시간 기온
+                   // SKY: 하늘 상태  - 1: 맑음/ 3: 구름많음/ 4: 흐림
+                   // POP: 강수확률 
+                   // PTY: 강수 형태없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4), 빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+    				// 여기서 비/눈은 비와 눈이 섞여 오는 것을 의미 (진눈개비)
+                    //빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+                }
+               
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+    	
+    	
+    	// 오늘 한시간 받기
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weathercurrent.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"today":wtoday, "now":wnow},
+            dataType : "json",
+            success : function(data, status, xhr) {
+
+                let dataHeader = data.result.response.header.resultCode;
+                
+                if (dataHeader == "00") {
+
+                   var t1h = data.result.response.body.items.item[3].obsrValue;
+        
+                   $("#t1h").html(t1h+"ºC");
+                }
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+        
+    	// 오늘 기온과 어제 기온 차이
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weatheryesterday.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"yesterday":yesterday, "ytime":ytime},
+            dataType : "json",
+            success : function(data, status, xhr) {
+
+                let dataHeader = data.result.response.header.resultCode;
+                
+                if (dataHeader == "00") {
+
+                   var y1h = data.result.response.body.items.item[3].obsrValue;
+        			console.log("어제온도:"+y1h);
+
+					var t1h = $("#t1h").text();        			
+					var gap = Math.abs(parseInt(t1h)-parseInt(y1h));
+					console.log("gap"+gap);
+					if(gap>=0){
+						$("#gap").html("어제보다 "+gap+" º 높아요."); 
+					}
+					else{
+						$("#gap").html("어제보다 "+gap+" º 낮아요."); 
+					}
+						
+        			
+                }
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+        
+    	
+     
+        <%-- 오다윤 날씨 구현 끝 --%>
+        
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -903,17 +1108,27 @@
   	다님님 파트(공지사항)
   </div>
   
-  <%-- start of div(calendar) 오다윤 --%>
+  
+  
+  
+  
+  <%-- =================== 오다윤 시작 =================== --%>
+  						<%--  달력 시작 --%>
   <div id="calendarO" style="float: right;">
 		<div id="calendar"></div>
 		<div id="todayCal" style="margin-top:10px; padding-left: 10px;"></div>
 		<div id="infoCalendar" style="margin-top:10px; padding-left: 10px;"></div>
   </div>
-
-  <%-- end of div(calendar) 오다윤 --%>
-  
+						<%--  달력 끝 --%>
+ 
+ 						<%--  날씨 시작 --%> 
   <div id="weather" style="border: solid 1px blue; float: left; margin: 10px 0px 50px 40px; width: 580px; height: 230px; ">
- 	 다윤님 파트 (날씨)
+ 	<div id="today-w" style="border: solid 1px blue; float: left; width: 50%; height: 100%;">
+ 	오늘의 날씨<br><br>
+ 	<span  id="sky"></span>
+ 	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><br>
+ 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
+ 	</div>
   </div>
-  
+  						<%--  날씨 끝 --%> 
 </div>
