@@ -34,6 +34,9 @@ public class EmailKdnVO {
     private String orgFilename; // 진짜 파일명(강아지.png)  // 사용자가 파일을 업로드 하거나 파일을 다운로드 할때 사용되어지는 파일명
     private String fileSize;
 	
+    // ======= select용 변수 추가
+    private String receiverCnt; // 받은 사람 수 
+    
 	public EmailKdnVO() {}
 	
 	public EmailKdnVO(String seq,String fk_seq, String fk_employeeid,String senderEmail,String senderName, String receiverName,String receiverEmail,String ccEmail
@@ -263,7 +266,13 @@ public class EmailKdnVO {
 		this.name = name;
 	}
 
-	
+	public String getReceiverCnt() {
+		return receiverCnt;
+	}
+
+	public void setReceiverCnt(String receiverCnt) {
+		this.receiverCnt = receiverCnt;
+	}
 
 	
 	
