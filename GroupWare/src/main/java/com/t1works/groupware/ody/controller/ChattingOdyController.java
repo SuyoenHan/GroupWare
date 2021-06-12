@@ -47,18 +47,8 @@ public class ChattingOdyController {
 	
 	@ResponseBody
 	@RequestMapping(value="/t1/weatherhome.tw")
-
-	    
-	    public String restApiGetWeather(HttpServletRequest request, HttpServletResponse response) throws Exception{
-	        /* 
-	            @ API LIST ~
-	            
-	            getUltraSrtNcst 초단기실황조회 
-	            getUltraSrtFcst 초단기예보조회 
-	            getVilageFcst 동네예보조회 
-	            getFcstVersion 예보버전조회
-	        */
-		
+	public String restApiGetWeather(HttpServletRequest request, HttpServletResponse response) throws Exception{
+	
 			String date= request.getParameter("today");
 			String time = request.getParameter("now");
 			
@@ -77,7 +67,7 @@ public class ChattingOdyController {
 	        
 	        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
 	        
-	        System.out.println("# RESULT : " + resultMap);
+	        System.out.println("# 동네예보RESULT : " + resultMap);
 
 	        JSONObject jsonObj = new JSONObject();
 	        
@@ -102,30 +92,17 @@ public class ChattingOdyController {
 	        return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
 	    }
 	    
-	    
-	    
-	    
-	    
+ 
 	    @ResponseBody
 		@RequestMapping(value="/t1/weathercurrent.tw")
-
-		    
-		    public String restApiGetWeathercurrent(HttpServletRequest request, HttpServletResponse response) throws Exception{
-		        /* 
-		            @ API LIST ~
-		            
-		            getUltraSrtNcst 초단기실황조회 
-		            getUltraSrtFcst 초단기예보조회 
-		            getVilageFcst 동네예보조회 
-		            getFcstVersion 예보버전조회
-		        */
+		public String restApiGetWeathercurrent(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		
 			
 				String date= request.getParameter("today");
 				String time = request.getParameter("now");
 				
-				System.out.println("일자:"+date);
-				System.out.println("시간:"+time);
-				
+				System.out.println(date);
+				System.out.println(time);
 		        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst"
 		            + "?serviceKey=Kb4EM%2FntmrXOi76DygiRHcmeF5z2%2BVNzCueqSypkUJTAIDbkCluUPi8REeX9m65vJ%2FiGwliXM%2FnlDL5GjSS3Kg%3D%3D"
 		            + "&dataType=JSON"            // JSON, XML
@@ -136,9 +113,9 @@ public class ChattingOdyController {
 		            + "&nx=60"                    // 예보지점 X 좌표
 		            + "&ny=127";                  // 예보지점 Y 좌표
 		        
-		        HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+		        HashMap<String, Object> resultMap = getDataFromJson1(url, "UTF-8", "get", "");
 		        
-		        System.out.println("# RESULT : " + resultMap);
+		        System.out.println("# 실시간RESULT : " + resultMap);
 
 		        JSONObject jsonObj = new JSONObject();
 		        
@@ -147,7 +124,7 @@ public class ChattingOdyController {
 		        return jsonObj.toString();
 		    }
 		    
-		    public HashMap<String, Object> getDataFromJson2(String url, String encoding, String type, String jsonStr) throws Exception
+		    public HashMap<String, Object> getDataFromJson1(String url, String encoding, String type, String jsonStr) throws Exception
 		    {
 		        boolean isPost = false;
 
@@ -163,8 +140,53 @@ public class ChattingOdyController {
 		        return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
 		    }
 		    
-		    
-		    
+		    // 어제 날씨
+		    @ResponseBody
+			@RequestMapping(value="/t1/weatheryesterday.tw")
+			    public String restApiGetWeatheryesterday(HttpServletRequest request, HttpServletResponse response) throws Exception{
+			       
+					String yesterday= request.getParameter("yesterday");
+					String  ytime = request.getParameter("ytime");
+					
+					System.out.println("어제날짜"+yesterday);
+					System.out.println("어제시간"+ytime);
+			        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst"
+			            + "?serviceKey=Kb4EM%2FntmrXOi76DygiRHcmeF5z2%2BVNzCueqSypkUJTAIDbkCluUPi8REeX9m65vJ%2FiGwliXM%2FnlDL5GjSS3Kg%3D%3D"
+			            + "&dataType=JSON"            // JSON, XML
+			            + "&numOfRows=10"             // 페이지 ROWS
+			            + "&pageNo=1"                 // 페이지 번호
+			            + "&base_date="+yesterday      // 발표일자
+			            + "&base_time="+ ytime           // 발표시각
+			            + "&nx=60"                    // 예보지점 X 좌표
+			            + "&ny=127";                  // 예보지점 Y 좌표
+			        
+			        HashMap<String, Object> resultMap = getDataFromJson2(url, "UTF-8", "get", "");
+			        
+			        System.out.println("# RESULT : " + resultMap);
+
+			        JSONObject jsonObj = new JSONObject();
+			        
+			        jsonObj.put("result", resultMap);
+			        
+			        return jsonObj.toString();
+			    }
+			    
+			    public HashMap<String, Object> getDataFromJson2(String url, String encoding, String type, String jsonStr) throws Exception
+			    {
+			        boolean isPost = false;
+
+			        if ("post".equals(type))
+			        {
+			            isPost = true;
+			        }
+			        else
+			        {
+			            url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
+			        }
+
+			        return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
+			    }    
+		   
 	    @SuppressWarnings("unchecked")
 		public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter, String contentType) throws Exception
 	    {
@@ -232,11 +254,7 @@ public class ChattingOdyController {
 	    }
 	
 	
-	
-	
-	
-	
-	
+	  
 
 	
 	
