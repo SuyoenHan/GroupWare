@@ -128,7 +128,7 @@ function check_checkbox(){
 function goView(seq){
 		console.log(seq);		
 		var frm = document.goViewFrm;
-		frm.seq.value = seq;
+		frm.fk_seq.value = seq;
 		frm.searchType.value = "${requestScope.paraMap.searchType}";
 	    frm.searchWord.value = "${requestScope.paraMap.searchWord}";
 	    
@@ -196,14 +196,25 @@ function goSearch(){
 	 						<i class="fas fa-paperclip"></i>
 	 					</c:if>
 	 				</td>
-	 				<td>${evo.receiverName}&lt;${evo.receiverEmail}&gt;</td>
+	 				
+	 				<%--받는사람이 여러명인 경우와 한명인 경우 고려 시작 --%>
+	 				<td>
+		 				<c:if test="${empty evo.receiverCnt}">
+		 					${evo.receiverName}&lt;${evo.receiverEmail}&gt;
+		 				</c:if>
+	 					<c:if test="${not empty evo.receiverCnt}">
+		 					${evo.receiverName}&lt;${evo.receiverEmail}&gt;&nbsp;외&nbsp;${evo.receiverCnt}명
+		 				</c:if>
+	 				</td>
+	 				<%--받는사람이 여러명인 경우와 한명인 경우 고려 끝 --%>
+	 				
 	 				<td>
 	 				<input type="hidden" name="seq" value="${evo.seq}" />
 	 				<c:if test="${evo.readStatus eq '0' }">
-		 				<a href="javascript:goView('${evo.seq}')" class="anchor-style" style="font-weight:bold;">${evo.subject}</a>
+		 				<a href="javascript:goView('${evo.fk_seq}')" class="anchor-style" style="font-weight:bold;">${evo.subject}</a>
 		 			</c:if>
 		 			<c:if test="${evo.readStatus eq '1' }">
-		 				<a href="javascript:goView('${evo.seq}')" class="anchor-style">${evo.subject}</a>
+		 				<a href="javascript:goView('${evo.fk_seq}')" class="anchor-style">${evo.subject}</a>
 		 			</c:if>
 	 				</td>
 	 				<td>${evo.sendingDate}</td>
@@ -226,7 +237,7 @@ function goSearch(){
  	
  	 <form name="goViewFrm">
  	 	<input type="hidden" name="mailBoxNo" value="2">
-    	<input type="hidden" name="seq"/>
+    	<input type="hidden" name="fk_seq"/>
     	<input type="hidden" name="gobackURL" value="${requestScope.gobackURL}"/>
     	<input type="hidden" name="searchType" />
       	<input type="hidden" name="searchWord" />

@@ -4,7 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <meta charset="UTF-8">
-<title>T1Works Talk</title>
+<title>T1Works GroupChat</title>
 
 <style type="text/css">
 
@@ -42,6 +42,9 @@ button#btnAllDialog{
 	background-color: #9bbad8;
 	margin-bottom: 2px;
 }
+
+
+
 </style>
 
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
@@ -90,7 +93,7 @@ button#btnAllDialog{
 	                                 // 자음 ㄴ 임
 	          if(event.data.substr(0,1)=="「" && event.data.substr(event.data.length-1)=="」") { 
 	        	  
-	        	  var event = event.data.replace(/ /gi, "<br/><br/>");
+	        	  var event = event.data.replace(/\#/gi, "<br/><br/>");
 	        	  event = event.substring(event.indexOf("「")+1, event.lastIndexOf("」"));
 	        	 console.log(event);
 	             $("div#connectingUserList").html(event);
@@ -142,7 +145,7 @@ button#btnAllDialog{
 	                websocket.send(JSON.stringify(messageObj));
 	                // JSON.stringify() 는 값을 그 값을 나타내는 JSON 표기법의 문자열로 변환한다
 	                
-	                $("div#chatMessage").append("<div style='float: right;'><span style='font-size: 10pt;'>"+hours + ":" + minutes +"</span>&nbsp;<span style='background-color: yellow; padding: 3px 2px;'>" + messageVal + "</span></div>&nbsp;<br/><br/>");
+	                $("div#chatMessage").append("<div style='float:right;'><span style='font-size: 10pt;'>"+hours + ":" + minutes +"</span>&nbsp;<span style='background-color: yellow; padding: 3px 2px;'>" + messageVal + "</span></div>&nbsp;<br/><br/>");
 	                $("div#chatMessage").scrollTop(99999999); // 스크롤이 맨위로 간다
 	                 
 	                $("input#message").val("");
@@ -189,18 +192,19 @@ button#btnAllDialog{
 
 </script>
 
-<h3>T1Works GroupChat</h3>
+<h3 style="margin-top:5px;">T1Works GroupChat</h3>
 <div style="width: 100%; height: 90%; margin-legt:10px;">
 
-<div style="float: left; width: 20%; height:500px; border-right: solid 1px gray; margin-left: 10px; margin-right: 20px;">
+<div style="float: left; width: 20%; height:480px; border-right: solid 1px gray; margin-left: 10px; margin-right: 20px;">
 	- 접속자<br><br>
 	<div id="connectingUserList" style="" ></div>
 </div>
   <div id="chatMessage" style="overFlow: auto; max-height: 500px; margin-right: 5px;"></div>
+  <div id="chatMessageMe" style="overFlow: auto; max-height: 500px; margin-right: 5px;"></div>
 </div>
   <div id="sendmsg" style="margin-left: 10px;">
   	<span id="toName"></span><button type="button" id="btnAllDialog">⊖</button><br>
-	<input type="text" id="message" size="54" style="height: 35px;"  placeholder="메시지 내용"/>
+	<input type="text" id="message" size="90" style="height: 35px;"  placeholder="메시지 내용"/>
     <input type="button" id="btnSendMessage" class="btn_normal" value="보내기" />
 
  </div> 

@@ -404,11 +404,21 @@ public class MemberBwbController {
 		String dcode = loginuser.getFk_dcode();
 		String pcode = loginuser.getFk_pcode();
 		
-		// 부서명 가져오기
-		String dname = service2.selectdname(dcode);
+		String dname="";
+		String duty =""; 
 		
-		// 직무 가져오기
-		String duty = service2.selectDuty(dname);
+		if(dcode==null) {
+			dcode="-";
+			dname="-";
+			duty="-";
+		}
+		else {
+			// 부서명 가져오기
+			dname = service2.selectdname(dcode);
+			// 직무 가져오기
+			duty = service2.selectDuty(dname);
+		}
+		
 		
 		// 직위 가져오기
 		String pname = service2.selectpname(pcode);
@@ -500,7 +510,7 @@ public class MemberBwbController {
 	}
 	
 	
-	// CS팀장 로그인시 업무관리 => 나의업무현황 => 미배정업무 보여주기
+	// CS부장 로그인시 업무관리 => 나의업무현황 => 미배정업무 보여주기
 	@RequestMapping(value="/t1/leaderTodo.tw")
 	public ModelAndView requiredLogin_leaderTodo_1(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
 		

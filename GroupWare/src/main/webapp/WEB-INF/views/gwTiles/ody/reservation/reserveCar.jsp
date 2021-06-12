@@ -77,12 +77,6 @@ div.car{
 	background-color: #b1b8cd;
 }
 
-button#btn_show{
-	float: right;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	margin-right: 50px;
-}
 
 </style>
 
@@ -110,7 +104,7 @@ if(curDay.toString().length < 2){
 var curYear = curDate.getFullYear();
 var curTime = curYear + "" + curMonth + "" + curDay;
 
-
+var cgtime= curYear + "-" + curMonth + "-" + curDay;
 
 $(document).ready(function(){
 
@@ -122,6 +116,7 @@ $(document).ready(function(){
 	var cno="";
 	var chgdate="";
 
+	$("input#chgdate").val(cgtime); 
 	
 	$("tr.selectCar").hover(function(){
 		$(this).css("cursor", "pointer");
@@ -136,6 +131,7 @@ $(document).ready(function(){
 		$("input#cno").val(cno);
 		$("input#carname").val(carname);
 		$(this).addClass("carClick");
+		ajaxReserve();
 	});
 	
         var calendarEl = document.getElementById('calendar');
@@ -156,6 +152,10 @@ $(document).ready(function(){
         	    info.dayEl.style.backgroundColor = '#b1b8cd';
         	    chgdate=info.dateStr;
         	    $("input#chgdate").val(chgdate);
+        	    
+        	    if($("input#cno").val().trim()!=""){
+        	    	ajaxReserve();
+        	    }
         	  }
         });
         
@@ -163,38 +163,6 @@ $(document).ready(function(){
         calendar.render();
         calendar.setOption('height', 510);
         
-		
-        $("button#btn_show").click(function(){
-        	
-        	var cno=$("input#cno").val();
-        	var chgdate=$("input#chgdate").val();
-        	 if( cno!= "" && chgdate != "" ){
-             	$.ajax({
-             		url:"<%= ctxPath%>/t1/rscar/reserveCar.tw",
-             		data:{"cno":cno, "chgdate":chgdate},
-             		dataType: "json",
-             		success:function(json){
-             		 //	console.log("json:"+json);
-             		 	
-             		 // 불러온 배열을 함수에 값 지정해주기
-             		 	showReserve(json);
-             		}
-             		, error: function(request, status, error){
-        	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
-          	      }
-             	});
-             	
-             }
-        	 else if(cno!= "" && chgdate == ""){
-        		 alert("날짜를 선택하세요");
-        	 }
-        	 else if(cno == "" && chgdate != ""){
-        		 alert("차량을 선택하세요");
-        	 }
-        	 else{
-        		 alert("날짜 및 차량을 선택하세요");
-        	 }
-        });
         
         // '등록' 버튼 클릭 이벤트
     	$("button#btn_Reserve").click(function(){
@@ -221,16 +189,55 @@ $(document).ready(function(){
             	 return;
              }
              else{
-            	 <%-- form으로 값 넘겨주기--%>
-            	 var frm = document.reserveCar;
-            	 frm.method = "POST";
-                 frm.action = "<%= ctxPath%>/t1/addReserveCar.tw";
-                 frm.submit();
+ 
+                 $.ajax({
+                 	url: "<%= ctxPath%>/t1/addReserveCar.tw",
+                 	type: "post",
+                 	data: $("form[name=reserveCar]").serialize(),
+                 	dataType: "json",
+                 	success:function(json){
+                 		if(json.n>0){
+                 			alert("예약되었습니다.");
+                 			$("#myModal").modal('hide');
+                 			ajaxReserve();
+                 		}
+                 		
+                 	},
+                 	error: function(request, status, error){
+         	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+                 	}
+                  });
              }
     	});
     	
 }); // end of $(document).ready(function(){}------
 
+	function ajaxReserve(){
+	
+		var cno=$("input#cno").val();
+    	var chgdate=$("input#chgdate").val();
+    	 
+		if( cno!= "" && chgdate != "" ){
+         	$.ajax({
+         		url:"<%= ctxPath%>/t1/rscar/reserveCar.tw",
+         		data:{"cno":cno, "chgdate":chgdate},
+         		dataType: "json",
+         		success:function(json){
+         		 //	console.log("json:"+json);
+         		 	
+         		 // 불러온 배열을 함수에 값 지정해주기
+         		 	showReserve(json);
+         		}
+         		, error: function(request, status, error){
+    	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+      	      }
+         	});
+         	
+         }
+	}
+	
+	
+	
 	function showReserve(json){
 	//	console.log("개수:"+json.length); 
 		
@@ -503,7 +510,7 @@ $(document).ready(function(){
 			dataType: "json",
 			success:function(json){
 				alert("예약내역이 삭제되었습니다.");
-     		 	location.href="javascript:history.go(0);"; 
+				 ajaxReserve();
 			}
 			, error: function(request, status, error){
 	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
@@ -539,7 +546,6 @@ $(document).ready(function(){
 	        			 </c:forEach>
 	          		</c:if>
 	         </table>
-	         <button id="btn_show" class="btn_r" style="width: 120px;" >예약현황보기</button>
 		</div>
 </div>
 	
