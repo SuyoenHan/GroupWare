@@ -60,7 +60,7 @@ public class TodoHsyController {
 		// 2) 업무완료 페이지가 로드되면 처음에는 1주일 기간을 보여주기 위함
 		if(periodOption==null) periodOption="week"; 
 		
-		if(!("week".equals(periodOption) || "month".equals(periodOption) || "3months".equals(periodOption))) {
+		if(!("week".equals(periodOption) || "month".equals(periodOption) || "3months".equals(periodOption)||"all".equals(periodOption))) {
 			periodOption="week";
 		}
 			
