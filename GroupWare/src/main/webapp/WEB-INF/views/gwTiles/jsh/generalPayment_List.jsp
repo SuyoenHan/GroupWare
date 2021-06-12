@@ -6,15 +6,25 @@
 <% String ctxPath = request.getContextPath(); %>
 
 <style type="text/css">
-   table, th, td {border: solid 1px gray;}
+   
 
     #table {width: 970px; border-collapse: collapse;}
-    #table th, #table td {padding: 5px;}
-    #table th {background-color: #DDD;}
+    #table th, #table td {padding: 5px; border: solid 1px gray;}
+    #table th{
+		background-color: #395673; 
+		color: #ffffff;
+		padding: 5px;
+		border: solid 1px #ccc;
+		border-collapse: collapse;
+	}
      
     .subjectStyle {font-weight: bold;
                    color: navy;
                    cursor: pointer;} 
+    button.btn:hover{
+	 background-color: #c3c6c9;
+	}      
+	       
 </style>
 
 <script type="text/javascript">
@@ -113,6 +123,37 @@
 		      		frm.submit();
 			}); 
 		
+		
+	///// === Excel 파일로 다운받기 시작 === /////
+	      $("button#btnExcel").click(function(){
+	         
+	         var arrAno = new Array();
+	         
+	         $("input:checkbox[name=ano]").each(function(index,item){
+	            var bool = $(item).is(":checked"); // 체크박스의 체크유무 검사 
+	             if(bool == true) {
+	                // 체크박스에 체크가 되었으면 
+	                arrAno.push($(item).val());
+	             }
+	         });
+	         
+	         var sAno = arrAno.join();
+	        //  console.log("~~~~~ 확인용  sAno => " + sAno);
+	         /*
+	               ~~~~~ 확인용  sDeptIdes => -9999,50,110
+	               ~~~~~ 확인용  sDeptIdes => 
+	               ~~~~~ 확인용  sDeptIdes => 10,30,50,80,110
+	         */
+	         
+	         var frm = document.searchFrm;
+	         frm.sAno.value = sAno;
+	         
+	         frm.method = "POST";
+	         frm.action = "<%= request.getContextPath()%>/excel/downloadExcelFile.tw"; 
+	      //   frm.submit();         
+	      });
+    	///// === Excel 파일로 다운받기 끝 === /////
+		
 	
 			 
 		}); //end of  $(document).ready(function(){})--------------------------------------------
@@ -162,7 +203,7 @@
          <option value="name">글쓴이</option>
       </select>
       <input type="text" name="searchWord" id="searchWord" size="40" autocomplete="off" /> 
-      <input type="submit"  value="검색"/>
+      <input type="submit" id="btn" value="검색"/>
    </form>
    
    <%-- === # 검색어 입력시 자동글 완성하기 1 === --%>
@@ -170,6 +211,8 @@
       
    </div>
    
+   
+   <button type="button" id="btnExcel">Excel파일로저장</button>
    <table id="table">
       <tr>
          <th style="width: 60px;  text-align: center;">NO.</th>
@@ -179,9 +222,14 @@
          <th style="width: 70px;  text-align: center;">날짜</th>
       </tr>
       
-        <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status">
-         <tr>
-	         <td align="center">${evo.rno}</td>
+      
+     
+    <form name="searchFrm">
+        <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status"> 
+         <tr class="hover">
+	         <td align="center">
+		         <label for="${evo.ano}"><input type="checkbox" name="ano" id="${evo.ano}" value="${evo.ano}" />&nbsp;&nbsp;${evo.rno}</label>
+	         </td>
 	         
 	         
 	         <td align="left"> ${evo.ncatname} </td>
@@ -201,6 +249,8 @@
 	         <td align="center">${evo.asdate}</td>   
          </tr>      
       </c:forEach>  
+      <input type="hidden" name="sAno"/>
+      </form>
    </table>    
     
      

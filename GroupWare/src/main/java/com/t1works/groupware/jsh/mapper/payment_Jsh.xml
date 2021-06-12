@@ -17,7 +17,7 @@
 		join tbl_position p
 		on e.fk_pcode = p.pcode
 		where fk_ano = #{ano}
-		order by logdate
+		order by logno
 	</select>
 
 
@@ -126,7 +126,9 @@
  <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
 		<select id="getTotalCount" parameterType="HashMap" resultType="int">
 			select  count(*) 
-			from tbl_approval  a left join tbl_norapproval n
+			from tbl_approval  a left join tbl_employee e
+			on a.fk_employeeid = e.employeeid
+			left join tbl_norapproval n
 			on a.ano = n.fk_ano
 			where anocode= '1' and apaper = 0
 				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
@@ -231,7 +233,7 @@
 		
 		<!-- //하나의 일반결재내역에서 결재의견 목록 보여주기 -->
 		<select id="oneOpinionList" parameterType="HashMap"  resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select dname ,name, pname,odate,ocontent
+			select dname ,name, pname,to_char(odate,'yyyy-mm-dd')as odate,ocontent
 			from tbl_aopinion a left join tbl_employee e
 				 on a.fk_employeeid = e.employeeid
 					left join tbl_department d
@@ -247,9 +249,11 @@
 		
 		<!-- //일반결재 글쓰기 -->
 		<select id="WriteJsh" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-			select dname ,d.dcode , e.managerid as managerid
+			select dname ,d.dcode ,pname, e.managerid as managerid
 			from tbl_employee e left join tbl_department d
 			on d.dcode = e.fk_dcode
+			left join tbl_position p
+			on p.pcode = e.fk_pcode
 			where employeeid = #{userid}
 		</select>
 		
@@ -354,7 +358,9 @@
        <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
 		<select id="expGetTotalCount" parameterType="HashMap" resultType="int">
 			select  count(*) 
-			from tbl_approval  a left join tbl_spenda s
+			from tbl_approval  a left join tbl_employee e
+			on a.fk_employeeid = e.employeeid
+			left join tbl_spenda s
 			on a.ano = s.fk_ano
 			where anocode= '2' and apaper = 0
 				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
@@ -416,10 +422,10 @@
 			  select e.employeeid ,scatname, scat, arecipient1, atitle, name ,dname, apaper ,a.ano as ano, acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus, fileName ,orgFilename, fileSize 
 			  <choose>
 				<when test="scatname eq'지출결의서'">
-				 , exdate,  exprice
+				 , to_char(exdate,'yyyy-mm-dd'),  exprice
 				</when>
 				<when test="scatname eq'법인카드사용신청서'">
-				, codate ,cocardnum ,copurpose,coprice
+				, to_char(codate,'yyyy-mm-dd') ,cocardnum ,copurpose,coprice
 				</when>
 				</choose>
 			 
@@ -532,7 +538,9 @@
        <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
 		<select id="vacGetTotalCount" parameterType="HashMap" resultType="int">
 			select  count(*) 
-			from tbl_approval  a left join tbl_vacation v
+			from tbl_approval  a left join tbl_employee e
+			on a.fk_employeeid = e.employeeid
+			left join tbl_vacation v
 			on a.ano = v.fk_ano
 			where anocode= '3' and apaper = 0
 				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
@@ -691,22 +699,22 @@
 		  select e.employeeid ,vcatname, vno, arecipient1, atitle, name ,dname, pname , apaper ,a.ano as ano, acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus, fileName ,orgFilename, fileSize 
 		  <choose>
 			<when test="vcatname eq'병가'">
-			 , slstart,  slend , sldates
+			 , to_char(slstart,'yyyy-mm-dd') as slstart,  to_char(slend,'yyyy-mm-dd') as slend , sldates
 			</when>
 			<when test="vcatname eq'반차'">
-			, afdate ,afdan ,afdates
+			, to_char(afdate,'yyyy-mm-dd') as afdate ,afdan ,afdates
 			</when>
 			<when test="vcatname eq'연차'">
-			 , daystart,  dayend, daydates
+			 , to_char(daystart,'yyyy-mm-dd') as daystart,   to_char(dayend,'yyyy-mm-dd') as dayend, daydates
 			</when>
 			<when test="vcatname eq'경조휴가'">
-			, congstart ,congend ,congdates
+			,  to_char(congstart,'yyyy-mm-dd') as congstart , to_char(congend,'yyyy-mm-dd') as congend ,congdates
 			</when>
 			<when test="vcatname eq'출장'">
-			 , bustart,  buend, budates, buplace, bupeople
+			 , to_char(bustart,'yyyy-mm-dd') as bustart,  to_char(buend,'yyyy-mm-dd') as buend, budates, buplace, bupeople
 			</when>
 			<when test="vcatname eq'추가근무'">
-			, ewdate ,ewhours 
+			, to_char(ewdate,'yyyy-mm-dd') as ewdate ,ewhours 
 			</when>
 			</choose>
 		from tbl_approval a 

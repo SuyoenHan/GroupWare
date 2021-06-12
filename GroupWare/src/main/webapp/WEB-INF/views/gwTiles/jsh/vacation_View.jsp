@@ -3,56 +3,80 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <% String ctxPath = request.getContextPath(); %>
 
 <style>
-
-table, th, td {border: solid 1px gray;}
-
-#containerall{
-color:#666;
+h3{
+	font-weight:bold;
 }
+div#containerview{
+	margin: 30px 0px 30px 50px;
+	width: 80%;
+}
+div.section table, div.section th, div.section td{
+	border: solid 1px #ccc;
+	border-collapse: collapse;
+}
+
 #table1 {
-    float:right; 
-    width: 300px; 
-    border-collapse: collapse;
-    margin-right: 200px;
-    margin-bottom: 80px;
+	float: right; 
+	width: 300px; 
+	border-collapse: collapse;
+	margin-right: 200px;
+	margin-bottom: 50px;
 }
-    
+
+#table1 th, #table1 td{
+	text-align: center;
+}
+#table1 th {
+	background-color: #395673; 
+	color: #ffffff;
+}
+#table2 th, #table3 th, #table4 th, #table5 th {
+	width: 150px;
+}
+
 th{
-    background-color: #DDD;
+	background-color: #ccd9e6;
+	padding: 7px;
+}
+td{
+	padding: 7px;
 }
 
 #table2 {
-	width: 80%;
-	height: 900px;
+	width: 70%;
 	margin: 50px auto;
 }
-
-.log {
-	width: 80%;
-	height: 100px;
-	margin: 50px auto;
+#table3 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table4 {
+	width: 70%;
+	margin: 10px auto;
+}
+#table5 {
+	width: 70%;
+	margin: 10px auto;
+}
+button.btn {
+	margin-left:20px;
+	border-radius: 10px;
+	font-weight: bold;
+}
+td.opinion{
+	border: solid 1px white;
+}
+td.log{
+	border: solid 1px white;
 }
 
-#radio{
-	width: 80%;
-	height: 150px;
-	margin-top:30px;
-	margin: 50px auto;
-	font-size: 20px;
-
-}
-
-
-hr.hr{
-   border: solid 2px gray;
-   width:80%;
-}
-
-#containerall{
-	padding:50px 50px;
+button.btn1:hover{
+ background-color: #c3c6c9;
 }
 </style>
 
@@ -61,272 +85,7 @@ hr.hr{
 		//사이드바 세부메뉴 나타내기 
 		$("div#submenu3").show();
 		
-		$("div#containerview").hide();
-		var obj = []; //전역변수 
-		
-		//일반결재내역 문서 카테고리 라디오 클릭 이벤트
-		$("input[name=scatname]").click(function(){
-			
-			$("input#atitle").val("");
-			$("input#aconent").val("");
-			
-			$("td#smarteditor").empty();
-			$("td#smarteditor").html('<textarea rows="30" cols="160" name="acontent" id="acontent"></textarea>');
-			
-			
-			 var scatname;
-			 var html1;
-			 var html2;
-			 var html3;
-			 
-			$("input[name=scatname]:checked").each(function(index,item){			
-				scatname = $(this).val();
-		     
-			 //alert(ncat);
-			
-			});
-				
-			
-			<%-- ===  스마트 에디터 구현 시작 ===  --%>
-		       
-		       
-		       
-		       //스마트에디터 프레임생성
-		       nhn.husky.EZCreator.createInIFrame({
-		           oAppRef: obj,
-		           elPlaceHolder: "acontent",
-		           sSkinURI: "<%= request.getContextPath() %>/resources/smarteditor/SmartEditor2Skin.html",
-		           htParams : {
-		               // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
-		               bUseToolbar : true,            
-		               // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
-		               bUseVerticalResizer : true,    
-		               // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
-		               bUseModeChanger : true,
-		           }
-		       });
-		     <%-- === 스마트 에디터 구현 끝 === --%>
-			
-				
-				
-				if(scatname =="지출결의서"){
-					$("tr.changeScat").show();
-					html1+="<th>지출일자</th>"+
-					       "<td colspan='3'>&nbsp;<input type='date' name='exdate' id='exdate'/></td>";
-					       
-					      
-				    html2+="<th>지출금액</th>"+
-					       "<td colspan='3'><input type='number'  name ='exprice' id='exprice'/>원</td>";
-					       
-					  
-						  
-				}
-				else if(scatname =="법인카드사용신청서"){
-					$("tr.changeNcat").show();
-					html1+="<th>사용예정일</th>"+
-						  "<td colspan='3'>&nbsp;<input type='date' name='codate' id='codate'/></td>";
-						  
-						  
-						  
-					html2+= "<th>카드번호</th>"+
-						    "<td colspan='3'><input type='hidden' name='cocardnum' value='[경영]111-222-333'/>[경영]111-222-333</td>";
-						  
-						  
-				    html3+= 
-						  "<th>예상금액</th>"+
-						  "<td><input type='number'  name ='coprice' id='coprice'/>원</td>"+
-						  "<th>지출목적</th>"+
-						  "<td><select class='myselect' name='copurpose' id='exprice'> "+
-			           		"	<option value='1'>교통비</option> "+
-			           		"	<option value='2'>사무비품</option> "+
-			           		"	<option value='3'>주유비</option> "+
-			           		"	<option value='4'>출장비</option> "+
-			           		"	<option value='5'>식비</option> "+
-			           		"	<option value='6' selected>기타</option> "+
-		           		"</select></td>";
-				}
-				
-				
-				if(scatname =="지출결의서"){
-					$("tr#changeScat3").hide();
-					$("tr#changeScat1").html(html1);
-					$("tr#changeScat2").html(html2);
-				}
-				else{
-					$("tr#changeScat3").show();
-					$("tr#changeScat1").html(html1);
-					$("tr#changeScat2").html(html2);
-					$("tr#changeScat3").html(html3);
-				}
-				$("h3#scat").html(scat);
-				$("div#containerview").show();
-				
-			}); //$("input[name=ncat]").click(function(){})------------------------------------
-			
-			
-		 // 문서 제출하기
-		$("button#insertWrite").click(function(){
-		 
-		    $("input[name=scatname]:checked").each(function(index,item){			
-			  scatname = $(this).val();
-			
-			});
-		 
-		    //글제목 유효성검사
-		    var atitleVal = $("input#atitle").val().trim();
-            if(atitleVal == "") {
-	            alert("글제목을 입력하세요!!");
-	            return false;
-	         }
-		 
-		    // 지출결의서 유효성 검사
-		    if(scatname =="지출결의서"){     
-		         var exdate = $("input#exdate").val(); //지출일자
-		         var exprice = $("input#exprice").val().trim();// 지출금액
-		         if(exdate == "" ) {
-		            alert("지출일자를 입력하세요!!");
-		            return false;
-		         }
-		         else if(exprice == ""){
-		        	 alert("지출금액을 입력하세요!!");
-			         return false;
-		         }
-		     
-		    }
-		    else if(scatname =="법인카드사용신청서"){
-		        // 법인카드사용신청서 유효성 검사
-		         var codate = $("input#codate").val(); //사용예정일
-		         var coprice = $("select#coprice").val().trim(); //예상금액
-		         if(codate == "" ) {
-		            alert("사용예정일을 입력하세요!!");
-		            return false;
-		         }
-		         else if(coprice == ""){
-		        	 alert("예상금액을 입력하세요!!");
-			         return false;
-		         }
-		    }    
-		         
-		    var bool = confirm(scatname+"을 제출하시겠습니까? ");
-		  if(bool){
-		 
-	 
-		 
-		   <%-- === 스마트 에디터 구현 시작 === --%>
- 		   
-           //id가 content인 textarea에 에디터에서 대입
-	        obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []);
-	         
-	       <%-- === 스마트 에디터 구현 끝 === --%>
-		         
-		          
-		
-		         
-			   <%-- === 스마트에디터 구현 시작 === --%>
-		        // 스마트에디터 사용시 무의미하게 생기는 p태그 제거
-			       var contentval = $("textarea#acontent").val();
-		              
-			       // === 확인용 ===
-		           // alert(contentval); // content에 내용을 아무것도 입력치 않고 쓰기할 경우 알아보는것. 
-		           // "<p>&nbsp;</p>" 이라고 나온다.
-		           
-		           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
-		           // 글내용 유효성 검사 
-		           if(contentval == "" || contentval == "<p>&nbsp;</p>") {
-		              alert("글내용을 입력하세요!!");
-		              return;
-		           }
-		           
-		           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-		           contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
-			       /*    
-			                   대상문자열.replace(/찾을 문자열/gi, "변경할 문자열");
-			           ==> 여기서 꼭 알아야 될 점은 나누기(/)표시안에 넣는 찾을 문자열의 따옴표는 없어야 한다는 점입니다. 
-			                        그리고 뒤의 gi는 다음을 의미합니다.
-			
-			              g : 전체 모든 문자열을 변경 global
-			              i : 영문 대소문자를 무시, 모두 일치하는 패턴 검색 ignore
-			       */    
-		           contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
-		           contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
-		           contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
-		       
-		           $("textarea#acontent").val(contentval);
-		           
-		         <%-- === 스마트에디터 구현 끝 === --%>    
-	 
-		         // 폼(form) 을 전송(submit)
-		         var frm = document.writeGFrm;
-		         frm.method = "POST";
-		         frm.action = "<%= ctxPath%>/t1/expApproval_WriteEnd.tw";
-		         frm.submit();   
-				}	
-				  else{
-					  alert(scatname+" 제출을 취소하셨습니다.");
-					  location.href="javascript:history.back()";
-				  }
-		  });	// 문서제출 -----------------------------
-			
-		
-		//문서 임시저장하기
-		 $("button#saveWrite").click(function(){
-			  
-			  var scatname ;
-				$("input[name=scatname]:checked").each(function(index,item){			
-				      scatname = $(this).val();			
-			      });
-			  
-		       <%-- === 스마트 에디터 구현 시작 === --%>
-		       //id가 content인 textarea에 에디터에서 대입
-		        obj.getById["acontent"].exec("UPDATE_CONTENTS_FIELD", []); 
-		       <%-- === 스마트 에디터 구현 끝 === --%>
-	         
-		       <%-- === 스마트에디터 구현 시작 === --%>
-	     	       // 스마트에디터 사용시 무의미하게 생기는 p태그 제거
-		       var contentval = $("textarea#acontent").val();
-	              
-		       // === 확인용 ===
-	           // alert(contentval); // content에 내용을 아무것도 입력치 않고 쓰기할 경우 알아보는것.
-	           // "<p>&nbsp;</p>" 이라고 나온다.
-	           
-	           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기전에 먼저 유효성 검사를 하도록 한다.
-	           // 글내용 유효성 검사 
-	          
-	           // 스마트에디터 사용시 무의미하게 생기는 p태그 제거하기
-	           contentval = $("textarea#acontent").val().replace(/<p><br><\/p>/gi, "<br>"); //<p><br></p> -> <br>로 변환
-		       /*    
-		                   대상문자열.replace(/찾을 문자열/gi, "변경할 문자열");
-		           ==> 여기서 꼭 알아야 될 점은 나누기(/)표시안에 넣는 찾을 문자열의 따옴표는 없어야 한다는 점입니다. 
-		                        그리고 뒤의 gi는 다음을 의미합니다.
-		
-		              g : 전체 모든 문자열을 변경 global
-		              i : 영문 대소문자를 무시, 모두 일치하는 패턴 검색 ignore
-		       */    
-	           contentval = contentval.replace(/<\/p><p>/gi, "<br>"); //</p><p> -> <br>로 변환  
-	           contentval = contentval.replace(/(<\/p><br>|<p><br>)/gi, "<br><br>"); //</p><br>, <p><br> -> <br><br>로 변환
-	           contentval = contentval.replace(/(<p>|<\/p>)/gi, ""); //<p> 또는 </p> 모두 제거시
-	       
-	           $("textarea#acontent").val(contentval);
-	           
-	         <%-- === 스마트에디터 구현 끝 === --%>	
-				
-			  var bool = confirm(scatname+"를 임시저장함에 저장하시겠습니까? ");
-			  if(bool){
-			  
-				 // 폼(form) 을 전송(submit)
-		         var frm = document.writeGFrm;
-		         frm.method = "POST";
-		         frm.action = "<%= ctxPath%>/t1/expApproval_saveWrite.tw";
-		         frm.submit(); 
-			  }
-			  else{
-				  alert(scatname+" 저장을 취소하셨습니다.");
-				  location.href="javascript:history.back()";
-			  }
-		          
-		});	//임시보관함 ------------------------------------------
-			
-     }); //end of $(document).ready(function(){})----------------------
+		 }); //end of $(document).ready(function(){})----------------------
 	
 		
 </script>
@@ -336,7 +95,7 @@ hr.hr{
 	<h3 align="center">${requestScope.vcatname}</h3>
 <hr>
 <br>
-<div id="astatus" >
+<div class="section" >
 	<table id="table1">
 	
 		<tr>
@@ -346,17 +105,15 @@ hr.hr{
 		</tr>
 		
 		<tr>
-			<td style="height:70px;">
+		<td style="height:70px;">
 				<c:if test="${not empty requestScope.alogList}">
 					<c:forEach var="lvo" items="${requestScope.alogList}">
-						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '0'}">
-							미결재
-						</c:if>
 						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '1'}">
-							승인
+							<img src="<%= ctxPath%>/resources/images/sia/approval_1.png" style="height: 40px;"/>
 						</c:if>
 						<c:if test="${lvo.pcode == '2' && lvo.logstatus == '2'}">
-							반려
+							<img src="<%= ctxPath%>/resources/images/sia/rejected_1.png" style="height: 40px;"/>
+							
 						</c:if>
 					</c:forEach>
 				</c:if>
@@ -364,14 +121,11 @@ hr.hr{
 			<td>
 				<c:if test="${not empty requestScope.alogList}">
 					<c:forEach var="lvo" items="${requestScope.alogList}">
-						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '0'}">
-							미결재
-						</c:if>
 						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '1'}">
-							승인
+						   <img src="<%= ctxPath%>/resources/images/sia/approval_2.png" style="height: 40px;"/>
 						</c:if>
 						<c:if test="${lvo.pcode == '3' && lvo.logstatus == '2'}">
-							반려
+							 <img src="<%= ctxPath%>/resources/images/sia/rejected_2.png" style="height: 40px;"/>
 						</c:if>
 					</c:forEach>
 				</c:if>
@@ -379,14 +133,11 @@ hr.hr{
 			<td>
 				<c:if test="${not empty requestScope.alogList}">
 					<c:forEach var="lvo" items="${requestScope.alogList}">
-						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '0'}">
-							미결재
-						</c:if>
 						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '1'}">
-							승인
+						 	<img src="<%= ctxPath%>/resources/images/sia/approval_3.png" style="height: 40px;"/>
 						</c:if>
 						<c:if test="${lvo.pcode == '4' && lvo.logstatus == '2'}">
-							반려
+							<img src="<%= ctxPath%>/resources/images/sia/rejected_3.png" style="height: 40px;"/>
 						</c:if>
 					</c:forEach>
 				</c:if>
@@ -401,7 +152,7 @@ hr.hr{
 				<c:if test="${requestScope.epvo.astatus eq '0'}">제출</c:if>
 				<c:if test="${requestScope.epvo.astatus eq '1'}">결재진행중</c:if>
 				<c:if test="${requestScope.epvo.astatus eq '2'}">반려</c:if>
-				<c:if test="${requestScope.epvo.astatus eq '3'}">승인완료</c:if>					
+				<c:if test="${requestScope.epvo.astatus eq '3'}">결재완료</c:if>					
 			</td>
 			<th>문서번호</th>
 			<td>${requestScope.epvo.ano}</td>
@@ -420,21 +171,21 @@ hr.hr{
 		<c:if test="${requestScope.epvo.vcatname eq '반차'}">
 			<tr>
 				<th>요청기간</th>
-				<td colspan="3">${requestScope.avo.afdate}&nbsp;&nbsp;
-				<span style="color: blue; font-weight: bold;"><c:if test="${requestScope.epvo.afdan eq '1'}">오전</c:if><c:if test="${requestScope.epvo.afdan eq '2'}">오후</c:if></span>반차
+				<td colspan="3">${requestScope.epvo.afdate}&nbsp;&nbsp;
+				<span style="color: #22a0d6; font-weight: bold;"><c:if test="${requestScope.epvo.afdan eq '1'}">오전&nbsp;</c:if><c:if test="${requestScope.epvo.afdan eq '2'}">오후&nbsp;</c:if></span>반차
 				</td>
 			</tr>
 		</c:if>
 		<c:if test="${requestScope.epvo.vcatname eq '연차'}">
 			<tr>
 				<th>요청기간</th>
-				<td colspan="3">${requestScope.epvo.daystart} - ${requestScope.epvo.dayend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.epvo.daydates}</span>일]</td>
+				<td colspan="3">${requestScope.epvo.daystart} - ${requestScope.epvo.dayend}&nbsp;&nbsp;&nbsp;[<span style="color: #22a0d6; font-weight: bold;">사용일수: ${requestScope.epvo.daydates}일</span>]</td>
 			</tr>
 		</c:if>
 		<c:if test="${requestScope.epvo.vcatname eq '경조휴가'}">
 			<tr>
 				<th>요청기간</th>
-				<td colspan="3">${requestScope.epvo.congstart} - ${requestScope.epvo.congend}&nbsp;&nbsp;&nbsp;[사용일수: <span style="color: blue; font-weight: bold;">${requestScope.epvo.congdates}</span>일]</td>
+				<td colspan="3">${requestScope.epvo.congstart} - ${requestScope.epvo.congend}&nbsp;&nbsp;&nbsp;[<span style="color: #22a0d6; font-weight: bold;">사용일수: ${requestScope.epvo.congdates}일</span>]</td>
 			</tr>
 		</c:if>
 		<c:if test="${requestScope.epvo.vcatname eq '출장'}">
@@ -465,11 +216,14 @@ hr.hr{
 		<th>첨부파일</th>
 			<td colspan="3">
 				<c:if test="${not empty epvo.orgFilename}">
-				   <a href ="<%= ctxPath%>/download1.tw?ano=${requestScope.epvo.ano}">${requestScope.epvo.orgFilename}</a>
-				   
+				   <a href ="<%= ctxPath%>/download2.tw?ano=${requestScope.epvo.ano}">${requestScope.epvo.orgFilename}</a>
+				   <tr>
+			            <th>파일크기(bytes)</th>
+			            <td colspan="3"><fmt:formatNumber value="${requestScope.epvo.fileSize}" pattern="#,###"></fmt:formatNumber></td>
+		         	</tr>
 				</c:if>
 				<c:if test="${empty epvo.orgFilename}">
-				   <div align="center">첨부파일이 존재하지 않습니다.</div>
+				   <div align="center" style="color:#22a0d6;">첨부파일이 존재하지 않습니다.</div>
 				</c:if>
 			</td>
 	    </tr>
@@ -477,51 +231,46 @@ hr.hr{
 			
 	<div align="center">상기와 같은 내용으로 <span style="font-weight: bold;">${requestScope.epvo.vcatname}계</span> 을(를) 제출하오니 재가바랍니다.</div>
 	<div align="right" style="margin: 4px 0; margin-right: 15%;">기안일: ${requestScope.epvo.asdate}</div>
-	<div align="right" style="margin-right: 15%;">신청자: ${requestScope.epvo.dname} ${requestScope.epvo.name} ${requestScope.epvo.pname}</div>
+	<div align="right" style="margin-right: 15%;">신청자: <span style="font-weight:bold;">${requestScope.epvo.name} </span> ${requestScope.epvo.pname} (${requestScope.epvo.dname})</div>	
 		
 		
-		
-	
-	
-	</table>
-		
-	<table class="log">
+	<table id="table3">
 			<tr>
 				<th style="width:20%;">결재로그</th>
-				<td>
+				<td class="log">
 					<c:if test="${not empty requestScope.alogList}">
 						<c:forEach var="lvo" items="${requestScope.alogList}">
 							<c:if test="${lvo.logstatus == '0'}">
-							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [제출]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="font-weight:bold;"> [제출]</span></div>
 							  </c:if>
 							  <c:if test="${lvo.logstatus == '1'}">
-							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [승인]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="color:#1b4de3; font-weight:bold;"> [승인]</span></div>
 							  </c:if>
 							  <c:if test="${lvo.logstatus == '2'}">
-							  	<div>${lvo.logdate}&nbsp;${lvo.dname}&nbsp;${lvo.name} &nbsp;${lvo.pname}<span style="color:red;"> [반려]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="color:red; font-weight:bold;"> [반려]</span></div>
 							  </c:if>
 						  
 						</c:forEach>
 					</c:if>
 					<c:if test="${empty requestScope.alogList}">
-					  <div> 결재 로그가 존재하지 않습니다. </div>
+					  <div style="color:#22a0d6;"> 결재 로그가 존재하지 않습니다. </div>
 					</c:if>
 				</td>
 			</tr>
 		</table>
-		<table class="log">
+		<table id="table4">
 			<tr>
 				<th style="width:20%;">결재의견</th>
-				<td>
+				<td class="opinion">
 					<c:if test="${not empty requestScope.opinionList}">
 						<c:forEach var="ovo" items="${requestScope.opinionList}">
-						  <div>${ovo.dname}&nbsp;${ovo.name}&nbsp;${ovo.pname}<span>[</span>${ovo.odate}<span>]</span></div>
-						  <div>${ovo.ocontent}</div>
+						  <div style="font-weight:bold;">${ovo.dname}&nbsp;${ovo.name}&nbsp;${ovo.pname}&nbsp;&nbsp;<span style="color:#87898c;">[${ovo.odate}]</span></div>
+						  <div>>>> &nbsp;<span>${ovo.ocontent}</span></div>
 						</c:forEach>
 					</c:if>
 					
 					<c:if test="${empty requestScope.opinionList}">
-					  <div> 의견이 존재하지 않습니다. </div>
+					  <div style="color:#22a0d6;"> 의견이 존재하지 않습니다. </div>
 					</c:if>
 				</td>
 			</tr>
@@ -529,9 +278,11 @@ hr.hr{
 		
 	</div>
 
-  
-	<button type="button" onclick="javascript:location.href='<%=ctxPath %>/t1/expApproval_List.tw'" >전체목록보기</button>
-     <button type="button" onclick="javascript:location.href='<%=ctxPath %>/${requestScope.gobackURL}'" >검색결과목록보기</button>
-
+    <div style="margin-top: 20px; margin-left:950px">
+		<button type="button" class="btn btn1" onclick="javascript:location.href='<%=ctxPath %>/t1/vacation_List.tw'" >전체목록보기</button>
+     	<button type="button"  class="btn btn-primary" onclick="javascript:location.href='<%=ctxPath %>/${requestScope.gobackURL}'" >검색결과목록보기</button>
+	</div>
+	<br><br>
+		
 </div>
 		
