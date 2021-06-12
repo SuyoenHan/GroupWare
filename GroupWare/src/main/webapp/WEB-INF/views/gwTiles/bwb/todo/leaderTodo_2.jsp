@@ -144,7 +144,7 @@
 				<span class="info" style="width:90px; text-align:center;">
 					<input class="hurryno" type="hidden" value="${product.hurryno}">
 					<c:if test="${product.hurryno eq 1}">
-						<span style="border:solid 1px red">긴급</span>
+						<span style="background-color:#ff471a; color:white; display:inline-block; width:32px;">긴급</span>
 					</c:if>
 					<c:if test="${product.hurryno eq 0}">
 						<span style="font-size:12pt;">-</span>
