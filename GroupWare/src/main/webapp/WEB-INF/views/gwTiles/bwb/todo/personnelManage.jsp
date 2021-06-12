@@ -144,17 +144,16 @@
    td.oneInfoMenu {
    		font-weight: bolder;
    		text-align: center;
+   		background-color: #E9E9ED;
    }
    
    input.updateInfo {
-   		background-color: #e6e6e6;
    		border: solid 1px black;
    		font-size:16px;
    		width:180px;
    }
    
    select.updateInfo {
-   		background-color: #e6e6e6;
    		font-size:15px;
    		width:100px;
    }
@@ -483,7 +482,7 @@
   	  </div>
   	  
   	  <div id="oneInfo" style="clear:both; margin-bottom:100px; margin-left:350px;">
-  	  		<span style="margin-left:350px;">ddd</span>
+  	  		<span style="margin-left:260px; margin-bottom:15px; font-size:15pt; font-weight:bolder;">&#60;수정전&#62;</span>
       		<table id="oneInfo">
       			<tbody>
 	      			<tr> 
@@ -514,8 +513,9 @@
       		</table>
       </div>
       	<form name="goUpdate">
-      	<div id="oneInfoUpdate" style="margin-bottom:150px; margin-left:600px;">		
-      		<table id="oneInfoUpdate" style="margin-top:50px;">
+      	<div id="oneInfoUpdate" style="margin-bottom:150px; margin-left:600px;">
+      		<span style="margin-left:10px; margin-bottom:15px; font-size:15pt; font-weight:bolder;">&#60;수정후&#62;</span>		
+      		<table id="oneInfoUpdate">
       			<tbody>
 	      			<tr> 
 	      				<td rowspan="3" style="width:130px"> <img id="employeesimg" style="height:140px; width:130px;"> </td>
