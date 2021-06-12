@@ -6,16 +6,31 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -86,44 +101,29 @@ public class PaymentJshController {
     
  }
 	
+ 
+ 
+ 
+ 
+ 
+	
 	// 글목록 보여주기
 	@RequestMapping(value = "/t1/generalPayment_List.tw")
-	public ModelAndView generalPayment_List(ModelAndView mav, HttpServletRequest request) {
+	public ModelAndView requiredLogin_generalPayment_List(HttpServletRequest request,
+		 HttpServletResponse response, ModelAndView mav) {
+		
+		
 		List<ElectronPayJshVO> electronList = null;
 
-		/*
-		 * // 일반결재내역 페이징 처리를 안한 검색어가 있는 전체 글목록 보여주기 시작== // String searchType =
-		 * request.getParameter("searchType"); String searchCategory =
-		 * request.getParameter("searchCategory"); String searchWord =
-		 * request.getParameter("searchWord");
-		 * 
-		 * if(searchType == null || !"atitle".equals(searchType) &&
-		 * !"name".equals(searchType)) { searchType = ""; }
-		 * System.out.println(searchType); if(searchCategory == "" ||
-		 * (!"1".equals(searchCategory) && !"2".equals(searchCategory) &&
-		 * !"3".equals(searchCategory) && !"4".equals(searchCategory) )) {
-		 * searchCategory = ""; }
-		 * 
-		 * if(searchWord == null || "".equals(searchWord) ||
-		 * searchWord.trim().isEmpty()) { searchWord = ""; }
-		 * 
-		 * Map<String, String> paraMap = new HashMap<>(); paraMap.put("searchType",
-		 * searchType); paraMap.put("searchCategory", searchCategory);
-		 * paraMap.put("searchWord", searchWord);
-		 * 
-		 * electronList = service.electronListSearch(paraMap); // 일반결재내역 페이징 처리를 안한 검색어가
-		 * 있는 전체 글목록 보여주기 끝== //
-		 */
-		// 검색어가 없는 글전체 목록
-		// electronList = service.generalPayment_List();
-
+		
+	  
 		// ====일반결재내역 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 시작== //
 		String searchType = request.getParameter("searchType");
 		String searchCategory = request.getParameter("searchCategory");
 		String searchWord = request.getParameter("searchWord");
 		String str_currentShowPageNo = request.getParameter("currentShowPageNo");
 
-		if (searchType == null || !"atitle".equals(searchType) && !"name".equals(searchType)) {
+		if (searchType == null || (!"atitle".equals(searchType) && !"name".equals(searchType))) {
 			searchType = "";
 		}
 		// System.out.println(searchType);
@@ -274,6 +274,16 @@ public class PaymentJshController {
 		return mav;
 
 	}
+	
+	
+	
+	
+
+	
+	      
+	   
+	
+	
 
 	// === #108. 검색어 입력시 자동글 완성하기 3 === //
 	@ResponseBody
@@ -369,6 +379,7 @@ public class PaymentJshController {
 			ElectronPayJshVO epvo = service.generalOneView(paraMap);
 			// System.out.println("확인용~~ => "+epvo.getName());
 
+			
 			ElectronPayJshVO receiver = service.receiver(paraMap); //수신자찍어주기
 			
 			List<ElectronPayJshVO> opinionList = service.oneOpinionList(paraMap);
@@ -512,7 +523,6 @@ public class PaymentJshController {
 				
 				fileSize = attach.getSize(); // 첨부파일의 크기(단위는 byte임)
 				epvo.setFileSize(String.valueOf(fileSize));
-				
 				
 				
 			} catch (Exception e) {
@@ -880,10 +890,6 @@ public class PaymentJshController {
 	  }   
    
 	
-	
-	   
-	   
-	   
 	   
 	   
 	   
@@ -895,7 +901,8 @@ public class PaymentJshController {
 		  
 		// 글목록 보여주기
 		@RequestMapping(value = "/t1/expApproval_List.tw")
-		public ModelAndView expApproval_List(ModelAndView mav, HttpServletRequest request) {
+		public ModelAndView requiredLogin_expApproval_List(HttpServletRequest request, HttpServletResponse response,
+				ModelAndView mav) {
 			
 			List<ElectronPayJshVO> expList = null;
 
@@ -1094,7 +1101,7 @@ public class PaymentJshController {
 		
 		
 		
-		// 하나의 전자결재내역 문서 보여주기
+		// 하나의 지출결재내역 문서 보여주기
 		@RequestMapping(value = "/t1/expView.tw")
 		public ModelAndView expOneView(HttpServletRequest request, ModelAndView mav) {
 
@@ -1157,6 +1164,9 @@ public class PaymentJshController {
 			try {
 
 				ElectronPayJshVO epvo = service.expOneView(paraMap);
+//	epvo.setExprice(String.valueOf(epvo.getExprice()));
+//	epvo.setCoprice(String.valueOf(epvo.getCoprice()));
+				
 				
 				ElectronPayJshVO receiver = service.receiver(paraMap); //수신자찍어주기
 				
@@ -1571,7 +1581,8 @@ public class PaymentJshController {
 		
 		// 글목록 보여주기
 		@RequestMapping(value = "/t1/vacation_List.tw")
-		public ModelAndView vacation_List(ModelAndView mav, HttpServletRequest request) {
+		public ModelAndView requiredLogin_vacation_List(HttpServletRequest request, HttpServletResponse response,
+				ModelAndView mav) {
 			
 			List<ElectronPayJshVO> vacList = null;
 
@@ -2074,6 +2085,8 @@ public class PaymentJshController {
 			String vcatname = request.getParameter("vcatname");
 			String employeeid = request.getParameter("employeeid");
 	
+			System.out.println("ano=>"+ano);
+			
 			//[추가] 글목록에서 검색되어진 글내용일 경우 이전글제목, 다음글제목은 검색되어진 결과물내의 이전글과 다음글이 나오도록 하기 위한 것이다.  
 		      String searchType = request.getParameter("searchType");
 		      String searchWord = request.getParameter("searchWord");
@@ -2134,6 +2147,7 @@ public class PaymentJshController {
 				mav.addObject("opinionList", opinionList);
 				mav.addObject("alogList", alogList);
 				mav.addObject("epvo", epvo);
+				System.out.println("epvo=>" +epvo.getAtitle());
 				mav.addObject("receiver", receiver);
 				mav.addObject("vcatname", vcatname);
 
@@ -2152,9 +2166,9 @@ public class PaymentJshController {
 		
 	
 			
-		/*
+		
 			// ===  첨부파일 다운로드 받기
-			   @RequestMapping(value="/download1.tw")
+			   @RequestMapping(value="/download2.tw")
 			   public void vacdownload(HttpServletRequest request,HttpServletResponse response) {
 				   
 				   
@@ -2166,7 +2180,7 @@ public class PaymentJshController {
 				  paraMap.put("searchType", "");
 				  paraMap.put("searchWord", "");
 				  paraMap.put("searchCategory", "");
-	*/			  
+			  
 				  
 				  /*
 			     	첨부파일이 있는 글 번호에서
@@ -2174,7 +2188,7 @@ public class PaymentJshController {
 			                   이러한 fileName값을 DB에서 가져와야 한다.
 			                   또한 orgFilename 값도 DB에서 가져와야 한다. 
 				  */
-		/*		  
+				  
 				  response.setContentType("text/html; charset=UTF-8");
 				  PrintWriter out = null;
 				  
@@ -2222,7 +2236,7 @@ public class PaymentJshController {
 					//	  System.out.println("~~~~~~ path =>" + path);
 						  //~~~~~~ path =>C:\NCS\workspace(spring)\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\Board\resources\files
 					   
-		/*				  
+						  
 						  // **** file 다운로드 하기 **** // 
 						  boolean flag = false; // file 다운로드의 성공,실패를 알려주는 용도 
 						  flag = fileManager.doFileDownload(fileName, orgFilename, path, response);
@@ -2260,12 +2274,11 @@ public class PaymentJshController {
 				  }
 				  
 			   }
-		*/
+		
 		
 			
-			
-			
-			
+			 
+		
 			
 			
 			
