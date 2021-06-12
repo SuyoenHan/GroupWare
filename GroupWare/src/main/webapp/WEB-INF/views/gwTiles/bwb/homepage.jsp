@@ -58,7 +58,7 @@
  }
  
  .fc-daygrid-event-dot{
- 	margin-left: 25px;
+ 	margin-left: 29px;
  }
  
  .fc-daygrid{
@@ -631,6 +631,8 @@
         
         
         <%-- 오다윤 날씨 구현 시작 --%>
+       
+        	
         var todayw = new Date();
         var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
         console.log("어제:"+yesterday);
@@ -727,9 +729,10 @@
                    
                    $("#pty").html(pty);
     				
+                   var image="";
                    if(pty==0){
 	                   if(sky==1){
-	                	   var image = "<%= ctxPath%>/resources/images/ody/pop1.png";
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
 	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
 	                   }
 	                   else if(sky==3){
@@ -785,7 +788,7 @@
 
                    var t1h = data.result.response.body.items.item[3].obsrValue;
         
-                   $("#t1h").html(t1h+"ºC");
+                   $("#t1h").html(t1h);
                 }
             },
             error : function(e, status, xhr, data) {
@@ -811,14 +814,15 @@
                    var y1h = data.result.response.body.items.item[3].obsrValue;
         			console.log("어제온도:"+y1h);
 
-					var t1h = $("#t1h").text();        			
+					var t1h = $("#t1h").text(); 
+					console.log("현재시간"+t1h);
 					var gap = Math.abs(parseInt(t1h)-parseInt(y1h));
 					console.log("gap"+gap);
 					if(gap>=0){
-						$("#gap").html("어제보다 "+gap+" º 높아요."); 
+						$("#gap").html("어제보다 "+parseInt(gap)+" º 높아요!"); 
 					}
 					else{
-						$("#gap").html("어제보다 "+gap+" º 낮아요."); 
+						$("#gap").html("어제보다 "+parseInt(gap)+" º 낮아요!"); 
 					}
 						
         			
@@ -831,7 +835,59 @@
         });
         
     	
-     
+    	$.ajax({
+    		  type: "GET",
+    		  url: "http://openapi.seoul.go.kr:8088/504543517764617936396d50484259/json/RealtimeCityAir/1/99",
+    		  data: {},
+    		  success: function(response){
+    				// 마포구의 미세먼지 값만 가져와보기
+    				let mapo = response["RealtimeCityAir"]["row"][5];
+    				let guName = mapo['MSRSTE_NM'];
+    				let guMise = mapo['PM10'];
+    				let guchoMise = mapo['PM25'];
+    				console.log(guName, guMise,guchoMise);
+    				
+    				var miseStatus="";
+    				if(guMise<=30){
+    					miseStatus="좋음" 
+    				}
+    				else if(guMise<=80){
+    					miseStatus="보통"
+    				}
+    				else if(guMise<=150){
+    					miseStatus="나쁨"
+    				}
+    				else{
+    					miseStatus="매우나쁨"
+    				}
+    				
+    				$("#miseStatus").html("미세먼지: "+miseStatus);
+    				$("#mise").html("("+guMise+"㎍/m³)");
+    				
+    				var miseimage="";
+    				var chomiseStatus="";
+    				if(guchoMise<=15){
+    					chomiseStatus="좋음" 
+    					miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
+    				}
+    				else if(guchoMise<=35){
+    					chomiseStatus="보통"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
+    				}
+    				else if(guchoMise<=75){
+    					chomiseStatus="나쁨"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
+    				}
+    				else{
+    					chomiseStatus="매우나쁨"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
+    				}
+    				
+    				$("#chomiseStatus").html("초미세먼지: "+chomiseStatus);
+    				$("#chomise").html("("+guchoMise+"㎍/m³)");
+    				$("#miseimg").html("<img style='width: 100px; height: 100px;' src='"+ miseimage +"'/>");
+    		  }
+    		})
         <%-- 오다윤 날씨 구현 끝 --%>
         
    }); // end of $(document).ready(function(){
@@ -1123,12 +1179,21 @@
  
  						<%--  날씨 시작 --%> 
   <div id="weather" style="border: solid 1px blue; float: left; margin: 10px 0px 50px 40px; width: 580px; height: 230px; ">
- 	<div id="today-w" style="border: solid 1px blue; float: left; width: 50%; height: 100%;">
- 	오늘의 날씨<br><br>
+ 	<div id="today-w" style="float: left; width: 50%; height: 100%; border-right: solid 1px blue;">
+ 	<span style="font-weight: bold;">오늘의 날씨</span><br><br>
  	<span  id="sky"></span>
- 	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><br>
+ 	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
  	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
  	</div>
+ 	<div style="float: right; width: 50%; height: 100%; " >
+ 		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
+ 		<div align="center" style="margin-top: 20px;">
+ 		<span id="miseimg"></span><br><br>
+ 		<span id="miseStatus" ></span><span id="mise"></span><br>
+ 		<span id="chomiseStatus"></span><span id="chomise"></span>
+ 		</div>
+ 	</div>
+ 	
   </div>
   						<%--  날씨 끝 --%> 
 </div>

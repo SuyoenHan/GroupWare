@@ -51,10 +51,7 @@ public class ChattingOdyController {
 	
 			String date= request.getParameter("today");
 			String time = request.getParameter("now");
-			
-			System.out.println("일자:"+date);
-			System.out.println("시간:"+time);
-			
+		
 	        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getVilageFcst"
 	            + "?serviceKey=Kb4EM%2FntmrXOi76DygiRHcmeF5z2%2BVNzCueqSypkUJTAIDbkCluUPi8REeX9m65vJ%2FiGwliXM%2FnlDL5GjSS3Kg%3D%3D"
 	            + "&dataType=JSON"            // JSON, XML
@@ -148,8 +145,6 @@ public class ChattingOdyController {
 					String yesterday= request.getParameter("yesterday");
 					String  ytime = request.getParameter("ytime");
 					
-					System.out.println("어제날짜"+yesterday);
-					System.out.println("어제시간"+ytime);
 			        String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService/getUltraSrtNcst"
 			            + "?serviceKey=Kb4EM%2FntmrXOi76DygiRHcmeF5z2%2BVNzCueqSypkUJTAIDbkCluUPi8REeX9m65vJ%2FiGwliXM%2FnlDL5GjSS3Kg%3D%3D"
 			            + "&dataType=JSON"            // JSON, XML
