@@ -97,12 +97,13 @@ public class EmailKdnController {
 		
 		String ccMail = request.getParameter("ccMail");
 		String checkSaveSentMail = request.getParameter("saveSentMail");
+		// System.out.println("checkSaveSentMail"+checkSaveSentMail);
 		String receiverEmail = request.getParameter("receiverEmail");
 		String ccEmail = request.getParameter("ccEmail");
 
-		//System.out.println(receiverEmail);
+		// System.out.println(receiverEmail);
 		evo.setReceiverEmail(receiverEmail);
-		//System.out.println("ccEmail: "+ccEmail);
+		// System.out.println("ccEmail: "+ccEmail);
 		evo.setCcEmail(ccEmail);
 		
 		if(ccMail == null) {
@@ -298,9 +299,16 @@ public class EmailKdnController {
 	public ModelAndView view(HttpServletRequest request, ModelAndView mav) {
 		
 		String mailBoxNo = request.getParameter("mailBoxNo");
-		// 조회하고자 하는 글번호 받아오기
-		String seq = request.getParameter("seq");
 		
+		// 조회하고자 하는 글번호 받아오기
+		String seq = request.getParameter("seq"); // 받은메일함에서 넘어온 경우
+		String fk_seq= request.getParameter("fk_seq"); // 보낸메일함에서 넘어온 경우
+		
+		// System.out.println(seq);
+		// System.out.println(fk_seq);
+
+		if(seq==null) {seq="0";}
+		if(fk_seq==null) {fk_seq="0";}
 		
 		HttpSession session = request.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO)session.getAttribute("loginuser");
@@ -340,15 +348,17 @@ public class EmailKdnController {
 		
 		// int m = service.getPreviousMail();
 		
-		
 		try {
 			Integer.parseInt(seq);
+			Integer.parseInt(fk_seq);
 			
 			EmailKdnVO evo = null;
+			
 			if(mailBoxNo.equals("1")) { // 받은메일함
 				evo = service.getView(paraMap);
 				mav.addObject("evo", evo);
 			} else if(mailBoxNo.equals("2")) {	// 보낸메일함
+				paraMap.put("seq",fk_seq);
 				evo = service.getSentMailView(paraMap);
 				mav.addObject("evo", evo);
 			} else if(mailBoxNo.equals("3")){	// 중요메일함
@@ -367,7 +377,13 @@ public class EmailKdnController {
 		
 		// ============= 받는 사람이 여러명인 경우 고려 => 받는사람 이름과 이메일 주소 메소드 따로 생성 시작 (받는사람이 null일 수는 없다)
 
-		String receiverEmail= service.receiverEmail(seq);
+		String receiverEmail="";
+		if("0".equals(seq)) { // 보낸메일함에서 넘어온 경우
+			receiverEmail=service.receiverEmail(fk_seq);
+		}
+		else if("0".equals(fk_seq)) { // 받은메일함에서 넘어온 경우
+			receiverEmail=service.receiverEmail(seq);
+		}
 		
 		List<Map<String,String>> receiverList= new ArrayList<>();
 		
@@ -407,7 +423,13 @@ public class EmailKdnController {
 		
 		// ============= 참조 사람이 여러명인 경우 고려 => 참조사람 이름과 이메일 주소 메소드 따로 생성 시작 (참조사람이 null일 수 있다)
 
-		String ccEmail= service.ccEmail(seq);
+		String ccEmail="";
+		if("0".equals(seq)) { // 보낸메일함에서 넘어온 경우
+			ccEmail=service.ccEmail(fk_seq);
+		}
+		else if("0".equals(fk_seq)) { // 받은메일함에서 넘어온 경우
+			ccEmail=service.ccEmail(seq);
+		}
 		
 		List<Map<String,String>> ccList= new ArrayList<>();
 		
@@ -571,8 +593,28 @@ public class EmailKdnController {
 		
 		// == 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
 		///////////////////////////////////////////////////////////////
+
+		// ============= 받는 사람이 여러명인 경우 고려 => 받는사람이 여러명인 경우 보낸메일함 리스트에는 1명의 이름과 이메일 주소를 표시해주고 나머지는 외 0명으로 표시한다
+		for(EmailKdnVO evo: emailList) {
+			
+			if(evo.getReceiverEmail().indexOf(",")!=-1) { // 수신자가 여러명인 경우
+				String[] receiverEmailArr= evo.getReceiverEmail().split(",");
+				String receiverName= service.getName(receiverEmailArr[0]); // 한명의 이름만 필요
+				evo.setReceiverEmail(receiverEmailArr[0]); // 한명의 이메일만 필요
+				evo.setReceiverName(receiverName); // 한명의 이름만 필요
+				evo.setReceiverCnt(String.valueOf(receiverEmailArr.length-1));  // 외 0명에 필요
+			}
+			else { // 수신자가 한명인 경우
+				String receiverName= service.getName(evo.getReceiverEmail());
+				evo.setReceiverEmail((evo.getReceiverEmail())); 
+				evo.setReceiverName(receiverName); 
+			}	
+		}
 		
 		mav.addObject("emailList", emailList);
+		
+		// ============= 받는 사람이 여러명인 경우 고려 => 받는사람이 여러명인 경우 보낸메일함 리스트에는 1명의 이름과 이메일 주소를 표시해주고 나머지는 외 0명으로 표시한다
+		
 		mav.setViewName("kdn/mail/mail_sent.gwTiles");
 		return mav;
 	}
