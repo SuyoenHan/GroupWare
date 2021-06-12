@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="<%=ctxPath %>/resources/css/kdn/mail.css" />
 
 <style type="text/css">
-	span.emailColor{color:red;}
+	span.myEmail{font-weight: bold;}
 </style>
 
 <script type="text/javascript">
@@ -21,7 +21,7 @@ $(document).ready(function(){
 	
 	// 로그인한 유저의 이메일이 받는사람에 있는지 참조에 있는지 한눈에 알아보기 위해 빨간색으로 표시
 	var employeeid= "${loginuser.employeeid}";
-	$("span#"+employeeid).addClass("emailColor");
+	$("span#"+employeeid).addClass("myEmail");
 	
 });
 
@@ -184,7 +184,7 @@ function goReply(seq){
 		<p>${requestScope.evo.content}</p>
 		
 		<c:if test="${not empty requestScope.evo.fileName}">
-		<hr style="border-top: double 3px #eee; margin-top: 50px;">
+			<hr style="border-top: double 3px #eee; margin-top: 50px;">
 			<span style="color: #999999;">첨부파일: </span>
 			<span>
 				<c:choose>
@@ -199,11 +199,6 @@ function goReply(seq){
 	</c:if>
 		
 	</c:if>
-	
-	
-	
-	
-	
 	
 	
 </c:if>	
