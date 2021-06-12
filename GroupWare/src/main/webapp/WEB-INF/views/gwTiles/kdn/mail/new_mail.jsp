@@ -168,12 +168,12 @@ $(document).ready(function(){
     // 쓰기버튼
     $("button#btnSend").click(function(){
        
-       //var emailVal = $("input[name=receiverEmail]").val().trim();
+       var emailVal = $("input[name=receiverEmail]").val().trim();
        
        var find = $("div#receiver").find('span').val();
        console.log("find: "+find);
        
-       if($("div#receiver").find('span').val() == null){
+       if($("div#receiver").find('span').val() == null){ 
           alert("받는사람 이메일주소를 입력하세요");
           return;
        }
@@ -220,6 +220,21 @@ $(document).ready(function(){
 		 }
  	});
  	
+ 	
+ 	
+ 	// ======================= 주소록 버튼 추가작업 시작 =============================
+ 	
+ 	// 1) 주소록 팝업 열기
+ 	$("button#contact").bind('click',function(){  
+ 		
+ 		window.name="email_employeeMapParent";
+ 		
+ 		window.open("<%=ctxPath%>/t1/emailEmployeeMap.tw", "email_employeeMap", "width=800px, height=600px, top=50px, left=500px, scrollbars=yes");
+ 	}); // end of $("button#contact").bind('click',function(){
+ 	
+   // ======================= 주소록 버튼 추가작업 끝 =============================
+ 	
+	   
  });// end of $(document).ready(function(){})----------------
  
  // 보낸메일함 저장하기
@@ -235,6 +250,36 @@ $(document).ready(function(){
  }
  
  
+ //======================= 주소록 버튼 추가작업 시작 =============================
+ 
+ // 자식창 (주소록)이 닫치고 실행할 부모 함수
+ function afterEmailEmployeeMap(){
+	
+	// 2) 주소록 팝업에서 적용 클릭시 부모창에 보내 준 데이터 가공 => 수신자, 참조에 넣어주기
+	var receiverEmail= $("input#receiverEmail").val();
+	var ccEmail= $("input#ccEmail").val();
+	// console.log(receiverEmail);
+	
+	if(receiverEmail!=""){
+	 	// 여러명일 경우 고려, 참조는 없는 경우도 존재
+	 	var receiverEmailArr= receiverEmail.split(",");	
+	 	
+	 	for(var i=0;i<receiverEmailArr.length;i++){
+	 		 $('#receiver').append('<span class="email-ids">'+ receiverEmailArr[i] +' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	 	} // end of for-------------------------
+	}
+	
+	if(ccEmail!=""){ 
+		var ccEmailArr= ccEmail.split(",");
+		for(var i=0;i<ccEmailArr.length;i++){
+	 		 $('#cc').append('<span class="email-ids">'+ ccEmailArr[i] +' <span class="cancel-ccemail" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	 	} // end of for-------------------------	
+	}
+	
+ } // end of function afterEmailEmployeeMap(){----------------
+	
+ // ======================= 주소록 버튼 추가작업 끝 =============================
+	 
 </script>
 
 <div id="mail-header" style="width: 100%; height: 120px; padding: 20px;">
@@ -299,4 +344,11 @@ $(document).ready(function(){
       <input type="hidden" name="depthno" value="${requestScope.depthno}"/>
       
    </form>
+   
+   <!-- 주소록에서 가져온 수신자, 참조 값을 넣어주기 위한 hidden form -->
+   <form>
+   		<input type="hidden" id="receiverEmail" name="receiverEmail" value="">
+   		<input type="hidden" id="ccEmail" name="ccEmail" value="">
+   </form>
+   
 </div>  
