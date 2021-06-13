@@ -243,7 +243,7 @@ button.btn1:hover{
 		    else if(scatname =="법인카드사용신청서"){
 		        // 법인카드사용신청서 유효성 검사
 		         var codate = $("input#codate").val(); //사용예정일
-		         var coprice = $("select#coprice").val().trim(); //예상금액
+		         var coprice = $("select#coprice").val(); //예상금액
 		         if(codate == "" ) {
 		            alert("사용예정일을 입력하세요!!");
 		            return false;
