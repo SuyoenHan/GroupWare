@@ -394,6 +394,8 @@ public class MyDocumentSiaService implements InterMyDocumentSiaService {
 			result = dao.submitLog(paraMap);
 		}
 		
+		System.out.println("확인용 : " + avo.getMdate());
+		
 		return result;
 	}
 	@Override
