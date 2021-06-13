@@ -22,15 +22,18 @@
  div#calendarWrapper{
 	float: left;
  }	
+
  .fc-scroller {
    	overflow-y: hidden !important;
  }
+
  a{
     color: #000;
     text-decoration: none;
     background-color: transparent;
     cursor: pointer;
  }
+
  a:hover {
     color: #000;
     cursor: pointer;
@@ -44,6 +47,7 @@
     text-decoration: none;
     background-color: transparent;
  }
+
  .fc-header-toolbar{
 	height: 30px;
  } 
@@ -211,16 +215,32 @@
 	.highcharts-data-table tr:hover {
 	    background: #f1f7ff;
 	}
+
 	<%-- word cloud 백원빈 끝 --%>
 	
+<%-- 김다님 공지사항 게시판 시작--%>
+
+table#recentNotice{
+	border: solid 1px gray;
+	border-collapse: collapse;
+	width: 550px;
+}
+
+
+
+<%-- 김다님 공지사항 게시판 끝--%>
+	
 </style>
+
 <!-- full calendar에 관련된 script -->
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
 <script src='<%=ctxPath %>/resources/fullcalendar/ko.js'></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
 <!-- 퀵메뉴에 쓰이는 차트 script -->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
 <%-- 내통계에 쓰이는 차트 script --%>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/data.js"></script>
@@ -230,9 +250,12 @@
 <%-- word Cloud 차트 script --%>
 <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+
 <script type="text/javascript">
    $(document).ready(function(){
       
+	   displayNotice(); //공지사항 게시판
       // div#sidemenu와 div#content길이 맞추기
       // func_height1();
       
@@ -332,6 +355,7 @@
               if(json.outtime != ""){
                  
                   $("span#outtime").text(json.outtime);
+
               }else{
                  $("span#outtime").text("(미퇴근)");
               }
@@ -451,6 +475,7 @@
          	    showMyList(date); // 해당 날짜에 대한 캘린더 정보를 불러오는 함수 
            }
          });
+
          calendar.render();
          calendar.setOption('height', 450);
     	
@@ -593,6 +618,7 @@
                 }
                 return arr;
             }, []);
+
         Highcharts.chart('container2', {
             accessibility: {
                 screenReaderSection: {
@@ -819,9 +845,11 @@
             data: {"today":wctoday, "now":wcnow},
             dataType : "json",
             success : function(data, status, xhr) {
+
                 let dataHeader = data.result.response.header.resultCode;
                 
                 if (dataHeader == "00") {
+
                 	var t1h = parseFloat(data.result.response.body.items.item[3].obsrValue);
         
                    $("#t1h").html(t1h);
@@ -837,9 +865,11 @@
                     data: {"yesterday":yesterday, "ytime":ytime},
                     dataType : "json",
                     success : function(data, status, xhr) {
+
                         let dataHeader = data.result.response.header.resultCode;
                         
                         if (dataHeader == "00") {
+
                            var y1h =parseFloat(data.result.response.body.items.item[3].obsrValue);
                 			console.log("어제온도:"+y1h);	
         					var gap = parseFloat(t1h-y1h).toFixed(2);
@@ -921,6 +951,57 @@
     		})
         <%-- 오다윤 날씨 구현 끝 --%>
         
+    <%-- 김다님 공지사항 게시판 시작 --%> 
+    
+   	function displayNotice(){
+   		
+   		$.ajax({
+   			url:"<%=ctxPath%>/t1/recentNotice.tw",
+   			type:"get",
+   			dataType:"json",
+   			success:function(json){
+   				if(json.length > 0){
+   			
+   				$.each(json, function(index,item){
+   					html = "";
+   					
+   					var categName = "";
+   					if(item.fk_categnum == "1"){
+   						categName = "전체공지";
+   					} else if(item.fk_categnum == "2"){
+   						categName = "총무공지";
+   					} else {
+   						categName = "경조사";
+   					}
+   					
+   					regDate = item.regDate.substring(0,10);
+   					
+   					console.log("카테고리넘버:"+item.fk_categnum);
+   					console.log(categName);
+   					console.log(item.subject);
+   					console.log(regDate);
+   					console.log(index);
+   					html += "<td style='height:30px;'>"+categName+"</td>";
+   					html += "<td style='height:30px;'><a href='<%=ctxPath%>/t1/viewNotice.tw?seq="+item.seq+"'>"+item.subject+"</a></td>";
+   					html += "<td style='height:30px;'>"+regDate+"</td>";
+   					$("tr#row-"+index+"-content").html(html);
+   				});
+   				
+   				} else {
+   					html = "<td aling+'center'>등록된 게시글이 없습니다.</td>"
+   						
+   					$("tr#row-0-content").html(html);
+   				}
+   			},
+   			error: function(request, status, error){
+   	           alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+   	       }
+   		
+   		});   	
+    	
+   	}	
+   		<%-- 김다님 공지사항 게시판 끝--%>
+    	
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -989,6 +1070,7 @@
       case 6:
          dayName = "토요일"
          break;
+
       }
    
       var today = year+"-"+month+"-"+date+"&nbsp;&nbsp;&nbsp;"+dayName+"&nbsp;&nbsp;&nbsp;"+hours+":"+minutes+":"+seconds;
@@ -1012,6 +1094,7 @@
        }
       
       var date = now.getDate();  // 현재일
+
       var todayDate =  year+"-"+month+"-"+date;
       return todayDate;
    }
@@ -1052,6 +1135,10 @@
    }
 	
 </script>
+
+
+
+
 <div id="content" style="width: 1580px;">
   
   <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
@@ -1109,6 +1196,7 @@
             <span style="margin-left:65px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
            </c:if>
         </div>
+
      </div>
      <div id="vacation" style="margin-top:5px; border-bottom:solid 1px black;">
      	<ul id="vacationUl">
@@ -1131,6 +1219,7 @@
   <div id="myStatic" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 450px; height: 280px; ">
   	<figure class="highcharts-figure">
     <div id="container" style="height:250px"></div>
+
     <table id="datatable">
         <tbody>
             <tr>
@@ -1146,6 +1235,7 @@
         </tbody>
 	    </table>
 	</figure>
+
   </div>
   <%-- =================== 백원빈 내통계 끝 =================== --%>
   
@@ -1178,14 +1268,25 @@
   <%-- =================== 한수연 끝 =================== --%>
   
   
-  
+  <%-- ============== 김다님 공지사항 게시판 시작 =============== --%>
   <%-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div --%>
   <div style="float: left; width: 800px;"></div>
   
   <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
-  	다님님 파트(공지사항)
+  	
+  	<table id="recentNotice" class="table">
+  		<tr>
+  			<th>구분</th>
+  			<th>제목</th>
+  			<th>작성일시</th>
+  		</tr>
+  		<tr id="row-0-content"></tr>
+  		<tr id="row-1-content"></tr>
+  		<tr id="row-2-content"></tr>
+  	</table>
   </div>
   
+  <%-- ============== 김다님 공지사항 게시판 끝 =============== --%>
   
   
   
