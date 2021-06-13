@@ -19,6 +19,10 @@ tr.infoSchedule{
 	background-color: white;
 }
 
+.info{
+	background-color: #eef2f7;
+	cursor: pointer;
+}
 .table th {
 	color: #fff;
 	background-color: #395673;
@@ -96,9 +100,21 @@ button.btn_normal{
 		    //To의 초기값을 3일후로 설정
 		    $('input#toDate').datepicker('setDate', 'today'); //(-1D:하루전, -1M:한달전, -1Y:일년전), (+1D:하루후, +1M:한달후, +1Y:일년후)
 		  
+		  
 		    
-		    
-		$("tr.infoSchedule").click(function(){
+
+			$("tr.infoSchedule").bind("mouseover",function(){			
+				$(this).addClass("info");			
+			}); 
+			
+			$("tr.infoSchedule").bind("mouseout",function(){
+
+				$(this).removeClass("info");
+			});
+			
+			
+			
+			$("tr.infoSchedule").click(function(){
 			//	console.log($(this).html());
 				var sdno = $(this).children(".sdno").text();
 				godetail(sdno);

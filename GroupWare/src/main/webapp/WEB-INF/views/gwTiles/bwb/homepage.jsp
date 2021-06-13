@@ -258,7 +258,7 @@
          });
 
          calendar.render();
-         calendar.setOption('height', 380);
+         calendar.setOption('height', 350);
     	
          
          $("div#infoCalendar").hide();
@@ -425,7 +425,6 @@
         
         <%-- 오다윤 날씨 구현 시작 --%>
        
-        	
         var todayw = new Date();
         var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
         console.log("어제:"+yesterday);
@@ -441,7 +440,8 @@
     	var ydyear = yesterday.getFullYear();
     	var ydmonth = yesterday.getMonth()+1;
     	var ydday = yesterday.getDate();
-    
+    	var yminutes = yesterday.getMinutes();
+    	
     	if(whour<10){
     		whour='0'+whour;
     	}
@@ -451,7 +451,7 @@
     	if(wday<10){
     		wday='0'+wday;
     	}
-    
+
     	if(ydmonth<10){
     		ydmonth='0'+ydmonth;
     	}
@@ -461,59 +461,62 @@
     	
     	var arr =[];
     	var harr = new Array('02','05','08','11','14','17','20','23');
-    	
+    	console.log("현재시간"+whour);
     	// sky,pop,pty 정보
     	for(var i=0;i<harr.length;i++){
     		var h=harr[i]-whour;
     		console.log("지금h"+h);
-    		console.log(h);
-    		if(whour!='00' || whour!='01'){
-	    		if(h==-1 || h==0 || h==-2){
-	    			var wnow=harr[i]+"00";
-	    			wtoday = wyear+""+wmonth+""+wday;
-	    			console.log("지금"+wnow);
-	    		}
+    	//	console.log(h);
+    		if(whour!='00' && whour!='01'){
+        		if(h==-1 || h==0 || h==-2){
+        			var wnow=harr[i]+"00"; 			
+        			wtoday = wyear+""+wmonth+""+wday;
+        //			console.log("지금"+wnow);
+        		}
     		}
-    		else if(whour=='00' || h==1){
+    		else if(whour=='00' || h>0){
+    		//	alert("현재시간");
     			wtoday = ydyear+""+ydmonth+""+ydday;
+    			console.log("밤12시"+wtoday);
     			var wnow=harr[7]+"00";
+    			console.log("12시체크"+wnow);
     		}
     	}
     	
     	// 오늘 t1hh==0 ||
     	for(var i=0;i<harr.length;i++){
     		var hc=harr[i]-whour;
-    		console.log("지금h"+h);
-    		console.log(h);
-    		if(whour!='00' || whour!='01'){
-	    		if(hc==-1 || hc==-2){
-	    			var wcnow=harr[i]+"00";
-	    			wctoday = wyear+""+wmonth+""+wday;
-	    			console.log("지금"+wnow);
-	    		}
-	    		else if(hc==0){
-	    			
-		    		if(wminutes<30){
-		    			if( whour=='02'){
-		    			var wcnow=harr[7]+"00";
-		    			wctoday = ydyear+""+ydmonth+""+ydday;
-		    			console.log("지금"+wcnow);
-		    			}
-		    			else{
-		    				var wcnow=harr[i-1]+"00";
-		    				wctoday = wyear+""+wmonth+""+wday;
-			    			console.log("지금오늘1th"+wcnow);
-		    			}
-		    		}
-		    		else{
-		    			var wcnow=harr[i]+"00";
-		    			wctoday = wyear+""+wmonth+""+wday;
-		    		}
-	    		}
+    	//	console.log("지금h"+h);
+    	//	console.log(h);
+    		if(whour!='00' && whour!='01'){
+        		if(hc==-1 || hc==-2){
+        			var wcnow=harr[i]+"00";
+        			wctoday = wyear+""+wmonth+""+wday;
+        		//	console.log("지금"+wnow);
+        		}
+        		else if(hc==0){
+        			
+    	    		if(wminutes<30){
+    	    			if( whour=='02'){
+    	    			var wcnow=harr[7]+"00";
+    	    			wctoday = ydyear+""+ydmonth+""+ydday;
+    	    		//	console.log("지금"+wcnow);
+    	    			}
+    	    			else{
+    	    				var wcnow=harr[i-1]+"00";
+    	    				wctoday = wyear+""+wmonth+""+wday;
+    		    		//	console.log("지금오늘1th"+wcnow);
+    	    			}
+    	    		}
+    	    		else{
+    	    			var wcnow=harr[i]+"00";
+    	    			wctoday = wyear+""+wmonth+""+wday;
+    	    		}
+        		}
     		}
-    		else if(whour=='00' || h==1){
-    			wtoday = ydyear+""+ydmonth+""+ydday;
-    			var wnow=harr[7]+"00";
+    		else if(whour=='00' || hc==1 || whour=='01'){
+    			wctoday = ydyear+""+ydmonth+""+ydday;
+    			var wcnow=harr[7]+"00";
     		}
     	}
     	
@@ -522,20 +525,32 @@
     	for(var i=0;i<harr.length;i++){
     		var hy=harr[i]-whour;
     		console.log("hy"+hy);
-    		if(whour!='00' && whour!='23'){
-	    		if(hy==-1 || hy==0 || hy==-2){
-	    			yesterday = ydyear+""+ydmonth+""+ydday;
-	    			var ytime=harr[(i+1)]+"00";
-	    			console.log("시간"+ytime);
-	    		}
+    		if(whour!='00' && whour!='01'){
+        		if(hy==-1 ||  hy==-2){
+        			yesterday = ydyear+""+ydmonth+""+ydday;
+        			var ytime=harr[(i+1)]+"00";
+        		//	console.log("시간"+ytime);
+        		}
+        		else if(hy==0){
+        			if(yminutes<=60){
+    	    			yesterday = ydyear+""+ydmonth+""+ydday;
+    	    			var ytime=harr[(i)]+"59";
+    	    		//	console.log("시간hy0"+ytime);
+        			}
+        			else{
+        				yesterday = ydyear+""+ydmonth+""+ydday;
+    	    			var ytime=harr[(i+1)]+"00";
+    	    		//	console.log("시간hy0"+ytime);
+        			}
+        		}
     		}	
-    		else if(whour=='23' || whour=='00'|| h>0){
+    		else if(whour=='01' || whour=='00'|| hy>0){
     			var ytime=harr[0]+"00";
     			yesterday = ydyear+""+ydmonth+""+ydday;
-    			console.log("시간00"+ytime);
+    		//	console.log("시간00"+ytime);
     		}
     	}
-    	console.log("오늘:"+wtoday);
+    	
     	console.log("진짜어제:"+yesterday);
     	
     	// 동네예보
@@ -570,33 +585,33 @@
                    console.log("강수확률:"+pop);
                    console.log("강수형태:"+pty);
                    console.log("하늘:"+sky);
-                   $("#pop").html("강수확률:"+pop+"%");
+                   $("#pop").html("강수확률 : "+pop+"%");
                    
                    $("#pty").html(pty);
     				
                    var image="";
                    if(pty==0){
-	                   if(sky==1){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
-	                   else if(sky==3){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
-	                   else if(sky==4){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
+                       if(sky==1){
+                    	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
+                    	   $("#sky").html("<img style='width: 100px; height: 100px;' src='"+ image +"'/>");
+                       }
+                       else if(sky==3){
+                    	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
+                    	   $("#sky").html("<img style='width: 100px; height: 100px;' src='"+ image +"'/>");
+                       }
+                       else if(sky==4){
+                    	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
+                    	   $("#sky").html("<img style='width: 100px; height: 100px;' src='"+ image +"'/>");
+                       }
                    }
                    else{
                 	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
                 		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
+                    	   $("#sky").html("<img style='width: 100px; height: 100px;' src='"+ image +"'/>");
                 	   }
                 	   else{
                 		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
+                    	   $("#sky").html("<img style='width: 100px; height: 100px;' src='"+ image +"'/>");
                 	   }
                    }
                    // TMN : 아침최저기온
@@ -676,7 +691,7 @@
             }
         });
         
-    	
+    	// 미세먼지농도 보여주기
     	$.ajax({
     		  type: "GET",
     		  url: "http://openapi.seoul.go.kr:8088/504543517764617936396d50484259/json/RealtimeCityAir/1/99",
@@ -703,33 +718,46 @@
     					miseStatus="매우나쁨"
     				}
     				
-    				$("#miseStatus").html("미세먼지: "+miseStatus);
+    				$("#miseStatus").html("미세먼지 : "+miseStatus);
     				$("#mise").html("("+guMise+"㎍/m³)");
     				
     				var miseimage="";
     				var chomiseStatus="";
     				if(guchoMise<=15){
     					chomiseStatus="좋음" 
-    					miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
+    					
     				}
     				else if(guchoMise<=35){
     					chomiseStatus="보통"
-    					miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
+    					
     				}
     				else if(guchoMise<=75){
     					chomiseStatus="나쁨"
-    					miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
+    					
     				}
     				else{
     					chomiseStatus="매우나쁨"
+    					
+    				}
+    	
+    				if(guMise<=30 && guchoMise<=15){
+    					miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
+    				}
+    				else if((guMise>30 && guMise<=80) || (guchoMise >15 && guchoMise<=35)){
+    					miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
+    				}
+    				else if((guMise>80 && guMise<=150) || (guchoMise >35 && guchoMise<=75)){
+    					miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
+    				}
+    				else if(guMise>150 || guchoMise>75 ){
     					miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
     				}
     				
-    				$("#chomiseStatus").html("초미세먼지: "+chomiseStatus);
+    				$("#chomiseStatus").html("초미세먼지 : "+chomiseStatus);
     				$("#chomise").html("("+guchoMise+"㎍/m³)");
-    				$("#miseimg").html("<img style='width: 70px; height: 70px;' src='"+ miseimage +"'/>");
+    				$("#miseimg").html("<img style='width: 80px; height: 80px;' src='"+ miseimage +"'/>");
     		  }
-    		})
+    		});
         <%-- 오다윤 날씨 구현 끝 --%>
         
     <%-- 김다님 공지사항 게시판 시작 --%> 
@@ -1085,15 +1113,17 @@
 	 	<div class="label-style" style="width:120px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
   			<span>오늘의 날씨</span>
   		</div>
-	 	<div id="today-w" style="float: left; width: 50%; height: 100%; border-right: solid 1px blue;">
-	 	<span  id="sky"></span>
-	 	<div style="padding-top: 30px; display: inline-block; float: right;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
-	 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
+	 	<div id="today-w" style="float: left; width: 55%; height: 100%;">
+	 	<div  style="padding-left: 10px; margin-top: 20px;">
+		 	<div  id="sky" style="display: inline; float: left; padding-top: 10px;"></div>
+		 	<div style="padding-top: 30px; display: inline-block; margin-left: 15px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 5px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
+		 		<span style="margin-left: 5px;" id="pop"></span><br><span id="gap"></span></div>
+	 		</div>
 	 	</div>
-	 	<div style="float: right; width: 50%; height: 100%; " >
+	 	<div style="float: right; width: 45%; height: 100%; " >
 	 		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
 	 		<div align="center" style="margin-top: 20px;">
-	 		<span id="miseimg"></span><br><br>
+	 		<div id="miseimg" style="margin-bottom: 4px;"></div>
 	 		<span id="miseStatus" ></span><span id="mise"></span><br>
 	 		<span id="chomiseStatus"></span><span id="chomise"></span>
 	 		</div>
