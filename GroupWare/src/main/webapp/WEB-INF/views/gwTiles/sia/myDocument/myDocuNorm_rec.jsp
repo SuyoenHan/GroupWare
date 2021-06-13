@@ -56,7 +56,7 @@
 		cursor: pointer;
 		font-weight: normal !important; 
 	}
-	table{
+	table.tbl{
 		margin: 10px 5px;
 		width: 90%;
 	}
@@ -477,7 +477,7 @@ $(document).ready(function(){
 	</div>
  
 	<form name="searchFrm">
-		<table>
+		<table class="tbl">
 			<tr>
 				<td width="20%" class="th">결재상태</td>
 				<td width="80%">&nbsp;&nbsp;
@@ -544,7 +544,7 @@ $(document).ready(function(){
 		
 		<br>
 		
-		<table id="table">
+		<table id="table" class="tbl">
 			<thead>
 			<tr>
 				<th style="width: 70px; text-align: center;">번호</th>

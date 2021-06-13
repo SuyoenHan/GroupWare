@@ -207,8 +207,11 @@
 			else if(periodOption == "month"){
 				$("label#month").css("color","#005c99");
 			}
-			else{
+			else if(periodOption=="3months"){
 				$("label#3months").css("color","#005c99");
+			}
+			else{
+				$("label#all").css("color","#005c99");
 			}
 		}
 
@@ -610,11 +613,12 @@
 		<span id="doneTodo" onclick="getEmployeeTodo('2')">진행완료업무&nbsp;(${doneTodoCnt}건)</span>
 		
 		<%-- 진행완료업무 클릭시에만 보여지는 날짜선택 옵션 --%>
-		<div style="float: right; margin-left: 240px; padding-top:17px;" id="periodOption">
+		<div style="float: right; margin-left: 190px; padding-top:17px;" id="periodOption">
 			<label style="color: #333; font-size: 10pt;">기간설정&nbsp;|&nbsp;</label>
 			<label class="period" id="week">1주일&nbsp;[${weekCnt}건]</label>&nbsp;&nbsp;
 			<label class="period" id="month">1개월&nbsp;[${monthCnt}건]</label>&nbsp;&nbsp;
-			<label class="period" id="3months">3개월&nbsp;[${threeMonthsCnt}건]</label>
+			<label class="period" id="3months">3개월&nbsp;[${threeMonthsCnt}건]</label>&nbsp;&nbsp;
+			<label class="period" id="all">전체&nbsp;[${doneTodoCnt}건]</label>
 		</div>
 	</div>
 	

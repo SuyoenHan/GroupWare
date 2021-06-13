@@ -21,15 +21,14 @@
     .subjectStyle {font-weight: bold;
                    color: navy;
                    cursor: pointer;} 
-    button.btn:hover{
-	 background-color: #c3c6c9;
-	}      
+  
+   
 	       
 </style>
 
 <script type="text/javascript">
 		$(document).ready(function(){
-			 $("div#submenu3").show();
+			// $("div#submenu3").show();
 			
 		    $("span.subject").bind("mouseover", function(event){
 		         var $target = $(event.target);
@@ -183,7 +182,7 @@
 		   
 </script>
 
-<div style="padding-left: 3%;">
+<div  style="padding-left: 3%; margin: 50px 50px;">
 
    <h2 style="margin-bottom: 30px;">일반결재내역</h2>
    
@@ -207,7 +206,7 @@
    </form>
    
    <%-- === # 검색어 입력시 자동글 완성하기 1 === --%>
-   <div id="displayList" style="border: solid 1px gray; border-top: 0px; width: 331px; height: 100px; margin-left: 70px; padding-top: 5px; overflow: auto;">
+   <div id="displayList" style="border: solid 1px gray; border-top: 0px; width: 320px; height: 100px; margin-left: 237px; padding-top: 5px; overflow: auto;">
       
    </div>
    

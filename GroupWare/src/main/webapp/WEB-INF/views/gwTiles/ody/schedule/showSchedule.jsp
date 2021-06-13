@@ -630,9 +630,11 @@ $(document).ready(function(){
 
 </script>
 
-	<div style="margin-left: 80px; width: 88%;">
-	<h3>일정 관리</h3>
 	
+	<div style="margin: 30px 0px 30px 50px; ">
+	<i class="far fa-calendar-alt fa-2x"></i>&nbsp;<span style="font-size: 18pt; font-weight: bold;">일정관리</span>
+	
+	<div style="width: 90%;">
 		<div id="wrapper1">
 			<input type="hidden" value="${sessionScope.loginuser.employeeid}" id="fk_employeeid"/>
 			
@@ -673,7 +675,7 @@ $(document).ready(function(){
 		</div>
 
 	</div>
-
+</div>
 <!-- 내 캘린더 추가 Modal -->
   <div class="modal fade" id="addMyCal" role="dialog">
     <div class="modal-dialog modal-sm">

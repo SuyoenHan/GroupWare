@@ -145,7 +145,7 @@ public class PaymentJshController {
 		// 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 게시판에 올라와 있는 총 게시물 건수
 		// int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
-		int sizePerPage = 2; // 한 페이지당 보여줄 게시물 건수
+		int sizePerPage =10 ; // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0;// 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
 		int totalPage = 0; // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)
 
@@ -200,7 +200,7 @@ public class PaymentJshController {
 		}
 
 		// == #121. 페이지 바 만들기
-		int blockSize = 3;
+		int blockSize = 5;
 		// int blockSize = 10;
 
 		int loop = 1;
@@ -935,7 +935,7 @@ public class PaymentJshController {
 			// 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 			int totalCount = 0; // 게시판에 올라와 있는 총 게시물 건수
 			// int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
-			int sizePerPage = 2; // 한 페이지당 보여줄 게시물 건수
+			int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
 			int currentShowPageNo = 0;// 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
 			int totalPage = 0; // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)
 
@@ -990,7 +990,7 @@ public class PaymentJshController {
 			}
 
 			// == #121. 페이지 바 만들기
-			int blockSize = 3;
+			int blockSize = 5;
 			// int blockSize = 10;
 
 			int loop = 1;
@@ -1615,7 +1615,7 @@ public class PaymentJshController {
 			// 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 			int totalCount = 0; // 게시판에 올라와 있는 총 게시물 건수
 			// int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
-			int sizePerPage = 2; // 한 페이지당 보여줄 게시물 건수
+			int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
 			int currentShowPageNo = 0;// 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
 			int totalPage = 0; // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)
 
@@ -1670,7 +1670,7 @@ public class PaymentJshController {
 			}
 
 			// == #121. 페이지 바 만들기
-			int blockSize = 3;
+			int blockSize = 5;
 			// int blockSize = 10;
 
 			int loop = 1;
@@ -1811,12 +1811,12 @@ public class PaymentJshController {
 		        	double dtotalOffCnt = Double.parseDouble(totalOffCnt);
 		        	
 		        	double duseOffCnt = Double.parseDouble(useOffCnt);
-		        	System.out.println("dtotalOffCnt"+dtotalOffCnt);
+		        //	System.out.println("dtotalOffCnt"+dtotalOffCnt);
 		        	
-		        	System.out.println("duseOffCnt"+duseOffCnt);
+		        //	System.out.println("duseOffCnt"+duseOffCnt);
 		        	// 이용자의 남은연차수
 		        	String leftOffCnt = String.valueOf(dtotalOffCnt-duseOffCnt);
-		        	System.out.println("leftOffCnt"+leftOffCnt);
+		        //	System.out.println("leftOffCnt"+leftOffCnt);
 					mav.addObject("leftOffCnt", leftOffCnt);
 					mav.addObject("write_view", write_view);
 					mav.addObject("write_mview", write_mview);
