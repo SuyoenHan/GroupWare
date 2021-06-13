@@ -288,13 +288,3 @@ table#recentNotice{
 /* 김다님 공지사항 게시판 끝 */
 
 
-
-
-
-@media (max-height: 810px){  /* 일반 노트북 화면기준 height 조정용 */
-	div#myInfo{
-		height:  35em; 
-	}
-
-}
-
