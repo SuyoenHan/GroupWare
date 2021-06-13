@@ -2022,7 +2022,7 @@ public class BoardKdnController {
 		paraMap.put("fk_categnum", "");
 		paraMap.put("searchWord", "");
 		paraMap.put("startRno", "1");
-		paraMap.put("endRno", "3");
+		paraMap.put("endRno", "4");
 		
 		List<BoardKdnVO> boardList = service.noticeBoardListSearchWithPaging(paraMap);
 		//System.out.println(boardList.size());
