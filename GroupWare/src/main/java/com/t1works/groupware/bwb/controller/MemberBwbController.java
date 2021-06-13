@@ -872,6 +872,8 @@ public class MemberBwbController {
 				else if(statusChoiceArr[i].equalsIgnoreCase("6")) statusChoice+=status6+str;
 
 			} // end of for(int i=0; i<len; i++) {-------------------
+			
+			
 		}
 		
 		

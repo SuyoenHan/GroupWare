@@ -19,7 +19,7 @@
 		<%-- === 검색어 입력시 자동글 완성하기 시작(백원빈) === --%>
 		$("div#displayList").hide();
 		
-		$("input#searchWord").keyup(function(event){
+		$("input#searchwords").keyup(function(event){
 			
 			// 검색어의 길이
 			var wordLength = $(this).val().trim().length;
@@ -33,7 +33,7 @@
 			else{
 				$.ajax({
 					url:"<%= ctxPath%>/t1/wordSearch.tw",
-					data:{"searchWord":$("input#searchWord").val()},
+					data:{"searchWord":$("input#searchwords").val()},
 					dataType:"json",
 					success:function(json){// "[]" 또는 "[{"word":"xxx"},{"word":"xxx"}]"
 						<%-- === #112. 검색어 입력시 자동글 완성하기7 === --%>
@@ -46,11 +46,11 @@
 								// word=> "첫번째 java","두번째 JaVa" 이런것임
 								
 								// 입력한 검색어만 자동글에 대소문자 상관없이 해당부분의 위치가 파랗게 나오도록 해보겠다.
-								var index = word.toLowerCase().indexOf($("input#searchWord").val().toLowerCase());
+								var index = word.toLowerCase().indexOf($("input#searchwords").val().toLowerCase());
 								// word=> "첫번째 java","두번째 java"
 								// 만약에 검색어라 jAva 이라면 index는 4가 된다.
 								
-								var len = $("input#searchWord").val().length;
+								var len = $("input#searchwords").val().length;
 								// 검색어의 길이 len = 4
 								
 								// javascript에서 substr=> 길이만큼 읽어오기 , substring ~부터~ 까지 뽑아오기
@@ -78,13 +78,13 @@
 			
 			} // end of else
 			
-		}); // end of $("input#searchWord").keyup(function(){
+		}); // end of $("input#searchwords").keyup(function(){
 		
 			
 		$(document).on("click","span.word",function(){
 			
 			// 텍스트박스에 검색된 결과중 선택한 문자열을 입력해준다.
-			$("input#searchWord").val($(this).text());
+			$("input#searchwords").val($(this).text());
 			
 			// 다시 감추기
 			$("div#displayList").hide();
@@ -118,7 +118,7 @@
 				
 				var bool = false;
 				$.each(json,function(index,item){
-					var searchWord = $("input#searchWord").val();
+					var searchWord = $("input#searchwords").val();
 
 					if(searchWord==item.word){
 						bool = true;
@@ -170,7 +170,7 @@
 		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=750px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
-				   	<input type="text" id="searchWord" name="searchWord" autocomplete="off" style="color:black;" />
+				   	<input type="text" id="searchwords" name="searchWord" autocomplete="off" style="color:black;" />
 				   	<input type="button" id="goButton" class="navbar-btn" value="검색"/>
 				   </form>
 		   			</td>
