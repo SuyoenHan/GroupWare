@@ -83,7 +83,10 @@ div.room{
 	background-color: #b1b8cd;
 }
 
-
+.info{
+	background-color: #b1b8cd;
+	cursor: pointer;
+}
 
 </style>
 
@@ -125,9 +128,14 @@ $(document).ready(function(){
 	 $("input#chgdate").val(cgtime); 
 	 
 	// 사무용품 마우스 오버시
-	$("tr.selectGoods").hover(function(){
-		$(this).css("cursor", "pointer");
+	$("tr.selectGoods").bind("mouseover",function(){			
+		$(this).addClass("info");			
+	}); 
+	
+	$("tr.selectGoods").bind("mouseout",function(){
+		$(this).removeClass("info");
 	});
+	
 	
 	// 사무용품 종류 클릭 했을 때
 	$("tr.selectGoods").click(function(){
