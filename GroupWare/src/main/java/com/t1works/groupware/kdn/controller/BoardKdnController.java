@@ -2034,6 +2034,7 @@ public class BoardKdnController {
 				jsonObj.put("fk_categnum", boardvo.getFk_categnum());
 				jsonObj.put("subject", boardvo.getSubject());
 				jsonObj.put("regDate", boardvo.getRegDate());
+				jsonObj.put("seq", boardvo.getSeq());
 				
 				jsonArr.put(jsonObj);
 			}
