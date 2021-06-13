@@ -261,7 +261,7 @@ public class EmailKdnController {
 		while( !(loop > blockSize || pageNo > totalPage)) {
 			
 			if(pageNo == currentShowPageNo) {
-				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"+pageNo+"</li>";
+				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px #0071bd; background-color: #0071bd; color:#fff; padding:2px 4px;'>"+pageNo+"</li>";
 			} else {
 				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
