@@ -2013,6 +2013,35 @@ public class BoardKdnController {
 		
 	}
 	
+	// 홈 페이지 공지사항 게시판 
+	@ResponseBody
+	@RequestMapping(value="/t1/recentNotice.tw", method= {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
+	public String displayNotice(HttpServletRequest request, HttpServletResponse response) {
+		
+		Map<String,String> paraMap = new HashMap<>();
+		paraMap.put("fk_categnum", "");
+		paraMap.put("searchWord", "");
+		paraMap.put("startRno", "1");
+		paraMap.put("endRno", "3");
+		
+		List<BoardKdnVO> boardList = service.noticeBoardListSearchWithPaging(paraMap);
+		//System.out.println(boardList.size());
+		JSONArray jsonArr = new JSONArray();
+		
+		if(boardList != null) {
+			for(BoardKdnVO boardvo : boardList) {
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("fk_categnum", boardvo.getFk_categnum());
+				jsonObj.put("subject", boardvo.getSubject());
+				jsonObj.put("regDate", boardvo.getRegDate());
+				
+				jsonArr.put(jsonObj);
+			}
+		}
+
+		return jsonArr.toString();
+		
+	}
 	
 
 }

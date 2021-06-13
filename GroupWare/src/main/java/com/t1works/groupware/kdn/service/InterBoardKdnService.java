@@ -91,32 +91,6 @@ public interface InterBoardKdnService {
 	int getGenCmntTotalCnt(String seq); // 자유게시판 특정 글 1개의 총 댓글 수 구해오기
 
 	
- 
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
-
-	
 	
 	
 
