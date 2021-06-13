@@ -90,6 +90,8 @@ public interface InterBoardKdnService {
 
 	int getGenCmntTotalCnt(String seq); // 자유게시판 특정 글 1개의 총 댓글 수 구해오기
 
+	int checkNewNotice(); // 신규 공지사항 유무 확인하기
+
 	
 	
 	

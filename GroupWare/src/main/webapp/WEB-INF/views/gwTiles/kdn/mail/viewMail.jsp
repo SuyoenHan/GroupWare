@@ -27,6 +27,8 @@ $(document).ready(function(){
 
 // 휴지통으로 이동
 function moveToTrash(seq){
+	
+	
 	var frm = document.toTrashFrm;
 	frm.seq.value = seq;
 	frm.searchType.value = "${requestScope.paraMap.searchType}";
@@ -34,7 +36,13 @@ function moveToTrash(seq){
 	
 	frm.method="get";
 	frm.action="<%=ctxPath%>/t1/moveToTrash.tw";
-	frm.submit();
+	
+	if (confirm("이 메일을 휴지통으로 이동하시겠습니까?") == true){    //확인
+		frm.submit();
+	 }else{   //취소
+	     return false;
+	 }
+	
 }
 // 메일 완전 삭제
 function delImmed(seq){

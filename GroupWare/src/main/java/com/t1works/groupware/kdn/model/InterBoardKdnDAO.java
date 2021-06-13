@@ -99,6 +99,10 @@ public interface InterBoardKdnDAO {
 	int editGenComment(CommentKdnVO commentvo); // 자유게시판 댓글 수정하기
  
 	int getGenCmntTotalCnt(String seq); // 자유게시판 특정 글 1개의 총 댓글 수 구해오기
+
+	int markAsRead(String seq); // 공지사항 글 1개 읽음 처리하기
+
+	int checkNewNotice(); // 신규 공지사항 유무 확인하기
  
 	
 

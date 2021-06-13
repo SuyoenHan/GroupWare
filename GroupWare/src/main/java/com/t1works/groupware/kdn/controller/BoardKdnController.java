@@ -2044,5 +2044,20 @@ public class BoardKdnController {
 		
 	}
 	
+	// 홈 페이지 공지사항 게시판 
+	@ResponseBody
+	@RequestMapping(value="/t1/checkNewNotice.tw", method= {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
+	public String checkNewNotice(HttpServletRequest request, HttpServletResponse response) {
+		
+		int n = service.checkNewNotice();
+		
+		JSONObject jsonObj = new JSONObject();
 
+		if(n > 0) {
+			jsonObj.put("n", "1");
+		}
+			return jsonObj.toString();
+			
+		}
+		
 }
