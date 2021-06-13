@@ -2,223 +2,10 @@
     pageEncoding="UTF-8"%> 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<%
-   String ctxPath = request.getContextPath();
-%>
-
+<% String ctxPath = request.getContextPath(); %>
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
-<style>
- div#gwContent{left: 80px;}
- 
- div#calendarO{
- 	border: solid 1px blue;
- 	width: 480px;
- 	margin: 10px 0px 50px 40px;
- 	height: 550px;
- }
- 
- /* 달력 css */
- div#calendarWrapper{
-	float: left;
- }	
-
- .fc-scroller {
-   	overflow-y: hidden !important;
- }
-
- a{
-    color: #000;
-    text-decoration: none;
-    background-color: transparent;
-    cursor: pointer;
- }
-
- a:hover {
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: transparent;
- }
- 
- .fc-daygrid{
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: transparent;
- }
-
- .fc-header-toolbar{
-	height: 30px;
- } 
- 
- .fc-event-time{
- 	color: #fff;
- }
- 
- .fc-daygrid-event-dot{
- 	margin-left: 29px;
- }
- 
- .fc-daygrid{
- 	border: solid 1px #fff;
- }
-  
-  .fc-button-primary{
-  	background-color: #333333;
-  }
-  
-  
- div.circle{   
- 	width: 8px;
- 	height: 8px;
- 	border-radius: 50%;
- 	display: inline-block;
- 	margin-left: 5px;
- 	margin-right: 10px;
- }
- 
- .fc-event-time{
- 	display: none;
- }
- 
- .fc-event-title{
- 	display: none;
- }
- 
- li{
-	margin-left:-10px;
- }
-   
-  div#myInfo{
-      border:solid 1px red;
-      width:250px;
-      font-size:12pt;
-  }
-  
-  span.sebuInfo{
-  	display:inline-block;
-  }
-  
-  span.sebuInfo:hover{
-  	  cursor:pointer;
-  	  color:blue;
-  	  font-weight:bolder;
-  }	
-  
-  <%-- quickMenu css 한수연 시작 --%>
-  
-  button.quickMenuBt{
-	  background-color: #dfe8f3;
-	  width: 120px;
-	  height: 50px;
-	  border: none;
-	  color:#000099;
-	  font-size: 11pt;
-	  border-radius: 5%;
-  }
-  
-  button.quickMenuBt:hover{
-	  background-color: #0066cc;
-	  color: #dfe8f3;
-	  font-weight: bold;
-  }
-  
-  span.quickCnt{
-  	color: red;
-  	font-weight: bold;
-  	text-decoration: underline;
-  }
-  
-  <%-- quickMenu css 한수연 끝 --%>
-  
-  <%-- 내통계 css 백원빈 시작 --%>
-	#container {
-	    height: 400px;
-	}
-	
-	.highcharts-figure, .highcharts-data-table table {
-	    min-width: 310px;
-	    max-width: 800px;
-	    margin: 1em auto;
-	}
-	
-	#datatable {
-	    font-family: Verdana, sans-serif;
-	    border-collapse: collapse;
-	    border: 1px solid #EBEBEB;
-	    margin: 10px auto;
-	    text-align: center;
-	    width: 100%;
-	    max-width: 500px;
-	}
-	#datatable caption {
-	    padding: 1em 0;
-	    font-size: 1.2em;
-	    color: #555;
-	}
-	#datatable th {
-		font-weight: 600;
-	    padding: 0.5em;
-	}
-	#datatable td, #datatable th, #datatable caption {
-	    padding: 0.5em;
-	}
-	#datatable thead tr, #datatable tr:nth-child(even) {
-	    background: #f8f8f8;
-	}
-	#datatable tr:hover {
-	    background: #f1f7ff;
-	}
-    
-    span#spanData{
-    	background-color:#b3ecff;
-    }
-    
-    ul#vacationUl li{
-    	line-height: 40px;
-    	font-size:12pt;
-    }
-  <%-- 내통계 css 백원빈 끝 --%>
-  
-  <%-- word cloud 백원빈 시작 --%>
-  .highcharts-figure, .highcharts-data-table table {
-    min-width: 320px; 
-    max-width: 800px;
-    margin: 1em auto;
-	}
-	
-	.highcharts-data-table table {
-		font-family: Verdana, sans-serif;
-		border-collapse: collapse;
-		border: 1px solid #EBEBEB;
-		margin: 10px auto;
-		text-align: center;
-		width: 100%;
-		max-width: 500px;
-	}
-	.highcharts-data-table caption {
-	    padding: 1em 0;
-	    font-size: 1.2em;
-	    color: #555;
-	}
-	.highcharts-data-table th {
-		font-weight: 600;
-	    padding: 0.5em;
-	}
-	.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
-	    padding: 0.5em;
-	}
-	.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
-	    background: #f8f8f8;
-	}
-	.highcharts-data-table tr:hover {
-	    background: #f1f7ff;
-	}
-
-	<%-- word cloud 백원빈 끝 --%>
-	
-</style>
+<!-- Homepage.jsp CSS -->
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/homepage.css"/>
 
 <!-- full calendar에 관련된 script -->
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
@@ -239,10 +26,16 @@
 <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
-
 <script type="text/javascript">
    $(document).ready(function(){
       
+	   window.innerWidth;
+	   window.innerHeight;
+	   console.log("브라우저 width: "+window.innerWidth);
+	   console.log("브라우저 height: "+window.innerHeight);
+	   
+	   
+	   displayNotice(); //공지사항 게시판
       // div#sidemenu와 div#content길이 맞추기
       // func_height1();
       
@@ -938,6 +731,57 @@
     		})
         <%-- 오다윤 날씨 구현 끝 --%>
         
+    <%-- 김다님 공지사항 게시판 시작 --%> 
+    
+   	function displayNotice(){
+   		
+   		$.ajax({
+   			url:"<%=ctxPath%>/t1/recentNotice.tw",
+   			type:"get",
+   			dataType:"json",
+   			success:function(json){
+   				if(json.length > 0){
+   			
+   				$.each(json, function(index,item){
+   					html = "";
+   					
+   					var categName = "";
+   					if(item.fk_categnum == "1"){
+   						categName = "전체공지";
+   					} else if(item.fk_categnum == "2"){
+   						categName = "총무공지";
+   					} else {
+   						categName = "경조사";
+   					}
+   					
+   					regDate = item.regDate.substring(0,10);
+   					
+   					console.log("카테고리넘버:"+item.fk_categnum);
+   					console.log(categName);
+   					console.log(item.subject);
+   					console.log(regDate);
+   					console.log(index);
+   					html += "<td style='height:30px;'>"+categName+"</td>";
+   					html += "<td style='height:30px;'><a href='<%=ctxPath%>/t1/viewNotice.tw?seq="+item.seq+"'>"+item.subject+"</a></td>";
+   					html += "<td style='height:30px;'>"+regDate+"</td>";
+   					$("tr#row-"+index+"-content").html(html);
+   				});
+   				
+   				} else {
+   					html = "<td aling+'center'>등록된 게시글이 없습니다.</td>"
+   						
+   					$("tr#row-0-content").html(html);
+   				}
+   			},
+   			error: function(request, status, error){
+   	           alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+   	       }
+   		
+   		});   	
+    	
+   	}	
+   		<%-- 김다님 공지사항 게시판 끝--%>
+    	
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -1075,7 +919,7 @@
 
 
 
-<div id="content" style="width: 1580px;">
+<div id="content" style="width: 90%; border: solid 1px red;">
   
   <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
   	 <div style="padding-left:130px;"><img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:120px; height:120px;"></div>
@@ -1204,14 +1048,25 @@
   <%-- =================== 한수연 끝 =================== --%>
   
   
-  
+  <%-- ============== 김다님 공지사항 게시판 시작 =============== --%>
   <%-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div --%>
   <div style="float: left; width: 800px;"></div>
   
   <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
-  	다님님 파트(공지사항)
+  	
+  	<table id="recentNotice" class="table">
+  		<tr>
+  			<th>구분</th>
+  			<th>제목</th>
+  			<th>작성일시</th>
+  		</tr>
+  		<tr id="row-0-content"></tr>
+  		<tr id="row-1-content"></tr>
+  		<tr id="row-2-content"></tr>
+  	</table>
   </div>
   
+  <%-- ============== 김다님 공지사항 게시판 끝 =============== --%>
   
   
   
