@@ -825,19 +825,20 @@ public class MemberBwbController {
 		mav.addObject("dname", dname);
 		
 		String currentShowPageNo_str = request.getParameter("currentShowPageNo");
-		String period = request.getParameter("period");
-		String statusChoice_es = request.getParameter("statusChoice_es");
-		String searchProject = request.getParameter("searchProject");
-		String searchWhoCharge = request.getParameter("searchWhoCharge");
+		String period = request.getParameter("period"); // 라디오박스 기간
+		String statusChoice_es = request.getParameter("statusChoice_es"); // 체크박스 업무상태("1,2,3")
+		String searchProject = request.getParameter("searchProject"); // 프로젝트명
+		String searchWhoCharge = request.getParameter("searchWhoCharge"); // 담당자명
 		
 		// 기간에서 선택한 period get방식 처리
 		if(period == null || period.equalsIgnoreCase("undefined")) {
-			period ="-1";
+			period ="7";
 		}
 		else if(!(period.equalsIgnoreCase("7")||period.equalsIgnoreCase("30")||period.equalsIgnoreCase("-1")||period.equalsIgnoreCase("90"))) {
 			period ="7";
 		}
 		
+
 		String statusChoice ="";
 		
 		// 상태값에서 선택한 statusChoice_es get방식 처리, 1:미배정, 2:미시작 3:진행중 4:보류 5:지연 6:완료  
@@ -892,7 +893,9 @@ public class MemberBwbController {
 		paraMap.put("searchProject", searchProject);
 		paraMap.put("searchWhoCharge", searchWhoCharge);
 		paraMap.put("statusChoice", statusChoice);
+		paraMap.put("statusChoice_es", statusChoice_es);
 		
+		mav.addObject("paraMap", paraMap);
 		
 		int totalTodo = 0;	        // 부서 총 업무 갯수
 		int sizePerPage = 3;	    // 한페이지당 보여주는 갯수

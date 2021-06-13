@@ -454,10 +454,10 @@ $(document).ready(function(){
 	
 </script>
 
-<div class="rsRoomContainer" style="margin-left: 80px;"> 
-	<h3 style="margin-top: 20px !important;">회의실 대여신청</h3>
+<div class="rsRoomContainer" style="margin: 30px 0px 30px 50px;"> 
+	<i class='fas fa-tasks fa-lg' style='font-size:24px'></i>&nbsp;<span style="font-size: 18pt; font-weight: bold;">회의실 대여신청</span>
 	
-
+	<div>
 		<div id="calendarWrapper">
 			<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px; margin-left: 200px;" ></div>
 		</div>
@@ -479,9 +479,8 @@ $(document).ready(function(){
 			        	</c:forEach>
 	          		</c:if>
 	         </table>
-	       
 		</div>
-
+	</div>
 	
 	<div class="middle">
 		<table  style="width: 92%; " class="table table-bordered" id="rsroom">

@@ -1811,12 +1811,12 @@ public class PaymentJshController {
 		        	double dtotalOffCnt = Double.parseDouble(totalOffCnt);
 		        	
 		        	double duseOffCnt = Double.parseDouble(useOffCnt);
-		        	System.out.println("dtotalOffCnt"+dtotalOffCnt);
+		        //	System.out.println("dtotalOffCnt"+dtotalOffCnt);
 		        	
-		        	System.out.println("duseOffCnt"+duseOffCnt);
+		        //	System.out.println("duseOffCnt"+duseOffCnt);
 		        	// 이용자의 남은연차수
 		        	String leftOffCnt = String.valueOf(dtotalOffCnt-duseOffCnt);
-		        	System.out.println("leftOffCnt"+leftOffCnt);
+		        //	System.out.println("leftOffCnt"+leftOffCnt);
 					mav.addObject("leftOffCnt", leftOffCnt);
 					mav.addObject("write_view", write_view);
 					mav.addObject("write_mview", write_mview);

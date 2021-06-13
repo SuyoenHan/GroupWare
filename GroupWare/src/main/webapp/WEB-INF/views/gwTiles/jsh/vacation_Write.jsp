@@ -105,17 +105,22 @@ button.btn1:hover{
 			   	var date = new Date();
 			   	var year = date.getFullYear();
 			   	var month = date.getMonth()+1;
-			   	var day = date.getDay();
+			   	var date = date.getDate();
 			   	if(month <10){
 			   		month = '0'+month;
 			   	}
-			   	if(day <10){
-			   		day = '0'+day;
+			   	else{
+			   		month=month;
+			   	}
+			   	if(date <10){
+			   		date = '0'+day;
+			   	}
+			   	else{
+			   		date=date;
 			   	}
 			   	
 			   	
-			   	
-			   	 var today = (year+"년 "+month+"월 "+day+"일");
+			   	 var today = (year+"년 "+month+"월 "+date+"일");
 			     //	console.log(today);
 				 var vcatname;
 				 var html;
