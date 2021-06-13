@@ -9,7 +9,6 @@
 
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
 <style>
-
  div#gwContent{left: 80px;}
  
  div#calendarO{
