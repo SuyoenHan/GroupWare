@@ -68,16 +68,11 @@
 			                      
 			                      $.each(json, function(index, item){
 			                         var word = item.word;
-			                         // word ==> "글쓰기 첫번째 java 연습입니다"
-			                         // word ==> "글쓰기 첫번째 JaVa 연습입니다"                        
-			                         
+			                         // word ==> "글쓰기 연습입니다"
 			                         var index = word.toLowerCase().indexOf($("input#searchWord").val().toLowerCase());
-			                         // word ==> "글쓰기 첫번째 java 연습입니다"
-			                         // word ==> "글쓰기 첫번째 java 연습입니다"
-			                         // 만약에 검색어가 jAva 이라면 index 는 8이 된다.
-			                         
+			                         //검색어의 index값  (대소문자 구분X 입력값)
 			                         var len = $("input#searchWord").val().length;
-			                         // 검색어의 길이 len = 4
+			                         // 검색어의 길이 
 			                         
 			                         word.substr(0,index) + "<span style='color: blue;'>"+word.substr(index,len)+"</span>"+word.substr(index+len); 
 			                         
@@ -96,7 +91,7 @@
 		         
 		      }); //end of   $("input#searchWord").keyup(function(){ ----------------------------
 			 
-		      <%-- === #113. 검색어 입력시 자동글 완성하기 8 === --%>
+		      <%-- ===  검색어 입력시 자동글 완성하기 8 === --%>
 		      $(document).on("click", "span.word", function(){ // span.word 는 body 태그 안에 쓴 것이 아니라 script 안에 있기 때문에 $("span.word") 와 같이 작성하면 안된다. 
 		         $("input#searchWord").val($(this).text());
 		         // 텍스트박스에 검색된 결과의 문자열을 입력해준다.
@@ -237,7 +232,9 @@
 	         <td align="center">
 	          <%-- 첨부파일이 있는 경우 시작 --%>
              	<c:if test="${not empty evo.fileName}">
-	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}' ,'${evo.employeeid}')">${evo.atitle}</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
+	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}' ,'${evo.employeeid}')">
+	         			${evo.atitle}
+	         			</span>&nbsp;<img src="<%=ctxPath%>/resources/images/jsh/disk.gif" />
         		</c:if>
         		<c:if test="${empty evo.fileName}">
 	         			<span class="subject" onclick="goView('${evo.ano}','${evo.ncatname}','${evo.employeeid}')">${evo.atitle}</span>&nbsp;

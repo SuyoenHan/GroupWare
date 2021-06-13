@@ -21,15 +21,15 @@
 	</select>
 
 
-<!--  하나의 문서보기 수신자 정보 받아오기 -->
-  <select id="receiver" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
-		 select name, employeeid  ,pname ,dname
-		 from tbl_employee e left join tbl_position p
-		 on e.fk_pcode = p. pcode
-		 left join tbl_department d
-		 on e.fk_dcode = d.dcode
-		where employeeid=(select managerid from tbl_employee where employeeid= #{employeeid}) 
-	</select>
+  <!--  하나의 문서보기 수신자 정보 받아오기 -->
+   <select id="receiver" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+	 select name, employeeid  ,pname ,dname
+	 from tbl_employee e left join tbl_position p
+	 on e.fk_pcode = p. pcode
+	 left join tbl_department d
+	 on e.fk_dcode = d.dcode
+	 where employeeid=(select managerid from tbl_employee where employeeid= #{employeeid}) 
+   </select>
 
 
 <!-- 글쓰기에서 수신자 정보 select해오기 -->
@@ -98,7 +98,7 @@
 		      order by  asdate desc
 	</select>
 
-  <!-- === 검색어 입력시 자동글 완성하기  === -->
+     <!-- === 검색어 입력시 자동글 완성하기  === -->
      <select id="wordSearchShow" parameterType="HashMap" resultType="String">
 			<choose>
 				<when test="searchType eq 'name'"> <!-- if -->
@@ -120,10 +120,10 @@
 		    <if test="searchType neq 'name'">
 		     order by  asdate desc
 		    </if>
-	</select>
+	  </select>
 
 
- <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
+        <!-- === 총 게시물 건수(totalCount) 구하기 - 검색이 있을때와 검색이 없을때로 나뉜다. === -->
 		<select id="getTotalCount" parameterType="HashMap" resultType="int">
 			select  count(*) 
 			from tbl_approval  a left join tbl_employee e
@@ -131,19 +131,19 @@
 			left join tbl_norapproval n
 			on a.ano = n.fk_ano
 			where anocode= '1' and apaper = 0
-				<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
-			         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
-			     </if>
-			      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
-			     	 	and ncat= #{searchCategory}
-			     </if>
-			      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
-			     	 	and ncat= #{searchCategory}
-			     </if>
-			     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
-				     	 and ncat= #{searchCategory}
-				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
-				  </if>
+			<if test=' searchCategory == "" and searchType != "" and searchWord != "" '>
+		         and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
+		     </if>
+		      <if test=' searchCategory != ""  and searchType == ""   and searchWord == "" '>
+		     	 	and ncat= #{searchCategory}
+		     </if>
+		      <if test=' searchCategory != ""  and searchType != ""   and searchWord == "" '>
+		     	 	and ncat= #{searchCategory}
+		     </if>
+		     <if test=' searchCategory != ""  and searchType != ""    and searchWord != "" '>
+			     	 and ncat= #{searchCategory}
+			         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
+			  </if>
 		</select>
 
 		<!--  //페이징 처리한 글목록 가져오기(검색이 있든지, 검색이 없든지 모두 다 포함한 것) -->
@@ -152,7 +152,7 @@
 				  , fileName, orgFilename, fileSize   
 			from
 			(
-			select row_number() over(order by a.ano desc) AS rno  
+			select row_number() over(order by asdate desc) AS rno  
 			      ,a.ano ,ncatname, atitle, name ,dname,asdate ,apaper  , e.employeeid 
 			       , fileName, orgFilename, fileSize 
 			from tbl_approval a left join tbl_norapproval n
@@ -178,16 +178,19 @@
 				     	 and ncat= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
-			 order by  asdate desc
+			 
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
+		      	
 		</select>
 		
 		
 		<!-- // 하나의 일반결재내역 문서 보여주기 -->
 		<select id="generalOneView" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
 			  
-			  select e.employeeid, ncatname, arecipient1, atitle, name ,dname, apaper ,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus, fileName ,orgFilename, fileSize 
+			  select e.employeeid, ncatname, arecipient1, atitle, name ,dname, apaper 
+			  		,a.ano , acontent ,to_char(asdate,'yyyy-mm-dd') as asdate, astatus
+			  		, fileName ,orgFilename, fileSize 
 			  <choose>
 				<when test="ncatname eq'회의록'">
 				 , mdate 
@@ -196,7 +199,7 @@
 				, fk_wiimdate 
 				</when>
 				<when test="ncatname eq'협조공문'">
-				 ,nvl(comname,'없습니다.') as comname
+				 , comname
 				</when>
 				
 				</choose>
@@ -385,7 +388,7 @@
 				  , fileName, orgFilename, fileSize   
 			from
 			(
-			select row_number() over(order by a.ano desc) AS rno  
+			select row_number() over(order by asdate desc) AS rno  
 			      ,a.ano ,scatname, atitle, name ,dname,asdate ,apaper ,e.employeeid  
 			       , fileName, orgFilename, fileSize 
 			from tbl_approval a left join tbl_spenda s
@@ -411,7 +414,6 @@
 				     	 and scat= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
-		  	order by  asdate desc
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
 		</select>
@@ -566,7 +568,7 @@
 				  , fileName, orgFilename, fileSize   
 			from
 			(
-			select row_number() over(order by a.ano desc) AS rno  
+			select row_number() over(order by asdate desc) AS rno  
 			      ,a.ano ,vno ,vcatname, atitle, name ,dname,asdate ,apaper ,e.employeeid   
 			       , fileName, orgFilename, fileSize 
 			from tbl_approval a left join tbl_vacation v
@@ -592,7 +594,6 @@
 				     	 and vcatname= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
-			 order by  asdate desc
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
 		</select>
