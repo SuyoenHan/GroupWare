@@ -105,17 +105,22 @@ button.btn1:hover{
 			   	var date = new Date();
 			   	var year = date.getFullYear();
 			   	var month = date.getMonth()+1;
-			   	var day = date.getDay();
+			   	var date = date.getDate();
 			   	if(month <10){
 			   		month = '0'+month;
 			   	}
-			   	if(day <10){
-			   		day = '0'+day;
+			   	else{
+			   		month=month;
+			   	}
+			   	if(date <10){
+			   		date = '0'+day;
+			   	}
+			   	else{
+			   		date=date;
 			   	}
 			   	
 			   	
-			   	
-			   	 var today = (year+"년 "+month+"월 "+day+"일");
+			   	 var today = (year+"년 "+month+"월 "+date+"일");
 			     //	console.log(today);
 				 var vcatname;
 				 var html;
@@ -266,7 +271,7 @@ button.btn1:hover{
 		            alert("요청기간을 입력하세요!!");
 		            return false;
 		         }
-		         else if(slstart == slend || slstart > slend){
+		         else if(slstart > slend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
@@ -340,7 +345,7 @@ button.btn1:hover{
 		            return false;
 		         
 		        }
-	            else if(congstart == congend || congstart > congend){
+	            else if( congstart > congend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
@@ -356,7 +361,7 @@ button.btn1:hover{
 		            alert("요청기간을 입력하세요!!");
 		            return false;
 		         }
-		         else if(bustart == buend || bustart > buend){
+		         else if( bustart > buend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
