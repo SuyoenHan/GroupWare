@@ -424,7 +424,7 @@
 	<form name="excelFrm">
 	<div style="padding-bottom:35px;"></div>
 	<div id="reserveTitle"><span id="name"></span>&nbsp;님의 예약현황<input type="hidden" id="clientname" name="clientname" />
-	<button type="button" id="excelBtn" style="background-color:#00b33c; color:white; margin-left:700px; width:75px; height:35px;">엑셀출력</button></div>
+	<button type="button" id="excelBtn" style="background-color:#00b33c; color:white; margin-left:700px; width:75px; height:35px; cursor:pointer;">엑셀출력</button></div>
 	</form>
 	
 	<div id="reserveList"></div>

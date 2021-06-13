@@ -158,10 +158,10 @@ button.btn_normal{
 
 </script>
 
-<div style="margin-left: 80px; width: 88%;">
+<div style="margin: 30px 0px 30px 50px; width: 88%;">
 
 	<div>
-		<h3 style="display: inline-block;">일정 검색결과</h3>&nbsp;&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
+		<i class="far fa-calendar-alt fa-2x"></i>&nbsp;<span style="font-size: 18pt; font-weight: bold;">일정 검색결과</span>&nbsp;&nbsp;<a  href="<%= ctxPath%>/t1/schedule.tw"><span>◀캘린더로 돌아가기</span></a>
 
 		<div id="searchPart" style="float: right; margin-top: 50px;">
 				<form name="searchSchedule">

@@ -9,6 +9,11 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	
+	 var str_arrCcEmail = "";  // 참조 이메일 배열 string 변환값
+     var str_arrReceiverEmail = "";
+     var arrAddrsBookCcEmail = ""; // 주소록에서 가져온 참조 이메일
+	 var arrAddrsBookEmail = "";     
+	
 	// 주소록 페이지에서 받는사람 이메일 주소 넘겨받은경우
 	var arrReceiverEmail = [];
 	var addrsBookEmail = "${requestScope.addrsBookEmail}";
@@ -27,7 +32,7 @@ $(document).ready(function(){
 	var preInputRplName = "${requestScope.replyToName}";
 	if(replySubject != null && replySubject != ""){
 		//alert ('회신메일 페이지입니다');
-		$('#receiver').append('<span class="email-ids">'+preInputRplName+'&lt;'+preInputRplEmail+'&gt;'+' <span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+		$('#receiver').append('<span class="email-ids">'+preInputRplName+'&lt;'+preInputRplEmail+'&gt;'+'<span class="cancel-email" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
 		//console.log('회신메일 preinput Email : '+preInputRplEmail);
 		$("input#subject").val("RE: "+replySubject);
 		arrReceiverEmail.push(preInputRplEmail);		
@@ -136,33 +141,47 @@ $(document).ready(function(){
 	});
   
   
-   	var arrAddrsBookEmail = $("input#receiverEmail").val(); // 주소록 받는사람 이메일 값
-   	var arrAddrsBookCcEmail = $("input#ccEmail").val();	// 주소록 참조이메일 값
+   	var addrsBookEmail = ""; // 주소록 받는사람 이메일 값
+   	var addrsBookCcEmail = "";	// 주소록 참조이메일 값
+   	var addrsBookEmailArr = []; // 주소록 받는사람 이메일 배열
+   	var addrsBookCcEmailArr = []; // 주소록 참조이메일 배열
   // 주소록에서 추가한 받는메일주소 취소클릭시
+  	var thisEmail = "";
+	var clicked = false;
   	$(document).on('click','[name=addrs-cancel-btn]',function(){
-	      $(this).parent().remove();
-	      $("input[name=receiver]").val("");
-	      var idx = $(this).find('input').val();
-	      console.log("취소버튼의 인덱스값: "+idx);
-	      console.log("삭제할 메일: "+arrReceiverEmail[idx]);
-	      var thisEmail = arrReceiverEmail[idx];
-	      arrReceiverEmail.splice(arrReceiverEmail.indexOf(thisEmail),1,"null");
-	      console.log("취소 후 배열값: "+arrReceiverEmail);
+  		addrsBookEmail = $("input#receiverEmail").val(); // 주소록 받는사람 이메일 값
+  		console.log("취소 전 주소록서추가한 이메일 최초 배열: "+addrsBookEmail);
+  		$(this).parent().remove();
+        $("input[name=receiver]").val("");
+	    var addrsIdx = $(this).find('input').val();
+	    console.log("취소버튼의 인덱스값: "+addrsIdx);
+		
+	      addrsBookEmailArr = addrsBookEmail.split(",");
+	      console.log("split 후 주소록에서 추가한 이메일 배열: "+addrsBookEmailArr);
+	      console.log("삭제할 메일: "+addrsBookEmailArr[addrsIdx]);
+	      var thisEmail = addrsBookEmailArr[addrsIdx];
+	      addrsBookEmailArr.splice(addrsBookEmailArr.indexOf(thisEmail),1,"null");
+	      console.log("취소 후 배열값: "+addrsBookEmailArr);
+	      clicked = true; 
+  		
 	});
   
   
   
   // 주소록에서 추가한 참조메일주소 취소클릭시
   $(document).on('click','[name=addrs-ccCancel-btn]',function(){
-	      $(this).parent().remove();
+	   addrsBookCcEmail = $("input#ccEmail").val();
+	  console.log("취소 전 주소록서추가한 참조이메일 최초 배열: "+addrsBookCcEmail);    
+	  $(this).parent().remove();
 	      $("input#cc-input").val("");
-	      var ccIdx = $(this).find('input').val();
-	      console.log("cc 취소버튼의 인덱스값: "+ccIdx);
-	      console.log("삭제할 참조메일: "+arrCcEmail[ccIdx]);
-	      
-	      var thisCcEmail = arrCcEmail[ccIdx];
-	      arrCcEmail.splice(arrCcEmail.indexOf(thisCcEmail),1,"null");
-	      console.log("취소 후 배열값: "+arrCcEmail);
+	      var addrsCcIdx = $(this).find('input').val();
+	      console.log("cc 취소버튼의 인덱스값: "+addrsCcIdx);
+	      addrsBookCcEmailArr = addrsBookCcEmail.split(",");
+	      console.log("split 후 주소록에서 추가한 cc이메일 배열: "+addrsBookCcEmailArr);
+	      console.log("삭제할 참조메일: "+addrsBookCcEmailArr[addrsCcIdx]);
+	      var thisCcEmail = addrsBookCcEmailArr[addrsCcIdx];
+	      addrsBookCcEmailArr.splice(addrsBookCcEmailArr.indexOf(thisCcEmail),1,"null");
+	      console.log("취소 후 CC배열값: "+addrsBookCcEmailArr);
 	      
 	});
   
@@ -215,48 +234,78 @@ $(document).ready(function(){
           return;
        }
        
-       // 받은메일 최종 배열값 string 변환하기
-       if(arrReceiverEmail.indexOf("null") != -1){
+       addrsBookEmail = $("input#receiverEmail").val();
+       addrsBookCcEmail = $("input#ccEmail").val();
+       console.log("addrsBookEmailArr : "+addrsBookEmailArr);
+       console.log("addrsBookCcEmailArr :"+addrsBookCcEmailArr);
+       addrsBookEmailArr = addrsBookEmail.split(",");
+       addrsBookCcEmailArr = addrsBookCcEmail.split(",");
+       
+       // 받은메일,참조메일 최종 배열값 string 변환하기
+       if(arrReceiverEmail.indexOf("null") != -1){ // 배열에 null이 있으면 삭제하기
 	       arrReceiverEmail.splice(arrReceiverEmail.indexOf('null'),1);
 	       console.log("공백제거 후 받은메일 배열: "+arrReceiverEmail);
        } else{
 	       str_arrReceiverEmail = arrReceiverEmail.join(',');
-	       arrAddrsBookEmail = $("input#receiverEmail").val(); // 주소록 받는사람 이메일 값
-	       console.log("주소록에서 가져온 주소: "+arrAddrsBookEmail);
 	       console.log("받는사람 이메일: "+str_arrReceiverEmail);
        }
        
-       var str_arrCcEmail = "";
-       var arrAddrsBookCcEmail = "";
-       if(arrCcEmail.indexOf("null") != -1){
+      
+       if(arrCcEmail.indexOf("null") != -1){ // 배열에 null이 있으면 삭제하기
 	       arrCcEmail.splice(arrCcEmail.indexOf('null'),1);
 	       console.log("공백제거 후 참조 배열: "+arrCcEmail);
        } else{
 	       str_arrCcEmail = arrCcEmail.join(',');
-	       arrAddrsBookCcEmail = $("input#ccEmail").val();	// 주소록 참조이메일 값
-	       console.log("주소록에서 가져온 cc: "+arrAddrsBookCcEmail);
 	       console.log("참조이메일: "+str_arrCcEmail);
        }
        
-       
 
-       if(arrAddrsBookEmail != ""){	// 주소록에서 추가한 이메일 있는 경우
-	   	str_arrReceiverEmail = str_arrReceiverEmail+","+arrAddrsBookEmail;
+       // 주소록에서 가져온 받은메일, 참조메일 최종 string 변환
+       var str_addrsBookEmailArr = "";
+       var str_addrsBookCcEmailArr = "";
+       if(addrsBookEmailArr.indexOf("null") != -1){ // 배열에 null이 있으면 삭제하기
+    	   addrsBookEmailArr.splice(addrsBookEmailArr.indexOf('null'),1);
+	       console.log("공백제거 후 주소록 받은메일 배열: "+addrsBookEmailArr);
+	       console.log("받은메일 배열 데이터타입: "+addrsBookEmailArr);
+	       str_addrsBookEmailArr = addrsBookEmailArr.join(',');
+       } else{
+	       str_addrsBookEmailArr = addrsBookEmailArr.join(',');
+	       console.log("주소록 받는사람 이메일: "+str_addrsBookEmailArr);
+       }
+       
+       if(addrsBookCcEmailArr.indexOf("null") != -1){ // 배열에 null이 있으면 삭제하기
+    	   addrsBookCcEmailArr.splice(addrsBookCcEmailArr.indexOf('null'),1);
+	       console.log("공백제거 후 주소록 참조 배열: "+addrsBookCcEmailArr);
+	       str_addrsBookCcEmailArr = addrsBookCcEmailArr.join(',');
+       } else{
+	       str_addrsBookCcEmailArr = addrsBookCcEmailArr.join(',');
+	       console.log("주소록 참조이메일: "+str_addrsBookCcEmailArr);
+       }
+       
+              
+		// 일반 메일주소랑 주소록에서 가져온 메일주소 값 합치기
+       if(arrReceiverEmail != ""){	// 직접 입력한 메일만 있는 경우
+    	   str_arrReceiverEmail = arrReceiverEmail.join(',');
+       } else if(arrReceiverEmail == "" && addrsBookEmailArr != ""){ // 직접 입력한 것 없이 주소록 추가 이메일만 있는 경우
+    	   str_arrReceiverEmail = str_addrsBookEmailArr;
+       } else if(arrReceiverEmail != "" && addrsBookEmailArr != ""){ // 직접 입력한것도 있고 주소록 추가 이메일도 있는 경우
+    	   str_addrsBookEmailArr = addrsBookEmail.join(',');
+    	   str_arrReceiverEmail = str_arrReceiverEmail+","+str_addrsBookEmailArr;
+    	   
        }
        
        console.log("email 최종: "+str_arrReceiverEmail);
     
-       if(arrCcEmail != ""){
-    	   var str_arrCcEmail = arrCcEmail.join();
-    	   var arrAddrsBookCcEmail = $("input#ccEmail").val();
-	       console.log("참조메일: "+str_arrCcEmail);
-    	   
-    	   if(arrAddrsBookEmail != ""){	// 주소록에서 추가한 참조이메일 있는 경우
-    		   str_arrCcEmail = str_arrCcEmail+","+arrAddrsBookCcEmail;
-    	   }
-    	   
-    	   console.log("ccEmail 최종: "+str_arrCcEmail);
+       if(arrCcEmail != "" ){ // 직접 입력한 참조메일만 있는 경우
+			str_arrCcEamil = arrCcEmail.join(',');
+       } else if(arrCcEmail == "" && addrsBookCcEmailArr != ""){ // 직접 입력한 것 없이 주소록 추가 참조이메일만 있는 경우
+    	   str_arrCcEmail = str_addrsBookCcEmailArr;
+       } else if(arrCcEmail != "" && addrsBookCcEmailArr != ""){ // 직접 입력한것도 있고 주소록 추가 참조이메일도 있는 경우
+    	   str_addrsBookCcEmailArr = addrsBookCcEmail(',');
+    	   str_arrCcEmail = str_arrCcEmail+","+str_addrsBookCcEmailArr;
        }
+       
+    	   console.log("ccEmail 최종: "+str_arrCcEmail);
        
         // 글제목 유효성 검사
        var subjectVal = $("input#subject").val().trim();
@@ -273,13 +322,13 @@ $(document).ready(function(){
           return;
        }
        
-       // 폼(form) 을 전송(submit)
+    	// 폼(form) 을 전송(submit)
        var frm = document.newMailFrm;
        frm.receiverEmail.value = str_arrReceiverEmail;
        frm.ccEmail.value = str_arrCcEmail;
        frm.method = "POST";
        frm.action = "<%= ctxPath%>/t1/sendSuccess.tw";
-       //frm.submit();   
+       frm.submit();   
     });
       
  	$("#btnCancel").click(function(){
@@ -328,23 +377,29 @@ $(document).ready(function(){
 	// 2) 주소록 팝업에서 적용 클릭시 부모창에 보내 준 데이터 가공 => 수신자, 참조에 넣어주기
 	var receiverEmail= $("input#receiverEmail").val();
 	var ccEmail= $("input#ccEmail").val();
-	// console.log(receiverEmail);
+	//console.log("주소록에서 가져온 메일주소:"+receiverEmail);
+	//console.log(typeof receiverEmail)
 	
+	var addrsCancelIdx = 0;
 	if(receiverEmail!=""){
 	 	// 여러명일 경우 고려, 참조는 없는 경우도 존재
 	 	var receiverEmailArr= receiverEmail.split(",");	
 	 	
 	 	for(var i=0;i<receiverEmailArr.length;i++){
-	 		 $('#receiver').append('<span class="email-ids">'+ receiverEmailArr[i] +' <span class="cancel-email" name="addrs-cancel-btn" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	 		 $('#receiver').append('<span class="email-ids">'+ receiverEmailArr[i] +' <span class="cancel-email" name="addrs-cancel-btn" style="color:gray;"><input class="mailIndex" type="hidden" value="'+addrsCancelIdx+'"><i class="far fa-window-close"></i></span></span>');
+	 		 addrsCancelIdx = addrsCancelIdx+1;
 	 	} // end of for-------------------------
 		//console.log("주소록에서 추가한 이메일 배열: "+arrReceiverEmail);
 	}
 	
+	var addrsCcCancelIdx = 0;
 	if(ccEmail!=""){ 
 		var ccEmailArr= ccEmail.split(",");
 		for(var i=0;i<ccEmailArr.length;i++){
-	 		 $('div#cc').append('<span class="email-ids">'+ ccEmailArr[i] +' <span class="cancel-email" name="addrs-ccCancel-btn" style="color:gray;"><i class="far fa-window-close"></i></span></span>');
+	 		 $('div#cc').append('<span class="email-ids">'+ ccEmailArr[i] +' <span class="cancel-email" name="addrs-ccCancel-btn" style="color:gray;"><input class="mailIndex" type="hidden" value="'+addrsCcCancelIdx+'"><i class="far fa-window-close"></i></span></span>');
+		 	addrsCcCancelIdx =addrsCcCancelIdx+1;
 	 	} // end of for-------------------------	
+	
 	}
 	
  } // end of function afterEmailEmployeeMap(){----------------
@@ -418,8 +473,8 @@ $(document).ready(function(){
    
    <!-- 주소록에서 가져온 수신자, 참조 값을 넣어주기 위한 hidden form -->
    <form name="fromAddrsBookFrm">
-   		<input type="text" id="receiverEmail" name="receiverEmail" value="">
-   		<input type="text" id="ccEmail" name="ccEmail" value="">
+   		<input type="text" id="receiverEmail" name="receiverEmail" value="" />
+   		<input type="text" id="ccEmail" name="ccEmail" value="" />
    </form>
    
 </div>  

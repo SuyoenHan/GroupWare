@@ -58,7 +58,7 @@
  }
  
  .fc-daygrid-event-dot{
- 	margin-left: 25px;
+ 	margin-left: 29px;
  }
  
  .fc-daygrid{
@@ -629,6 +629,281 @@
         
         <%-- 백원빈 word-cloud 작업 끝 --%>
         
+        
+        <%-- 오다윤 날씨 구현 시작 --%>
+       
+        	
+        var todayw = new Date();
+        var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
+        console.log("어제:"+yesterday);
+        
+        // 오늘 정보
+    	var wyear = todayw.getFullYear();
+    	var wmonth = todayw.getMonth()+1;
+    	var wday = todayw.getDate();
+    	var whour = todayw.getHours();
+    	var wminutes = todayw.getMinutes();
+    	
+    	// 어제 정보
+    	var ydyear = yesterday.getFullYear();
+    	var ydmonth = yesterday.getMonth()+1;
+    	var ydday = yesterday.getDate();
+    
+    	if(whour<10){
+    		whour='0'+whour;
+    	}
+    	if(wmonth<10){
+    		wmonth='0'+wmonth;
+    	}
+    	if(wday<10){
+    		wday='0'+wday;
+    	}
+    
+    	if(ydmonth<10){
+    		ydmonth='0'+ydmonth;
+    	}
+    	if(ydday<10){
+    		ydday='0'+ydday;
+    	}
+    	
+    	var arr =[];
+    	var harr = new Array('02','05','08','11','14','17','20','23');
+    	
+    	for(var i=0;i<harr.length;i++){
+    		var h=harr[i]-whour;
+    		console.log("지금h"+h);
+    		console.log(h);
+    		if(whour!='00' || whour=='01'){
+	    		if(h==-1 || h==0 || h==-2){
+	    			var wnow=harr[i]+"00";
+	    			wtoday = wyear+""+wmonth+""+wday;
+	    			console.log("지금"+wnow);
+	    		}
+    		}
+    		else if(whour=='00' || h==1){
+    			wtoday = ydyear+""+ydmonth+""+ydday;
+    			var wnow=harr[7]+"00";
+    		}
+    	}
+    	
+    
+    	for(var i=0;i<harr.length;i++){
+    		var hy=harr[i]-whour;
+    		console.log("hy"+hy);
+    		if(whour!='00' && whour!='23'){
+	    		if(hy==-1 || hy==0 || hy==-2){
+	    			yesterday = ydyear+""+ydmonth+""+ydday;
+	    			var ytime=harr[(i+1)]+"00";
+	    			console.log("시간"+ytime);
+	    		}
+    		}	
+    		else if(whour=='23' || whour=='00'|| h>0){
+    			var ytime=harr[0]+"00";
+    			yesterday = ydyear+""+ydmonth+""+ydday;
+    			console.log("시간00"+ytime);
+    		}
+    	}
+    	console.log("오늘:"+wtoday);
+    	console.log("진짜어제:"+yesterday);
+    	
+    	// 동네예보
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weatherhome.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"today":wtoday, "now":wnow},
+            dataType : "json",
+            success : function(data, status, xhr) {
+                let dataHeader = data.result.response.header.resultCode;
+                let data1 = data.result.response.body.items.item;
+                
+                if (dataHeader == "00") {
+                	for (var i = 0; i < data1.length; i++) {
+                        var item = data1[i];
+                        switch (item.category) {
+                            case "SKY":
+                                var sky = parseInt(item.fcstValue);
+                                console.log("하늘:"+sky);
+                                break;
+                            case "POP":
+                            	var pop =parseInt(item.fcstValue);
+                                break;
+                            case "PTY":
+                            	var pty =parseInt(item.fcstValue);
+                                break;
+                        }
+                	}
+     			
+                   console.log("강수확률:"+pop);
+                   console.log("강수형태:"+pty);
+                   console.log("하늘:"+sky);
+                   $("#pop").html("강수확률:"+pop+"%");
+                   
+                   $("#pty").html(pty);
+    				
+                   var image="";
+                   if(pty==0){
+	                   if(sky==1){
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+	                   else if(sky==3){
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+	                   else if(sky==4){
+	                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                   }
+                   }
+                   else{
+                	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
+                		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+                	   }
+                	   else{
+                		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
+	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+                	   }
+                   }
+                   // TMN : 아침최저기온
+                   // TMX : 낮 최고기온
+                   // T3H: 3시간 기온
+                   // SKY: 하늘 상태  - 1: 맑음/ 3: 구름많음/ 4: 흐림
+                   // POP: 강수확률 
+                   // PTY: 강수 형태없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4), 빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+    				// 여기서 비/눈은 비와 눈이 섞여 오는 것을 의미 (진눈개비)
+                    //빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+                }
+               
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+    	
+    	
+    	// 오늘 한시간 받기
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weathercurrent.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"today":wtoday, "now":wnow},
+            dataType : "json",
+            success : function(data, status, xhr) {
+
+                let dataHeader = data.result.response.header.resultCode;
+                
+                if (dataHeader == "00") {
+
+                	var t1h = data.result.response.body.items.item[3].obsrValue;
+        
+                   $("#t1h").html(t1h);
+                   $("input#mt1h").val(t1h);
+                }
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+        
+    	// 오늘 기온과 어제 기온 차이
+    	$.ajax({
+            url : "<%= ctxPath%>/t1/weatheryesterday.tw",
+            type : "get",
+            timeout: 30000,
+            contentType: "application/json",
+            data: {"yesterday":yesterday, "ytime":ytime},
+            dataType : "json",
+            success : function(data, status, xhr) {
+
+                let dataHeader = data.result.response.header.resultCode;
+                
+                if (dataHeader == "00") {
+
+                   var y1h =parseInt(data.result.response.body.items.item[3].obsrValue);
+        			console.log("어제온도:"+y1h);
+
+					var t1h = parseInt($("input#mt1h").val()); 
+					console.log("현재시간"+t1h);
+					var gap = Math.abs(parseInt(t1h)-parseInt(y1h));
+					console.log("gap"+gap);
+					if(gap>=0){
+						$("#gap").html("어제보다 "+parseInt(gap)+" º 높아요!"); 
+					}
+					else{
+						$("#gap").html("어제보다 "+parseInt(gap)+" º 낮아요!"); 
+					}
+						
+        			
+                }
+            },
+            error : function(e, status, xhr, data) {
+                console.log("error == >");
+                console.log(e);
+            }
+        });
+        
+    	
+    	$.ajax({
+    		  type: "GET",
+    		  url: "http://openapi.seoul.go.kr:8088/504543517764617936396d50484259/json/RealtimeCityAir/1/99",
+    		  data: {},
+    		  success: function(response){
+    				// 마포구의 미세먼지 값만 가져와보기
+    				let mapo = response["RealtimeCityAir"]["row"][5];
+    				let guName = mapo['MSRSTE_NM'];
+    				let guMise = mapo['PM10'];
+    				let guchoMise = mapo['PM25'];
+    				console.log(guName, guMise,guchoMise);
+    				
+    				var miseStatus="";
+    				if(guMise<=30){
+    					miseStatus="좋음" 
+    				}
+    				else if(guMise<=80){
+    					miseStatus="보통"
+    				}
+    				else if(guMise<=150){
+    					miseStatus="나쁨"
+    				}
+    				else{
+    					miseStatus="매우나쁨"
+    				}
+    				
+    				$("#miseStatus").html("미세먼지: "+miseStatus);
+    				$("#mise").html("("+guMise+"㎍/m³)");
+    				
+    				var miseimage="";
+    				var chomiseStatus="";
+    				if(guchoMise<=15){
+    					chomiseStatus="좋음" 
+    					miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
+    				}
+    				else if(guchoMise<=35){
+    					chomiseStatus="보통"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
+    				}
+    				else if(guchoMise<=75){
+    					chomiseStatus="나쁨"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
+    				}
+    				else{
+    					chomiseStatus="매우나쁨"
+    					miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
+    				}
+    				
+    				$("#chomiseStatus").html("초미세먼지: "+chomiseStatus);
+    				$("#chomise").html("("+guchoMise+"㎍/m³)");
+    				$("#miseimg").html("<img style='width: 100px; height: 100px;' src='"+ miseimage +"'/>");
+    		  }
+    		})
+        <%-- 오다윤 날씨 구현 끝 --%>
+        
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -903,17 +1178,36 @@
   	다님님 파트(공지사항)
   </div>
   
-  <%-- start of div(calendar) 오다윤 --%>
+  
+  
+  
+  
+  <%-- =================== 오다윤 시작 =================== --%>
+  						<%--  달력 시작 --%>
   <div id="calendarO" style="float: right;">
 		<div id="calendar"></div>
 		<div id="todayCal" style="margin-top:10px; padding-left: 10px;"></div>
 		<div id="infoCalendar" style="margin-top:10px; padding-left: 10px;"></div>
   </div>
-
-  <%-- end of div(calendar) 오다윤 --%>
-  
+						<%--  달력 끝 --%>
+ 
+ 						<%--  날씨 시작 --%> 
   <div id="weather" style="border: solid 1px blue; float: left; margin: 10px 0px 50px 40px; width: 580px; height: 230px; ">
- 	 다윤님 파트 (날씨)
+ 	<div id="today-w" style="float: left; width: 50%; height: 100%; border-right: solid 1px blue;">
+ 	<span style="font-weight: bold;">오늘의 날씨</span><br><br>
+ 	<span  id="sky"></span>
+ 	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
+ 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span><input type="hidden" id="mt1h"/></div>
+ 	</div>
+ 	<div style="float: right; width: 50%; height: 100%; " >
+ 		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
+ 		<div align="center" style="margin-top: 20px;">
+ 		<span id="miseimg"></span><br><br>
+ 		<span id="miseStatus" ></span><span id="mise"></span><br>
+ 		<span id="chomiseStatus"></span><span id="chomise"></span>
+ 		</div>
+ 	</div>
+ 	
   </div>
-  
+  						<%--  날씨 끝 --%> 
 </div>

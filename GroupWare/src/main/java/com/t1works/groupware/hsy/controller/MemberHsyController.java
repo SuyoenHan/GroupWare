@@ -341,13 +341,15 @@ public class MemberHsyController {
 		
 		// 근태결재 승인처리 완료된 문서번호 가공하기 => in절에 사용될 수 있도록 데이터 가공
 		String anoForIn="";
-		for(int i=0; i<anoList.size();i++) {   
-
-			String str= (i < anoList.size()-1) ? "," : "";
-			anoForIn+= anoList.get(i)+str;
-		} // end of for------------------------
-		
-		
+		if(anoList.size()==0) anoForIn="-1";
+		else{
+			for(int i=0; i<anoList.size();i++) {   
+	
+				String str= (i < anoList.size()-1) ? "," : "";
+				anoForIn+= anoList.get(i)+str;
+			} // end of for------------------------
+		}
+	
 		Map<String,String> paraMap= new HashMap<>();
 		paraMap.put("employeeid", employeeid);
 		paraMap.put("date",year+"-"+month);
@@ -725,12 +727,14 @@ public class MemberHsyController {
 		
 		// 근태결재 승인처리 완료된 문서번호 가공하기 => in절에 사용될 수 있도록 데이터 가공
 		String anoForIn="";
-		for(int i=0; i<anoList.size();i++) {   
+		if(anoList.size()==0) anoForIn="-1";
+		else{
+			for(int i=0; i<anoList.size();i++) {   
 
 			String str= (i < anoList.size()-1) ? "," : "";
 			anoForIn+= anoList.get(i)+str;
-		} // end of for------------------------
-		
+			} // end of for------------------------
+		}
 		
 		Map<String,String> paraMap= new HashMap<>();
 		paraMap.put("employeeid", employeeid);

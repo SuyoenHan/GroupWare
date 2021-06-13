@@ -490,31 +490,32 @@ $(document).ready(function(){
 	
 </script>
 
-<div class="rsGoodsContainer" style="margin-left: 80px;"> 
-	<h3 style="margin-top: 20px !important;">사무용품 대여신청</h3>
+<div class="rsGoodsContainer"  style="margin: 30px 0px 30px 50px;"> 
+	<i class='fas fa-tasks fa-lg' style='font-size:24px'></i>&nbsp;<span style="font-size: 18pt; font-weight: bold;">사무용품 대여신청</span>
 	
+	<div>
 	<div id="calendarWrapper">
 		<div id="calendar" style="width: 450px; margin-top: 50px; margin-bottom: 80px; margin-left: 200px;" ></div>
 	</div>
 	
-  
-	<div class="room" >
-		<table style="width: 90%; margin-top: 200px;" class="table table-bordered">
-            <tr><td colspan="2">사무용품 목록</td></tr>
-            	<c:if test="${empty requestScope.goodsList}">
-	            		<tr><td colspan="2">사무용품이 존재하지 않습니다.</td></tr>
-	            </c:if>
-	            <c:if test="${not empty requestScope.goodsList}">
-		        	<c:forEach var="goodsvo" items="${requestScope.goodsList}">
-				        	<tr class="selectGoods">
-				            <td id="findno" style="display: none;">${goodsvo.gno}</td>
-				            <td id="findname"  style="width: 30%; text-align: left; padding-left: 15px;">${goodsvo.goodsname}</td>
-		            	</tr>
-        		 	</c:forEach>
-          		</c:if>
-         </table>
+	
+		<div class="room" >
+			<table style="width: 90%; margin-top: 200px;" class="table table-bordered">
+	            <tr><td colspan="2">사무용품 목록</td></tr>
+	            	<c:if test="${empty requestScope.goodsList}">
+		            		<tr><td colspan="2">사무용품이 존재하지 않습니다.</td></tr>
+		            </c:if>
+		            <c:if test="${not empty requestScope.goodsList}">
+			        	<c:forEach var="goodsvo" items="${requestScope.goodsList}">
+					        	<tr class="selectGoods">
+					            <td id="findno" style="display: none;">${goodsvo.gno}</td>
+					            <td id="findname"  style="width: 30%; text-align: left; padding-left: 15px;">${goodsvo.goodsname}</td>
+			            	</tr>
+	        		 	</c:forEach>
+	          		</c:if>
+	         </table>
+		</div>
 	</div>
-
 	
 	<div class="middle">
 		<table  style="width: 92%; " id="rsgoods" class="table table-bordered" >
