@@ -382,7 +382,7 @@
 	
 	<!-- 내문서함 - 결재의견 조회하기 -->
 	<select id="getOpinionList" parameterType="String" resultType="com.t1works.groupware.sia.model.ApprovalSiaVO">
-		select dname, name, pname, to_char(odate, 'yyyy-mm-dd hh24:mi:ss') AS odate, ocontent, employeeid, ono
+		select nvl(dname, ' ') AS dname, name, pname, to_char(odate, 'yyyy-mm-dd hh24:mi:ss') AS odate, ocontent, employeeid, ono
 		from tbl_aopinion a left join tbl_employee e
 		on a.fk_employeeid = e.employeeid
 		left join tbl_department d

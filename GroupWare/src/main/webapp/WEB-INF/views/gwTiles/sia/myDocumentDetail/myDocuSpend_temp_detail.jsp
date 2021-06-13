@@ -89,7 +89,7 @@ input.btn {
 				var res = str.substring(0, str.length-1); 
 				$(this).val(res);
 			} 
-		}		
+		});		
 		
 	});
 	
