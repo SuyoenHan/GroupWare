@@ -44,6 +44,12 @@ body > table > thead > tr > th{
 	color: white;
 }
 
+@media screen and (max-width: 1540px) {
+	div#mail-list{
+		width: 80%;
+	} 
+}
+
 
 /* new_mail.jsp 메일쓰기 페이지 css */
 

@@ -1,5 +1,6 @@
 package com.t1works.groupware.kdn.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.t1works.groupware.kdn.model.BoardKdnVO;
 import com.t1works.groupware.kdn.model.CommentKdnVO;
+import com.t1works.groupware.kdn.model.EmailKdnVO;
 import com.t1works.groupware.kdn.model.InterBoardKdnDAO;
 
 @Component
@@ -55,14 +57,34 @@ public class BoardKdnService implements InterBoardKdnService {
 			dao.setAddReadCount(paraMap); // 글 조회수 1 증가하기
 			boardvo = dao.getView(paraMap);
 		}
+		if(boardvo != null) {
+			String readStatus = boardvo.getReadStatus();
+			//System.out.println("readStatus : "+readStatus);
+			if(readStatus.equals("0")) {
+				int n = dao.markAsRead(boardvo.getSeq());
+				//System.out.println("readStatus 업데이트 유무: "+n);
+			}
+		}
 		
 		return boardvo;
+		
 	}
 
 	// 글조회수 증가는 없고 단순히 글1개 조회만을 해주는 것
 	@Override
 	public BoardKdnVO getViewWithNoAddCount(Map<String, String> paraMap) {
 		BoardKdnVO boardvo = dao.getView(paraMap);	//글1개 조회하기
+		//System.out.println("글조회수 증가없는 메소드에서 boardvo: "+boardvo);
+		if(boardvo != null) {
+			String readStatus = boardvo.getReadStatus();
+			// System.out.println("readStatus : "+readStatus);
+			if(readStatus.equals("0")) {
+				int n = dao.markAsRead(boardvo.getSeq());
+				//System.out.println("readStatus 업데이트 유무: "+n);
+			}
+		}
+		
+		
 		return boardvo;
 	}
 
@@ -364,6 +386,13 @@ public class BoardKdnService implements InterBoardKdnService {
 	@Override
 	public int getGenCmntTotalCnt(String seq) {
 		int n = dao.getGenCmntTotalCnt(seq);
+		return n;
+	}
+
+	// 신규 공지사항 유무 확인하기
+	@Override
+	public int checkNewNotice() {
+		int n = dao.checkNewNotice();
 		return n;
 	}
 

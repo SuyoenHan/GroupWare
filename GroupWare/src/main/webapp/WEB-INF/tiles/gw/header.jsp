@@ -16,6 +16,8 @@
 
 	$(document).ready(function(){
 		
+		displayNew(); // 신규 공지사항 있을시 new 아이콘 띄우기
+		
 		<%-- === 검색어 입력시 자동글 완성하기 시작(백원빈) === --%>
 		$("div#displayList").hide();
 		
@@ -142,6 +144,29 @@
 		
 	}// end of function goSearch(){
 	
+		
+function displayNew(){
+	
+	$.ajax({
+		url:"<%=ctxPath%>/t1/checkNewNotice.tw",
+		dataType:"json",
+		success:function(json){
+			var html = "";		
+			if(json.n == 1){
+				html = '<i style="display: block; position: relative; top: 8px;" class="fas fa-bullhorn fa-2x"></i><span style="border:solid 1px red; background-color: red; border-radius:100%; font-size: 6px; height: 12px; width: 12px; display:block; line-height: 8px; padding-right: 1px; position: relative; top:-19px; left: 28px;">n</span>';
+			} else {
+				html = '<i class="fas fa-bullhorn fa-2x"></i>';
+			}
+			console.log("공지사항 아이콘 : "+json.n);
+			$("td.bullhorn").html(html);
+		},
+		error: function(request, status, error){
+            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+        }
+		
+	});
+	
+}
 	
 </script>
 <div id="mainMenu"> 
@@ -166,7 +191,7 @@
 		   			<td class="mypage"><i class="far fa-user-circle fa-2x"></i></td>
 		   			<td class="schedule"><i class="far fa-calendar-alt fa-2x"></i></td>
 		   			<td class="rsv"><i class="far fa-calendar-check fa-2x"></i></td>
-		   			<td class="notice"><i class="fas fa-bullhorn fa-2x"></i></td>
+		   			<td class="notice bullhorn"></td>
 		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=750px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">

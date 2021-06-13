@@ -78,7 +78,10 @@ div.room{
 	background-color: #b1b8cd;
 }
 
-
+.info{
+	background-color: #b1b8cd;
+	cursor: pointer;
+}
 </style>
 
 
@@ -118,9 +121,16 @@ $(document).ready(function(){
 	$("input#chgdate").val(cgtime); 
 
 	// 회의실 종류에서 마우스 오버시
-	$("tr.selectRoom").hover(function(){
-		$(this).css("cursor", "pointer");
+	
+	$("tr.selectRoom").bind("mouseover",function(){			
+		$(this).addClass("info");			
+	}); 
+	
+	$("tr.selectRoom").bind("mouseout",function(){
+		$(this).removeClass("info");
 	});
+	
+	
 	
 	// 회의실 종류 선택했을 때
 	$("tr.selectRoom").click(function(){
