@@ -270,15 +270,15 @@ public class BoardKdnController {
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo != 1) {
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'>[맨처음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'><i class=\"fas fa-angle-double-left\" style='font-size: 18px;'></i></a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'><i class=\"fas fa-chevron-left\" style='font-size:15px;'></i></a></li>";
 		}
 		
 		
 		while( !(loop > blockSize || pageNo > totalPage)) {
 			
 			if(pageNo == currentShowPageNo) {
-				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
+				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; border: solid 1px #395673; color: #fff; background-color: #395673; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
 			} else {
 				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
@@ -290,8 +290,8 @@ public class BoardKdnController {
 		
 		// === [다음][마지막] 만들기 ===
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'><i class=\"fas fa-chevron-right\"></i></a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'><i class=\"fas fa-angle-double-right\"></i></a></li>";
 		}
 		
 		pageBar += "</ul>";
@@ -694,15 +694,15 @@ public class BoardKdnController {
 		
 		// === [맨처음][이전] 만들기 ===
 		if(pageNo != 1) {
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'>[맨처음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'><i class=\"fas fa-angle-double-left\" style='font-size: 18px;'></i></a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'><i class=\"fas fa-chevron-left\" style='font-size:15px;'></i></a></li>";
 		}
 		
 		
 		while( !(loop > blockSize || pageNo > totalPage)) {
 			
 			if(pageNo == currentShowPageNo) {
-				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
+				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; border: solid 1px #395673; color: #fff; background-color: #395673; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
 			} else {
 				pageBar += "<li style='display:inline-block; width:20px; font-size:11pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 			}
@@ -714,8 +714,8 @@ public class BoardKdnController {
 		
 		// === [다음][마지막] 만들기 ===
 		if(pageNo <= totalPage) {
-			pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-			pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'><i class=\"fas fa-chevron-right\"></i></a></li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'><i class=\"fas fa-angle-double-right\"></i></a></li>";
 		}
 		
 		pageBar += "</ul>";
@@ -1410,15 +1410,15 @@ public class BoardKdnController {
 	
 	// === [맨처음][이전] 만들기 ===
 	if(pageNo != 1) {
-		pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'>[맨처음]</a></li>";
-		pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'>[이전]</a></li>";
+		pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+1+"'><i class=\"fas fa-angle-double-left\" style='font-size: 18px;'></i></a></li>";
+		pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+(pageNo-1)+"'><i class=\"fas fa-chevron-left\" style='font-size:15px;'></i></a></li>";
 	}
 	
 	
 	while( !(loop > blockSize || pageNo > totalPage)) {
 		
 		if(pageNo == currentShowPageNo) {
-			pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
+			pageBar += "<li style='display:inline-block; width:20px; font-size:11pt; border: solid 1px #395673; color: #fff; background-color: #395673; font-weight: bold; padding:2px 2px;'>"+pageNo+"</li>";
 		} else {
 			pageBar += "<li style='display:inline-block; width:20px; font-size:11pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>"+pageNo+"</a></li>";
 		}
@@ -1430,8 +1430,8 @@ public class BoardKdnController {
 	
 	// === [다음][마지막] 만들기 ===
 	if(pageNo <= totalPage) {
-		pageBar += "<li style='display:inline-block; width:50px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'>[다음]</a></li>";
-		pageBar += "<li style='display:inline-block; width:70px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'>[마지막]</a></li>";
+		pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+pageNo+"'><i class=\"fas fa-chevron-right\"></i></a></li>";
+		pageBar += "<li style='display:inline-block; width:20px; font-size:12pt;'><a href='"+url+"?searchType="+searchType+"&searchWord="+searchWord+"&currentShowPageNo="+totalPage+"'><i class=\"fas fa-angle-double-right\"></i></a></li>";
 	}
 	
 	pageBar += "</ul>";
