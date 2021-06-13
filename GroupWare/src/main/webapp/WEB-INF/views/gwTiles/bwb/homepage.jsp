@@ -2,224 +2,10 @@
     pageEncoding="UTF-8"%> 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<%
-   String ctxPath = request.getContextPath();
-%>
-
+<% String ctxPath = request.getContextPath(); %>
 <link href='<%=ctxPath %>/resources/fullcalendar/main.min.css' rel='stylesheet' />
-<style>
-
- div#gwContent{left: 80px;}
- 
- div#calendarO{
- 	border: solid 1px blue;
- 	width: 480px;
- 	margin: 10px 0px 50px 40px;
- 	height: 550px;
- }
- 
- /* 달력 css */
- div#calendarWrapper{
-	float: left;
- }	
-
- .fc-scroller {
-   	overflow-y: hidden !important;
- }
-
- a{
-    color: #000;
-    text-decoration: none;
-    background-color: transparent;
-    cursor: pointer;
- }
-
- a:hover {
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: transparent;
- }
- 
- .fc-daygrid{
-    color: #000;
-    cursor: pointer;
-    text-decoration: none;
-    background-color: transparent;
- }
-
- .fc-header-toolbar{
-	height: 30px;
- } 
- 
- .fc-event-time{
- 	color: #fff;
- }
- 
- .fc-daygrid-event-dot{
- 	margin-left: 29px;
- }
- 
- .fc-daygrid{
- 	border: solid 1px #fff;
- }
-  
-  .fc-button-primary{
-  	background-color: #333333;
-  }
-  
-  
- div.circle{   
- 	width: 8px;
- 	height: 8px;
- 	border-radius: 50%;
- 	display: inline-block;
- 	margin-left: 5px;
- 	margin-right: 10px;
- }
- 
- .fc-event-time{
- 	display: none;
- }
- 
- .fc-event-title{
- 	display: none;
- }
- 
- li{
-	margin-left:-10px;
- }
-   
-  div#myInfo{
-      border:solid 1px red;
-      width:250px;
-      font-size:12pt;
-  }
-  
-  span.sebuInfo{
-  	display:inline-block;
-  }
-  
-  span.sebuInfo:hover{
-  	  cursor:pointer;
-  	  color:blue;
-  	  font-weight:bolder;
-  }	
-  
-  <%-- quickMenu css 한수연 시작 --%>
-  
-  button.quickMenuBt{
-	  background-color: #dfe8f3;
-	  width: 120px;
-	  height: 50px;
-	  border: none;
-	  color:#000099;
-	  font-size: 11pt;
-	  border-radius: 5%;
-  }
-  
-  button.quickMenuBt:hover{
-	  background-color: #0066cc;
-	  color: #dfe8f3;
-	  font-weight: bold;
-  }
-  
-  span.quickCnt{
-  	color: red;
-  	font-weight: bold;
-  	text-decoration: underline;
-  }
-  
-  <%-- quickMenu css 한수연 끝 --%>
-  
-  <%-- 내통계 css 백원빈 시작 --%>
-	#container {
-	    height: 400px;
-	}
-	
-	.highcharts-figure, .highcharts-data-table table {
-	    min-width: 310px;
-	    max-width: 800px;
-	    margin: 1em auto;
-	}
-	
-	#datatable {
-	    font-family: Verdana, sans-serif;
-	    border-collapse: collapse;
-	    border: 1px solid #EBEBEB;
-	    margin: 10px auto;
-	    text-align: center;
-	    width: 100%;
-	    max-width: 500px;
-	}
-	#datatable caption {
-	    padding: 1em 0;
-	    font-size: 1.2em;
-	    color: #555;
-	}
-	#datatable th {
-		font-weight: 600;
-	    padding: 0.5em;
-	}
-	#datatable td, #datatable th, #datatable caption {
-	    padding: 0.5em;
-	}
-	#datatable thead tr, #datatable tr:nth-child(even) {
-	    background: #f8f8f8;
-	}
-	#datatable tr:hover {
-	    background: #f1f7ff;
-	}
-    
-    span#spanData{
-    	background-color:#b3ecff;
-    }
-    
-    ul#vacationUl li{
-    	line-height: 40px;
-    	font-size:12pt;
-    }
-  <%-- 내통계 css 백원빈 끝 --%>
-  
-  <%-- word cloud 백원빈 시작 --%>
-  .highcharts-figure, .highcharts-data-table table {
-    min-width: 320px; 
-    max-width: 800px;
-    margin: 1em auto;
-	}
-	
-	.highcharts-data-table table {
-		font-family: Verdana, sans-serif;
-		border-collapse: collapse;
-		border: 1px solid #EBEBEB;
-		margin: 10px auto;
-		text-align: center;
-		width: 100%;
-		max-width: 500px;
-	}
-	.highcharts-data-table caption {
-	    padding: 1em 0;
-	    font-size: 1.2em;
-	    color: #555;
-	}
-	.highcharts-data-table th {
-		font-weight: 600;
-	    padding: 0.5em;
-	}
-	.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
-	    padding: 0.5em;
-	}
-	.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
-	    background: #f8f8f8;
-	}
-	.highcharts-data-table tr:hover {
-	    background: #f1f7ff;
-	}
-
-	<%-- word cloud 백원빈 끝 --%>
-	
-</style>
+<!-- Homepage.jsp CSS -->
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/homepage.css"/>
 
 <!-- full calendar에 관련된 script -->
 <script src='<%=ctxPath %>/resources/fullcalendar/main.min.js'></script>
@@ -240,10 +26,16 @@
 <script src="https://code.highcharts.com/modules/wordcloud.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 
-
 <script type="text/javascript">
    $(document).ready(function(){
       
+	   window.innerWidth;
+	   window.innerHeight;
+	   console.log("브라우저 width: "+window.innerWidth);
+	   console.log("브라우저 height: "+window.innerHeight);
+	   
+	   
+	   displayNotice(); //공지사항 게시판
       // div#sidemenu와 div#content길이 맞추기
       // func_height1();
       
@@ -669,11 +461,12 @@
     	var arr =[];
     	var harr = new Array('02','05','08','11','14','17','20','23');
     	
+    	// sky,pop,pty 정보
     	for(var i=0;i<harr.length;i++){
     		var h=harr[i]-whour;
     		console.log("지금h"+h);
     		console.log(h);
-    		if(whour!='00' || whour=='01'){
+    		if(whour!='00' || whour!='01'){
 	    		if(h==-1 || h==0 || h==-2){
 	    			var wnow=harr[i]+"00";
 	    			wtoday = wyear+""+wmonth+""+wday;
@@ -686,7 +479,45 @@
     		}
     	}
     	
-    
+    	// 오늘 t1hh==0 ||
+    	for(var i=0;i<harr.length;i++){
+    		var hc=harr[i]-whour;
+    		console.log("지금h"+h);
+    		console.log(h);
+    		if(whour!='00' || whour!='01'){
+	    		if(hc==-1 || hc==-2){
+	    			var wcnow=harr[i]+"00";
+	    			wctoday = wyear+""+wmonth+""+wday;
+	    			console.log("지금"+wnow);
+	    		}
+	    		else if(hc==0){
+	    			
+		    		if(wminutes<30){
+		    			if( whour=='02'){
+		    			var wcnow=harr[7]+"00";
+		    			wctoday = ydyear+""+ydmonth+""+ydday;
+		    			console.log("지금"+wcnow);
+		    			}
+		    			else{
+		    				var wcnow=harr[i-1]+"00";
+		    				wctoday = wyear+""+wmonth+""+wday;
+			    			console.log("지금오늘1th"+wcnow);
+		    			}
+		    		}
+		    		else{
+		    			var wcnow=harr[i]+"00";
+		    			wctoday = wyear+""+wmonth+""+wday;
+		    		}
+	    		}
+    		}
+    		else if(whour=='00' || h==1){
+    			wtoday = ydyear+""+ydmonth+""+ydday;
+    			var wnow=harr[7]+"00";
+    		}
+    	}
+    	
+    	
+    	// 어제 t1h 정보
     	for(var i=0;i<harr.length;i++){
     		var hy=harr[i]-whour;
     		console.log("hy"+hy);
@@ -746,25 +577,25 @@
                    if(pty==0){
 	                   if(sky==1){
 	                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
-	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
 	                   }
 	                   else if(sky==3){
 	                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
-	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
 	                   }
 	                   else if(sky==4){
 	                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
-	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
 	                   }
                    }
                    else{
                 	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
                 		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
-	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
                 	   }
                 	   else{
                 		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
-	                	   $("#sky").html("<img style='width: 130px; height: 130px;' src='"+ image +"'/>");
+	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
                 	   }
                    }
                    // TMN : 아침최저기온
@@ -791,7 +622,7 @@
             type : "get",
             timeout: 30000,
             contentType: "application/json",
-            data: {"today":wtoday, "now":wnow},
+            data: {"today":wctoday, "now":wcnow},
             dataType : "json",
             success : function(data, status, xhr) {
 
@@ -799,48 +630,44 @@
                 
                 if (dataHeader == "00") {
 
-                	var t1h = data.result.response.body.items.item[3].obsrValue;
+                	var t1h = parseFloat(data.result.response.body.items.item[3].obsrValue);
         
                    $("#t1h").html(t1h);
                    $("input#mt1h").val(t1h);
                 }
-            },
-            error : function(e, status, xhr, data) {
-                console.log("error == >");
-                console.log(e);
-            }
-        });
-        
-    	// 오늘 기온과 어제 기온 차이
-    	$.ajax({
-            url : "<%= ctxPath%>/t1/weatheryesterday.tw",
-            type : "get",
-            timeout: 30000,
-            contentType: "application/json",
-            data: {"yesterday":yesterday, "ytime":ytime},
-            dataType : "json",
-            success : function(data, status, xhr) {
-
-                let dataHeader = data.result.response.header.resultCode;
                 
-                if (dataHeader == "00") {
+             // 오늘 기온과 어제 기온 차이
+            	$.ajax({
+                    url : "<%= ctxPath%>/t1/weatheryesterday.tw",
+                    type : "get",
+                    timeout: 30000,
+                    contentType: "application/json",
+                    data: {"yesterday":yesterday, "ytime":ytime},
+                    dataType : "json",
+                    success : function(data, status, xhr) {
 
-                   var y1h =parseInt(data.result.response.body.items.item[3].obsrValue);
-        			console.log("어제온도:"+y1h);
+                        let dataHeader = data.result.response.header.resultCode;
+                        
+                        if (dataHeader == "00") {
 
-					var t1h = parseInt($("input#mt1h").val()); 
-					console.log("현재시간"+t1h);
-					var gap = Math.abs(parseInt(t1h)-parseInt(y1h));
-					console.log("gap"+gap);
-					if(gap>=0){
-						$("#gap").html("어제보다 "+parseInt(gap)+" º 높아요!"); 
-					}
-					else{
-						$("#gap").html("어제보다 "+parseInt(gap)+" º 낮아요!"); 
-					}
-						
-        			
-                }
+                           var y1h =parseFloat(data.result.response.body.items.item[3].obsrValue);
+                			console.log("어제온도:"+y1h);	
+        					var gap = parseFloat(t1h-y1h).toFixed(2);
+        	            	if(gap>=0){
+        	        			$("#gap").html("어제보다 "+Math.abs(parseFloat(gap))+" º 높아요!"); 
+        	        		}
+        	        		else{
+        	        			$("#gap").html("어제보다 "+Math.abs(parseFloat(gap))+" º 낮아요!"); 
+        	        		}
+        	        		
+                        }
+                    },
+                    error : function(e, status, xhr, data) {
+                        console.log("error == >");
+                        console.log(e);
+                    }
+                });
+            	
             },
             error : function(e, status, xhr, data) {
                 console.log("error == >");
@@ -904,6 +731,57 @@
     		})
         <%-- 오다윤 날씨 구현 끝 --%>
         
+    <%-- 김다님 공지사항 게시판 시작 --%> 
+    
+   	function displayNotice(){
+   		
+   		$.ajax({
+   			url:"<%=ctxPath%>/t1/recentNotice.tw",
+   			type:"get",
+   			dataType:"json",
+   			success:function(json){
+   				if(json.length > 0){
+   			
+   				$.each(json, function(index,item){
+   					html = "";
+   					
+   					var categName = "";
+   					if(item.fk_categnum == "1"){
+   						categName = "전체공지";
+   					} else if(item.fk_categnum == "2"){
+   						categName = "총무공지";
+   					} else {
+   						categName = "경조사";
+   					}
+   					
+   					regDate = item.regDate.substring(0,10);
+   					
+   					console.log("카테고리넘버:"+item.fk_categnum);
+   					console.log(categName);
+   					console.log(item.subject);
+   					console.log(regDate);
+   					console.log(index);
+   					html += "<td style='height:30px;'>"+categName+"</td>";
+   					html += "<td style='height:30px;'><a href='<%=ctxPath%>/t1/viewNotice.tw?seq="+item.seq+"'>"+item.subject+"</a></td>";
+   					html += "<td style='height:30px;'>"+regDate+"</td>";
+   					$("tr#row-"+index+"-content").html(html);
+   				});
+   				
+   				} else {
+   					html = "<td aling+'center'>등록된 게시글이 없습니다.</td>"
+   						
+   					$("tr#row-0-content").html(html);
+   				}
+   			},
+   			error: function(request, status, error){
+   	           alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+   	       }
+   		
+   		});   	
+    	
+   	}	
+   		<%-- 김다님 공지사항 게시판 끝--%>
+    	
    }); // end of $(document).ready(function(){
       
    // Function Declaration
@@ -1041,7 +919,7 @@
 
 
 
-<div id="content" style="width: 1580px;">
+<div id="content" style="width: 90%; border: solid 1px red;">
   
   <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
   	 <div style="padding-left:130px;"><img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:120px; height:120px;"></div>
@@ -1170,14 +1048,25 @@
   <%-- =================== 한수연 끝 =================== --%>
   
   
-  
+  <%-- ============== 김다님 공지사항 게시판 시작 =============== --%>
   <%-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div --%>
   <div style="float: left; width: 800px;"></div>
   
   <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
-  	다님님 파트(공지사항)
+  	
+  	<table id="recentNotice" class="table">
+  		<tr>
+  			<th>구분</th>
+  			<th>제목</th>
+  			<th>작성일시</th>
+  		</tr>
+  		<tr id="row-0-content"></tr>
+  		<tr id="row-1-content"></tr>
+  		<tr id="row-2-content"></tr>
+  	</table>
   </div>
   
+  <%-- ============== 김다님 공지사항 게시판 끝 =============== --%>
   
   
   
@@ -1197,7 +1086,7 @@
  	<span style="font-weight: bold;">오늘의 날씨</span><br><br>
  	<span  id="sky"></span>
  	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
- 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span><input type="hidden" id="mt1h"/></div>
+ 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
  	</div>
  	<div style="float: right; width: 50%; height: 100%; " >
  		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>

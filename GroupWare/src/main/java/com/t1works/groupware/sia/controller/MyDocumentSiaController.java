@@ -2467,6 +2467,8 @@ public class MyDocumentSiaController {
 		
 		String mdate = mdate1+" "+mdate2+" ~ "+mdate3;
 		String fk_wiimdate = fk_wiimdate1+" ~ "+fk_wiimdate2;
+		
+		System.out.println(mdate);
 
 		HttpSession session = mrequest.getSession();
 		MemberBwbVO loginuser = (MemberBwbVO) session.getAttribute("loginuser");		

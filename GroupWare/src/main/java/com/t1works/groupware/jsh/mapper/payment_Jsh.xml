@@ -95,7 +95,7 @@
 				     	 and ncat= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
-		      order by  a.ano desc
+		      order by  asdate desc
 	</select>
 
   <!-- === 검색어 입력시 자동글 완성하기  === -->
@@ -118,7 +118,7 @@
 				     where anocode= 1 and apaper = 0
 			 			 and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 		    <if test="searchType neq 'name'">
-		     order by  a.ano desc
+		     order by  asdate desc
 		    </if>
 	</select>
 
@@ -178,6 +178,7 @@
 				     	 and ncat= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
+			 order by  asdate desc
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
 		</select>
@@ -241,7 +242,7 @@
 					left join tbl_position p
 				 on e.fk_pcode=p.pcode
 			where fk_ano =#{ano}
-		
+		    order by  odate desc
 		</select>
 		
 		
@@ -350,7 +351,7 @@
 					     where anocode= 2 and apaper = 0
 				 			   and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			    <if test="searchType neq 'name'">
-			     order by  a.ano desc
+			     order by  asdate desc
 			    </if>
 		</select>
 
@@ -410,6 +411,7 @@
 				     	 and scat= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
+		  	order by  asdate desc
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
 		</select>
@@ -530,7 +532,7 @@
 					     where anocode= 3 and apaper =0
 				 			   and lower(${searchType}) like '%' || lower(#{searchWord}) || '%'
 			    <if test="searchType neq 'name'">
-			     order by  a.ano desc
+			     order by  asdate desc
 			    </if>
 		</select>
 
@@ -590,6 +592,7 @@
 				     	 and vcatname= #{searchCategory}
 				         and lower(${searchType}) like '%'|| lower(#{searchWord}) ||'%'
 				  </if>
+			 order by  asdate desc
 				 ) V
 		      	where rno between #{startRno} and #{endRno}
 		</select>

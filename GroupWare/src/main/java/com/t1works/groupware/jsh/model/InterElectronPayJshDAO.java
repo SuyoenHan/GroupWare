@@ -125,8 +125,7 @@ public interface InterElectronPayJshDAO {
 	int vacAdd(ElectronPayJshVO epvo);
 	// 4) scatname 조건에 따라 (지출결의서, 법인카드사용신청서) 테이블에 insert 시켜줌 
 	int selectVacadd(ElectronPayJshVO epvo);
-	// 5) 직급테이블 휴가 수 update
-	int offUpdate(ElectronPayJshVO epvo);
+	
 	// 6) 결재로그에 insert
 	int logInsert(ElectronPayJshVO epvo);
 	
