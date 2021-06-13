@@ -271,7 +271,7 @@ button.btn1:hover{
 		            alert("요청기간을 입력하세요!!");
 		            return false;
 		         }
-		         else if(slstart == slend || slstart > slend){
+		         else if(slstart > slend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
@@ -345,7 +345,7 @@ button.btn1:hover{
 		            return false;
 		         
 		        }
-	            else if(congstart == congend || congstart > congend){
+	            else if( congstart > congend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
@@ -361,7 +361,7 @@ button.btn1:hover{
 		            alert("요청기간을 입력하세요!!");
 		            return false;
 		         }
-		         else if(bustart == buend || bustart > buend){
+		         else if( bustart > buend){
 		        	 alert("요청기간을 올바르게 입력하세요!!");
 			         return false;
 		         }
