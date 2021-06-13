@@ -122,7 +122,7 @@ td.opinion{
 	function goback(){
 		var $myFrm= document.myFrm;
 		$myFrm.method="POST";
-		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_rec.tw";
+		$myFrm.action="<%=ctxPath%>/t1/myDocuSpend_complete.tw";
 		$myFrm.submit();
 	}
 	
