@@ -165,7 +165,8 @@
 	}// end of function updatePasswd(){
 
 </script>
-<div id="content"> 
+<div id="content">
+	<span style="position:relative; top:80px; left:100px; font-size:15pt; font-weigth:bolder;">&#60; 마이페이지 &#62;</span> 
 	<table id="mypageInfo">
 		<tr>
 			<c:if test="${loginuser.employeeimg eq 'noimage.png'}">
