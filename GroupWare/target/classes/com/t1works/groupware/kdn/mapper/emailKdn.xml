@@ -388,7 +388,7 @@
 	<!-- 휴지통 비우기 -->
 	<delete id="emptyTrash" parameterType="String">
 		delete from tbl_mailinbox
-		where senderEmail = #{email} and moveToTrash = 1
+		where (senderEmail like '%' || #{email} || '%' or ccEmail like '%' || #{email} || '%') and moveToTrash = 1
 	</delete>
 	
 	<!-- Conversation View를 위한 회신받은 메일의 이전 메일 정보 가져오기 -->
