@@ -29,7 +29,9 @@ $(document).ready(function(){
 		wday='0'+wday;
 	}
 
-	
+	 
+	 
+	 
 	var arr =[];
 	var harr = new Array('02','05','08','11','14','17','20','23');
 	console.log("현재시간"+whour);
