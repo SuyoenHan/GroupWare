@@ -68,8 +68,7 @@ public interface InterEmailKdnService {
 
 	String ccEmail(String seq);// 해당 seq의 수신자이메일 가져오기 (여러명일수도 있고 한명일 수도 있다 + null 일 수도 있다)
 
-	
-	// int getPreviousMail(); // 회신한 이전 메일 가져오기
+	List<EmailKdnVO> getPreviousEmail(Map<String, String> paraMap); // 회신 받은 메일의 이전 메일 가져오기(Conversation View)
 	
 	
 

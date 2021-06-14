@@ -195,7 +195,6 @@ function goSearch(){
 	 	<form name="searchFrm" id="searchFrm" style="display:inline-block;">
 			 <select name="searchType">
 			 	<option value="subject">제목</option>
-			 	<option value="name">보낸사람</option>
 			 	<option value="content">내용</option>
 			 </select>
 			<input type="text" name="searchWord" id="searchWord"/>

@@ -25,15 +25,16 @@ $(document).ready(function(){
 	    
 	$("input#checkPrivate").change(function(){
 		 if($(this).is(":checked") == true){
-			 $("input[name=privatePost]").val("1");
+			 $("input#privatePost").val("1");
 		 } else {
-			 $("input[name=privatePost]").val("0");
+			 $("input#privatePost").val("0");
 		 }
 	})
 	
 	
       // 쓰기버튼
       $("button#btnWrite").click(function(){
+    	  console.log("privatePost val(): "+privatePost);
       
           // 글제목 유효성 검사
          var subjectVal = $("input#subject").val().trim();
@@ -57,7 +58,10 @@ $(document).ready(function(){
             alert("비밀번호를 입력하세요");
             return;
          }
-         
+         //
+         if($("input#checkPrivate").prop('checked') ==false){
+        	 $("input#privatePost").val("0");
+         }
          
          // 폼(form) 을 전송(submit)
          var frm = document.postFrm;
@@ -78,7 +82,7 @@ $(document).ready(function(){
 	 <a href="javascript:location.href='suggestionBoard.tw'" style="text-decoration:none; color: black;"><i class="fas fa-exclamation fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">건의사항</span></a>
 	
 	 <form name="postFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 --> 
-	    <table id="table" class="table">
+	    <table id="table" class="table" style="margin-top: 50px;">
 	       <tr>
 	          <th>성명</th>
 	          <td>
@@ -114,7 +118,12 @@ $(document).ready(function(){
 	          <th>비밀번호</th>
 	          <td>
 	             <input type="password" name="pw" id="pw" class="short" />
-		         <input type="hidden" name="privatePost" value="${requestScope.privatePost}"/>
+	             <c:if test="${not empty requestScope.privatePost}">
+			         <input type="hidden" name="privatePost" id="privatePost" value="${requestScope.privatePost}"/>
+	             </c:if>
+	             <c:if test="${empty requestScope.privatePost}">
+			         <input type="hidden" name="privatePost" id="privatePost" value=""/>
+	             </c:if>
 		         <input type="checkbox" id="checkPrivate" />&nbsp;비밀글
 	          </td>
 	       </tr>

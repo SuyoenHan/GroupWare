@@ -70,7 +70,10 @@ $(document).ready(function(){
    		 var emailEndIdx = getValue.indexOf(">")-1;
    		 var emailOnly = getValue.substring(emailStartIdx,emailEndIdx);
    		 if(getValue.trim() != null && getValue.trim() != ""){
-	   		 $('#receiver').append('<span class="email-ids" name="email-container">'+ getValue +' <span class="cancel-email" name="cancel-btn" style="color:gray;"><input class="mailIndex" type="hidden" value="'+cancelIdx+'"><i class="far fa-window-close"></i></span></span>');
+	   		 $('#receiver').append('<span class="email-ids" name="email-container">'
+	   				 + getValue +' <span class="cancel-email" name="cancel-btn" style="color:gray;">'
+	   				 +'<input class="mailIndex" type="hidden" value="'+cancelIdx+'">'
+	   				 +'<i class="far fa-window-close"></i></span></span>');
 	   		 arrReceiverEmail.push(emailOnly);
 	    	 console.log("받는사람 입력창에 입력된 배열값: "+arrReceiverEmail);
    		 }

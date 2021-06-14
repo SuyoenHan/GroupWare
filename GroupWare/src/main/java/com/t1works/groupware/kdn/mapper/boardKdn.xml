@@ -304,7 +304,7 @@
 	<!-- === (자유게시판) 파일첨부가 있는 글쓰기 === --> 
 	<insert id="genUploadWithFile" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		insert into tbl_generalboard(seq, fk_employeeid, name, subject, content, pw, readCount, regDate, status, fileName, orgFilename, fileSize)
-		values(seq_generalboardcomment.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
+		values(seq_generalboard.nextval, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
 	</insert>
 	
 	<!-- (자유게시판) 총 게시물 건수(totalCount) 구하기 -->

@@ -68,6 +68,9 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 	@Override
 	public EmailKdnVO getView(Map<String, String> paraMap) {
 		EmailKdnVO evo = sqlsession3.selectOne("email.getView",paraMap);
+		System.out.println("moveToTrash: "+evo.getMoveToTrash());
+		System.out.println("previouseseq"+evo.getPreviousseq());
+		System.out.println("nextseq: "+evo.getNextseq());
 		return evo;
 	}
 
@@ -246,6 +249,14 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 	public String ccEmail(String seq) {
 		String ccEmail= sqlsession3.selectOne("email.ccEmail",seq);
 		return ccEmail;
+	}
+
+	// 회신 받은 메일의 이전 메일 가져오기(Conversation View)
+	@Override
+	public List<EmailKdnVO> getPreviousEmail(Map<String, String> paraMap) {
+		List<EmailKdnVO> prevEvo = sqlsession3.selectList("email.getPreviousEmail", paraMap);
+		System.out.println("메퍼에서 가져온 prevEvo: "+prevEvo);
+		return prevEvo;
 	}
 
 	

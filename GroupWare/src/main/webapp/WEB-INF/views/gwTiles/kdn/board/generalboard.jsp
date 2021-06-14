@@ -99,7 +99,8 @@ $(document).ready(function(){
 			<tbody>
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
-					<td>${fn:length(boardList) - status.index}</td>
+					<%-- <td>${fn:length(boardList) - status.index}</td> --%>
+					<td>${boardvo.rno}</td>
 					<td>
 					<a class="anchor-style" href="javascript:goView('${boardvo.seq}')" >${boardvo.subject}&nbsp;
 					<c:if test="${boardvo.commentCount > 0}">(<span style="font-weight:bold;">${boardvo.commentCount}</span>)</c:if>
