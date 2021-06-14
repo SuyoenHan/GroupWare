@@ -46,7 +46,7 @@ body > table > thead > tr > th{
 
 @media screen and (max-width: 1540px) {
 	div#mail-list{
-		width: 80%;
+		width: 100%;
 	} 
 }
 
