@@ -879,6 +879,233 @@ public class PaymentJshController {
 	   
 	   
 	   
+		// >>> #191. Excel 파일로 다운받기 예제 <<< // 
+		
+		@RequestMapping(value="/excel/downloadExcelFile.tw", method= {RequestMethod.POST}) 
+		public String downloadExcelFile(HttpServletRequest request, Model model) {
+	
+			System.out.println("~~~~~~~ /excel/downloadExcelFile.tw 호출됨!!");
+			
+			String sAno = request.getParameter("sAno");
+		      /*
+		          sDeptIdes ==> null  검색버튼을 클릭안하고 처음으로 보여줄때
+		          sDeptIdes ==> "-9999,50,110"
+		          sDeptIdes ==> ""
+		          sDeptIdes ==> "10,30,50,80,110"
+		      */
+		      
+		      
+		      Map<String,Object> paraMap = new HashMap<>();
+		            
+		      if( sAno != null && !"".equals(sAno) ) {
+		         String[] AnoArr = sAno.split(",");
+		         paraMap.put("AnoArr", AnoArr);
+		      }
+		      
+		   
+		      List<ElectronPayJshVO> empList = service.empList(paraMap);
+			
+		      // === 조회결과물인 empList 를 가지고 엑셀 시트 생성하기 ===
+		      // 시트를 생성하고, 행을 생성하고, 셀을 생성하고, 셀안에 내용을 넣어주면 된다.
+		      SXSSFWorkbook workbook = new SXSSFWorkbook();
+		      
+		      // 시트생성
+		      SXSSFSheet sheet = workbook.createSheet("일반결재 목록");
+		      
+		      // 시트 열 너비 설정
+		      sheet.setColumnWidth(0, 2000);
+		      sheet.setColumnWidth(1, 4000);
+		      sheet.setColumnWidth(2, 8000);
+		      sheet.setColumnWidth(3, 2000);
+		      sheet.setColumnWidth(4, 2000);
+		      sheet.setColumnWidth(5, 4000);
+		      sheet.setColumnWidth(6, 3000);
+		      
+		      
+		      
+			////////////////////////////////////////////////////////////////////////////////////////
+			// CellStyle 정렬하기(Alignment)
+			// CellStyle 객체를 생성하여 Alignment 세팅하는 메소드를 호출해서 인자값을 넣어준다.
+			// 아래는 HorizontalAlignment(가로)와 VerticalAlignment(세로)를 모두 가운데 정렬 시켰다.
+			CellStyle mergeRowStyle = workbook.createCellStyle();
+			mergeRowStyle.setAlignment(HorizontalAlignment.CENTER);
+			mergeRowStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			// import org.apache.poi.ss.usermodel.VerticalAlignment 으로 해야함.
+			
+			CellStyle headerStyle = workbook.createCellStyle();
+			headerStyle.setAlignment(HorizontalAlignment.CENTER);
+			headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+			
+			
+			// CellStyle 배경색(ForegroundColor)만들기
+			// setFillForegroundColor 메소드에 IndexedColors Enum인자를 사용한다.
+			// setFillPattern은 해당 색을 어떤 패턴으로 입힐지를 정한다.
+			mergeRowStyle.setFillForegroundColor(IndexedColors.DARK_BLUE.getIndex()); // IndexedColors.DARK_BLUE.getIndex() 는 색상(남색)의 인덱스값을 리턴시켜준다.  
+			mergeRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			
+			
+			headerStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.getIndex()); // IndexedColors.LIGHT_YELLOW.getIndex() 는 연한노랑의 인덱스값을 리턴시켜준다.  
+			headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			
+			
+			// Cell 폰트(Font) 설정하기
+			// 폰트 적용을 위해 POI 라이브러리의 Font 객체를 생성해준다.
+			// 해당 객체의 세터를 사용해 폰트를 설정해준다. 대표적으로 글씨체, 크기, 색상, 굵기만 설정한다.
+			// 이후 CellStyle의 setFont 메소드를 사용해 인자로 폰트를 넣어준다.
+			Font mergeRowFont = workbook.createFont(); // import org.apache.poi.ss.usermodel.Font; 으로 한다.
+			mergeRowFont.setFontName("나눔고딕");
+			mergeRowFont.setFontHeight((short)500);
+			mergeRowFont.setColor(IndexedColors.WHITE.getIndex());
+			mergeRowFont.setBold(true);
+			
+			mergeRowStyle.setFont(mergeRowFont); 
+			
+			
+			// CellStyle 테두리 Border
+			// 테두리는 각 셀마다 상하좌우 모두 설정해준다.
+			// setBorderTop, Bottom, Left, Right 메소드와 인자로 POI라이브러리의 BorderStyle 인자를 넣어서 적용한다.
+			headerStyle.setBorderTop(BorderStyle.THICK);
+			headerStyle.setBorderBottom(BorderStyle.THICK);
+			headerStyle.setBorderLeft(BorderStyle.THIN);
+			headerStyle.setBorderRight(BorderStyle.THIN);
+					      
+			
+			
+			
+			
+			///////////////////////////////////////////////
+			// 4) 엑셀 데이터값 입력
+			Row row= null;
+		    Cell cell= null;
+			
+		    // 4-1) 첫번째 행 cell 설정 (1-8열 병합)		
+		    row= sheet.createRow(0); 
+		    row.setHeight((short) 1200); // 첫번째 행 높이 설정
+		    
+		    for(int i=0; i<7; i++) {  
+	             cell = row.createCell(i);
+	             // cell.setCellStyle(titleStyle);
+	             cell.setCellValue("일반결재문서");
+	        }
+
+		    sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 6)); // 시작 행, 끝 행, 시작 열, 끝 열 
+		    
+		    // 4-2) 두번째 행 생성 
+		    row= sheet.createRow(1);
+		    row.setHeight((short) 700); // 세번째 행 높이 설정
+		    
+		    cell = row.createCell(0);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("문서번호");
+		    
+		    cell = row.createCell(1);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("일반결재문서");
+		   
+		    cell = row.createCell(2);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("제목");
+			    
+		    cell = row.createCell(3);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("작성자");
+		   
+		    cell = row.createCell(4);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("수신자");
+		   
+		    cell = row.createCell(5);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("날짜");
+		    
+		    cell = row.createCell(6);
+		   // cell.setCellStyle(thStyle1);
+		    cell.setCellValue("결재상태");
+		  
+		    
+		   // 4-3) 이 후 행들은 반복문으로 들어온다
+		    
+	        // 선택한 일반결재목록에 해당하는 행 및 셀 생성하기
+	        Row bodyRow = null;
+	        Cell bodyCell = null;
+	        
+	        for(int i=0; i<empList.size(); i++) {
+	           
+	           ElectronPayJshVO empVO = empList.get(i);  
+	           
+	           // 행생성
+	           bodyRow = sheet.createRow(i + 2); // 3번째 행부터 시작
+	           
+	           // 번호 표시 
+	           bodyCell = bodyRow.createCell(0);
+	           bodyCell.setCellValue(empVO.getRno());
+	           
+	           // 결재종류 표시 
+	           bodyCell = bodyRow.createCell(1);
+	           bodyCell.setCellValue(empVO.getNcatname());
+	           
+	           // 제목 표시 
+	           bodyCell = bodyRow.createCell(2);
+	           bodyCell.setCellValue(empVO.getAtitle());
+	           
+	           // 작성자 표시 
+	           bodyCell = bodyRow.createCell(3);
+	           bodyCell.setCellValue(empVO.getName());
+	           
+	           // 수신자 표시 
+	           bodyCell = bodyRow.createCell(4);
+	           bodyCell.setCellValue(empVO.getManagername());
+	           
+	           // 기안일 표시 
+	           bodyCell = bodyRow.createCell(5);
+	           bodyCell.setCellValue(empVO.getAsdate());
+	           
+	           // 결재상태 표시 
+	           bodyCell = bodyRow.createCell(6);
+	           if(empVO.getAstatus().equals("0")) {
+	        	   empVO.setAstatus("제출");
+	           }
+	           else if(empVO.getAstatus().equals("1")) {
+	        	   empVO.setAstatus("결재진행중");
+	           }
+	           else if(empVO.getAstatus().equals("2")) {
+	        	   empVO.setAstatus("반려");
+	           }
+	           else if(empVO.getAstatus().equals("3")) {
+	        	   empVO.setAstatus("승인완료");
+	           }
+	           
+	           
+	           bodyCell.setCellValue(empVO.getAstatus());
+	           
+	           
+	           
+	        }// end of for----------------------------------------
+	        
+	        model.addAttribute("locale", Locale.KOREA);
+	        model.addAttribute("workbook", workbook);
+	        model.addAttribute("workbookName", "일반결재문서");
+	        
+	      return "excelDownloadView";
+	        
+	        
+		}// end of public String downloadExcelFile(HttpServletRequest request, Model model)------------- 
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
 	
 	   
 	  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

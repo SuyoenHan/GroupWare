@@ -767,8 +767,33 @@
 		where anocode= 3 and ano=#{ano}
 	</select>
 		
-		
-		
+	
+	
+	
+	<!-- Excel 파일 추출하기 -->
+	<select id="empList" parameterType="HashMap" resultType="com.t1works.groupware.jsh.model.ElectronPayJshVO">
+		select rno, ano ,ncatname, atitle, name, managername, to_char(asdate,'yyyy-mm-dd') as asdate, astatus  
+		from
+		(
+		select row_number() over(order by asdate desc) AS rno  
+		   ,a.ano ,ncatname, atitle,asdate ,astatus  , E.name, managername
+		from tbl_approval a left join tbl_norapproval n
+		on a.ano = n.fk_ano
+		left join 
+		(select E.employeeid ,E.name , E1.name as managername
+		from tbl_employee E  join tbl_employee E1 on E.managerid= E1.employeeid
+		)e
+		on a.fk_employeeid = e.employeeid
+		where anocode= 1  AND
+			 ano in
+			 <foreach collection="AnoArr" index="i" open="(" separator="," close=")">
+	            ${AnoArr[i]}
+	         </foreach>
+		 ) V
+	
+	</select>
+	
+	
 		
 </mapper>
 

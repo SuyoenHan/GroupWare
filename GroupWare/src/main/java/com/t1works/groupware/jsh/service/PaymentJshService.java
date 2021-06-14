@@ -521,6 +521,18 @@ public class PaymentJshService implements InterPaymentJshService {
 			return epvo;
 		}
 
+		
+		
+		
+		
+		///////추가
+		//Excel 파일 추출하기
+		@Override
+		public List<ElectronPayJshVO> empList(Map<String, Object> paraMap) {
+			List<ElectronPayJshVO> empList = dao.empList(paraMap);
+			return empList;
+		}
+
 
 
 

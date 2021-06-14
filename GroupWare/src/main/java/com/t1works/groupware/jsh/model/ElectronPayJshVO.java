@@ -4,16 +4,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ElectronPayJshVO {
 
-	private String  ano; 						  // 문서번호
-	private String  fk_employeeid;              // 사번
-	private String  anocode;      		         //결재구분 (1:일반결재, 2:지출결재, 3:근태결재)
-	private String  arecipient1;                 // 수신자    
-	private String  atitle;      			  //제목
-	private String  astatus;                 // default '0' not null     -- 결재상태 (0:제출, 1:결재진행중, 2:반려, 3:승인완료)
-	private String  acontent;      		  // 글내용
-	private String  asdate;                // 기안일
-	
-	private String  apaper;       	 	 //  문서상태 (0:수신, 1:발신, 2:임시보관)
+	private String  ano; 			    // 문서번호
+	private String  fk_employeeid;     // 사번
+	private String  anocode;      	   //결재구분 (1:일반결재, 2:지출결재, 3:근태결재)
+	private String  arecipient1;      // 수신자    
+	private String  atitle;      	   //제목
+	private String  astatus;          // default '0' not null     -- 결재상태 (0:제출, 1:결재진행중, 2:반려, 3:승인완료)
+	private String  acontent;      	   // 글내용
+	private String  asdate;           // 기안일
+	private String  apaper;       	   //  문서상태 (0:수신, 1:발신, 2:임시보관)
 	
 	
 	 private MultipartFile   attach;
@@ -728,8 +727,20 @@ public class ElectronPayJshVO {
 	
 	
 
+	// 매니저 이름
+	private String managername; 
 	
 	
+	
+	public String getManagername() {
+		return managername;
+	}
+	public void setManagername(String managername) {
+		this.managername = managername;
+	}
+
+
+
 	//rno 받아오기
 	private String rno;
 

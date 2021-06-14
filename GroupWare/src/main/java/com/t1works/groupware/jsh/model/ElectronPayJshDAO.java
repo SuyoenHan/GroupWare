@@ -371,6 +371,14 @@ public class ElectronPayJshDAO implements InterElectronPayJshDAO {
 			return epvo;
 		}
 
+		///////추가
+		//Excel 파일 추출하기
+		@Override
+		public List<ElectronPayJshVO> empList(Map<String, Object> paraMap) {
+			 List<ElectronPayJshVO> empList =sqlsession6.selectList("payment_Jsh.empList",paraMap);
+			return empList;
+		}
+
 		
 
 		

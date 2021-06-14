@@ -28,6 +28,7 @@
 
 <script type="text/javascript">
 		$(document).ready(function(){
+			
 			// $("div#submenu3").show();
 			
 		    $("span.subject").bind("mouseover", function(event){
@@ -109,42 +110,36 @@
 		      } 
 		    	  
 		    	  
-		$("button#search").click(function(){
-				   var frm = document.searchFrm;
-				   //console.log(frm);
-		      		frm.method = "get";
-		      		frm.action = "<%= ctxPath%>/t1/generalPayment_List.tw";
-		      		frm.submit();
-			}); 
 		
 		
 	///// === Excel 파일로 다운받기 시작 === /////
-	      $("button#btnExcel").click(function(){
+	      $("form#excelFrm").submit(function(){
 	         
 	         var arrAno = new Array();
-	         
+	        
+	         var bool= false;
 	         $("input:checkbox[name=ano]").each(function(index,item){
-	            var bool = $(item).is(":checked"); // 체크박스의 체크유무 검사 
-	             if(bool == true) {
-	                // 체크박스에 체크가 되었으면 
+	            
+	             if($(item).is(":checked")) {
+	                bool =true;// 체크박스에 체크가 되었으면 
 	                arrAno.push($(item).val());
 	             }
+	             
 	         });
 	         
-	         var sAno = arrAno.join();
-	        //  console.log("~~~~~ 확인용  sAno => " + sAno);
-	         /*
-	               ~~~~~ 확인용  sDeptIdes => -9999,50,110
-	               ~~~~~ 확인용  sDeptIdes => 
-	               ~~~~~ 확인용  sDeptIdes => 10,30,50,80,110
-	         */
-	         
-	         var frm = document.searchFrm;
-	         frm.sAno.value = sAno;
-	         
-	         frm.method = "POST";
-	         frm.action = "<%= request.getContextPath()%>/excel/downloadExcelFile.tw"; 
-	      //   frm.submit();         
+	         if(!bool){
+            	 alert("추출할 엑셀 파일 목록을 선택하세요!");
+            	 return false;
+	         }
+	         else{
+	        	 	        	 
+	        	 var sAno = arrAno.join();
+	 	        //  console.log("~~~~~ 확인용  sAno => " + sAno);
+	 	        
+	 	         $("input#sAno").val(sAno);
+	 	         
+	         }
+	              
 	      });
     	///// === Excel 파일로 다운받기 끝 === /////
 		
@@ -159,7 +154,7 @@
 			// === #124. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
 			    //           사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
 			    //           현재 페이지 주소를 뷰단으로 넘겨준다.
-			    	var frm =document.goViewFrm;
+			    	var frm = document.goViewFrm;
 			    	frm.ano.value = ano;
 			    	frm.ncatname.value = ncatname;
 			    	frm.employeeid.value=employeeid;
@@ -167,12 +162,8 @@
 			    	frm.method = "get";
 			    	frm.action = "<%= ctxPath%>/t1/view.tw";
 			        frm.submit();
-			  
 		      
 		   }// end of function goView(seq){}--------------------
-		   
-		
-		
 		   
 		   
 </script>
@@ -197,7 +188,7 @@
          <option value="name">글쓴이</option>
       </select>
       <input type="text" name="searchWord" id="searchWord" size="40" autocomplete="off" /> 
-      <input type="submit" id="btn" value="검색"/>
+      <input type="submit" id="search" value="검색"/>
    </form>
    
    <%-- === # 검색어 입력시 자동글 완성하기 1 === --%>
@@ -206,8 +197,11 @@
    </div>
    
    
-   <button type="button" id="btnExcel">Excel파일로저장</button>
-   <table id="table">
+   <form id="excelFrm" action="/groupware/excel/downloadExcelFile.tw" method="POST" >
+   	
+   	<input type="submit" value="Excel파일로저장" />
+      
+    <table id="table">
       <tr>
          <th style="width: 60px;  text-align: center;">NO.</th>
          <th style="width: 80px; text-align: center;">일반결재문서</th>
@@ -215,11 +209,8 @@
          <th style="width: 150px; text-align: center;">작성자</th>
          <th style="width: 70px;  text-align: center;">날짜</th>
       </tr>
-      
-      
-     
-    <form name="searchFrm">
-        <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status"> 
+   
+      <c:forEach var="evo" items="${requestScope.electronList}" varStatus="status"> 
          <tr class="hover">
 	         <td align="center">
 		         <label for="${evo.ano}"><input type="checkbox" name="ano" id="${evo.ano}" value="${evo.ano}" />&nbsp;&nbsp;${evo.rno}</label>
@@ -245,10 +236,13 @@
 	         <td align="center">${evo.asdate}</td>   
          </tr>      
       </c:forEach>  
-      <input type="hidden" name="sAno"/>
-      </form>
-   </table>    
-    
+      <tr>
+        <td colspan="5">
+      	   <input type="hidden" id="sAno" name="sAno" value="" />
+        </td>
+      </tr>
+     </table>    
+   </form> 
      
       <!-- === #122. 페이지바 보여주기  -->
    <div align="center" style="with:70%; border:solid 0px gray ; margin:20px auto;">

@@ -124,6 +124,12 @@ public interface InterPaymentJshService {
 	// 하나의 근태결재내역 문서 보여주기
 	ElectronPayJshVO vacOneView(Map<String, String> paraMap);
 
+	
+	
+	//////// 추가
+	//Excel 파일 추출하기
+	List<ElectronPayJshVO> empList(Map<String, Object> paraMap);
+
 
 
 
