@@ -152,59 +152,18 @@ $(document).ready(function(){
             	for (var i = 0; i < data1.length; i++) {
                     var item = data1[i];
                     switch (item.category) {
-                        case "SKY":
-                            var sky = parseInt(item.fcstValue);
-                            console.log("하늘:"+sky);
-                            break;
+                        
                         case "POP":
                         	var pop =parseInt(item.fcstValue);
-                            break;
-                        case "PTY":
-                        	var pty =parseInt(item.fcstValue);
                             break;
                     }
             	}
  			
-               console.log("강수확률:"+pop);
-               console.log("강수형태:"+pty);
-               console.log("하늘:"+sky);
+
                $("#pop").html("강수확률 : "+pop+"%");
                
                $("#pty").html(pty);
-				
-               var image="";
-               if(pty==0){
-                   if(sky==1){
-                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
-                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-                   }
-                   else if(sky==3){
-                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
-                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-                   }
-                   else if(sky==4){
-                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
-                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-                   }
-               }
-               else{
-            	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
-            		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
-                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-            	   }
-            	   else{
-            		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
-                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-            	   }
-               }
-               // TMN : 아침최저기온
-               // TMX : 낮 최고기온
-               // T3H: 3시간 기온
-               // SKY: 하늘 상태  - 1: 맑음/ 3: 구름많음/ 4: 흐림
-               // POP: 강수확률 
-               // PTY: 강수 형태없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4), 빗방울(5), 빗방울/눈날림(6), 눈날림(7)
-				// 여기서 비/눈은 비와 눈이 섞여 오는 것을 의미 (진눈개비)
-                //빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+			
             }
            
         },
@@ -341,7 +300,73 @@ $(document).ready(function(){
 				$("#miseimg").html("<img style='width: 100px; height: 100px;' src='"+ miseimage +"'/>");
 		  }
 		})
-});
+}); // end of 
+
+// ------ 기상청 날씨정보 공공API XML데이터 호출하기 -------- //
+<%--
+function showWeather(){
+	   $.ajax({
+		  url:"<%= request.getContextPath()%>/opendata/weatherXML.action",
+		  type: "GET",
+		  dataType: "XML",
+		  success: function(xml){
+			  var rootElement = $(xml).find(":root");
+			  
+		      var localArr = $(rootElement).find("local");
+		  	   console.log("지역개수:"+ localArr.length);
+		  //	   지역개수: 95
+		      var html = "발표시각 : <span style='font-weight:bold;'>"+updateTime+"</span>&nbsp;";
+			              html += "<span style='color:blue; cursor:pointer; font-size:9pt;' onClick='javascript:showWeather();'>업데이트</span><br/>";
+			              html += "<table class='table table-hover' align='center'>";
+			              html += "<tr>";
+			              html += "<th>지역</th>";
+			              html += "<th>날씨</th>";
+			              html += "<th>기온</th>";
+			              html += "</tr>";
+			              
+			       
+			            
+			              for(var i=0;i<localArr.length;i++){
+			            	  var local = $(localArr).eq(i);
+			            	  /* .eq(index) 는 선택된 요소들을 인덱스 번호로 찾을 수 있는 선택자이다. 
+					                           마치 배열의 인덱스(index)로 값(value)를 찾는 것과 같은 효과를 낸다.
+					          */
+					          console.log($(local).text()+" stn_id:"+$(local).attr("stn_id")+" icon:"+$(local).attr("icon")+" desc: "+$(local).attr("desc")+" ta"+$(local).attr("ta"));
+					          
+					          /*
+					          	밀양 stn_id:288 icon:04 desc: 흐림 ta24.8
+								산청 stn_id:289 icon:03 desc: 구름많음 ta22.9
+								거제 stn_id:294 icon:04 desc: 흐림 ta24.1
+								남해 stn_id:295 icon:03 desc: 구름많음 ta21.7
+								춘천 stn_id:101 icon: desc: - ta23.8
+					          */
+					          var icon = $(local).attr("icon");
+					          if(icon ==""){
+					        	  icon="없음";
+					          }
+					          
+					          html += "<tr>";
+					          html += "<td>"+$(local).text()+"</td><td><img src='/board/resources/images/weather/"+icon+".png'/>"+$(local).attr("desc")+"</td><td>"+$(local).attr("ta")+"</td>";
+					          html += "</tr>";
+					          
+					      
+			              } // end of for-------------------------
+			              
+			              
+			              html += "</table>";
+		            	  $("div#displayWeather").html(html);
+			              
+		            	
+         
+         ///////////////////////////////////////////////////                 
+		                                    
+		  }, // end of success: function(xml){}----------------
+		  error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	      }
+	   });--%>
+} // end of function showWeather(){}----------
+
 
 
 
