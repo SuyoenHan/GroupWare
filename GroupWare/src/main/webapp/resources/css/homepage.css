@@ -154,7 +154,7 @@ div.circle{
 
 .fc-event-title{ display: none; }
 
-li{ margin-left:-10px; }
+li{ /* margin-left:-10px; */ }
   
 div#myInfo{
     /* border:solid 1px red; */
