@@ -450,6 +450,18 @@
     		wday='0'+wday;
     	}
 
+
+   	    var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
+   	    var ydyear = yesterday.getFullYear();
+   	    //console.log("년도"+ydyear);
+    	var ydmonth = yesterday.getMonth()+1;
+    	var ydday = yesterday.getDate();
+    	if(ydmonth<10){
+   			ydmonth='0'+ydmonth;
+   	    }
+   	 	if(ydday<10){
+   			ydday='0'+ydday;
+   	    }
     	
     	var arr =[];
     	var harr = new Array('02','05','08','11','14','17','20','23');
