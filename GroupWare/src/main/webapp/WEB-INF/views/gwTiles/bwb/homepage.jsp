@@ -45,14 +45,21 @@
       
       $("div#vacation").hide();
       
+      $("span#indolenceInfo").addClass('border-change');
       // 휴가정보 클릭시
       $("span#vacationInfo").click(function(){
+    	  //console.log('span#vacationInfo 클릭했다');
+      	 $("span#indolenceInfo").removeClass('border-change');
+		 $(this).addClass('border-change');    
          $("div#vacation").show();
          $("div#indolence").hide();
       });
       
       // 근태정보 클릭 시
       $("span#indolenceInfo").click(function(){
+    	  //console.log('span#indolenceInfo 클릭했다');
+      	 $("span#vacationInfo").removeClass('border-change');
+		 $(this).addClass('border-change');    
          $("div#vacation").hide();
          $("div#indolence").show();
       });
@@ -992,8 +999,8 @@
      </div>
      </div>
      <div id="sebuMenu" style="height:50px; margin-top:5px;">
-	     <span id="indolenceInfo" style="border-bottom:solid 1px #ccc; font-size:14px; display: inline-block; width: 185px; padding-left: 70px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">근태정보</a></span>
-	     <span id="vacationInfo"  style="border-bottom:solid 1px #ccc; font-size:14px; display: inline-block; width: 187px; margin-left:0; padding-left: 60px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">휴가정보</a></span>
+	     <span id="indolenceInfo" class="border-before" style="font-size:14px; display: inline-block; width: 185px; padding-left: 70px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">근태정보</a></span>
+	     <span id="vacationInfo"  class="border-before" style="font-size:14px; display: inline-block; width: 187px; margin-left:0; padding-left: 60px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">휴가정보</a></span>
      </div>
      <div id="indolence">
      <div id="timer" style="text-align:center;"></div>

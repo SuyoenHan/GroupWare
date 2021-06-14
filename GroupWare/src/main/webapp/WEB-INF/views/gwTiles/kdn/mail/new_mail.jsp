@@ -473,8 +473,8 @@ $(document).ready(function(){
    
    <!-- 주소록에서 가져온 수신자, 참조 값을 넣어주기 위한 hidden form -->
    <form name="fromAddrsBookFrm">
-   		<input type="text" id="receiverEmail" name="receiverEmail" value="" />
-   		<input type="text" id="ccEmail" name="ccEmail" value="" />
+   		<input type="hidden" id="receiverEmail" name="receiverEmail" value="" />
+   		<input type="hidden" id="ccEmail" name="ccEmail" value="" />
    </form>
    
 </div>  

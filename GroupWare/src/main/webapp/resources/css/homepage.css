@@ -71,7 +71,7 @@ div.label-style{
 }
 
 #timer{
-	border: solid 1px #ccc;
+	border: double 3px #ccc;
 	display: block;
 	padding: 15px;
 	border-radius: 30px;
@@ -79,6 +79,16 @@ div.label-style{
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 25px;
+}
+
+.border-before{
+	border-bottom:solid 1px #ccc;
+}
+
+.border-change{
+	border-bottom: solid 2px #4080bf;
+	color: #4080bf;
+	font-weight: bold;
 }
 
 /* 내 정보 css 끝 */
