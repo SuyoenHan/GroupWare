@@ -157,7 +157,7 @@ public class ProductHsyController {
 	
 	// 결제창 매핑 url
 	@RequestMapping(value="/t1/orderPayment.tw")
-	public ModelAndView checkClientAjax(ModelAndView mav, HttpServletRequest request) {
+	public ModelAndView orderPayment(ModelAndView mav, HttpServletRequest request) {
 		
 		mav.addObject("amount", Integer.parseInt(request.getParameter("amount")));
 		mav.addObject("buyer_name", request.getParameter("buyer_name"));
