@@ -486,6 +486,7 @@
                 	for (var i = 0; i < data1.length; i++) {
                         var item = data1[i];
                         switch (item.category) {
+
                             case "POP":
                             	var pop =parseInt(item.fcstValue);
                                 break;
@@ -722,7 +723,6 @@
 		          if($(local).text()=="서울"){
 						
 						var ta = $(local).attr("ta");
-						console.log("서울시공ㄴ:"+ta);
 						$("#sky").html("<img style='width: 100px; height: 100px;' src='<%= ctxPath%>/resources/images/ody/"+icon+".png'/>");
 	  					 $("#t1h").html(ta);
 	 		
@@ -785,16 +785,19 @@
 						
 					}
 		
-					if(guMise<=30 && guchoMise<=15){
+					if(miseStatus=="좋음" && chomiseStatus=="좋음"){
 						miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
 					}
-					else if((guMise>30 && guMise<=80) || (guchoMise >15 && guchoMise<=35)){
+					else if((miseStatus=="좋음" && chomiseStatus=="보통")||(miseStatus=="보통" && chomiseStatus=="좋음")||(miseStatus=="보통" && chomiseStatus=="보통")){
 						miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
 					}
-					else if((guMise>80 && guMise<=150) || (guchoMise >35 && guchoMise<=75)){
+					else if((miseStatus=="좋음" && chomiseStatus=="나쁨") || (miseStatus=="보통" && chomiseStatus=="나쁨") || (miseStatus=="나쁨" && chomiseStatus=="나쁨")
+							|| (miseStatus=="나쁨" && chomiseStatus=="좋음")||(miseStatus=="보통" && chomiseStatus=="나쁨")||(miseStatus=="나쁨" && chomiseStatus=="나쁨")){
 						miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
 					}
-					else if(guMise>150 || guchoMise>75 ){
+					else if((miseStatus=="좋음" && chomiseStatus=="매우나쁨") || (miseStatus=="보통" && chomiseStatus=="매우나쁨") || (miseStatus=="나쁨" && chomiseStatus=="매우나쁨")
+							|| (miseStatus=="매우나쁨" && chomiseStatus=="좋음")||(miseStatus=="매우나쁨" && chomiseStatus=="나쁨")||(miseStatus=="매우나쁨" && chomiseStatus=="나쁨")
+							|| (miseStatus=="매우나쁨" && chomiseStatus=="매우나쁨")){
 						miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
 					}
 					
