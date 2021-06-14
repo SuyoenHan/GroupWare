@@ -539,8 +539,11 @@ public class MemberHsyController {
 				String bonusDate1= bonusDateList.get(i).get("endDate");
 				
 				String bonusDate2="";
-				if(i<bonusDateList.size()-1) { // 실적이 존재하는 마지막 달이 아닌 경우
+				if(i<bonusDateList.size()-1 && "desc".equalsIgnoreCase(sortOption)) { // 실적이 존재하는 마지막 달이 아닌 경우 (desc)
 					bonusDate2= bonusDateList.get(i+1).get("endDate");
+				}
+				else if(!(i==0) && "asc".equalsIgnoreCase(sortOption)) { // 실적이 존재하는 첫 달인 경우 (asc)
+					bonusDate2= bonusDateList.get(i-1).get("endDate");
 				}
 				
 				String[] bonusDate1Arr= bonusDate1.split("-"); // 2021-03
@@ -553,7 +556,7 @@ public class MemberHsyController {
 				// 2-1) 전달 날짜 만들기
 				
 				// 실적이 존재하는 마지막 달인 경우 전달처리 하지 않는다
-				if("01".equals(bonusDate1Arr[1]) && i!=bonusDateList.size()-1) { // 1월인 경우 전달이 12월이므로 다른 월들과 다르게 처리
+				if("01".equals(bonusDate1Arr[1]) && i!=bonusDateList.size()-1 && "desc".equalsIgnoreCase(sortOption) ) { // 1월인 경우 전달이 12월이므로 다른 월들과 다르게 처리
 					prevMonth="12";  // 전달처리
 					bonusDate1Arr[0]= String.valueOf(Integer.parseInt(bonusDate1Arr[0])-1); // 전년처리  
 				}
@@ -561,6 +564,15 @@ public class MemberHsyController {
 					prevMonth= String.valueOf(Integer.parseInt(bonusDate1Arr[1])-1); 
 					if(prevMonth.length()==1) prevMonth="0"+prevMonth;
 				}
+				else if("01".equals(bonusDate1Arr[1]) && i!=0 && "asc".equalsIgnoreCase(sortOption)) {
+					prevMonth="12";  // 전달처리
+					bonusDate1Arr[0]= String.valueOf(Integer.parseInt(bonusDate1Arr[0])-1); // 전년처리  
+				}
+				else if(i!=0) {
+					prevMonth= String.valueOf(Integer.parseInt(bonusDate1Arr[1])-1); 
+					if(prevMonth.length()==1) prevMonth="0"+prevMonth;
+				}
+				
 				
 				bonusDate1Arr[1]= prevMonth;
 				
@@ -571,13 +583,21 @@ public class MemberHsyController {
 				
 				// 2-2) 전달에 실적이 존재하는지 비교하기
 				
-				// 실적이 존재하는 마지막 달인 경우 목표치는 무조건 2건
-				if(!bonusDate2.equals(prevDate) || i==bonusDateList.size()-1 ) {  // 전달에 실적이 없는 경우 목표치는 2건
+				// 실적이 존재하는 마지막 달인 경우 목표치는 무조건 2건 (내림차순 인 경우)
+				if((!bonusDate2.equals(prevDate) || i==bonusDateList.size()-1) && "desc".equalsIgnoreCase(sortOption)) {  // 전달에 실적이 없는 경우 목표치는 2건
 					prevCnt="0";
 					goalCnt= "2";
 				}
-				else {  // 전달에 실적이 있는 경우 목표치는 전달실적+2건
+				else if((!bonusDate2.equals(prevDate) || i==0) && "asc".equalsIgnoreCase(sortOption)) {
+					prevCnt="0";
+					goalCnt= "2";
+				}
+				else if("desc".equalsIgnoreCase(sortOption)){  // 전달에 실적이 있는 경우 목표치는 전달실적+2건
 					prevCnt=String.valueOf(Integer.parseInt(bonusDateList.get(i+1).get("cnt")));
+					goalCnt= String.valueOf(Integer.parseInt(prevCnt)+2);
+				}
+				else {
+					prevCnt=String.valueOf(Integer.parseInt(bonusDateList.get(i-1).get("cnt")));
 					goalCnt= String.valueOf(Integer.parseInt(prevCnt)+2);
 				}
 			
