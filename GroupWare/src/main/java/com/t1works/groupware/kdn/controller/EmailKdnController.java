@@ -344,19 +344,23 @@ public class EmailKdnController {
 		
 		// 회신한 이전 메일 상세 가져오기
 		
-		// String parentSeq = request.getParameter("parentSeq");
-		
-		// int m = service.getPreviousMail();
 		
 		try {
 			Integer.parseInt(seq);
 			Integer.parseInt(fk_seq);
 			
 			EmailKdnVO evo = null;
-			
+			List<EmailKdnVO> prevEvo = null;
 			if(mailBoxNo.equals("1")) { // 받은메일함
 				evo = service.getView(paraMap);
+				
+				if(Integer.parseInt(evo.getDepthno()) > 0) {
+					prevEvo = service.getPreviousEmail(evo);	// 회신받은 이전 메일 정보 가져오기
+					System.out.println("prevEvo: "+prevEvo);
+				}
+				
 				mav.addObject("evo", evo);
+				mav.addObject("prevEvo",prevEvo);
 			} else if(mailBoxNo.equals("2")) {	// 보낸메일함
 				paraMap.put("seq",fk_seq);
 				evo = service.getSentMailView(paraMap);
@@ -465,6 +469,9 @@ public class EmailKdnController {
 		mav.addObject("ccList", ccList);  // 참조수신자가 없는 경우 ccList는 empty가 된다
 		
 		// ============= 참조 사람이 여러명인 경우 고려 => 참조사람 이름과 이메일 주소 메소드 따로 생성 끝
+		
+		
+		
 
 		return mav;
 	}
@@ -1283,5 +1290,6 @@ public class EmailKdnController {
         mav.setViewName("msg");
 		return mav;
 	}
+	
 	
 }

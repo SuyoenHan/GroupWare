@@ -110,7 +110,8 @@ $(document).ready(function(){
 			<tbody>
 			<c:forEach var="boardvo" items="${requestScope.boardList}" varStatus="status">
 				<tr class="tbody">
-					<td>${fn:length(boardList) - status.index}</td>
+					<%-- <td>${fn:length(boardList) - status.index}</td> --%>
+					<td>${boardvo.rno}</td>
 					<c:choose>
 						<c:when test="${boardvo.fk_categnum eq '1'}">
 							<td>전체공지</td>

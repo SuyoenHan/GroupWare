@@ -93,7 +93,7 @@
 
 	<!-- (받은메일함, 중요메일함) 페이징 처리한 글목록 가져오기(검색기능, 파일첨부, 답메일 기능 포함) -->
 	<select id="emailListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.EmailKdnVO">
-		select seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno, readStatus
+		select seq, rno, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno, readStatus
 		from
 		(
 		    select rownum as rno, seq, senderName, senderEmail, subject, checkImportant, fileName, sendingDate, groupno, parentSeq, depthno, readStatus
@@ -390,5 +390,19 @@
 		delete from tbl_mailinbox
 		where senderEmail = #{email} and moveToTrash = 1
 	</delete>
+	
+	<!-- Conversation View를 위한 회신받은 메일의 이전 메일 정보 가져오기 -->
+	<select id="getPreviousEmail" parameterType="com.t1works.groupware.kdn.model.EmailKdnVO" resultType="java.util.List">
+		select senderName, subject, senderEmail, content, sendingDate, depthno, receiverName, receiverEmail, ccEmail
+		from
+		(
+		select E.name as sendername, senderemail, E2.name as receiverName, receiveremail, subject
+			, content, sendingdate, parentseq, groupno,seq, depthno, ccEmail
+		from tbl_mailinbox M, tbl_employee E, tbl_employee E2
+		where senderEmail = E.email and receiverEmail = E2.email
+		)
+		where groupno = #{groupno} and rownum <![CDATA[<]]>= #{depthno}-1
+		order by depthno desc
+	</select>
 		
 </mapper>

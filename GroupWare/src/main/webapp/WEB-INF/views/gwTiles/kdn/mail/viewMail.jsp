@@ -180,32 +180,19 @@ function goReply(seq){
 	</c:if>
 	
 	<hr style="clear:both; margin: 10px 0 20px 0;">
-	<c:if test="${requestScope.evo.seq eq requestScope.evo.parentSeq}"><!-- 회신한 이전 메일 보기 -->
-		<h3>${requestScope.evo.subject}</h3>
-		<h4>${requestScope.evo.senderName}&lt;${requestScope.evo.senderEmail}&gt;</h4>
-		<span style="color: #999999;">보낸날짜: </span><span>${requestScope.evo.sendingDate}</span><br>
-		<span style="color: #999999;">받는사람: </span><span>${requestScope.evo.receiverName}&lt;${requestScope.evo.receiverEmail}&gt;</span><br>
-		<c:if test="${not empty requestScope.evo.ccEmail}">
-			<span style="color: #999999;">참조메일: </span><span>${requestScope.evo.ccEmail}</span><br>
+	
+	
+	<%-- <c:if test="${requestScope.evo.seq eq requestScope.prevEvo.parentSeq}"> --%><!-- 회신한 이전 메일 보기 -->
+	<c:if test="${not empty requestScope.prevEvo}"><!-- 회신한 이전 메일 보기 -->
+		<h3>${requestScope.prevEvo.subject}</h3>
+		<h4>${requestScope.prevEvo.senderName}&lt;${requestScope.prevEvo.senderEmail}&gt;</h4>
+		<span style="color: #999999;">보낸날짜: </span><span>${requestScope.prevEvo.sendingDate}</span><br>
+		<span style="color: #999999;">받는사람: </span><span>${requestScope.prevEvo.receiverName}&lt;${requestScope.prevEvo.receiverEmail}&gt;</span><br>
+		<c:if test="${not empty requestScope.prevEvo.ccEmail}">
+			<span style="color: #999999;">참조메일: </span><span>${requestScope.prevEvo.ccEmail}</span><br>
 		</c:if>
 		<hr>
-		<p>${requestScope.evo.content}</p>
-		
-		<c:if test="${not empty requestScope.evo.fileName}">
-			<hr style="border-top: double 3px #eee; margin-top: 50px;">
-			<span style="color: #999999;">첨부파일: </span>
-			<span>
-				<c:choose>
-					<c:when test="${not empty requestScope.evo.fk_seq}"><!-- 보낸메일함 -->
-						<a href="<%=ctxPath%>/t1/downloadEmailAttach.tw?seq=${requestScope.evo.seq}&mailBoxNo=2">${requestScope.evo.orgFilename}</a>
-					</c:when>
-					<c:otherwise><!-- 받은메일함, 중요메일함 -->
-						<a href="<%=ctxPath%>/t1/downloadEmailAttach.tw?seq=${requestScope.evo.seq}&mailBoxNo=1">${requestScope.evo.orgFilename}</a>
-					</c:otherwise>
-				</c:choose>
-			</span>
-	</c:if>
-		
+		<p>${requestScope.prevEvo.content}</p>
 	</c:if>
 	
 	
