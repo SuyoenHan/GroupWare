@@ -7,13 +7,13 @@
 <mapper namespace="board">
 	<!-- 파일 첨부가 없는 글쓰기 하기 -->
 	<insert id="noticePostUpload" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status)
-		values(seq_noticeboard.nextval, #{fk_categnum}, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default)
+		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status, readStatus)
+		values(seq_noticeboard.nextval, #{fk_categnum}, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, default)
 	</insert>
 	
 	<!-- === 파일첨부가 있는 글쓰기 === --> 
 	<insert id="noticeUploadwithFile" parameterType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status, fileName, orgFilename, fileSize)
+		insert into tbl_noticeboard(seq, fk_categnum, fk_employeeid, name, subject, content, pw, readCount, regDate, status, fileName, orgFilename, fileSize, readStatus)
 		values(seq_noticeboard.nextval, #{fk_categnum}, #{fk_employeeid}, #{name}, #{subject},#{content},#{pw}, default, default, default, #{fileName}, #{orgFilename}, #{fileSize})
 	</insert>
 	
@@ -33,12 +33,12 @@
 
 	<!-- 페이징 처리한 글목록 가져오기(검색어 유무 상관없이 모두 다 포함한것, 파일첨부기능 있음) -->
 	<select id="noticeBoardListSearchWithPaging" parameterType="HashMap" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
-		select rno, seq, fk_categnum, fk_employeeid, name, subject, readCount, regDate, fileName
+		select rno, seq, fk_categnum, fk_employeeid, name, subject, readCount, regDate, fileName, readStatus
 		from
 		(
 		select row_number() over(order by seq desc) as rno,
 		       seq, fk_categnum, fk_employeeid, name, subject, readCount,
-		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate, fileName
+		       to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') as regDate, fileName, readStatus
 		from tbl_noticeboard
 		where status = 1
 		<if test='fk_categnum != ""'>
@@ -60,7 +60,7 @@
 	<!--  (댓글쓰기가 없는 게시판에서) 공지사항 글 1개 보여주기  ==  -->
 	<select id="getView" parameterType="String" resultType="com.t1works.groupware.kdn.model.BoardKdnVO">
 		select previousseq, previoussubject, seq, fk_categnum, fk_employeeid, name, subject, content, readcount, regDate, nextseq,nextsubject,
-		fileName, orgFilename, fileSize
+		fileName, orgFilename, fileSize, readStatus
 		from
 		(
 			select lag(seq,1) over(order by seq desc) as previousseq
@@ -71,7 +71,7 @@
 			     
 			     ,lead(seq,1) over(order by seq desc) as nextseq
 			     ,lead(subject,1) over(order by seq desc) as nextsubject
-			     ,fileName, orgFilename, fileSize
+			     ,fileName, orgFilename, fileSize, readStatus
 			from tbl_noticeboard
 			where status = 1
 			<if test='searchType != "" and searchWord != ""'>
@@ -437,5 +437,18 @@
 		from tbl_generalboardcomment
 		where fk_seq=#{seq}
 	</select>
+	
+	<!-- 공지사항 게시글 읽음으로 변경 -->
+	<update id="markAsRead" parameterType="String">
+		update tbl_noticeboard set readStatus = '1'
+		where seq = #{seq}
+	</update>
+	
+	<!-- 새 공지사항 유무 알아오기 -->
+	<select id="checkNewNotice" resultType="int">
+		select count(*)
+		from tbl_noticeboard where readStatus = '0'
+	</select>
+	
 
 </mapper>

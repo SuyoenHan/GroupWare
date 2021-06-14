@@ -211,7 +211,7 @@ function goSearch(){
 </div>
 
  <div id="mail-list">
- 	<table class="table" >
+ 	<table class="table" id="inbox-table" >
  		<thead>
  			<tr>
  				<th width=3%><input type="checkbox" name="selectAll" id="selectAll" style="margin-left: 10px;"/></th>

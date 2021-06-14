@@ -29,29 +29,37 @@
 <script type="text/javascript">
    $(document).ready(function(){
       
-	   window.innerWidth;
-	   window.innerHeight;
 	   console.log("브라우저 width: "+window.innerWidth);
 	   console.log("브라우저 height: "+window.innerHeight);
 	   
+	   /* $(window).scroll(function(event){ 
+		   console.log("브라우저 width: "+window.innerWidth);
+		   console.log("브라우저 height: "+window.innerHeight);
+	   
+	   }); */
 	   
 	   displayNotice(); //공지사항 게시판
-      // div#sidemenu와 div#content길이 맞추기
-      // func_height1();
       
       // 시계 보여주기
       func_loopDate();
       
       $("div#vacation").hide();
       
+      $("span#indolenceInfo").addClass('border-change');
       // 휴가정보 클릭시
       $("span#vacationInfo").click(function(){
+    	  //console.log('span#vacationInfo 클릭했다');
+      	 $("span#indolenceInfo").removeClass('border-change');
+		 $(this).addClass('border-change');    
          $("div#vacation").show();
          $("div#indolence").hide();
       });
       
       // 근태정보 클릭 시
       $("span#indolenceInfo").click(function(){
+    	  //console.log('span#indolenceInfo 클릭했다');
+      	 $("span#vacationInfo").removeClass('border-change');
+		 $(this).addClass('border-change');    
          $("div#vacation").hide();
          $("div#indolence").show();
       });
@@ -257,7 +265,7 @@
          });
 
          calendar.render();
-         calendar.setOption('height', 450);
+         calendar.setOption('height', 350);
     	
          
          $("div#infoCalendar").hide();
@@ -324,7 +332,7 @@
 	
 	 		        var options = {
 				 		             pieHole: 0.4,
-				 		             chartArea:{left:0,top:70,width:'100%',height:'70%'},
+				 		             chartArea:{left:0,top:70,width:'90%',height:'60%'},
 				 		             colors: ["#006680", "#00b8e6", "#0099ff","#c0bfbf"],
 				 		             legend: 'none',
 				 		             backgroundColor: "transparent"
@@ -423,24 +431,15 @@
         
         
         <%-- 오다윤 날씨 구현 시작 --%>
-       
-        	
         var todayw = new Date();
-        var yesterday = new Date((new Date()).valueOf() - 1000*60*60*24);
-        console.log("어제:"+yesterday);
-        
+
         // 오늘 정보
     	var wyear = todayw.getFullYear();
     	var wmonth = todayw.getMonth()+1;
     	var wday = todayw.getDate();
     	var whour = todayw.getHours();
-    	var wminutes = todayw.getMinutes();
+    	var wminutes = todayw.getMinutes();	
     	
-    	// 어제 정보
-    	var ydyear = yesterday.getFullYear();
-    	var ydmonth = yesterday.getMonth()+1;
-    	var ydday = yesterday.getDate();
-    
     	if(whour<10){
     		whour='0'+whour;
     	}
@@ -450,92 +449,26 @@
     	if(wday<10){
     		wday='0'+wday;
     	}
-    
-    	if(ydmonth<10){
-    		ydmonth='0'+ydmonth;
-    	}
-    	if(ydday<10){
-    		ydday='0'+ydday;
-    	}
+
     	
     	var arr =[];
     	var harr = new Array('02','05','08','11','14','17','20','23');
-    	
-    	// sky,pop,pty 정보
+
     	for(var i=0;i<harr.length;i++){
     		var h=harr[i]-whour;
-    		console.log("지금h"+h);
-    		console.log(h);
-    		if(whour!='00' || whour!='01'){
-	    		if(h==-1 || h==0 || h==-2){
-	    			var wnow=harr[i]+"00";
-	    			wtoday = wyear+""+wmonth+""+wday;
-	    			console.log("지금"+wnow);
-	    		}
+    
+    		if(whour!='00' && whour!='01'){
+        		if(h==-1 || h==0 || h==-2){
+        			var wnow=harr[i]+"00"; 			
+        			wtoday = wyear+""+wmonth+""+wday;
+        		}
     		}
-    		else if(whour=='00' || h==1){
+    		else if(whour=='00' || h>0){
     			wtoday = ydyear+""+ydmonth+""+ydday;
     			var wnow=harr[7]+"00";
     		}
     	}
     	
-    	// 오늘 t1hh==0 ||
-    	for(var i=0;i<harr.length;i++){
-    		var hc=harr[i]-whour;
-    		console.log("지금h"+h);
-    		console.log(h);
-    		if(whour!='00' || whour!='01'){
-	    		if(hc==-1 || hc==-2){
-	    			var wcnow=harr[i]+"00";
-	    			wctoday = wyear+""+wmonth+""+wday;
-	    			console.log("지금"+wnow);
-	    		}
-	    		else if(hc==0){
-	    			
-		    		if(wminutes<30){
-		    			if( whour=='02'){
-		    			var wcnow=harr[7]+"00";
-		    			wctoday = ydyear+""+ydmonth+""+ydday;
-		    			console.log("지금"+wcnow);
-		    			}
-		    			else{
-		    				var wcnow=harr[i-1]+"00";
-		    				wctoday = wyear+""+wmonth+""+wday;
-			    			console.log("지금오늘1th"+wcnow);
-		    			}
-		    		}
-		    		else{
-		    			var wcnow=harr[i]+"00";
-		    			wctoday = wyear+""+wmonth+""+wday;
-		    		}
-	    		}
-    		}
-    		else if(whour=='00' || h==1){
-    			wtoday = ydyear+""+ydmonth+""+ydday;
-    			var wnow=harr[7]+"00";
-    		}
-    	}
-    	
-    	
-    	// 어제 t1h 정보
-    	for(var i=0;i<harr.length;i++){
-    		var hy=harr[i]-whour;
-    		console.log("hy"+hy);
-    		if(whour!='00' && whour!='23'){
-	    		if(hy==-1 || hy==0 || hy==-2){
-	    			yesterday = ydyear+""+ydmonth+""+ydday;
-	    			var ytime=harr[(i+1)]+"00";
-	    			console.log("시간"+ytime);
-	    		}
-    		}	
-    		else if(whour=='23' || whour=='00'|| h>0){
-    			var ytime=harr[0]+"00";
-    			yesterday = ydyear+""+ydmonth+""+ydday;
-    			console.log("시간00"+ytime);
-    		}
-    	}
-    	console.log("오늘:"+wtoday);
-    	console.log("진짜어제:"+yesterday);
     	
     	// 동네예보
     	$.ajax({
@@ -553,59 +486,13 @@
                 	for (var i = 0; i < data1.length; i++) {
                         var item = data1[i];
                         switch (item.category) {
-                            case "SKY":
-                                var sky = parseInt(item.fcstValue);
-                                console.log("하늘:"+sky);
-                                break;
+
                             case "POP":
                             	var pop =parseInt(item.fcstValue);
                                 break;
-                            case "PTY":
-                            	var pty =parseInt(item.fcstValue);
-                                break;
                         }
                 	}
-     			
-                   console.log("강수확률:"+pop);
-                   console.log("강수형태:"+pty);
-                   console.log("하늘:"+sky);
-                   $("#pop").html("강수확률:"+pop+"%");
-                   
-                   $("#pty").html(pty);
-    				
-                   var image="";
-                   if(pty==0){
-	                   if(sky==1){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop1.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
-	                   else if(sky==3){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop2.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
-	                   else if(sky==4){
-	                	   image = "<%= ctxPath%>/resources/images/ody/pop3.png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-	                   }
-                   }
-                   else{
-                	   if(pty==1 || pty==2 || pty==4 || pty==5 || pty==6){
-                		   image = "<%= ctxPath%>/resources/images/ody/pty(rain).png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-                	   }
-                	   else{
-                		   image = "<%= ctxPath%>/resources/images/ody/pty(snow).png";
-	                	   $("#sky").html("<img style='width: 110px; height: 110px;' src='"+ image +"'/>");
-                	   }
-                   }
-                   // TMN : 아침최저기온
-                   // TMX : 낮 최고기온
-                   // T3H: 3시간 기온
-                   // SKY: 하늘 상태  - 1: 맑음/ 3: 구름많음/ 4: 흐림
-                   // POP: 강수확률 
-                   // PTY: 강수 형태없음(0), 비(1), 비/눈(2), 눈(3), 소나기(4), 빗방울(5), 빗방울/눈날림(6), 눈날림(7)
-    				// 여기서 비/눈은 비와 눈이 섞여 오는 것을 의미 (진눈개비)
-                    //빗방울(5), 빗방울/눈날림(6), 눈날림(7)
+                   $("#pop").html("강수확률 : "+pop+"%");
                 }
                
             },
@@ -614,121 +501,22 @@
                 console.log(e);
             }
         });
-    	
-    	
-    	// 오늘 한시간 받기
-    	$.ajax({
-            url : "<%= ctxPath%>/t1/weathercurrent.tw",
-            type : "get",
-            timeout: 30000,
-            contentType: "application/json",
-            data: {"today":wctoday, "now":wcnow},
-            dataType : "json",
-            success : function(data, status, xhr) {
 
-                let dataHeader = data.result.response.header.resultCode;
-                
-                if (dataHeader == "00") {
-
-                	var t1h = parseFloat(data.result.response.body.items.item[3].obsrValue);
-        
-                   $("#t1h").html(t1h);
-                   $("input#mt1h").val(t1h);
-                }
-                
-             // 오늘 기온과 어제 기온 차이
-            	$.ajax({
-                    url : "<%= ctxPath%>/t1/weatheryesterday.tw",
-                    type : "get",
-                    timeout: 30000,
-                    contentType: "application/json",
-                    data: {"yesterday":yesterday, "ytime":ytime},
-                    dataType : "json",
-                    success : function(data, status, xhr) {
-
-                        let dataHeader = data.result.response.header.resultCode;
-                        
-                        if (dataHeader == "00") {
-
-                           var y1h =parseFloat(data.result.response.body.items.item[3].obsrValue);
-                			console.log("어제온도:"+y1h);	
-        					var gap = parseFloat(t1h-y1h).toFixed(2);
-        	            	if(gap>=0){
-        	        			$("#gap").html("어제보다 "+Math.abs(parseFloat(gap))+" º 높아요!"); 
-        	        		}
-        	        		else{
-        	        			$("#gap").html("어제보다 "+Math.abs(parseFloat(gap))+" º 낮아요!"); 
-        	        		}
-        	        		
-                        }
-                    },
-                    error : function(e, status, xhr, data) {
-                        console.log("error == >");
-                        console.log(e);
-                    }
-                });
-            	
-            },
-            error : function(e, status, xhr, data) {
-                console.log("error == >");
-                console.log(e);
-            }
-        });
-        
-    	
-    	$.ajax({
-    		  type: "GET",
-    		  url: "http://openapi.seoul.go.kr:8088/504543517764617936396d50484259/json/RealtimeCityAir/1/99",
-    		  data: {},
-    		  success: function(response){
-    				// 마포구의 미세먼지 값만 가져와보기
-    				let mapo = response["RealtimeCityAir"]["row"][5];
-    				let guName = mapo['MSRSTE_NM'];
-    				let guMise = mapo['PM10'];
-    				let guchoMise = mapo['PM25'];
-    				console.log(guName, guMise,guchoMise);
-    				
-    				var miseStatus="";
-    				if(guMise<=30){
-    					miseStatus="좋음" 
-    				}
-    				else if(guMise<=80){
-    					miseStatus="보통"
-    				}
-    				else if(guMise<=150){
-    					miseStatus="나쁨"
-    				}
-    				else{
-    					miseStatus="매우나쁨"
-    				}
-    				
-    				$("#miseStatus").html("미세먼지: "+miseStatus);
-    				$("#mise").html("("+guMise+"㎍/m³)");
-    				
-    				var miseimage="";
-    				var chomiseStatus="";
-    				if(guchoMise<=15){
-    					chomiseStatus="좋음" 
-    					miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
-    				}
-    				else if(guchoMise<=35){
-    					chomiseStatus="보통"
-    					miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
-    				}
-    				else if(guchoMise<=75){
-    					chomiseStatus="나쁨"
-    					miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
-    				}
-    				else{
-    					chomiseStatus="매우나쁨"
-    					miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
-    				}
-    				
-    				$("#chomiseStatus").html("초미세먼지: "+chomiseStatus);
-    				$("#chomise").html("("+guchoMise+"㎍/m³)");
-    				$("#miseimg").html("<img style='width: 100px; height: 100px;' src='"+ miseimage +"'/>");
-    		  }
-    		})
+          var nowwea = new Date();
+          var weaminute = nowwea.getMinutes(); 
+          
+          if(weaminute < 30) { 
+             weatherTimejugi = (30-weaminute)*60*1000; 
+                                      
+          }
+          else if(weaminute == 30) {
+             weatherTimejugi = 1000;                
+          }
+          else {                                     
+             weatherTimejugi = ( (60-weaminute)+30 )*60*1000;                                           
+          }
+          
+    		loopshowWeather();
         <%-- 오다윤 날씨 구현 끝 --%>
         
     <%-- 김다님 공지사항 게시판 시작 --%> 
@@ -761,7 +549,7 @@
    					console.log(item.subject);
    					console.log(regDate);
    					console.log(index);
-   					html += "<td style='height:30px;'>"+categName+"</td>";
+   					html += "<td style='height:30px; padding-left: 20px;'>"+categName+"</td>";
    					html += "<td style='height:30px;'><a href='<%=ctxPath%>/t1/viewNotice.tw?seq="+item.seq+"'>"+item.subject+"</a></td>";
    					html += "<td style='height:30px;'>"+regDate+"</td>";
    					$("tr#row-"+index+"-content").html(html);
@@ -912,19 +700,142 @@
                alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
            }
 		});
-   }
-	
+   } // end of function showMyList(date){}----------
+   
+   
+   function showWeather(){
+	   $.ajax({
+		  url:"<%= request.getContextPath()%>/opendata/weatherXML.tw",
+		  type: "GET",
+		  dataType: "XML",
+		  success: function(xml){
+			  var rootElement = $(xml).find(":root");
+			  var localArr = $(rootElement).find("local");
+			  console.log(localArr);
+			  for(var i=0;i<localArr.length;i++){
+            	  var local = $(localArr).eq(i);
+            	  
+		          var icon = $(local).attr("icon");
+		          if(icon ==""){
+		        	  icon="없음";
+		          }
+		      
+		          if($(local).text()=="서울"){
+						
+						var ta = $(local).attr("ta");
+						$("#sky").html("<img style='width: 100px; height: 100px;' src='<%= ctxPath%>/resources/images/ody/"+icon+".png'/>");
+	  					 $("#t1h").html(ta);
+	 		
+					}
+
+              } // end of for-------------------------
+                 
+		                                    
+		  }, // end of success: function(xml){}----------------
+		  error: function(request, status, error){
+	            alert("code: "+request.status+"\n"+"message: "+request.responseText+"\n"+"error: "+error);
+	      }
+	   });
+	   
+	   $.ajax({
+			  type: "GET",
+			  url: "http://openapi.seoul.go.kr:8088/504543517764617936396d50484259/json/RealtimeCityAir/1/99",
+			  data: {},
+			  success: function(response){
+					// 마포구의 미세먼지 값만 가져와보기
+					let mapo = response["RealtimeCityAir"]["row"][5];
+					let guName = mapo['MSRSTE_NM'];
+					let guMise = mapo['PM10'];
+					let guchoMise = mapo['PM25'];
+					console.log(guName, guMise,guchoMise);
+					
+					var miseStatus="";
+					if(guMise<=30){
+						miseStatus="좋음" 
+					}
+					else if(guMise<=80){
+						miseStatus="보통"
+					}
+					else if(guMise<=150){
+						miseStatus="나쁨"
+					}
+					else{
+						miseStatus="매우나쁨"
+					}
+					
+					$("#miseStatus").html("미세먼지 : "+miseStatus);
+					$("#mise").html("("+guMise+"㎍/m³)");
+					
+					var miseimage="";
+					var chomiseStatus="";
+					if(guchoMise<=15){
+						chomiseStatus="좋음" 
+						
+					}
+					else if(guchoMise<=35){
+						chomiseStatus="보통"
+						
+					}
+					else if(guchoMise<=75){
+						chomiseStatus="나쁨"
+						
+					}
+					else{
+						chomiseStatus="매우나쁨"
+						
+					}
+		
+					if(miseStatus=="좋음" && chomiseStatus=="좋음"){
+						miseimage = "<%= ctxPath%>/resources/images/ody/good.png";
+					}
+					else if((miseStatus=="좋음" && chomiseStatus=="보통")||(miseStatus=="보통" && chomiseStatus=="좋음")||(miseStatus=="보통" && chomiseStatus=="보통")){
+						miseimage = "<%= ctxPath%>/resources/images/ody/normal.png";
+					}
+					else if((miseStatus=="좋음" && chomiseStatus=="나쁨") || (miseStatus=="보통" && chomiseStatus=="나쁨") || (miseStatus=="나쁨" && chomiseStatus=="나쁨")
+							|| (miseStatus=="나쁨" && chomiseStatus=="좋음")||(miseStatus=="보통" && chomiseStatus=="나쁨")||(miseStatus=="나쁨" && chomiseStatus=="나쁨")){
+						miseimage = "<%= ctxPath%>/resources/images/ody/sad.png";
+					}
+					else if((miseStatus=="좋음" && chomiseStatus=="매우나쁨") || (miseStatus=="보통" && chomiseStatus=="매우나쁨") || (miseStatus=="나쁨" && chomiseStatus=="매우나쁨")
+							|| (miseStatus=="매우나쁨" && chomiseStatus=="좋음")||(miseStatus=="매우나쁨" && chomiseStatus=="나쁨")||(miseStatus=="매우나쁨" && chomiseStatus=="나쁨")
+							|| (miseStatus=="매우나쁨" && chomiseStatus=="매우나쁨")){
+						miseimage = "<%= ctxPath%>/resources/images/ody/devil.png";
+					}
+					
+					$("#chomiseStatus").html("초미세먼지 : "+chomiseStatus);
+					$("#chomise").html("("+guchoMise+"㎍/m³)");
+					$("#miseimg").html("<img style='width: 100px; height: 100px;' src='"+ miseimage +"'/>");
+			  }
+			});
+			
+	} // end of function showWeather(){}----------
+
+
+	function loopshowWeather() {
+	    showWeather();
+	    
+	    setTimeout(function() {
+	          showWeather();   
+	       }, weatherTimejugi);
+	    
+	    setTimeout(function() {
+	            loopshowWeather();   
+	       }, weatherTimejugi + (60*60*1000)); 
+	 }// end of loopshowWeather() --------------------------   
+
 </script>
 
 
 
 
-<div id="content" style="width: 90%; border: solid 1px red;">
+<div id="content">
   
-  <div id="myInfo" style="margin: 50px 0px 50px 50px; width: 380px; height: 820px; float:left;">
-  	 <div style="padding-left:130px;"><img src="<%= ctxPath%>/resources/images/bwb/person.jpg" style="width:120px; height:120px;"></div>
-     <div id="nameDep" style="border-bottom:solid 1px black; text-align:center; margin-top:10px; margin-bottom:10px;">
-     <span id="name">${loginuser.name}
+  <div id="myInfo" class="content-style" style="margin: 50px 0px 50px 50px; width: 380px; float:left;">
+  	<div class="label-style" style="width:100px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
+  		<span>내 정보</span>
+  	</div>
+  	 <img src="<%= ctxPath%>/resources/images/kdn/default-avatar-profile-icon.jpg" style="width:90px; height:90px; display: block; margin: 0 auto;">
+     <div id="nameDep" style="border-bottom:solid 1px #ccc; text-align:center; margin-top:10px; margin-bottom:10px; padding-bottom: 5px;">
+     <span id="name" style="font-weight:bold;">${loginuser.name}
        <c:if test="${loginuser.fk_pcode eq 1}">
             사원님
        </c:if>
@@ -938,7 +849,7 @@
             사장님
        </c:if>
      </span>
-     <span id="department">
+     <span id="department" style="font-weight:bold;">
         <c:if test="${loginuser.fk_dcode eq 1}">
             (CS1팀)
        </c:if>
@@ -955,40 +866,39 @@
             (총무팀)
        </c:if>
      </span>
+     <div id="loginIp" style="font-size:10pt; text-align:center; margin-top:5px;">
+        	<span style="border:solid 1px #ccc; background-color: #ccc; color: #fff; border-radius:5px; display: inline-block; font-weight: bold; height: 20px; width: 30px; line-height: 20px;">IP</span>&nbsp;&nbsp;${loginip}
      </div>
-     <div id="loginIp" style="font-size:10pt; text-align:center; margin-top:10px;">
-        	접속IP : ${loginip}
      </div>
-     <div id="timer" style="text-align:center; margin-top:15px;"></div>
-     <div id="sebuMenu" style="border-bottom:solid 1px black; border-top:solid 1px black; height:50px; margin-top:20px; padding-top:10px;">
-	     <span id="indolenceInfo" style="border-bottom:solid 1px black; font-size:15pt; margin-right:90px; margin-left:15px; ">근태정보</span>
-	     <span id="vacationInfo"  style="border-bottom:solid 1px black; font-size:15pt;">휴가정보</span>
+     <div id="sebuMenu" style="height:50px; margin-top:5px;">
+	     <span id="indolenceInfo" class="border-before" style="font-size:14px; display: inline-block; width: 185px; padding-left: 70px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">근태정보</a></span>
+	     <span id="vacationInfo"  class="border-before" style="font-size:14px; display: inline-block; width: 187px; margin-left:0; padding-left: 60px; padding-bottom: 5px;"><a href="javascript:void(0)" style="text-decoration:none;">휴가정보</a></span>
      </div>
      <div id="indolence">
-        <div style="margin-top:10px; margin-left:7px;">출퇴근시간</div>
-        <div id="buttonDiv" style="margin-top:15px; border-top:solid 1px black; border-bottom:solid 1px black; height:50px; font-size:16pt; padding-top:10px;">
-	        <span id="intimeButton" style="background-color: #cce6ff; margin-left:15px;">출근</span> <span id="intime" style="margin-right:60px; font-size:12pt;"></span>
-	        <span id="outtimeButton" style="background-color: #cce6ff;">퇴근</span> <span id="outtime" style="font-size:12pt;"></span>
+     <div id="timer" style="text-align:center;"></div>
+        <div id="buttonDiv" style="border-top:solid 1px #ccc; height:50px; font-size:16pt; padding-top:10px; padding-left: 40px; display: block; margin-left: auto; margin-right: auto; margin-top: 5px;">
+	        <span id="intimeButton" class="btn-style">출근</span> <span id="intime" style="margin-right:10px; font-size:13px;"></span>
+	        <span id="outtimeButton" class="btn-style">퇴근</span> <span id="outtime" style="font-size:13px;"></span>
         </div>
-        <div style="margin-top:20px; border-top:solid 1px black; border-bottom:solid 1px black; padding-top:10px;">
-           <span style="margin-left:15px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
+        <div style="margin-top:10px; border-top:solid 1px #ccc; border-bottom:solid 1px #ccc; padding: 25px 35px;">
+           <span  class="btn-style" onclick="location.href='<%= ctxPath%>/t1/myMonthIndolence.tw'">월별근태현황</span>
            <c:if test="${loginuser.fk_pcode eq 3}">
-            <span style="margin-left:65px; font-size:15pt;" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
+            <span style="margin-left:65px;" class="btn-style" onclick="location.href='<%= ctxPath%>/t1/depMonthIndolence.tw'">부서근태현황</span>
            </c:if>
         </div>
 
      </div>
-     <div id="vacation" style="margin-top:5px; border-bottom:solid 1px black;">
-     	<ul id="vacationUl">
-     		<li>입사일자 : ${fn:substring(loginuser.hiredate,0,4)}년 ${fn:substring(loginuser.hiredate,5,7)}월 ${fn:substring(loginuser.hiredate,8,10)}일</li>
-     		<li>총 연차일수 : ${offMap.totalOffCnt}일</li>
-     		<li>사용 연차 일수 : ${offMap.useOffCnt}일</li>
-     		<li>남은 연차 일수 : ${offMap.leftOffCnt}일</li>
+     <div id="vacation" style="margin-top:5px; border-bottom:solid 1px #ccc;">
+     	<ul id="vacationUl" class="ul-style">
+     		<li class="list-style"><span class="vction-subject">입사일자</span> : <span class="vction-content">${fn:substring(loginuser.hiredate,0,4)}년 ${fn:substring(loginuser.hiredate,5,7)}월 ${fn:substring(loginuser.hiredate,8,10)}일</span></li>
+     		<li class="list-style"><span class="vction-subject">총 연차일수</span> : <span class="vction-content">${offMap.totalOffCnt}일</span></li>
+     		<li class="list-style"><span class="vction-subject">사용 연차 일수</span> : <span class="vction-content">${offMap.useOffCnt}일</span></li>
+     		<li class="list-style"><span class="vction-subject">남은 연차 일수</span> : <span class="vction-content">${offMap.leftOffCnt}일</span></li>
      	</ul>
      </div>
              <%-- word-cloud 차트  시작(백원빈) --%>
        	<figure class="highcharts-figure">
-    	<div id="container2" style="width:360px; height:330px; overflow:hidden;"></div>
+    	<div id="container2" style="width:375px; height:270px; overflow:hidden;"></div>
 		</figure>
 		<%-- word-cloud 차트 끝(백원빈) --%>
   </div><%-- end of div(myInfo) 백원빈 --%>
@@ -996,10 +906,12 @@
   
   
   <%-- =================== 백원빈 내통계 시작 =================== --%>
-  <div id="myStatic" style="border: solid 1px green; float: left; margin: 50px 0px 40px 40px; width: 450px; height: 280px; ">
+  <div id="myStatic" class="content-style" style="float: left; margin: 50px 0px 20px 40px; width: 450px; height: 280px; ">
+  	<div class="label-style" style="width:100px; height:35px; border-style:outset; border-width: 7px; line-height: 18px; margin-bottom:0;">
+  		<span>내 통계</span>
+  	</div>
   	<figure class="highcharts-figure">
-    <div id="container" style="height:250px"></div>
-
+    <div id="container" style="height:240px"></div>
     <table id="datatable">
         <tbody>
             <tr>
@@ -1021,26 +933,26 @@
   
   
   <%-- =================== 한수연 시작 =================== --%>
-  <div id="quickMenu" style="border: solid 2px #bbc3c3; float: left; margin: 50px 0px 40px 40px; width: 600px; height: 280px;">
-  	<div style="border: solid 2px #0071bd; background-color:#0071bd; color:#fff; font-size:15pt; width:200px; height:35px; text-align: center; padding-top: 2px; ">
-  		My Quick Menu
+  <div id="quickMenu" class="content-style" style="float: left; margin: 50px 0px 20px 40px; width: 530px; height: 280px;">
+  	<div class="label-style" style="width:200px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
+  		<span>My Quick Menu</span>
   	</div>
-  	<div id="donutchart" style="width: 300px; height: 280px; float:left; border: solid 0px red; position:relative; top:-40px;"></div>
-	<div style='font-size:13pt; float:left; border: solid 0px red;'>
+  	<div id="donutchart" style="width: 240px; height: 280px; float:left; border: solid 0px red; position:relative; top:-40px;"></div>
+	<div style='font-size:13pt; float:left; border: solid 0px red; margin-top: 20px;'>
 		<div style='margin-bottom: 18px;'>
 			<button type="button" class='quickMenuBt' onclick='location.href="<%=ctxPath%>/t1/mail.tw"'>받은메일함</button>
 			<button type="button" class='quickMenuBt' style='margin-left:20px;' onclick='location.href="<%=ctxPath%>/t1/myDocuNorm_send.tw"'>문서 발신함</button>
 		</div>
-		<div>
-			<span style='color:#006680; font-size: 22pt; padding-left:5px;'>■</span>
+		<div style="margin-bottom: 5px;">
+			<span style='color:#006680; font-size: 13pt; padding-left:5px;'>■</span>
 			&nbsp;&nbsp;읽지 않은 메일 <span class="quickCnt" id="notReadCnt"></span>&nbsp;건
 		</div>
-		<div>
-			<span style='color:#00b8e6; font-size: 22pt; padding-left:5px;'>■</span>
+		<div style="margin-bottom: 5px;">
+			<span style='color:#00b8e6; font-size: 13pt; padding-left:5px;'>■</span>
 			&nbsp;&nbsp;결재 진행 중 문서 <span class="quickCnt" id="ingDocuCnt"></span>&nbsp;건
 		</div>
 		<div>
-			<span style='color:#0099ff; font-size: 22pt; padding-left:5px;'>■</span>
+			<span style='color:#0099ff; font-size: 13pt; padding-left:5px;'>■</span>
 			&nbsp;&nbsp;최근 결재 완료 문서 <span class="quickCnt" id="doneDocuCnt"></span>&nbsp;건
 		</div>
 	</div> 
@@ -1048,55 +960,70 @@
   <%-- =================== 한수연 끝 =================== --%>
   
   
-  <%-- ============== 김다님 공지사항 게시판 시작 =============== --%>
   <%-- 위의 float에서 한칸 아래로 내려오기 위한 빈 div --%>
   <div style="float: left; width: 800px;"></div>
   
-  <div id="simpleNotice" style="border: solid 1px gray; float: left; width: 580px; height: 230px; margin: 10px 0px 20px 40px;">
+  <!-- 공지사항 게시판&날씨 container div -->
+  <div id="notice-weather-container" style="float: left;">
+  
+	  <%-- ============== 김다님 공지사항 게시판 시작 =============== --%>
+	  <div id="simpleNotice" class="content-style" style="width: 500px; height: 220px; margin: 5px 0px 20px 40px;">
+	  	<div class="label-style" style="width:100px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
+  			<span>공지사항</span>
+  		</div>
+	  	<table id="recentNotice" class="table">
+	  		<tr>
+	  			<th style="padding-left: 20px;">구분</th>
+	  			<th>제목</th>
+	  			<th>작성일시</th>
+	  		</tr>
+	  		<tr id="row-0-content"></tr>
+	  		<tr id="row-1-content"></tr>
+	  		<tr id="row-2-content"></tr>
+	  		<tr id="row-3-content"></tr>
+	  	</table>
+	</div>
+  	<%-- ============== 김다님 공지사항 게시판 끝 =============== --%>
   	
-  	<table id="recentNotice" class="table">
-  		<tr>
-  			<th>구분</th>
-  			<th>제목</th>
-  			<th>작성일시</th>
-  		</tr>
-  		<tr id="row-0-content"></tr>
-  		<tr id="row-1-content"></tr>
-  		<tr id="row-2-content"></tr>
-  	</table>
-  </div>
-  
-  <%-- ============== 김다님 공지사항 게시판 끝 =============== --%>
-  
-  
-  
-  
   <%-- =================== 오다윤 시작 =================== --%>
+  	
+  	  <%--  날씨 시작 --%> 
+	  <div id="weather" class="content-style" style="margin-top: 20px; margin-left: 40px; margin-top: 25px; width: 500px; height: 220px; ">
+	 	<div class="label-style" style="width:120px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
+  			<span>오늘의 날씨</span>
+  		</div>
+	 	<div id="today-w" style="float: left; width: 55%; height: 100%;">
+	 	<div  style="padding-left: 15px; margin-top: 20px;">
+		 	<div  id="sky" style="display: inline; float: left; padding-top: 10px;"></div>
+		 	<div style="padding-top: 30px; display: inline-block; margin-left: 15px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 5px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
+		 		<span style="margin-left: 5px;" id="pop"></span><br><span id="gap"></span></div>
+	 		</div>
+	 	</div>
+	 	<div style="float: right; width: 45%; height: 100%; " >
+	 		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
+	 		<div align="center" style="margin-top: 10px;">
+	 		<div id="miseimg" style="margin-bottom: 4px;"></div>
+	 		<span id="miseStatus" ></span><span id="mise"></span><br>
+	 		<span id="chomiseStatus"></span><span id="chomise"></span>
+	 		</div>
+	 	</div>
+	  </div>
+  	  <%--  날씨 끝 --%> 
+  	  
+  </div><!-- 공지사항 게시판&날씨 div 끝-->
+  
+  
   						<%--  달력 시작 --%>
-  <div id="calendarO" style="float: right;">
+  <div id="calendarO" class="content-style" style="float:left;">
+  	<div class="label-style" style="width:100px; height:35px; border-style:outset; border-width: 7px; line-height: 18px;">
+  			<span>일정</span>
+  		</div>
 		<div id="calendar"></div>
-		<div id="todayCal" style="margin-top:10px; padding-left: 10px;"></div>
+		<div id="todayCal" style="margin-top:10px; padding: 10px;"></div>
 		<div id="infoCalendar" style="margin-top:10px; padding-left: 10px;"></div>
   </div>
 						<%--  달력 끝 --%>
+  						
  
- 						<%--  날씨 시작 --%> 
-  <div id="weather" style="border: solid 1px blue; float: left; margin: 10px 0px 50px 40px; width: 580px; height: 230px; ">
- 	<div id="today-w" style="float: left; width: 50%; height: 100%; border-right: solid 1px blue;">
- 	<span style="font-weight: bold;">오늘의 날씨</span><br><br>
- 	<span  id="sky"></span>
- 	<div style="padding-top: 30px; display: inline-block; float: right; margin-right: 20px;"><span id="t1h" style="font-size: 25pt; font-weight: bold; margin-left: 10px; "></span><span style="font-size: 25pt; font-weight: bold; ">ºC</span><br>
- 	<span style="margin-left: 10px;" id="pop"></span><br><span id="gap"></span></div>
- 	</div>
- 	<div style="float: right; width: 50%; height: 100%; " >
- 		<span style="text-align: left; font-weight: bold;">미세먼지 농도</span><br>
- 		<div align="center" style="margin-top: 20px;">
- 		<span id="miseimg"></span><br><br>
- 		<span id="miseStatus" ></span><span id="mise"></span><br>
- 		<span id="chomiseStatus"></span><span id="chomise"></span>
- 		</div>
- 	</div>
- 	
-  </div>
-  						<%--  날씨 끝 --%> 
+	
 </div>

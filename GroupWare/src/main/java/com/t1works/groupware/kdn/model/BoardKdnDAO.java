@@ -46,7 +46,9 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 	// 공지사항 글1개 조회하기
 	@Override
 	public BoardKdnVO getView(Map<String, String> paraMap) {
+		System.out.println("DAO 메소드 호출됨");
 		BoardKdnVO boardvo = sqlsession3.selectOne("board.getView", paraMap);
+		System.out.println("boardvo 유무: "+boardvo);
 		return boardvo;
 	}
 	
@@ -319,6 +321,20 @@ public class BoardKdnDAO implements InterBoardKdnDAO {
 	@Override
 	public int getGenCmntTotalCnt(String seq) {
 		int n = sqlsession3.selectOne("board.getGenCmntTotalCnt", seq);
+		return n;
+	}
+
+	// 공지사항 읽음 처리 하기
+	@Override
+	public int markAsRead(String seq) {
+		int n = sqlsession3.update("board.markAsRead", seq);
+		return n;
+	}
+
+	// 신규 공지사항 유무 확인하기
+	@Override
+	public int checkNewNotice() {
+		int n = sqlsession3.selectOne("board.checkNewNotice");
 		return n;
 	}
 

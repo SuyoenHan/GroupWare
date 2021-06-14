@@ -125,6 +125,20 @@
 	div#infoMenu{
 		background-color: #94b8b8 !important;
 	}
+	
+	span.buttonspan{
+		font-size:8pt;
+	}
+	
+	button.buttonMail{
+		height: 17px;
+		background-color: #b3e0ff;
+		font-weight: bolder;
+	}
+	
+	th.menuName{
+		background-color: #94B8B8;
+	}
 </style>
 
 <script type="text/javascript">
@@ -341,7 +355,7 @@
 			success:function(json){
 				var html ="";
 				html+="<table id='clientList'>";
-				html+="<th colspan='4' style='text-align:center;'>*** 예약자명단 ***</th>";
+				html+="<th colspan='4' style='text-align:center; backgroud-color:#0088cc;'>*** 예약자명단 ***</th>";
 				html+="<tr>"
 				html+="<td>예약자명</td>";
 				html+="<td>인원수</td>";
@@ -356,10 +370,10 @@
 					html +="<td>"+item.cnumber+"</td>";
 					html +="<td id='"+item.clientmobile+"'>"+item.clientmobile+"<input class='fk_pNo' type='hidden' value='"+pNo+"'></td>";
 					if(endDate == '-'){
-						html +="<td><span class='producting'>메일보내기</span></td>";
+						html +="<td><span class='producting buttonspan'><button class='buttonMail'>메일보내기</button></span></td>";
 					}
 					else{
-						html +="<td><span class='productCompleted'>메일보내기</span></td>";
+						html +="<td><span class='productCompleted buttonspan'><button class='buttonMail'>메일보내기</button></span></td>";
 					}
 					html +="</tr>";
 				});

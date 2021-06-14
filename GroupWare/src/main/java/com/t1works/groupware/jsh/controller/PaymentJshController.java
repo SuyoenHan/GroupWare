@@ -144,7 +144,6 @@ public class PaymentJshController {
 		// 먼저 총 게시물 건수(totalCount)를 구해와야 한다.
 		// 총 게시물 건수(totalCount)는 검색조건이 있을때와 없을때로 나뉘어진다.
 		int totalCount = 0; // 게시판에 올라와 있는 총 게시물 건수
-		// int sizePerPage = 10; // 한 페이지당 보여줄 게시물 건수
 		int sizePerPage =10 ; // 한 페이지당 보여줄 게시물 건수
 		int currentShowPageNo = 0;// 현재 보여주는 페이지 번호로서, 초기치로는 1페이지로 설정함.
 		int totalPage = 0; // 총 페이지수(웹브라우저상에서 보여줄 총 페이지 개수, 페이지바)
@@ -160,9 +159,8 @@ public class PaymentJshController {
 		// 총 페이지 수(totalPage)는 13개가 되어야 한다.
 
 		totalPage = (int) Math.ceil((double) totalCount / sizePerPage);
-		// (double)127/10 ==> 12.7 ==>Math.ceil(12.7) ==> 13. 0 ==>13 ==> Math.ceil()의
-		// 파라미터는 double타입
-		// (double)120/10 ==> 12.7 ==>Math.ceil(12.0) ==> 12. 0 ==>12
+		// ex> (double)127/10 ==> 12.7 ==>Math.ceil(12.7) ==> 13. 0 ==>13 ==> Math.ceil()의
+		
 
 		if (str_currentShowPageNo == null) {
 			// 게시판에 보여지는 초기화면
@@ -178,7 +176,7 @@ public class PaymentJshController {
 			}
 		}
 
-		// **** 가져올 게시글의 범위를 구한다.(공식임!!!) ****
+		// **** 가져올 게시글의 범위를 구한다.(공식!!!) ****
 		/*
 		 * currentShowPageNo startRno endRno
 		 * -------------------------------------------- 1 page ===> 1 10 2 page ===> 11
@@ -200,18 +198,14 @@ public class PaymentJshController {
 		}
 
 		// == #121. 페이지 바 만들기
-		int blockSize = 5;
-		// int blockSize = 10;
-
-		int loop = 1;
-		// loop는 1부터 증가하여 1개 블럭을 이루는 페이지번호의 개수[ 지금은 10개(== blockSize) ] 까지만 증가하는 용도이다.
+		int blockSize = 5; // 페이지바의 개수
+		int loop = 1;// loop는 1부터 증가하여 1개 블럭을 이루는 페이지번호의 개수 까지만 증가하는 용도이다.
 
 		// === 공식 ===
 		int pageNo = ((currentShowPageNo - 1) / blockSize) * blockSize + 1;
 		// ==========
 
 		String pageBar = "<ul style=' list-style:none;'>";
-
 		String url = "generalPayment_List.tw";
 
 		// === [맨처음][이전] 만들기 ===
@@ -225,7 +219,6 @@ public class PaymentJshController {
 		}
 
 		while (!(loop > blockSize || pageNo > totalPage)) {
-
 			if (pageNo == currentShowPageNo) {
 				pageBar += "<li style='display:inline-block; width:30px; font-size:12pt; border:solid 1px gray; color:red; padding:2px 4px;'>"
 						+ pageNo + "</li>";
@@ -234,11 +227,8 @@ public class PaymentJshController {
 						+ "?searchCategory=" + searchCategory + "&searchType=" + searchType + "&searchWord="
 						+ searchWord + "&currentShowPageNo=" + pageNo + "'>" + pageNo + "</a></li>";
 			}
-
 			loop++;
-
 			pageNo++;
-
 		} // end of while--------------------
 
 		// === [다음][마지막] 만들기 ===
@@ -255,16 +245,13 @@ public class PaymentJshController {
 
 		mav.addObject("pageBar", pageBar);
 
-		// === #123. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		// ===  페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
 		// 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
 		// 현재 페이지 주소를 뷰단으로 넘겨준다.
 		String gobackURL = MyUtil.getCurrentURL(request);
 		// System.out.println("~~~확인용 gobackURL =>"+gobackURL);
-		// ~~~확인용 gobackURL
-		// =>t1/generalPayment_List.tw?searchCategory=&searchType=&searchWord=&currentShowPageNo=3
 		mav.addObject("gobackURL", gobackURL);
-		// == #114. 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 
 		// === 페이징 처리를 한 검색어가 있는 전체 글목록 보여주기 끝== //
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,7 +272,7 @@ public class PaymentJshController {
 	
 	
 
-	// === #108. 검색어 입력시 자동글 완성하기 3 === //
+	// === 검색어 입력시 자동글 완성하기  === //
 	@ResponseBody
 	@RequestMapping(value = "/t1/wordSearchShow.tw", method = {
 			RequestMethod.GET }, produces = "text/plain;charset=UTF-8")
@@ -359,16 +346,15 @@ public class PaymentJshController {
 	     //[추가끝]///////////////////////////////////////////////////////////////////////////
 		
 		
-		// === #125. 페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
+		// ===페이징 처리되어진 후 특정 글제목을 클릭하여 상세내용을 본 이후
 		// 사용자가 목록보기 버튼을 클릭했을때 돌아갈 페이지를 알려주기 위해
 		// 현재 페이지 주소를 뷰단으로 넘겨준다.
 		String gobackURL = request.getParameter("gobackURL");
 		// System.out.println("~~확인용 gobackURL=>" +gobackURL);
 		//
 		if (gobackURL != null) {
-			gobackURL = gobackURL.replaceAll(" ", "&"); // gobackURL 속에 " "(공백)이 있으면 "&" 로 바꾸어준다
-			// 이전글제목, 다음글제목을 클릭했을때 돌아갈 페이지 주소를 올바르게 만들어주기 위해서 한 것임.
-
+			gobackURL = gobackURL.replaceAll(" ", "&"); 
+			// gobackURL 속에 " "(공백)이 있으면 "&" 로 바꾸어준다
 			// System.out.println("~~확인용 gobackURL=>" +gobackURL);
 		}
 

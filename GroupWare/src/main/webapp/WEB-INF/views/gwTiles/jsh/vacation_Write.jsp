@@ -94,7 +94,7 @@ button.btn1:hover{
 					
 			
 			
-			//일반결재내역 문서 카테고리 라디오 클릭 이벤트
+			//근태결재내역 문서 카테고리 라디오 클릭 이벤트
 			$("input[name=vcatname]").click(function(){
 				
 				$("td#smarteditor").empty();
@@ -150,9 +150,6 @@ button.btn1:hover{
 		           }
 		       });
 			     <%-- === 스마트 에디터 구현 끝 === --%>
-				
-			    
-				
 				
 				
 				if(vcatname =="병가"){
@@ -528,14 +525,14 @@ button.btn1:hover{
 <div id="containerall">
 	<div id=radio>
  		<span style="border:solid 2px gray; width:400px; height:100px; font-size:20px; padding:10px 10px;">근태/휴가결재문서작성</span>
-				<span style="margin-left:20px;">&nbsp;&nbsp;
-					<label for="sickleave"><input type="radio" name="vcatname" id="sickleave" value="병가"> 병가</label>&nbsp;&nbsp;
-					<label for="afternoonoff"><input  type="radio" name="vcatname" id="afternoonoff" value="반차"> 반차</label>&nbsp;&nbsp;
-					<label for="dayoff"><input type="radio" name="vcatname" id="dayoff" value="연차"> 연차</label>&nbsp;&nbsp;
-					<label for="congoff"><input type="radio" name="vcatname" id="congoff" value="경조휴가"> 경조휴가</label>&nbsp;&nbsp;
-					<label for="businesstrip"><input type="radio" name="vcatname" id="businesstrip" value="출장"> 출장</label>&nbsp;&nbsp;
-					<label for="extrawork"><input  type="radio" name="vcatname" id="extrawork" value="추가근무"> 추가근무</label>&nbsp;&nbsp;
-				</span>
+		<span style="margin-left:20px;">&nbsp;&nbsp;
+			<label for="sickleave"><input type="radio" name="vcatname" id="sickleave" value="병가"> 병가</label>&nbsp;&nbsp;
+			<label for="afternoonoff"><input  type="radio" name="vcatname" id="afternoonoff" value="반차"> 반차</label>&nbsp;&nbsp;
+			<label for="dayoff"><input type="radio" name="vcatname" id="dayoff" value="연차"> 연차</label>&nbsp;&nbsp;
+			<label for="congoff"><input type="radio" name="vcatname" id="congoff" value="경조휴가"> 경조휴가</label>&nbsp;&nbsp;
+			<label for="businesstrip"><input type="radio" name="vcatname" id="businesstrip" value="출장"> 출장</label>&nbsp;&nbsp;
+			<label for="extrawork"><input  type="radio" name="vcatname" id="extrawork" value="추가근무"> 추가근무</label>&nbsp;&nbsp;
+		</span>
  	</div>
 	<div id="containerview">
  	

@@ -220,8 +220,8 @@ button.btn1:hover{
 	         
 		    // 회의록 회의시간 유효성 검사
 		    if(ncat =="회의록"){     
-		         var mdate1 = $("input#mdate1").val().trim();
-		         var mdate2 = $("input#mdate2").val().trim();
+		         var mdate1 = $("input#mdate1").val();
+		         var mdate2 = $("input#mdate2").val();
 		         var mdate3 = $("input#mdate3").val().trim();
 		         if(mdate1 == "" || mdate2 == "" || mdate3 == "") {
 		            alert("회의시간을 입력하세요!!");
@@ -231,8 +231,8 @@ button.btn1:hover{
 		    }
 		    else if(ncat =="위임장"){
 		         // 위임기간 유효성 검사
-		         var fk_wiimdate1 = $("input#fk_wiimdate1").val().trim();
-		         var fk_wiimdate2 = $("input#fk_wiimdate2").val().trim();
+		         var fk_wiimdate1 = $("input#fk_wiimdate1").val();
+		         var fk_wiimdate2 = $("input#fk_wiimdate2").val();
 		         if(fk_wiimdate1 == "" || fk_wiimdate2 == "" ) {
 		            alert("위임기간을 입력하세요!!");
 		            return;

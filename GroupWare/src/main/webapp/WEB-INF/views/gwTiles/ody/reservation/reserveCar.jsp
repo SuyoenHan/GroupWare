@@ -77,6 +77,10 @@ div.car{
 	background-color: #b1b8cd;
 }
 
+.info{
+	background-color: #b1b8cd;
+	cursor: pointer;
+}
 
 </style>
 
@@ -117,12 +121,15 @@ $(document).ready(function(){
 	var chgdate="";
 
 	$("input#chgdate").val(cgtime); 
+
+	$("tr.selectCar").bind("mouseover",function(){			
+		$(this).addClass("info");			
+	}); 
 	
-	$("tr.selectCar").hover(function(){
-		$(this).css("cursor", "pointer");
+	$("tr.selectCar").bind("mouseout",function(){
+		$(this).removeClass("info");
 	});
 	
-
 	$("tr.selectCar").click(function(){
 		$("tr.selectCar").removeClass("carClick");
 		var cno = $(this).find("td#findno").html();

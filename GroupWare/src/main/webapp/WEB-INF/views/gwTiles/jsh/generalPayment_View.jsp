@@ -254,13 +254,19 @@ button.btn1:hover{
 					<c:if test="${not empty requestScope.alogList}">
 						<c:forEach var="lvo" items="${requestScope.alogList}">
 							<c:if test="${lvo.logstatus == '0'}">
-							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="font-weight:bold;"> [제출]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>
+							  	${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}
+							  	</span> &nbsp;${lvo.pname}<span style="font-weight:bold;"> [제출]</span></div>
 							  </c:if>
 							  <c:if test="${lvo.logstatus == '1'}">
-							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="color:#1b4de3; font-weight:bold;"> [승인]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>
+							  	${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span>
+							  	 &nbsp;${lvo.pname}<span style="color:#1b4de3; font-weight:bold;"> [승인]</span></div>
 							  </c:if>
 							  <c:if test="${lvo.logstatus == '2'}">
-							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> &nbsp;${lvo.pname}<span style="color:red; font-weight:bold;"> [반려]</span></div>
+							  	<div><span style="color:#87898c;">${lvo.logdate}&nbsp;</span>
+							  	${lvo.dname}&nbsp;<span style="font-weight:bold;">${lvo.name}</span> 
+							  	&nbsp;${lvo.pname}<span style="color:red; font-weight:bold;"> [반려]</span></div>
 							  </c:if>
 						  
 						</c:forEach>
