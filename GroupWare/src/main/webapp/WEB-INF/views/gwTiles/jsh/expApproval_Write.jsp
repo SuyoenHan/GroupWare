@@ -240,7 +240,7 @@ button.btn1:hover{
 		            alert("지출일자를 입력하세요!!");
 		            return false;
 		         }
-		         else if(exprice == ""){
+		         else if(exprice == null){
 		        	 alert("지출금액을 입력하세요!!");
 			         return false;
 		         }
@@ -254,7 +254,7 @@ button.btn1:hover{
 		            alert("사용예정일을 입력하세요!!");
 		            return false;
 		         }
-		         else if(coprice == ""){
+		         else if(coprice == null){
 		        	 alert("예상금액을 입력하세요!!");
 			         return false;
 		         }

@@ -32,6 +32,7 @@
    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
       <beans:property name="prefix" value="/WEB-INF/views/" />
       <beans:property name="suffix" value=".jsp" />
+      <beans:property name="order" value="2"/>
    </beans:bean>
    
    <!-- ======= #20. 실행시 모든 페이지에 기본틀이 되어지는 틀을 배치하기 위한 템플릿 프레임워크인 TilesViewResolver 를 사용하기 위해 빈으로 등록한다. ======= -->
