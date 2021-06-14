@@ -208,7 +208,7 @@
 	<div id="passbox">
 		<form name="changePasswd">
 			<div id="checkUserPasswd">
-				<label id="passwd">기존비밀번호</label> <input type="password" name="lastpasswd" id="lastpasswd" />
+				<label id="passwd" style="width:116px;">기존비밀번호</label> <input type="password" name="lastpasswd" id="lastpasswd"/>
 		    </div>
 			<div id="changePasswd">
 				<label id="passwd" style="width:116px;">신규비밀번호</label> <input type="password" name="passwd" id="passwd" /><br>
