@@ -1,19 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<% String ctxPath = request.getContextPath(); %>    
+<% String ctxPath = request.getContextPath(); %>
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/resources/css/kdn/board.css"/>    
 
 <style type="text/css">
 
-   table, th, td, input, textarea {border: solid gray 1px;}
-   
-   #table {border-collapse: collapse;
-          width: 900px;
+#table {border-collapse: collapse;
+          width: 250px;
           }
-   #table th, #table td{padding: 5px;}
-   #table th{width: 120px; background-color: #DDDDDD;}
-   #table td{width: 860px;}
-   .long {width: 470px;}
-   .short {width: 120px;}
+#table th, #table td{padding: 5px;}
 
 </style>
 <script type="text/javascript">
@@ -49,25 +44,24 @@
    
 </script>
 
-<div style="padding-left: 10%;">
-   <h1>자유게시판 게시글 삭제</h1>
-
-   <form name="delFrm">
-      <table id="table">
+<div>
+  <form name="delFrm">
+      <table id="table" style="display: block; margin: 15% auto 0 auto;">
          <tr>
-            <th>비밀번호</th>
-            <td>
+            <td align="center">비밀번호를 입력하세요</td>
+         </tr>
+         <tr>
+            <td align="center">
                <input type="password" name="pw" id="pw" class="short" /> 
                <input type="hidden" name="seq" value="${requestScope.seq}" />       
             </td>
          </tr>
+         <tr>
+         	<td align="center">
+	         <button type="button" id="btnDelete" class="btn-style">완료</button>
+	         <button type="button" onclick="javascript:history.back()" class="cmnt-btn-style">취소</button>
+         	</td>
+         </tr>
       </table>
-      
-      <div style="margin: 20px;">
-         <button type="button" id="btnDelete">완료</button>
-         <button type="button" onclick="javascript:history.back()">취소</button>
-      </div>
-         
    </form>
-   
 </div>

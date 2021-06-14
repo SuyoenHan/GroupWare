@@ -253,8 +253,8 @@ public class EmailKdnDAO implements InterEmailKdnDAO {
 
 	// 회신 받은 메일의 이전 메일 가져오기(Conversation View)
 	@Override
-	public List<EmailKdnVO> getPreviousEmail(EmailKdnVO evo) {
-		List<EmailKdnVO> prevEvo = sqlsession3.selectList("email.getPreviousEmail", evo);
+	public List<EmailKdnVO> getPreviousEmail(Map<String, String> paraMap) {
+		List<EmailKdnVO> prevEvo = sqlsession3.selectList("email.getPreviousEmail", paraMap);
 		System.out.println("메퍼에서 가져온 prevEvo: "+prevEvo);
 		return prevEvo;
 	}

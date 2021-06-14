@@ -75,7 +75,7 @@ $(document).ready(function(){
 	 <a href="javascript:location.href='generalBoard.tw'" style="text-decoration:none; color: black;"><i class="far fa-comments fa-lg"></i>&nbsp;&nbsp;<span style="display: inline-block; font-size:22px;">자유게시판</span></a>
 	
 	 <form name="postFrm" enctype="multipart/form-data"><!-- 파일첨부가 있는 글쓰기 -->  
-	    <table id="table" class="table">
+	    <table id="table" class="table" style="margin-top: 50px;">
 	       <tr>
 	          <th>성명</th>
 	          <td>

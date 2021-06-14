@@ -353,9 +353,13 @@ public class EmailKdnController {
 			List<EmailKdnVO> prevEvo = null;
 			if(mailBoxNo.equals("1")) { // 받은메일함
 				evo = service.getView(paraMap);
+				System.out.println("getGroupno: "+evo.getGroupno());
+				System.out.println("getdepthno: "+evo.getDepthno());
+				paraMap.put("groupno", evo.getGroupno());
+				paraMap.put("depthno", evo.getDepthno());
 				
 				if(Integer.parseInt(evo.getDepthno()) > 0) {
-					prevEvo = service.getPreviousEmail(evo);	// 회신받은 이전 메일 정보 가져오기
+					prevEvo = service.getPreviousEmail(paraMap);	// 회신받은 이전 메일 정보 가져오기
 					System.out.println("prevEvo: "+prevEvo);
 				}
 				

@@ -319,8 +319,8 @@ public class EmailKdnService implements InterEmailKdnService {
 
 	// 회신받은 메일의 이전 메일 정보 가져오기(Conversation View)
 	@Override
-	public List<EmailKdnVO> getPreviousEmail(EmailKdnVO evo) {
-		List<EmailKdnVO> prevEvo = dao.getPreviousEmail(evo);
+	public List<EmailKdnVO> getPreviousEmail(Map<String, String> paraMap) {
+		List<EmailKdnVO> prevEvo = dao.getPreviousEmail(paraMap);
 		return prevEvo;
 	}
 

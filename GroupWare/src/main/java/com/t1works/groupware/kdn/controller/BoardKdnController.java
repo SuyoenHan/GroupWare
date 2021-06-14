@@ -534,14 +534,17 @@ public class BoardKdnController {
 		
 		// 삭제해야 할 글번호 가져오기
 		String seq = request.getParameter("seq");
-		
 		String searchType = request.getParameter("searchType");
 	      String searchWord = request.getParameter("searchWord");
 	      
+	      if(searchWord == null || searchWord == "") {
+	    	  searchWord = "";
+	      }
 	      Map<String,String> paraMap = new HashMap<>();
 	      paraMap.put("seq", seq);
 	      paraMap.put("searchType", searchType);
 	      paraMap.put("searchWord", searchWord);
+	      
 	      
 	      mav.addObject("searchType", searchType);
 	      mav.addObject("searchWord", searchWord);
@@ -576,10 +579,10 @@ public class BoardKdnController {
 		
 		String seq = request.getParameter("seq");
         String pw = request.getParameter("pw");
-      
         Map<String,String> paraMap = new HashMap<>();
         paraMap.put("seq", seq);
         paraMap.put("pw", pw);
+        paraMap.put("searchWord", "");
 		
         int n = service.noticeDel(paraMap); 
         // n 이 1 이라면 정상적으로 삭제됨.
@@ -590,7 +593,7 @@ public class BoardKdnController {
             mav.addObject("loc", request.getContextPath()+"/t1/viewNotice.tw?seq="+seq);
         }
         else {
-           mav.addObject("message", "글삭제 성공!!");
+           mav.addObject("message", "글이 삭제되었습니다.");
            mav.addObject("loc", request.getContextPath()+"/t1/employeeBoard.tw");
         }
         
@@ -1144,7 +1147,7 @@ public class BoardKdnController {
             mav.addObject("loc", request.getContextPath()+"/t1/viewSuggPost.tw?seq="+seq);
         }
         else {
-           mav.addObject("message", "글삭제 성공!!");
+           mav.addObject("message", "글이 삭제되었습니다.");
            mav.addObject("loc", request.getContextPath()+"/t1/suggestionBoard.tw");
         }
         mav.setViewName("msg");
@@ -1168,53 +1171,6 @@ public class BoardKdnController {
 		return jsonObj.toString();
 	}
 	
-	/*
-	// === 건의사항 원게시물에 딸린 댓글들을 페이징처리해서 조회해오기(Ajax 로 처리) ===
-	@ResponseBody
-	@RequestMapping(value="/t1/suggCommentList.tw", method= {RequestMethod.GET}, produces="text/plain;charset=UTF-8")
-	public String suggCommentList(HttpServletRequest request) {
-		
-		String fk_seq = request.getParameter("fk_seq");
-		String currentShowPageNo = request.getParameter("currentShowPageNo");
-		
-		if(currentShowPageNo == null) {
-			currentShowPageNo = "1";
-		}
-		
-		int sizePerPage = 5; // 한 페이지당 5개의 댓글을 보여줄 것임.
-		
-		int startRno = (( Integer.parseInt(currentShowPageNo) - 1 ) * sizePerPage) + 1;
-	    int endRno = startRno + sizePerPage - 1; 
-		
-	    Map<String, String> paraMap = new HashMap<>();
-	    paraMap.put("fk_seq", fk_seq);
-	    paraMap.put("startRno", String.valueOf(startRno));
-	    paraMap.put("endRno", String.valueOf(endRno));
-	    
-		List<CommentKdnVO> commentList = service.getSuggCmntListPaging(paraMap);
-		
-		JSONArray jsonArr = new JSONArray(); // []
-		
-		if(commentList != null) {
-			for(CommentKdnVO cmtvo : commentList) {
-				JSONObject jsonObj = new JSONObject();
-				jsonObj.put("content", cmtvo.getContent());
-				jsonObj.put("name", cmtvo.getName());
-				jsonObj.put("fk_employeeid", cmtvo.getFk_employeeid());
-				jsonObj.put("regDate", cmtvo.getRegDate());
-				jsonObj.put("seq", cmtvo.getSeq());
-				
-				jsonArr.put(jsonObj);
-			}
-		}
-		
-		//System.out.println(jsonArr.toString());
-		
-		return jsonArr.toString();
-		// "[]" 또는
-		// "[{"content":"댓글내용물", "name":"작성자명", "regDate":"작성일자"}]
-	}
-	*/
 	
 	// === 건의사항 원게시물에 딸린 댓글들을 더보기 버튼으로 페이징처리하기(Ajax 로 처리) ===
 	@ResponseBody
@@ -1251,11 +1207,7 @@ public class BoardKdnController {
 		}
 		
 		return jsonArr.toString();
-		// "[]" 또는
-		// "[{"content":"댓글내용물", "name":"작성자명", "regDate":"작성일자"}]
 	}
-	
-	
 	
 	
 	// === 건의사항 원게시물에 딸린 댓글 totalPage 알아오기(Ajax 로 처리) ===
@@ -1787,6 +1739,10 @@ public class BoardKdnController {
 		String searchType = request.getParameter("searchType");
 	    String searchWord = request.getParameter("searchWord");
 	      
+	    if(searchWord == null || searchWord == "") {
+	    	  searchWord = "";
+	      }
+	    
 	    Map<String,String> paraMap = new HashMap<>();
 	    paraMap.put("seq", seq);
 	    paraMap.put("searchType", searchType);
@@ -1839,7 +1795,7 @@ public class BoardKdnController {
             mav.addObject("loc", request.getContextPath()+"/t1/viewGenPost.tw?seq="+seq);
         }
         else {
-           mav.addObject("message", "글삭제 성공!!");
+           mav.addObject("message", "글이 삭제되었습니다.");
            mav.addObject("loc", request.getContextPath()+"/t1/generalBoard.tw");
         }
         
