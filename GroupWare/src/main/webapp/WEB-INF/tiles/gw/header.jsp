@@ -12,6 +12,13 @@
 	String serverName = "http://"+serverIP+":"+portnumber; 
 %>
 
+<style>
+	span.word:hover{
+		background-color: #b3e6ff;
+		display: inline-block;
+	}
+</style>
+
 <script>
 
 	$(document).ready(function(){
@@ -58,7 +65,7 @@
 								// javascript에서 substr=> 길이만큼 읽어오기 , substring ~부터~ 까지 뽑아오기
 								word = word.substr(0,index) + "<span style='color:#b30000;'>"+word.substr(index,len)+"</span>"+word.substr(index+len);
 								
-								html += "<span style='cursor:pointer;' class='word'>"+word+"</span><br>";
+								html += "<span style='cursor:pointer; width:170px;' class='word'>"+word+"</span><br>";
 								
 							});//end of $.each(json, function(index,item){
 							
@@ -195,7 +202,7 @@ function displayNew(){
 		   			<td class="groupchat" onclick='window.open("<%= serverName%><%= ctxPath%>/t1/chatting/chatwith.tw", "", "left=100px, top=100px, width=750px, height=600px");'><i class="far fa-comments fa-2x"></i></td>
 		   			<td rowspan="2">
 		   			<form name="searchFrm" style="display:inline-block;">
-				   	<input type="text" id="searchwords" name="searchWord" autocomplete="off" style="color:black;" />
+				   	<input type="text" id="searchwords" name="searchWord" autocomplete="off" style="color:black; font-size:10pt;" />
 				   	<input type="button" id="goButton" class="navbar-btn" value="검색"/>
 				   </form>
 		   			</td>
@@ -210,7 +217,7 @@ function displayNew(){
 		   		</tr>
 		    </tbody>
 	    </table>
-		<div id="displayList" style="border:solid 1px gray; border-top: 0px; padding-top:3px; width:138px; top:-15px; left:393px; position:relative; overflow:auto;">
+		<div id="displayList" style="border:solid 1px gray; border-top: 0px; padding-top:3px; width:172px; top:-15px; left:375px; position:relative; overflow:auto; background-color: white;">
 	    </div>
    </div>
    

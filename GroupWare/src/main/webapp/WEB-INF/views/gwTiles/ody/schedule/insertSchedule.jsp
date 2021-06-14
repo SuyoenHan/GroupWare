@@ -141,7 +141,7 @@ button.btn_normal{
 		
 		// 공유자 추가하기
 		$("input#joinEmp").keyup(function(){
-				var joinEmp = $(this).val();
+				var joinEmp = $(this).val(); // 공유자로 설정할 직원명 입력
 			
 				$.ajax({
 					url:"<%= ctxPath%>/t1/insertSchedule/searchJoinEmpList.tw",
@@ -149,15 +149,14 @@ button.btn_normal{
 					dataType:"json",
 					success : function(json){
 						var list = [];
-				//		console.log("수:"+json.length);
 						if(json.length > 0){
 								$.each(json,function(index,item){
 									var inputEmp = item.name;
-									if(!joinEmp.includes(inputEmp)){
-										list.push(inputEmp+"("+item.employeeid+"/"+item.dname+")");
+									if(!joinEmp.includes(inputEmp)){ 
+										list.push(inputEmp+"("+item.employeeid+"/"+item.dname+")"); // 배열에 직원명,사번,부서명 담기
 									}
 								});
-							$("input#joinEmp").autocomplete({
+							$("input#joinEmp").autocomplete({ // 직원명 자동완성입력
 								source:list,
 								select: function(event, ui) {
 									addJoinEmp(ui.item.value);
@@ -274,12 +273,12 @@ button.btn_normal{
 		
 	}); // end of $(document).ready(function(){}----------------
 
-
+	
 	function addJoinEmp(value){
 		var joinEmp = $("span.plusEmp").text();
 		var $div = $("div.extraArea");
 		var $span = $("<span class='plusEmp'>").text(value+" ");
-		if(joinEmp.includes(value)){
+		if(joinEmp.includes(value)){ // 이미 공유자로 값을 지정하여 존재하는 경우
 			alert("이미 추가한 사원입니다.");
 		}
 		else{

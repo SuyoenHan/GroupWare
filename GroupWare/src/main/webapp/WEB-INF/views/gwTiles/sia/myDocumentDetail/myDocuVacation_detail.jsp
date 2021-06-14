@@ -445,7 +445,7 @@ div#delBtn:hover{
 			<c:if test="${requestScope.avo.vno eq '6'}">
 				<tr>
 					<th>요청시간</th>
-					<td colspan="3">${requestScope.avo.ewdate}시간</td>
+					<td colspan="3">${requestScope.avo.ewdate}&nbsp;&nbsp;&nbsp;<span style="color: blue; font-weight: bold;">${requestScope.avo.ewhours}</span>시간</td>
 				</tr>
 			</c:if>	
 			
