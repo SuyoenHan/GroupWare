@@ -65,7 +65,7 @@
 								// javascript에서 substr=> 길이만큼 읽어오기 , substring ~부터~ 까지 뽑아오기
 								word = word.substr(0,index) + "<span style='color:#b30000;'>"+word.substr(index,len)+"</span>"+word.substr(index+len);
 								
-								html += "<span style='cursor:pointer; width:140px;' class='word'>"+word+"</span><br>";
+								html += "<span style='cursor:pointer; width:170px;' class='word'>"+word+"</span><br>";
 								
 							});//end of $.each(json, function(index,item){
 							
@@ -217,7 +217,7 @@ function displayNew(){
 		   		</tr>
 		    </tbody>
 	    </table>
-		<div id="displayList" style="border:solid 1px gray; border-top: 0px; padding-top:3px; width:142px; top:-15px; left:375px; position:relative; overflow:auto; background-color: white;">
+		<div id="displayList" style="border:solid 1px gray; border-top: 0px; padding-top:3px; width:172px; top:-15px; left:375px; position:relative; overflow:auto; background-color: white;">
 	    </div>
    </div>
    
